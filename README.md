@@ -19,6 +19,21 @@ So far, A1icia has managed to do a pretty good job of everything except drive my
 
 And as far as keeping me company, A1icia's currently about at the tropical fish stage, though I expect her to enter the house cat stage soon.
 
+## N Interesting Things About A1icia, N Being A Small Integer Less Than 100 (Probably)
+
+* A1icia can speak, and quite well. She uses a small and robust Text To Speech (TTS) service to do this.
+* A1icia can currently speak 5.5 different languages; the .5 is because she speaks American and British English.
+* A1icia can "understand" many languages, thanks to Google Cloud Translate, but she currently only uses the 5.5 referred to above.
+* A1icia can run a remote Raspberry Pi, either stock with a Command Line Interface (CLI) or configured as a "Magic Mirror", and successfully communicate with the Pi hardware using Java (no Python).
+* A1icia can classify images using the TensorFlow Inception engine (we have bigger plans for TensorFlow, heh heh).
+* A1icia can respond to commands with multimedia output as well as text/voice.
+* A1icia has a database of quotes from which she can select and read, because every project needs a quotes database, dammit.
+* A1icia has, to a limited degree, "self-awareness", in the sense that she knows about her memory, file systems, operating temperature and the like, and can report on same.
+* A1icia can communicate with a weather service and tell you the current weather and the forecast for wherever (mostly) you may be.
+* A1icia can look up and answer queries about facts ("Who is Donald Trump?"), and has the beginnings of non-factoid query response ("Why is Donald Trump's hair that weird color?").
+* A1icia has two built-in web servers and three command line interfaces with which to communicate with the outside world, i.e. you.
+* A1icia is free software, licensed under GPL3.
+
 ## Design Goals
 
 * A1icia should have little to no reliance on external services, preferably no reliance. Thus, no "cloud services". We'll use local TTS and ASR services instead of e.g. Google Voice Cloud Service. As of this writing, the only cloud service that A1icia uses is Google Cloud Translate, and that's just because we haven't found a suitable alternative yet.
