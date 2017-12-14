@@ -17,7 +17,7 @@ So I decided to create a personal assistant that was written in Java by a profes
 
 So far, A1icia has managed to do a pretty good job of everything except drive my car, but that's just because I haven't gotten around to that module yet, and I suppose I should learn about LIDAR and crap like that first so I don't kill anyone.
 
-And as far as keeping me company, A1icia's currently about at the tropical fish stage, though I expect her to enter the house cat stage soon.
+And as far as keeping me company, A1icia's currently about at the tropical fish stage, though I expect her to enter the house cat stage soon. Don't tell her I said that, by the way.
 
 ## N Interesting Things About A1icia, N Being A Small Integer Less Than 100 (Probably)
 
