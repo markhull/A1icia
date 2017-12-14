@@ -3,9 +3,12 @@
 
 A1icia is a professional incarnation of a personal assistant written in Java. She is modular, extensible, and damn fast.
 
-# So Why Another Personal Assistant?
+## So Why Another Personal Assistant?
 
-I wanted to create a "personal assistant" that was written in Java by a professional programmer (me, duh) that was adaptable enough to do all the things I wanted to do:
+I really wanted a "personal assistant", but one that I could have complete control over and one that would let me do all the things
+I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
+
+So I decided to create a personal assistant that was written in Java by a professional programmer (me, duh) that was adaptable enough to do all the things I wanted to do:
 
 * experiment with machine learning and AI, 
 * run so-called **IoT** gizmos around the house (like a Magic Mirror), 
@@ -16,7 +19,7 @@ So far, A1icia has managed to do a pretty good job of everything except drive my
 
 And as far as keeping me company, A1icia's currently about at the tropical fish stage, though I expect her to enter the house cat stage soon.
 
-# Design Goals
+## Design Goals
 
 * A1icia should have little to no reliance on external services, preferably no reliance. Thus, no "cloud services". We'll use local TTS and ASR services instead of e.g. Google Voice Cloud Service. As of this writing, the only cloud service that A1icia uses is Google Cloud Translate, and that's just because we haven't found a suitable alternative yet.
 
