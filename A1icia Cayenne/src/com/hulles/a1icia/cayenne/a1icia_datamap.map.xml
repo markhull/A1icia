@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/10/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/modelMap http://cayenne.apache.org/schema/10/modelMap.xsd"
+	 project-version="10">
+	<property name="defaultPackage" value="com.hulles.a1icia.cayenne"/>
+	<property name="defaultCatalog" value="a1icia"/>
+	<db-entity name="alarm" catalog="a1icia">
+		<db-attribute name="alarm_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="date_time" type="TIMESTAMP" isMandatory="true" length="19"/>
+		<db-attribute name="description" type="VARCHAR" length="255"/>
+		<db-attribute name="person_ID" type="BIGINT" isMandatory="true" length="10"/>
+	</db-entity>
+	<db-entity name="answer_chunk" catalog="a1icia">
+		<db-attribute name="answer_chunk_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="answer_history_ID" type="BIGINT" isMandatory="true" length="10"/>
+		<db-attribute name="chunk" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="chunk_tags" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="sequence" type="SMALLINT" isMandatory="true" length="5"/>
+	</db-entity>
+	<db-entity name="answer_history" catalog="a1icia">
+		<db-attribute name="answer_history_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="lemmatized_question" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="pos_tags" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="question" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="satisfaction" type="INTEGER" length="10"/>
+		<db-attribute name="spark_ID" type="BIGINT" length="10"/>
+		<db-attribute name="spark_object" type="VARCHAR" length="255"/>
+		<db-attribute name="spark_object_type_code" type="SMALLINT" isMandatory="true" length="5"/>
+	</db-entity>
+	<db-entity name="country" catalog="a1icia">
+		<db-attribute name="code2" type="CHAR" isMandatory="true" length="2"/>
+		<db-attribute name="country_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="country_UUID" type="CHAR" isMandatory="true" length="36"/>
+		<db-attribute name="iso3" type="CHAR" isMandatory="true" length="3"/>
+		<db-attribute name="name" type="VARCHAR" isMandatory="true" length="80"/>
+	</db-entity>
+	<db-entity name="lemma" catalog="a1icia">
+		<db-attribute name="lemma" type="VARCHAR" isMandatory="true" length="80"/>
+		<db-attribute name="lemma_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="pos" type="CHAR" isMandatory="true" length="5"/>
+		<db-attribute name="word" type="VARCHAR" isMandatory="true" length="80"/>
+	</db-entity>
+	<db-entity name="media_file" catalog="a1icia">
+		<db-attribute name="artist" type="VARCHAR" length="255"/>
+		<db-attribute name="file_name" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="format" type="CHAR" isMandatory="true" length="6"/>
+		<db-attribute name="media_file_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="title" type="VARCHAR" length="255"/>
+	</db-entity>
+	<db-entity name="named_timer" catalog="a1icia">
+		<db-attribute name="duration_ms" type="BIGINT" isMandatory="true" length="20"/>
+		<db-attribute name="name" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="timer_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="timer_UUID" type="CHAR" isMandatory="true" length="36"/>
+	</db-entity>
+	<db-entity name="nbest_answer" catalog="a1icia">
+		<db-attribute name="answer" type="LONGVARCHAR" isMandatory="true" length="65535"/>
+		<db-attribute name="nbest_answer_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="nfl6_question_ID" type="BIGINT" isMandatory="true" length="10"/>
+	</db-entity>
+	<db-entity name="nfl6_category" catalog="a1icia">
+		<db-attribute name="category_name" type="VARCHAR" isMandatory="true" length="80"/>
+		<db-attribute name="nfl6_category_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+	</db-entity>
+	<db-entity name="nfl6_question" catalog="a1icia">
+		<db-attribute name="best_answer" type="LONGVARCHAR" isMandatory="true" length="65535"/>
+		<db-attribute name="nfl6_category_ID" type="BIGINT" isMandatory="true" length="10"/>
+		<db-attribute name="nfl6_question_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="question" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="yahoo_ID" type="VARCHAR" isMandatory="true" length="12"/>
+	</db-entity>
+	<db-entity name="owm_city" catalog="a1icia">
+		<db-attribute name="country_ID" type="BIGINT" length="10"/>
+		<db-attribute name="latitude" type="REAL" isMandatory="true" length="12"/>
+		<db-attribute name="longitude" type="REAL" isMandatory="true" length="12"/>
+		<db-attribute name="name" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="owm_ID" type="BIGINT" isMandatory="true" length="10"/>
+		<db-attribute name="owm_city_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+	</db-entity>
+	<db-entity name="person" catalog="a1icia">
+		<db-attribute name="avatar" type="LONGVARBINARY" length="16777215"/>
+		<db-attribute name="birth_date" type="DATE" length="10"/>
+		<db-attribute name="check_in" type="BIT" isMandatory="true"/>
+		<db-attribute name="email" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="first_name" type="VARCHAR" length="80"/>
+		<db-attribute name="gender" type="CHAR" length="1"/>
+		<db-attribute name="height_cm" type="SMALLINT" length="5"/>
+		<db-attribute name="last_access" type="TIMESTAMP" length="19"/>
+		<db-attribute name="last_name" type="VARCHAR" length="80"/>
+		<db-attribute name="mobile" type="VARCHAR" length="20"/>
+		<db-attribute name="notes" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="password" type="CHAR" isMandatory="true" length="60"/>
+		<db-attribute name="password_changed" type="TIMESTAMP" isMandatory="true" length="19"/>
+		<db-attribute name="person_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="person_UUID" type="CHAR" isMandatory="true" length="36"/>
+		<db-attribute name="user_type_ID" type="SMALLINT" isMandatory="true" length="5"/>
+		<db-attribute name="username" type="VARCHAR" isMandatory="true" length="255"/>
+	</db-entity>
+	<db-entity name="spark" catalog="a1icia">
+		<db-attribute name="admin_only" type="BIT" isMandatory="true"/>
+		<db-attribute name="canonical_form" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="external" type="BIT" isMandatory="true"/>
+		<db-attribute name="logged_in" type="BIT" isMandatory="true"/>
+		<db-attribute name="name" type="VARCHAR" isMandatory="true" length="127"/>
+		<db-attribute name="spark_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+	</db-entity>
+	<db-entity name="task" catalog="a1icia">
+		<db-attribute name="date_completed" type="TIMESTAMP" length="19"/>
+		<db-attribute name="date_created" type="TIMESTAMP" isMandatory="true" length="19"/>
+		<db-attribute name="date_due" type="TIMESTAMP" length="19"/>
+		<db-attribute name="description" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="notes" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="person_ID" type="BIGINT" isMandatory="true" length="10"/>
+		<db-attribute name="task_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="task_UUID" type="CHAR" isMandatory="true" length="36"/>
+		<db-attribute name="task_priority_ID" type="BIGINT" length="10"/>
+		<db-attribute name="task_status_ID" type="BIGINT" length="10"/>
+		<db-attribute name="task_type_ID" type="BIGINT" length="10"/>
+	</db-entity>
+	<db-entity name="task_priority" catalog="a1icia">
+		<db-attribute name="description" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="sequence" type="SMALLINT" isMandatory="true" length="5"/>
+		<db-attribute name="task_priority_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="task_priority_UUID" type="CHAR" isMandatory="true" length="36"/>
+	</db-entity>
+	<db-entity name="task_status" catalog="a1icia">
+		<db-attribute name="description" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="task_status_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="task_status_UUID" type="CHAR" isMandatory="true" length="36"/>
+	</db-entity>
+	<db-entity name="task_type" catalog="a1icia">
+		<db-attribute name="description" type="VARCHAR" isMandatory="true" length="255"/>
+		<db-attribute name="task_type_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="task_type_UUID" type="CHAR" isMandatory="true" length="36"/>
+	</db-entity>
+	<obj-entity name="Alarm" className="com.hulles.a1icia.cayenne.Alarm" dbEntityName="alarm">
+		<obj-attribute name="dateTime" type="java.time.LocalDateTime" db-attribute-path="date_time"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="personId" type="java.lang.Integer" db-attribute-path="person_ID"/>
+	</obj-entity>
+	<obj-entity name="AnswerChunk" className="com.hulles.a1icia.cayenne.AnswerChunk" dbEntityName="answer_chunk">
+		<obj-attribute name="chunk" type="java.lang.String" db-attribute-path="chunk"/>
+		<obj-attribute name="chunkTags" type="java.lang.String" db-attribute-path="chunk_tags"/>
+		<obj-attribute name="sequence" type="java.lang.Short" db-attribute-path="sequence"/>
+	</obj-entity>
+	<obj-entity name="AnswerHistory" className="com.hulles.a1icia.cayenne.AnswerHistory" dbEntityName="answer_history">
+		<obj-attribute name="lemmatizedQuestion" type="java.lang.String" db-attribute-path="lemmatized_question"/>
+		<obj-attribute name="originalQuestion" type="java.lang.String" db-attribute-path="question"/>
+		<obj-attribute name="posTags" type="java.lang.String" db-attribute-path="pos_tags"/>
+		<obj-attribute name="satisfaction" type="java.lang.Integer" db-attribute-path="satisfaction"/>
+		<obj-attribute name="sparkObject" type="java.lang.String" db-attribute-path="spark_object"/>
+		<obj-attribute name="sparkObjectTypeCode" type="java.lang.Short" db-attribute-path="spark_object_type_code"/>
+	</obj-entity>
+	<obj-entity name="Country" className="com.hulles.a1icia.cayenne.Country" dbEntityName="country">
+		<obj-attribute name="code2" type="java.lang.String" db-attribute-path="code2"/>
+		<obj-attribute name="countryUuid" type="java.lang.String" db-attribute-path="country_UUID"/>
+		<obj-attribute name="iso3" type="java.lang.String" db-attribute-path="iso3"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="Lemma" className="com.hulles.a1icia.cayenne.Lemma" dbEntityName="lemma">
+		<obj-attribute name="lemma" type="java.lang.String" db-attribute-path="lemma"/>
+		<obj-attribute name="pos" type="java.lang.String" db-attribute-path="pos"/>
+		<obj-attribute name="word" type="java.lang.String" db-attribute-path="word"/>
+	</obj-entity>
+	<obj-entity name="MediaFile" className="com.hulles.a1icia.cayenne.MediaFile" dbEntityName="media_file">
+		<obj-attribute name="artist" type="java.lang.String" db-attribute-path="artist"/>
+		<obj-attribute name="fileName" type="java.lang.String" db-attribute-path="file_name"/>
+		<obj-attribute name="formatCode" type="java.lang.String" db-attribute-path="format"/>
+		<obj-attribute name="title" type="java.lang.String" db-attribute-path="title"/>
+	</obj-entity>
+	<obj-entity name="NamedTimer" className="com.hulles.a1icia.cayenne.NamedTimer" dbEntityName="named_timer">
+		<obj-attribute name="durationMs" type="java.lang.Long" db-attribute-path="duration_ms"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="timerUuid" type="java.lang.String" db-attribute-path="timer_UUID"/>
+	</obj-entity>
+	<obj-entity name="NbestAnswer" className="com.hulles.a1icia.cayenne.NbestAnswer" dbEntityName="nbest_answer">
+		<obj-attribute name="answer" type="java.lang.String" db-attribute-path="answer"/>
+	</obj-entity>
+	<obj-entity name="Nfl6Category" className="com.hulles.a1icia.cayenne.Nfl6Category" dbEntityName="nfl6_category">
+		<obj-attribute name="categoryName" type="java.lang.String" db-attribute-path="category_name"/>
+	</obj-entity>
+	<obj-entity name="Nfl6Question" className="com.hulles.a1icia.cayenne.Nfl6Question" dbEntityName="nfl6_question">
+		<obj-attribute name="bestAnswer" type="java.lang.String" db-attribute-path="best_answer"/>
+		<obj-attribute name="question" type="java.lang.String" db-attribute-path="question"/>
+		<obj-attribute name="yahooId" type="java.lang.String" db-attribute-path="yahoo_ID"/>
+	</obj-entity>
+	<obj-entity name="OwmCity" className="com.hulles.a1icia.cayenne.OwmCity" dbEntityName="owm_city">
+		<obj-attribute name="latitude" type="java.lang.Float" db-attribute-path="latitude"/>
+		<obj-attribute name="longitude" type="java.lang.Float" db-attribute-path="longitude"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+		<obj-attribute name="owmId" type="java.lang.Integer" db-attribute-path="owm_ID"/>
+	</obj-entity>
+	<obj-entity name="Person" className="com.hulles.a1icia.cayenne.Person" dbEntityName="person">
+		<obj-attribute name="avatarBytes" type="byte[]" db-attribute-path="avatar"/>
+		<obj-attribute name="birthDate" type="java.time.LocalDate" db-attribute-path="birth_date"/>
+		<obj-attribute name="checkIn" type="java.lang.Boolean" db-attribute-path="check_in"/>
+		<obj-attribute name="email" type="java.lang.String" db-attribute-path="email"/>
+		<obj-attribute name="firstName" type="java.lang.String" db-attribute-path="first_name"/>
+		<obj-attribute name="genderCode" type="java.lang.Character" db-attribute-path="gender"/>
+		<obj-attribute name="heightCm" type="java.lang.Integer" db-attribute-path="height_cm"/>
+		<obj-attribute name="lastAccess" type="java.time.LocalDateTime" db-attribute-path="last_access"/>
+		<obj-attribute name="lastName" type="java.lang.String" db-attribute-path="last_name"/>
+		<obj-attribute name="mobile" type="java.lang.String" db-attribute-path="mobile"/>
+		<obj-attribute name="notes" type="java.lang.String" db-attribute-path="notes"/>
+		<obj-attribute name="password" type="java.lang.String" db-attribute-path="password"/>
+		<obj-attribute name="passwordChanged" type="java.time.LocalDateTime" db-attribute-path="password_changed"/>
+		<obj-attribute name="personUuid" type="java.lang.String" db-attribute-path="person_UUID"/>
+		<obj-attribute name="userTypeId" type="java.lang.Integer" db-attribute-path="user_type_ID"/>
+		<obj-attribute name="username" type="java.lang.String" db-attribute-path="username"/>
+	</obj-entity>
+	<obj-entity name="Spark" className="com.hulles.a1icia.cayenne.Spark" dbEntityName="spark">
+		<obj-attribute name="adminOnly" type="java.lang.Boolean" db-attribute-path="admin_only"/>
+		<obj-attribute name="canonicalForm" type="java.lang.String" db-attribute-path="canonical_form"/>
+		<obj-attribute name="external" type="java.lang.Boolean" db-attribute-path="external"/>
+		<obj-attribute name="loggedIn" type="java.lang.Boolean" db-attribute-path="logged_in"/>
+		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
+	</obj-entity>
+	<obj-entity name="Task" className="com.hulles.a1icia.cayenne.Task" dbEntityName="task">
+		<obj-attribute name="dateCompleted" type="java.time.LocalDateTime" db-attribute-path="date_completed"/>
+		<obj-attribute name="dateCreated" type="java.time.LocalDateTime" db-attribute-path="date_created"/>
+		<obj-attribute name="dateDue" type="java.time.LocalDateTime" db-attribute-path="date_due"/>
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="notes" type="java.lang.String" db-attribute-path="notes"/>
+		<obj-attribute name="taskUuid" type="java.lang.String" db-attribute-path="task_UUID"/>
+	</obj-entity>
+	<obj-entity name="TaskPriority" className="com.hulles.a1icia.cayenne.TaskPriority" dbEntityName="task_priority">
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="sequence" type="java.lang.Short" db-attribute-path="sequence"/>
+		<obj-attribute name="taskPriorityUuid" type="java.lang.String" db-attribute-path="task_priority_UUID"/>
+	</obj-entity>
+	<obj-entity name="TaskStatus" className="com.hulles.a1icia.cayenne.TaskStatus" dbEntityName="task_status">
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="taskStatusUuid" type="java.lang.String" db-attribute-path="task_status_UUID"/>
+	</obj-entity>
+	<obj-entity name="TaskType" className="com.hulles.a1icia.cayenne.TaskType" dbEntityName="task_type">
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="taskTypeUuid" type="java.lang.String" db-attribute-path="task_type_UUID"/>
+	</obj-entity>
+	<db-relationship name="answerHistory" source="answer_chunk" target="answer_history">
+		<db-attribute-pair source="answer_history_ID" target="answer_history_ID"/>
+	</db-relationship>
+	<db-relationship name="answerChunks" source="answer_history" target="answer_chunk" toMany="true">
+		<db-attribute-pair source="answer_history_ID" target="answer_history_ID"/>
+	</db-relationship>
+	<db-relationship name="spark" source="answer_history" target="spark">
+		<db-attribute-pair source="spark_ID" target="spark_ID"/>
+	</db-relationship>
+	<db-relationship name="owmCities" source="country" target="owm_city" toMany="true">
+		<db-attribute-pair source="country_ID" target="country_ID"/>
+	</db-relationship>
+	<db-relationship name="nfl6Question" source="nbest_answer" target="nfl6_question">
+		<db-attribute-pair source="nfl6_question_ID" target="nfl6_question_ID"/>
+	</db-relationship>
+	<db-relationship name="nfl6Questions" source="nfl6_category" target="nfl6_question" toMany="true">
+		<db-attribute-pair source="nfl6_category_ID" target="nfl6_category_ID"/>
+	</db-relationship>
+	<db-relationship name="nbestAnswers" source="nfl6_question" target="nbest_answer" toMany="true">
+		<db-attribute-pair source="nfl6_question_ID" target="nfl6_question_ID"/>
+	</db-relationship>
+	<db-relationship name="nfl6Category" source="nfl6_question" target="nfl6_category">
+		<db-attribute-pair source="nfl6_category_ID" target="nfl6_category_ID"/>
+	</db-relationship>
+	<db-relationship name="country" source="owm_city" target="country">
+		<db-attribute-pair source="country_ID" target="country_ID"/>
+	</db-relationship>
+	<db-relationship name="tasks" source="person" target="task" toMany="true">
+		<db-attribute-pair source="person_ID" target="person_ID"/>
+	</db-relationship>
+	<db-relationship name="answerHistories" source="spark" target="answer_history" toMany="true">
+		<db-attribute-pair source="spark_ID" target="spark_ID"/>
+	</db-relationship>
+	<db-relationship name="person" source="task" target="person">
+		<db-attribute-pair source="person_ID" target="person_ID"/>
+	</db-relationship>
+	<db-relationship name="taskPriority" source="task" target="task_priority">
+		<db-attribute-pair source="task_priority_ID" target="task_priority_ID"/>
+	</db-relationship>
+	<db-relationship name="taskStatus" source="task" target="task_status">
+		<db-attribute-pair source="task_status_ID" target="task_status_ID"/>
+	</db-relationship>
+	<db-relationship name="taskType" source="task" target="task_type">
+		<db-attribute-pair source="task_type_ID" target="task_type_ID"/>
+	</db-relationship>
+	<db-relationship name="tasks" source="task_priority" target="task" toMany="true">
+		<db-attribute-pair source="task_priority_ID" target="task_priority_ID"/>
+	</db-relationship>
+	<db-relationship name="tasks" source="task_status" target="task" toMany="true">
+		<db-attribute-pair source="task_status_ID" target="task_status_ID"/>
+	</db-relationship>
+	<db-relationship name="tasks" source="task_type" target="task" toMany="true">
+		<db-attribute-pair source="task_type_ID" target="task_type_ID"/>
+	</db-relationship>
+	<obj-relationship name="answerHistory" source="AnswerChunk" target="AnswerHistory" deleteRule="Nullify" db-relationship-path="answerHistory"/>
+	<obj-relationship name="answerChunks" source="AnswerHistory" target="AnswerChunk" deleteRule="Deny" db-relationship-path="answerChunks"/>
+	<obj-relationship name="spark" source="AnswerHistory" target="Spark" deleteRule="Nullify" db-relationship-path="spark"/>
+	<obj-relationship name="owmCities" source="Country" target="OwmCity" deleteRule="Deny" db-relationship-path="owmCities"/>
+	<obj-relationship name="nfl6Question" source="NbestAnswer" target="Nfl6Question" deleteRule="Nullify" db-relationship-path="nfl6Question"/>
+	<obj-relationship name="nfl6Questions" source="Nfl6Category" target="Nfl6Question" deleteRule="Deny" db-relationship-path="nfl6Questions"/>
+	<obj-relationship name="nbestAnswers" source="Nfl6Question" target="NbestAnswer" deleteRule="Deny" db-relationship-path="nbestAnswers"/>
+	<obj-relationship name="nfl6Category" source="Nfl6Question" target="Nfl6Category" deleteRule="Nullify" db-relationship-path="nfl6Category"/>
+	<obj-relationship name="country" source="OwmCity" target="Country" deleteRule="Nullify" db-relationship-path="country"/>
+	<obj-relationship name="tasks" source="Person" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
+	<obj-relationship name="answerHistories" source="Spark" target="AnswerHistory" deleteRule="Deny" db-relationship-path="answerHistories"/>
+	<obj-relationship name="person" source="Task" target="Person" deleteRule="Nullify" db-relationship-path="person"/>
+	<obj-relationship name="taskPriority" source="Task" target="TaskPriority" deleteRule="Nullify" db-relationship-path="taskPriority"/>
+	<obj-relationship name="taskStatus" source="Task" target="TaskStatus" deleteRule="Nullify" db-relationship-path="taskStatus"/>
+	<obj-relationship name="taskType" source="Task" target="TaskType" deleteRule="Nullify" db-relationship-path="taskType"/>
+	<obj-relationship name="tasks" source="TaskPriority" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
+	<obj-relationship name="tasks" source="TaskStatus" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
+	<obj-relationship name="tasks" source="TaskType" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
+</data-map>
