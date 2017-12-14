@@ -1,0 +1,132 @@
+<h3>Results for WordToVecSearch using GoogleNews-vectors-negative300.bin</h3>
+<pre>
+Picked up _JAVA_OPTIONS:  -Xms4096m -Xmx10240m
+Loading map for 3000000 word vectors, dimension 300
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: refilling
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: channelStart = 0
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: buffer position = 2147479821
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: new channelStart = 2147479821
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: after read, bytes read = 1496778701
+Mar 27, 2016 1:03:51 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecLoader: after read, channel position = 3644258522
+Loaded map with 0 duplicates ignored
+Mar 27, 2016 1:03:56 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+<strong>INFO: Timer LOADER: 19.836 seconds</strong>
+Mar 27, 2016 1:03:56 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecSearch: searching entry table
+Mar 27, 2016 1:03:57 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecSearch: built match table for search
+Mar 27, 2016 1:03:57 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+<strong>INFO: Timer MATCHES: 1.514 seconds</strong>
+scratched = nose_Lemole (0.6341), scratches (0.5740), scratch (0.5680), Scratched (0.5572), mild_abdominal_strain (0.5156), bruise (0.5047), rib_cage_soreness (0.4907), Scratches (0.4883), bruised_hoof (0.4842), scratching (0.4834), sore (0.4823), RW_Arron_Asham (0.4806), D_Richard_Matvichuk (0.4741), stiff_neck (0.4722), sore_hip_flexor (0.4707), scraped (0.4682), nicked (0.4674), Dearest_Mon (0.4599), sore_shins (0.4598), bruised (0.4593)
+Mar 27, 2016 1:03:58 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecSearch: searching entry table
+
+Mar 27, 2016 1:03:59 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+INFO: WordToVecSearch: built match table for search
+Mar 27, 2016 1:03:59 PM com.hulles.a1icia.mind.server.echo.w2vA1icia.SharedUtils log
+<strong>INFO: Timer ANALOGY: 1.425 seconds</strong>
+dog bone cat = bones (0.6192), cartilage (0.5065), trabecular_bone (0.5042), connective_tissue (0.5025), fibrous_connective_tissue (0.5014), marrow_cavity (0.5000), tissue (0.4988), meniscal_tissue (0.4988), femur (0.4955), cortical_bone (0.4948), cranial_bones (0.4939), spinal_vertebrae (0.4903), jawbones (0.4896), femoral_condyle (0.4880), anklebone (0.4868), avulsed (0.4830), talus_bone (0.4830), cartilages (0.4827), periosteal (0.4785), greater_trochanter (0.4773)
+</pre>
+<h3>Results for original distance.c and word-analogy.c using GoogleNews-vectors-negative300.bin</h3>
+<pre>
+Word: scratched  Position in vocabulary: 14167
+
+                                              Word       Cosine distance
+------------------------------------------------------------------------
+                                       nose_Lemole		0.634074
+                                         scratches		0.574025
+                                           scratch		0.568029
+                                         Scratched		0.557248
+                             mild_abdominal_strain		0.515645
+                                            bruise		0.504698
+                                 rib_cage_soreness		0.490674
+                                         Scratches		0.488345
+                                      bruised_hoof		0.484221
+                                        scratching		0.483440
+                                              sore		0.482274
+                                    RW_Arron_Asham		0.480600
+                               D_Richard_Matvichuk		0.474093
+                                        stiff_neck		0.472212
+                                   sore_hip_flexor		0.470712
+                                           scraped		0.468220
+                                            nicked		0.467406
+                                       Dearest_Mon		0.459863
+                                        sore_shins		0.459840
+                                           bruised		0.459335
+
+Enter three words (EXIT to break): 
+Word: dog  Position in vocabulary: 2043
+
+Word: bone  Position in vocabulary: 6606
+
+Word: cat  Position in vocabulary: 5947
+
+                                              Word              Distance
+------------------------------------------------------------------------
+                                             bones		0.619241
+                                         cartilage		0.506475
+                                   trabecular_bone		0.504220
+                                 connective_tissue		0.502478
+                         fibrous_connective_tissue		0.501449
+                                     marrow_cavity		0.499993
+                                            tissue		0.498762
+                                   meniscal_tissue		0.498757
+                                             femur		0.495542
+                                     cortical_bone		0.494781
+                                     cranial_bones		0.493938
+                                  spinal_vertebrae		0.490294
+                                          jawbones		0.489587
+                                   femoral_condyle		0.488017
+                                         anklebone		0.486805
+                                           avulsed		0.482985
+                                        talus_bone		0.482969
+                                        cartilages		0.482715
+                                        periosteal		0.478493
+                                greater_trochanter		0.477278
+</pre>
+<h3>Results for WordToVecSearch using output of original demo-train-big-model-v1.sh (9.9GB BIN file)</h3>
+<pre>
+<strong>Loading map for 4889031 word vectors, dimension 500</strong>
+INFO: jvm WordToVecLoader: refilling [Fri Mar 25 17:23:37 CDT 2016]
+INFO: jvm WordToVecLoader: channelStart = 0 [Fri Mar 25 17:23:38 CDT 2016]
+INFO: jvm WordToVecLoader: buffer position = 2147480451 [Fri Mar 25 17:23:38 CDT 2016]
+INFO: jvm WordToVecLoader: new channelStart = 2147480451 [Fri Mar 25 17:23:38 CDT 2016]
+INFO: jvm WordToVecLoader: after read, bytes read = 2147479552 [Fri Mar 25 17:23:50 CDT 2016]
+INFO: jvm WordToVecLoader: after read, channel position = 4294960003 [Fri Mar 25 17:23:50 CDT 2016]
+INFO: jvm WordToVecLoader: refilling [Fri Mar 25 17:23:56 CDT 2016]
+INFO: jvm WordToVecLoader: channelStart = 2147480451 [Fri Mar 25 17:23:56 CDT 2016]
+INFO: jvm WordToVecLoader: buffer position = 2147479931 [Fri Mar 25 17:23:56 CDT 2016]
+INFO: jvm WordToVecLoader: new channelStart = 4294960382 [Fri Mar 25 17:23:56 CDT 2016]
+INFO: jvm WordToVecLoader: after read, bytes read = 2147479552 [Fri Mar 25 17:24:08 CDT 2016]
+INFO: jvm WordToVecLoader: after read, channel position = 6442439934 [Fri Mar 25 17:24:08 CDT 2016]
+INFO: jvm WordToVecLoader: refilling [Fri Mar 25 17:24:15 CDT 2016]
+INFO: jvm WordToVecLoader: channelStart = 4294960382 [Fri Mar 25 17:24:15 CDT 2016]
+INFO: jvm WordToVecLoader: buffer position = 2147479896 [Fri Mar 25 17:24:15 CDT 2016]
+INFO: jvm WordToVecLoader: new channelStart = 6442440278 [Fri Mar 25 17:24:15 CDT 2016]
+INFO: jvm WordToVecLoader: after read, bytes read = 2147479552 [Fri Mar 25 17:24:27 CDT 2016]
+INFO: jvm WordToVecLoader: after read, channel position = 8589919830 [Fri Mar 25 17:24:27 CDT 2016]
+INFO: jvm WordToVecLoader: refilling [Fri Mar 25 17:24:43 CDT 2016]
+INFO: jvm WordToVecLoader: channelStart = 6442440278 [Fri Mar 25 17:24:43 CDT 2016]
+INFO: jvm WordToVecLoader: buffer position = 2147481286 [Fri Mar 25 17:24:43 CDT 2016]
+INFO: jvm WordToVecLoader: new channelStart = 8589921564 [Fri Mar 25 17:24:43 CDT 2016]
+INFO: jvm WordToVecLoader: after read, bytes read = 1265905844 [Fri Mar 25 17:24:50 CDT 2016]
+INFO: jvm WordToVecLoader: after read, channel position = 9855827408 [Fri Mar 25 17:24:50 CDT 2016]
+Loaded map with 51 duplicates ignored
+<strong>INFO: jvm Timer LOADER: 1 minutes, 37.551998 seconds [Fri Mar 25 17:24:55 CDT 2016]</strong>
+INFO: jvm WordToVecSearch: searching entry table [Fri Mar 25 17:24:55 CDT 2016]
+INFO: jvm WordToVecSearch: built match table for search [Fri Mar 25 17:25:02 CDT 2016]
+<strong>INFO: jvm Timer MATCHES: 6.394 seconds [Fri Mar 25 17:25:02 CDT 2016]</strong>
+scratched = scratch (0.6938), scratches (0.6637), scratching (0.6543), scraped (0.6165), rubbed (0.6141), cracked (0.5682), bruised (0.5323), smudged (0.5259), rubbing (0.5211), peeled_off (0.5201), sore (0.5194), licked (0.5126), bruise (0.5106), scratch_marks (0.5100), wiped (0.5097), abraded (0.5089), deep_scratches (0.5082), brushed (0.5080), smudges (0.5064)
+INFO: jvm WordToVecSearch: searching entry table [Fri Mar 25 17:25:02 CDT 2016]
+
+INFO: jvm WordToVecSearch: built match table for search [Fri Mar 25 17:25:06 CDT 2016]
+<strong>INFO: jvm Timer ANALOGY: 3.736 seconds [Fri Mar 25 17:25:06 CDT 2016]</strong>
+dog bone cat = bones (0.7212), skeletal (0.6386), cartilage (0.6225), bone_tissue (0.6201), soft_tissue (0.6197), cancellous_bone (0.6166), cortical_bone (0.6035), subchondral_bone (0.5911), dentine (0.5900), trabecular_bone (0.5889), tissue (0.5859), osteocyte (0.5854), spongy_bone (0.5834), skull (0.5782), skeleton (0.5780), soft_tissues (0.5759), osteon (0.5727), trabeculae (0.5665), bone_matrix (0.5662)
+</pre>
+                                 
