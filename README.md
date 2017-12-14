@@ -5,7 +5,7 @@ A1icia is a professional incarnation of a personal assistant written in Java. Sh
 
 ## So Why Another Personal Assistant?
 
-I really wanted a "personal assistant", but one that I could have complete control over and one that would let me do all the things
+I really wanted a "personal assistant", but one over which I could have complete control and one that would let me do all the things
 I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
 
 So I decided to create a personal assistant that was written in Java by a professional programmer (me, duh) that was adaptable enough to do all the things I wanted to do:
