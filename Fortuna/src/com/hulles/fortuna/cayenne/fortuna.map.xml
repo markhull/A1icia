@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/10/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/modelMap http://cayenne.apache.org/schema/10/modelMap.xsd"
+	 project-version="10">
+	<property name="defaultPackage" value="com.hulles.fortuna.cayenne"/>
+	<db-entity name="fortune" catalog="fortuna">
+		<db-attribute name="fortune_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="source" type="LONGVARCHAR" length="65535"/>
+		<db-attribute name="text" type="LONGVARCHAR" isMandatory="true" length="65535"/>
+	</db-entity>
+	<obj-entity name="Fortune" className="com.hulles.fortuna.cayenne.Fortune" dbEntityName="fortune">
+		<obj-attribute name="source" type="java.lang.String" db-attribute-path="source"/>
+		<obj-attribute name="text" type="java.lang.String" db-attribute-path="text"/>
+	</obj-entity>
+</data-map>

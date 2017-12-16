@@ -21,6 +21,14 @@ package com.hulles.a1icia.api.object;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
 
+/**
+ * Request to log a person at a remote station in or out on the A1icia server.
+ * 
+ * @see LoginResponseObject
+ * 
+ * @author hulles
+ *
+ */
 public class LoginObject implements A1iciaClientObject {
 	private static final long serialVersionUID = 5508127665810763843L;
 	private String userName;

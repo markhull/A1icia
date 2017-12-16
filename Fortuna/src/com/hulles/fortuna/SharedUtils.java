@@ -17,28 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.hulles.a1icia.api.object;
+package com.hulles.fortuna;
 
 import java.io.Serializable;
+import java.net.ServerSocket;
 
-/**
- * A generalization of objects passed back and forth between A1icia server and remote stations.
- * 
- * @author hulles
- *
- */
-public interface A1iciaClientObject extends Serializable {
-
-	public ClientObjectType getClientObjectType();
+public class SharedUtils implements Serializable {
+	private static final long serialVersionUID = 3869704244983332875L;
+	@SuppressWarnings("unused")
+	private static ServerSocket canary = null;
 	
-	public boolean isValid();
-	
-	public enum ClientObjectType {
-		LOGIN,
-		LOGIN_RESPONSE,
-		AUDIOBYTES,
-		VIDEOBYTES,
-		IMAGEBYTES,
-		CHANGE_LANGUAGE
+	// see guava SharedUtils, this is just adapted from there
+	public static <T> void checkNotNull(T reference) {
+		
+		if (reference == null) {			
+			throw new NullPointerException("Null reference in checkNotNull");
+		}
 	}
+
+	public static <T> void nullsOkay(T reference) {
+		// doesn't do anything, just indicates we don't use checkNotNull
+	}
+
 }

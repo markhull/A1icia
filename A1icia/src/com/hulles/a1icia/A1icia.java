@@ -78,7 +78,7 @@ public class A1icia implements Closeable {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1icia");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
-	private final static int THREADCOUNT = 12;
+//	private final static int THREADCOUNT = 12;
 	private static final int PORT = 12345;		// random large port number
 	private final static int EXIT_ALREADY_RUNNING = 1;
 	private final AsyncEventBus streetBus;
@@ -104,8 +104,8 @@ public class A1icia implements Closeable {
 			System.exit(EXIT_ALREADY_RUNNING);
 		}
 		a1icianID = A1iciaConstants.getA1iciaA1icianID();
-		busPool = Executors.newFixedThreadPool(THREADCOUNT);
-//		busPool = Executors.newCachedThreadPool();
+//		busPool = Executors.newFixedThreadPool(THREADCOUNT);
+		busPool = Executors.newCachedThreadPool();
 		streetBus = new AsyncEventBus("Street", busPool);
 		addDelayedShutdownHook(busPool);
 		startServices(streetBus);

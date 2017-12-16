@@ -59,7 +59,7 @@ public final class Station implements Serializable {
 	private Map<Keys, String> keyMap;
 	
 	public Station() {
-		// need no-arg constructor
+		// need public no-arg constructor
 	}
 
 	public static synchronized Station getInstance() {
@@ -101,7 +101,7 @@ public final class Station implements Serializable {
 		keyMap.put(Keys.CENTRALPORT, port.toString());
 	}
 
-	public Boolean getHasPicoInstalled() {
+	public Boolean hasPicoInstalled() {
 		String pico;
 		
 		pico = keyMap.get(Keys.HASPICO);
@@ -114,7 +114,7 @@ public final class Station implements Serializable {
 		keyMap.put(Keys.HASPICO, pico.toString());
 	}
 
-	public Boolean getHasMpvInstalled() {
+	public Boolean hasMpvInstalled() {
 		String mpv;
 		
 		mpv = keyMap.get(Keys.HASMPV);
@@ -127,7 +127,7 @@ public final class Station implements Serializable {
 		keyMap.put(Keys.HASMPV, mpv.toString());
 	}
 
-	public Boolean getHasPrettyLights() {
+	public Boolean hasPrettyLights() {
 		String lights;
 		
 		lights = keyMap.get(Keys.PRETTYLIGHTS);
@@ -140,7 +140,7 @@ public final class Station implements Serializable {
 		keyMap.put(Keys.PRETTYLIGHTS, lights.toString());
 	}
 
-	public Boolean getHasLEDs() {
+	public Boolean hasLEDs() {
 		String leds;
 		
 		leds = keyMap.get(Keys.LEDS);

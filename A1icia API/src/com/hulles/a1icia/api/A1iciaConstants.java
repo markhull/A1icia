@@ -23,6 +23,13 @@ import java.util.logging.Level;
 
 import com.hulles.a1icia.api.remote.A1icianID;
 
+/**
+ * Constants for A1icia. I expect this class to grow as more constants are migrated to here,
+ * as part of A1icia's evolution.
+ * 
+ * @author hulles
+ *
+ */
 public class A1iciaConstants {
 	private final static A1icianID ALICIA_ALICIAN_ID = new A1icianID("ALICIA");
 	private final static A1icianID BROADCAST_ALICIAN_ID = new A1icianID("ALL");

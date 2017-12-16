@@ -20,6 +20,7 @@
 package com.hulles.a1icia.api.jebus;
 
 import com.hulles.a1icia.api.jebus.JebusPool.JebusPoolType;
+import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.JedisPoolConfig;
@@ -27,7 +28,7 @@ import redis.clients.jedis.JedisPoolConfig;
 /**
  * This is the API version of the A1icia Jebus hub. It exists to provide a JebusPool 
  * (aka a JedisPool) to anyone who asks, and to eventually destroy the pool during 
- * cleanup. Note to self: actually do the cleanup.
+ * cleanup. Note to self: make sure we actually do the cleanup.
  * 
  * @author hulles
  *
@@ -37,9 +38,7 @@ public final class JebusApiHub {
 //	private final static int JEBUS_WRITE_TIMEOUT = 5 * 1000; // 5 seconds
 	private static final int MAX_HARD_OUTPUT_BUFFER_LIMIT = 64 * 1024 * 1024;
 	private static final int MAX_SOFT_OUTPUT_BUFFER_LIMIT = 16 * 1024 * 1024;
-	private static final String CENTRAL_SERVER = "10.0.0.3"; // get it from AppKeys...
 	private static final String LOCAL_SERVER = "localhost";
-	private static final int CENTRAL_SERVER_PORT = 6379;
 	private static final int LOCAL_SERVER_PORT = 6379;
 	private static JebusPool jebusCentral = null;
 	private static JebusPool jebusLocal = null;
@@ -55,8 +54,11 @@ public final class JebusApiHub {
 	 * @return The JebusPool
 	 */
 	public static JebusPool getJebusCentral() {
+		Station station;
 		
-		return getJebusCentral(CENTRAL_SERVER, CENTRAL_SERVER_PORT, JEBUS_READ_TIMEOUT);
+		station = Station.getInstance();
+		station.ensureStationExists();
+		return getJebusCentral(station.getCentralHost(), station.getCentralPort(), JEBUS_READ_TIMEOUT);
 	}
 	public static JebusPool getJebusCentral(String host, Integer port) {
 		
@@ -92,15 +94,29 @@ public final class JebusApiHub {
 		return jebusLocal;
 	}
 	
+	/**
+	 * Get the Redis "hard" output buffer limit for pub/sub in bytes. This can be set in 
+	 * the Redis config file. We can also look it up, though it might change if set elsewhere.
+	 * 
+	 * @see getMaxSoftOutputBufferLimit
+	 * 
+	 * @return The maximum buffer size in bytes
+	 */
 	public static int getMaxHardOutputBufferLimit() {
 		
-		// can also look it up, though it might change if set elsewhere
 		return MAX_HARD_OUTPUT_BUFFER_LIMIT;
 	}
 	
+	/**
+	 * Get the Redis "soft" output buffer limit for pub/sub in bytes. This can be set in 
+	 * the Redis config file. We can also look it up, though it might change if set elsewhere.
+	 * 
+	 * @see getMaxHardOutputBufferLimit
+	 * 
+	 * @return The maximum buffer size in bytes
+	 */
 	public static int getMaxSoftOutputBufferLimit() {
 		
-		// can also look it up, though it might change if set elsewhere
 		return MAX_SOFT_OUTPUT_BUFFER_LIMIT;
 	}
 	

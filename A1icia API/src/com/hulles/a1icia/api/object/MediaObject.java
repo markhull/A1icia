@@ -26,8 +26,8 @@ import com.hulles.a1icia.media.MediaUtils;
 
 /**
  * A MediaObject is an instance of an image, an audio file, or a video. Actually,
- * there may be multiple segments in the byte[][]. This is an array array 
- * not to cram multiple songs from a playlist into one object (although I suppose it
+ * there may be multiple segments in the byte[][]. This array array is not intended for 
+ * cramming multiple songs from a playlist into one object (although I suppose it
  * might work for a small playlist, now that I mention it); it's more to concatenate a 
  * couple of files into a media package. The causal instance combines the 
  * A1iciaVision intro with a video file so they play seamlessly back-to-back and make us

@@ -22,6 +22,12 @@ package com.hulles.a1icia.api.dialog;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 
+/**
+ * A generalization of dialog-related documents.
+ * 
+ * @author hulles
+ *
+ */
 public interface Dialog {
 
 	public A1iciaClientObject getClientObject();
