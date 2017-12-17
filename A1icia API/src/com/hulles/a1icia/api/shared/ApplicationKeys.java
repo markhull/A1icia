@@ -117,6 +117,28 @@ public class ApplicationKeys implements Serializable {
 		keyMap.put(Keys.MIKELIBRARY, library);
 	}
 
+	public String getMusicLibrary() {
+		
+		return keyMap.get(Keys.MUSICLIBRARY);
+	}
+
+	public void setMusicLibrary(String library) {
+		
+		SharedUtils.checkNotNull(library);
+		keyMap.put(Keys.MUSICLIBRARY, library);
+	}
+
+	public String getVideoLibrary() {
+		
+		return keyMap.get(Keys.VIDEOLIBRARY);
+	}
+
+	public void setVideoLibrary(String library) {
+		
+		SharedUtils.checkNotNull(library);
+		keyMap.put(Keys.VIDEOLIBRARY, library);
+	}
+
 	public String getDefaultOWMCity() {
 		
 		return keyMap.get(Keys.OWMCITY);
@@ -287,6 +309,8 @@ public class ApplicationKeys implements Serializable {
 		JEBUSPORT,
 		LITTLEGINA,
 		MIKELIBRARY,
+		VIDEOLIBRARY,
+		MUSICLIBRARY,
 		SYSTEMPERSONUUID,
 		INCEPTIONPATH,
 		OPENNLPPATH,

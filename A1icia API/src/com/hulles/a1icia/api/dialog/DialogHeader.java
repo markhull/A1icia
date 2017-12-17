@@ -27,7 +27,8 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 /**
  * The concept here is that the DialogHeader contains only enough publicly-available 
  * information to determine if the rest of the dialog is intended for the recipient
- * or not.
+ * or not. To this end we can deserialize only the header, not the entire package, unless
+ * it is meant for us (broadcast or individually addressed).
  *  
  * @author hulles
  *

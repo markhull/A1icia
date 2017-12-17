@@ -17,28 +17,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.hulles.a1icia.api.object;
+package com.hulles.fortuna;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-/**
- * A generalization of objects passed back and forth between A1icia server and remote stations.
- * 
- * @author hulles
- *
- */
-public interface A1iciaClientObject extends Serializable {
-
-	public ClientObjectType getClientObjectType();
+final public class SerialFortune implements Serializable {
+	private static final long serialVersionUID = 465302354035354130L;
+	private UUID fortuneUUID;
+	private String text;
+	private String source;
 	
-	public boolean isValid();
-	
-	public enum ClientObjectType {
-		LOGIN,
-		LOGIN_RESPONSE,
-		AUDIOBYTES,
-		VIDEOBYTES,
-		IMAGEBYTES,
-		CHANGE_LANGUAGE
+	public SerialFortune() {
+		// need no-arg constructor
 	}
+	
+	public String getText() {
+		
+		return text;
+	}
+	
+	public void setText(String text) {
+		
+		SharedUtils.checkNotNull(text);
+		this.text = text;
+	}
+	
+	public String getSource() {
+		
+		return source;
+	}
+	
+	public void setSource(String source) {
+		
+		SharedUtils.checkNotNull(source);
+		this.source = source;
+	}
+
+	public UUID getUUID() {
+		
+		return fortuneUUID;
+	}
+
+	public void setUUID(UUID fortuneUUID) {
+		
+		SharedUtils.checkNotNull(fortuneUUID);
+		this.fortuneUUID = fortuneUUID;
+	}
+
 }

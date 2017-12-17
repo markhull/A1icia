@@ -46,15 +46,6 @@ public final class JebusApiBible {
 	private final static String ALICIAPURDAHKEY = "a1icia:purdah";
     
     private final static String ALICIASTATIONKEY = "a1icia:station";
-//    private final static String STATION_ID = "station_ID";
-//    private final static String STATION_CENTRAL_HOST = "central_host";
-//    private final static String STATION_CENTRAL_PORT = "central_port";
-//    private final static String STATION_OS = "os";
-//    private final static String STATION_PICO = "pico";
-//    private final static String STATION_MPV = "mpv";
-//    private final static String STATION_PRETTY_LIGHTS = "pretty_lights";
-//    private final static String STATION_LEDS = "leds";
-//    private final static String STATION_IRON = "iron";
 	
     private final static String ALICIAMEDIACACHEKEY = "a1icia:mediacache";
     private final static String MEDIAFORMATFIELD = "mediafmt";
@@ -125,60 +116,6 @@ public final class JebusApiBible {
 		return ALICIASTATIONKEY;
 	}
 	
-/*	public static String getStationIdKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_ID;
-	}
-
-	public static String getStationCentralHostKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_CENTRAL_HOST;
-	}
-
-	public static String getStationCentralPortKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_CENTRAL_PORT;
-	}
-
-	public static String getStationOsKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_OS;
-	}
-
-	public static String getStationPicoKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_PICO;
-	}
-
-	public static String getStationMpvKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_MPV;
-	}
-
-	public static String getStationIronKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_IRON;
-	}
-
-	public static String getStationLightsKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_PRETTY_LIGHTS;
-	}
-
-	public static String getStationLedsKey(JebusPool pool) {
-		
-		matchPool(pool, JebusPoolType.LOCAL);
-		return ALICIASTATIONKEY + ":" + STATION_LEDS;
-	}
-*/
 	/*******************/
 	/***** ALICIAN *****/
     /*******************/
@@ -223,6 +160,12 @@ public final class JebusApiBible {
 		return (ALICIACHANNELKEY + TOCHANNEL).getBytes();
 	}
 	
+	/**
+	 * Match the pool type with the pool; if they don't match throw an A1iciaAPIException.
+	 * 
+	 * @param pool The Jebus pool
+	 * @param type The JebusPoolType
+	 */
 	private static void matchPool(JebusPool pool, JebusPoolType type) {
 		
 		SharedUtils.checkNotNull(pool);

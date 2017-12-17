@@ -31,6 +31,12 @@ import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
+/**
+ * This is a request (aka a query) from a client, asking for a response of some sort.
+ * 
+ * @author hulles
+ *
+ */
 public class DialogRequest implements Serializable, Dialog {
 	private static final long serialVersionUID = 2902774382678495512L;
 	private Set<SerialSpark> sparks;

@@ -28,6 +28,14 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.Jedis;
 
+/**
+ * An ID for an A1ician, a client entity that interacts with the A1icia server.
+ * These ID is not permanently assigned to the A1ician; it exists for the session (while
+ * the A1icia is actively interacting) only.
+ * 
+ * @author hulles
+ *
+ */
 public class A1icianID implements Serializable {
 	private static final long serialVersionUID = -7396766025766617796L;
 	private final String a1icianID;
@@ -84,6 +92,11 @@ public class A1icianID implements Serializable {
 		return true;
 	}
 	
+	/**
+	 * Create a new A1ician ID with a Jebus counter.
+	 * 
+	 * @return The ID
+	 */
 	@SuppressWarnings("resource")
 	public static A1icianID createA1icianID() {
 		JebusPool jebusPool;

@@ -22,6 +22,12 @@ package com.hulles.a1icia.api.object;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
+/**
+ * This object changes languages passed between the A1icia server and remote station.
+ * 
+ * @author hulles
+ *
+ */
 public class ChangeLanguageObject implements A1iciaClientObject {
 	private static final long serialVersionUID = 6987368151783107511L;
 	private Language language;

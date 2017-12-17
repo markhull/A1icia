@@ -29,6 +29,9 @@ import redis.clients.jedis.JedisPoolConfig;
  * The reason for this existing as a subclass of JedisPool is for type checking, and because
  * it is very easy to accidentally close the pool so we make it harder here.
  * 
+ * TODO Is there any benefit to essentially duplicating the JebusPool in the API? If not, get
+ * rid of this one.
+ * 
  * @author hulles
  *
  */

@@ -38,12 +38,28 @@ import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
+/**
+ * This is how we send requests and responses back and forth between A1icia Central and
+ * remote stations.
+ * 
+ * @author hulles
+ *
+ */
 public class DialogSerialization {
 	final static Logger LOGGER = Logger.getLogger("A1iciaApi.DialogSerialization");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	private static final boolean DEBUG = true;
 	private static final int MAXHEADROOM = JebusApiHub.getMaxHardOutputBufferLimit();
 	
+	/**
+	 * Deserialize a byte array for an A1ician. We deserialize at least the header,
+	 * and if it's either a broadcast message or sent to the A1ician, we also 
+	 * deserialize the body.
+	 * 
+	 * @param a1icianID The ID of the A1ician
+	 * @param bytes The byte array containing the serialized objects
+	 * @return A Dialog, or null if it was not sent to the A1ician or there was a problem deserializing
+	 * the data
+	 */
 	public static Dialog deSerialize(A1icianID a1icianID, byte[] bytes) {
 		ByteArrayInputStream byteInputStream;
 		Object object;
@@ -53,9 +69,11 @@ public class DialogSerialization {
 		A1icianID dialogA1icianID;
 		A1icianID bcastID = A1iciaConstants.getBroadcastA1icianID();
 		String debugString;
+		boolean debugging;
 		
 		SharedUtils.checkNotNull(a1icianID);
 		SharedUtils.checkNotNull(bytes);
+		debugging = LOGGER.isLoggable(LOGLEVEL);
 		LOGGER.log(LOGLEVEL, "DESERIALIZING");
 		byteInputStream = new ByteArrayInputStream(bytes);
 		try (ObjectInputStream objectInputStream = new ObjectInputStream(byteInputStream)) {
@@ -65,7 +83,7 @@ public class DialogSerialization {
 			if (dialogA1icianID.equals(bcastID) || dialogA1icianID.equals(a1icianID)) {
 				object = objectInputStream.readObject();
 				dialog = (Dialog) object;
-				if (DEBUG) {
+				if (debugging) {
 					if (dialog instanceof DialogRequest) {
 						debugString = ((DialogRequest)dialog).toString();
 					} else {
@@ -73,7 +91,7 @@ public class DialogSerialization {
 					}
 					LOGGER.log(LOGLEVEL, debugString);
 				}
-			} else if (DEBUG) {
+			} else if (debugging) {
 				object = objectInputStream.readObject();
 				notOurDialog = (Dialog) object;
 				debugString = "NOT OUR ALICIANID\n";
@@ -99,6 +117,13 @@ public class DialogSerialization {
 		return dialog;
 	}
 
+	/**
+	 * Given a DialogHeader and a Dialog, serialize them and return the resulting byte array.
+	 * 
+	 * @param header The DialogHeader
+	 * @param dialog The Dialog
+	 * @return The serialized objects as a byte array
+	 */
 	public static byte[] serialize(DialogHeader header, Dialog dialog) {
 		ByteArrayOutputStream byteOutputStream;
 		String debugString;

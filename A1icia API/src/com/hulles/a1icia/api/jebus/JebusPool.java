@@ -25,6 +25,13 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * The reason for this existing as a subclass of JedisPool is for type checking, and because
+ * it is very easy to accidentally close the pool so we make it harder here.
+ * 
+ * @author hulles
+ *
+ */
 public final class JebusPool extends JedisPool {
 	private final JebusPoolType poolType; 
 	
@@ -49,16 +56,27 @@ public final class JebusPool extends JedisPool {
 		this.poolType = type;
 	}
 
+	/**
+	 * Return the type of this pool, central or local.
+	 * 
+	 * @return The type
+	 */
 	public JebusPoolType getPoolType() {
 	
 		return poolType;
 	}
 	
+	/**
+	 * Close the pool from a public location, which throws an error. Let JebusHub close it.
+	 * We're supposed to really release the resources in a Closeable close fail, *then*
+	 * throw the exception.
+	 * 
+	 * @see realClose
+	 * 
+	 */
 	@Override
 	public final void close() {
 		
-		// we're supposed to really release the resources in a Closeable close fail, *then*
-		//    throw the exception. So we do.
 		realClose();
 		throw new A1iciaAPIException("JebusAPIPool: attempting to close pool remotely");
 	}
@@ -67,16 +85,28 @@ public final class JebusPool extends JedisPool {
 		super.close();
 	}
 	
+	
+	
+	/**
+	 * Destroy the pool from a public location, which throws an error. Let JebusHub close it.
+	 * We're supposed to really release the resources in a Closeable close fail, *then*
+	 * throw the exception. This is equivalent to the close fail {Jedis close just calls destroy()},
+	 * but of course that might not always be true so we emulate the two Jedis methods here.
+	 * 
+	 * @see realDestroy
+	 * 
+	 */
 	@Override
 	public final void destroy() {
 		
-		// we're supposed to really release the resources in a Closeable close fail, *then*
-		//    throw the exception. This is equivalent to the close fail -- Jedis close() just 
-		//    calls destroy().
 		realDestroy();
 		throw new A1iciaAPIException("JebusAPIPool: attempting to destroy pool remotely");
 	}
 	
+	/**
+	 * Really close the pool. Note that this is package-visible, not public.
+	 * 
+	 */
 	void realDestroy() {
 		super.destroy();
 	}

@@ -23,6 +23,14 @@ import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
+/**
+ * The response from the server to the log in/out request from the remote station.
+ * 
+ * @see LoginObject
+ * 
+ * @author hulles
+ *
+ */
 public class LoginResponseObject implements A1iciaClientObject {
 	private static final long serialVersionUID = 4715884810552504623L;
 	private SerialUUID<SerialPerson> personUUID;
@@ -59,7 +67,7 @@ public class LoginResponseObject implements A1iciaClientObject {
 	@Override
 	public boolean isValid() {
 
-		// personUUID can be null if failed login
+		// personUUID can be null if failed login or logout
 		return true;
 	}
 

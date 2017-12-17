@@ -144,13 +144,13 @@ public final class MikeRoom extends UrRoom {
 		}
 	}
 	
-	public static void updateMediaLibrary() {
+	public void updateMediaLibrary() {
 		List<String> audioList;
 		List<String> videoList;
 		
-		audioList = LibraryLister.listFiles("/home/hulles/Media/MP3s", "*.mp3");
+		audioList = LibraryLister.listFiles(appKeys.getMusicLibrary(), "*.mp3");
 		audioList.stream().forEach(e -> updateAudioItem(e));
-		videoList = LibraryLister.listFiles("/home/hulles/Media/Music Videos", "*.{mp4,flv}");
+		videoList = LibraryLister.listFiles(appKeys.getVideoLibrary(), "*.{mp4,flv}");
 		videoList.stream().forEach(e -> updateVideoItem(e));
 	}
 	
@@ -269,7 +269,7 @@ public final class MikeRoom extends UrRoom {
 		praise = LibraryLister.listFiles(lib + "praise");
 		specialMedia = LibraryLister.listFiles(lib + "other_responses");
 		notifications = LibraryLister.listFiles(lib + "notifications");
-//		updateMediaLibrary();
+		updateMediaLibrary();
 		media = MediaFile.getMediaFiles();
 		media.stream().forEach(e -> addMediaToLists(e));
 		fileName = findMediaFile("AV.mov", specialMedia);
@@ -318,7 +318,7 @@ public final class MikeRoom extends UrRoom {
 				return createPromptActionPackage(sparkPkg, request);
 			case "pronounce_linux":
 			case "listen_to_her_heart":
-			case "pronounce_a1icia":
+			case "pronounce_alicia":
 			case "sorry_for_it_all":
 			case "dead_sara":
 			case "pronounce_hulles":
@@ -567,11 +567,11 @@ public final class MikeRoom extends UrRoom {
 			System.out.println("Looking for " + target);
 		} else if (sparkPkg.is("dead_sara")) {
 			target = "masse_color1.jpg";
-		} else if (sparkPkg.is("pronounce_a1icia")) {
+		} else if (sparkPkg.is("pronounce_alicia")) {
 			if (random.nextBoolean()) {
-				target = "Sv-A1icia_Vikander.wav";
+				target = "Sv-Alicia_Vikander.wav";
 			} else {
-				target = "pronounce_a1icia.mov";
+				target = "pronounce_alicia.mov";
 			}
 		}
 		if (target == null) {
@@ -810,7 +810,7 @@ public final class MikeRoom extends UrRoom {
 		sparks.add(Spark.find("exclamation"));
 		sparks.add(Spark.find("nothing_to_do"));
 		sparks.add(Spark.find("pronounce_linux"));
-		sparks.add(Spark.find("pronounce_a1icia"));
+		sparks.add(Spark.find("pronounce_alicia"));
 		sparks.add(Spark.find("pronounce_hulles"));
 		sparks.add(Spark.find("listen_to_her_heart"));
 		sparks.add(Spark.find("sorry_for_it_all"));

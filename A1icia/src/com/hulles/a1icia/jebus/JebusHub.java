@@ -57,7 +57,7 @@ public final class JebusHub {
 	 * Get the official A1icia III JebusPool, creating one if it doesn't exist. Optionally
 	 * create a new JebusMonitor as well. Because we're the server, jebusCentral and jebusLocal
 	 * can have the same host and port number. So far I have no opinion on whether they *should*
-	 * or not. TODO.
+	 * or not. TODO evaluate performance with both the same.
 	 * 
 	 * @return The JebusPool
 	 */
@@ -125,7 +125,6 @@ public final class JebusHub {
 	 */
 	public static int getMaxHardOutputBufferLimit() {
 		
-		//
 		return MAX_HARD_OUTPUT_BUFFER_LIMIT;
 	}
 	
@@ -139,7 +138,6 @@ public final class JebusHub {
 	 */
 	public static int getMaxSoftOutputBufferLimit() {
 		
-		// can also look it up, though it might change if set elsewhere
 		return MAX_SOFT_OUTPUT_BUFFER_LIMIT;
 	}
 	
