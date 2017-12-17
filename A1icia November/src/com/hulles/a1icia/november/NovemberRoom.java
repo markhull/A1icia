@@ -19,23 +19,16 @@
  *******************************************************************************/
 package com.hulles.a1icia.november;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.crypto.SecretKey;
-
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.dialog.DialogRequest;
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.object.LoginResponseObject;
-import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
-import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Person;
 import com.hulles.a1icia.cayenne.Spark;
@@ -54,8 +47,6 @@ import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
-import redis.clients.jedis.Jedis;
-
 /**
  * November Room is concerned with user data and security. 
  * 
@@ -63,13 +54,10 @@ import redis.clients.jedis.Jedis;
  *
  */
 public final class NovemberRoom extends UrRoom {
-	private final com.hulles.a1icia.api.jebus.JebusPool jebusPool;
 	
 	public NovemberRoom(EventBus bus) {
 		super(bus);
 		
-		jebusPool = JebusApiHub.getJebusCentral();
-		loadPurdah();
 	}
 	
 	@Override
@@ -90,35 +78,6 @@ public final class NovemberRoom extends UrRoom {
 
 	@Override
 	protected void roomShutdown() {
-	}
-	
-	private void loadPurdah() {
-		SecretKey aesKey = null;
-		byte[] purdahKeyBytes;
-		byte[] purdah;
-		byte[] purdahBytes;
-		PurdahKeys purdahKeys;
-		
-		try (Jedis jebus = jebusPool.getResource()) {
-			try {
-				aesKey = A1iciaCrypto.getA1iciaFileAESKey();
-			} catch (Exception e) {
-				throw new A1iciaException("NovemberRoom: can't recover AES key", e);
-			}
-			purdahKeyBytes = JebusApiBible.getA1iciaPurdahKey(jebusPool).getBytes();
-			purdah = jebus.get(purdahKeyBytes);
-			try {
-				purdahBytes = A1iciaCrypto.decrypt(aesKey, purdah);
-			} catch (Exception e) {
-				throw new A1iciaException("NovemberRoom: can't decrypt purdah", e);
-			}
-			try {
-				purdahKeys = (PurdahKeys) Serialization.deSerialize(purdahBytes);
-			} catch (ClassNotFoundException | IOException e) {
-				throw new A1iciaException("NovemberRoom: can't deserialize purdah", e);
-			}
-		}
-		PurdahKeys.setInstance(purdahKeys);
 	}
 
 	@Override

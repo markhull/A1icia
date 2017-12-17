@@ -26,6 +26,8 @@ import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
 
+import com.hulles.a1icia.api.shared.PurdahKeys;
+
 public final class A1iciaApplication {
     private static ObjectContext entityContext = null;
 	private static ServerRuntime cayenneRuntime = null;
@@ -42,8 +44,11 @@ public final class A1iciaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
+    	@SuppressWarnings("unused")
+		PurdahKeys purdah;
     	
     	if (cayenneRuntime == null) {
+    		purdah = PurdahKeys.getInstance();
     		if (!logging) {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")

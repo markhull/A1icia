@@ -19,10 +19,20 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.shared;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.crypto.SecretKey;
+
+import com.hulles.a1icia.api.jebus.JebusApiBible;
+import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
+import com.hulles.a1icia.crypto.A1iciaCrypto;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * The purdah is where we keep the sensitive material: passwords, tokens, IDs and the like.
@@ -42,7 +52,7 @@ public class PurdahKeys implements Serializable {
 	public static synchronized PurdahKeys getInstance() {
 	
 		if (instance ==  null) {
-			throw new A1iciaAPIException("PurdahKeys has not been initialized");
+			instance = getPurdahKeys();
 		}
 		return instance;
 	}
@@ -143,6 +153,38 @@ public class PurdahKeys implements Serializable {
 		
 		SharedUtils.checkNotNull(keys);
 		instance = keys;
+	}
+	
+	@SuppressWarnings("resource")
+	private static PurdahKeys getPurdahKeys() {
+		SecretKey aesKey = null;
+		byte[] purdahKeyBytes;
+		byte[] purdah;
+		byte[] purdahBytes;
+		PurdahKeys purdahKeys;
+		JebusPool jebusPool;
+		
+		jebusPool = JebusApiHub.getJebusCentral();
+		try (Jedis jebus = jebusPool.getResource()) {
+			try {
+				aesKey = A1iciaCrypto.getA1iciaFileAESKey();
+			} catch (Exception e) {
+				throw new A1iciaAPIException("PurdahKeys: can't recover AES key", e);
+			}
+			purdahKeyBytes = JebusApiBible.getA1iciaPurdahKey(jebusPool).getBytes();
+			purdah = jebus.get(purdahKeyBytes);
+			try {
+				purdahBytes = A1iciaCrypto.decrypt(aesKey, purdah);
+			} catch (Exception e) {
+				throw new A1iciaAPIException("PurdahKeys: can't decrypt purdah", e);
+			}
+			try {
+				purdahKeys = (PurdahKeys) Serialization.deSerialize(purdahBytes);
+			} catch (ClassNotFoundException | IOException e) {
+				throw new A1iciaAPIException("PurdahKeys: can't deserialize purdah", e);
+			}
+		}
+		return purdahKeys;
 	}
 	
 	/**
