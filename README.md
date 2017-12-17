@@ -13,7 +13,7 @@ I wanted to do, see below. So I looked at various efforts written in scripting l
 So I decided to create a personal assistant that was written in Java by a professional programmer (me, duh) that was adaptable enough to do all the things I wanted to do:
 
 * experiment with machine learning and AI, 
-* run so-called **IoT** gizmos around the house (like a Magic Mirror), 
+* run so-called **IoT** gizmos around the house (like a [Magic Mirror](https://github.com/MichMich/MagicMirror)), 
 * drive my car, 
 * and keep me company on these cold and lonely winter nights.
 
