@@ -5,7 +5,7 @@ A1icia is a professional incarnation of a personal assistant written in Java. Sh
 
 ## So Why Another Personal Assistant?
 
-The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, but still, it's personal information.
+The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, but still, it's personal information.
 
 So, I really wanted a personal assistant, but one over which I could have complete control and one that would let me do all the things
 I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these scripting languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
