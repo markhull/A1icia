@@ -36,11 +36,14 @@ public class AudioBytePlayer {
 	
 	/**
 	 * playAudioFromByteArray will only play Java Sound (javax.sound) supported formats,
-	 * notably .wav files. 
+	 * notably .wav files.
+	 *  
 	 * @param audio The audio stream as an array of bytes
+	 * @param length The length to play, in seconds; null if entire stream
+	 * 
 	 * @throws Exception
 	 */
-	public static void playAudioFromByteArray(byte[] audio) throws Exception {
+	public static void playAudioFromByteArray(byte[] audio, Integer length) throws Exception {
 		final AudioFormat format;
 		
 		MediaUtils.checkNotNull(audio);
@@ -50,18 +53,36 @@ public class AudioBytePlayer {
 			      1, // channels
 			      true, // signed
 			      false); // bigEndian
-		playAudioFromByteArray(format, audio);
+		playAudioFromByteArray(format, audio, length);
 	}
+	
+	/**
+	 * playAudioFromByteArray will only play Java Sound (javax.sound) supported formats,
+	 * notably .wav files.
+	 *  
+	 * @param format The AudioFormat of the audio stream
+	 * @param audio The audio stream as an array of bytes
+	 * @param length The length to play, in seconds; null if entire stream
+	 * 
+	 * @throws Exception
+	 */
 	@SuppressWarnings("resource")
-	public static void playAudioFromByteArray(AudioFormat format, byte[] audio) throws Exception {
+	public static void playAudioFromByteArray(AudioFormat format, byte[] audio, Integer length) throws Exception {
 		InputStream input;
 		final AudioInputStream ais;
 		DataLine.Info info;
 		final SourceDataLine line;
 		Thread playThread;
+		long lengthInMicroseconds;
 		
 		MediaUtils.checkNotNull(format);
 		MediaUtils.checkNotNull(audio);
+		MediaUtils.nullsOkay(length);
+		if (length == null) {
+			lengthInMicroseconds = Long.MAX_VALUE;
+		} else {
+			lengthInMicroseconds = length * 1000000;
+		}
 		input = new ByteArrayInputStream(audio);
 		ais = new AudioInputStream(input, format, audio.length / format.getFrameSize());
 		info = new DataLine.Info(SourceDataLine.class, format);
@@ -79,21 +100,19 @@ public class AudioBytePlayer {
 			public void run() {
 				int bufferSize;
 				byte[] buffer;
-				boolean playing;
 				int count;
 				
 				bufferSize = (int) format.getSampleRate() * format.getFrameSize();
 				buffer = new byte[bufferSize];
 				try {
-					playing = true;
 					while ((count = ais.read(buffer, 0, buffer.length)) != -1) {
 						if (count > 0) {
 							line.write(buffer, 0, count);
 						}
-						if (!playing)
+						if (line.getMicrosecondPosition() > lengthInMicroseconds) {
 							break;
+						}
 					}
-					playing = false;
 					line.drain();
 					line.close();
 				} catch (Exception e) {
@@ -106,23 +125,45 @@ public class AudioBytePlayer {
 		playThread.start();
 	}
 
-	public static void playAudioFromFile(String filename) throws Exception {
+	/**
+	 * Get an audio file, convert it to a byte array, and play it.
+	 * 
+	 * @see playAudioFromByteArray
+	 * 
+	 * @param filename The file name of the audio file
+	 * @param length The length to play, in seconds; null if entire stream
+	 * 
+	 * @throws Exception
+	 */
+	public static void playAudioFromFile(String filename, Integer length) throws Exception {
 		AudioFormat format;
 		byte[] audioBytes;
 		
 		MediaUtils.checkNotNull(filename);
 		format = MediaUtils.getAudioFormat(filename);
 		audioBytes = MediaUtils.fileToByteArray(filename);
-		playAudioFromByteArray(format, audioBytes);
+		playAudioFromByteArray(format, audioBytes, length);
 	}
 	
-	public static void playAudioFromFile(String filename, AudioFormat format) throws Exception {
+
+	/**
+	 * Get an audio file, convert it to a byte array, and play it using the specified AudioFormat.
+	 * 
+	 * @see playAudioFromByteArray
+	 * 
+	 * @param filename The file name of the audio file
+	 * @param format The AudioFormat
+	 * @param length The length to play, in seconds; null if entire stream
+	 * 
+	 * @throws Exception
+	 */
+	public static void playAudioFromFile(String filename, AudioFormat format, Integer length) throws Exception {
 		byte[] audioBytes;
 		
 		MediaUtils.checkNotNull(filename);
 		MediaUtils.checkNotNull(format);
 		audioBytes = MediaUtils.fileToByteArray(filename);
-		playAudioFromByteArray(format, audioBytes);
+		playAudioFromByteArray(format, audioBytes, length);
 	}
 	
 }

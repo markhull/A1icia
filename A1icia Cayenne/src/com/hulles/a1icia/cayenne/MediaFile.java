@@ -20,10 +20,12 @@
 package com.hulles.a1icia.cayenne;
 
 import java.util.List;
+import java.util.Random;
 
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
+import org.apache.cayenne.query.Query;
 
 import com.hulles.a1icia.cayenne.auto._MediaFile;
 import com.hulles.a1icia.media.MediaFormat;
@@ -31,6 +33,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class MediaFile extends _MediaFile {
     private static final long serialVersionUID = 1L; 
+	private static final Random RANDOM = new Random();
+    
     
     public static MediaFile findMediaFile(String fileName) {
 		ObjectContext context;
@@ -90,6 +94,33 @@ public class MediaFile extends _MediaFile {
 				.where(_MediaFile.TITLE.likeIgnoreCase(title))
 				.selectOne(context);
 		return dbMediaFile;
+    }
+    
+    public static MediaFile getRandomMediaFile() {
+		int recCount;
+		int recPos;
+		Query query;
+		ObjectContext context;
+
+		context = A1iciaApplication.getEntityContext();
+		recCount = getRecordCount();
+		recPos = RANDOM.nextInt(recCount);
+		query = ObjectSelect
+				.query(MediaFile.class)
+				.limit(1)
+				.offset(recPos);
+		return (MediaFile) Cayenne.objectForQuery(context, query);
+    }
+    
+	private static int getRecordCount() {
+     	ObjectContext context;
+     	int count;
+    	
+    	context = A1iciaApplication.getEntityContext();
+    	count = (int) ObjectSelect
+    			.query(MediaFile.class)
+    			.selectCount(context);
+     	return count;
     }
     
     public MediaFormat getFormat() {

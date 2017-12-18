@@ -112,6 +112,8 @@ final public class MindServiceImpl extends RemoteServiceServlet implements MindS
 		List<String> urls;
 		List<MediaFormat> formats;
 		List<String> serialFormats;
+		List<Integer> lengths;
+		Integer length;
 		
 		prongz.matchProng(prong);
 		prongKey = prong.getProngString();
@@ -125,15 +127,18 @@ final public class MindServiceImpl extends RemoteServiceServlet implements MindS
 		clientObjects = console.getClientObjects();
 		urls = new ArrayList<>();
 		formats = new ArrayList<>();
+		lengths = new ArrayList<>();
 		for (A1iciaClientObject obj : clientObjects) {
 			if (obj.getClientObjectType() == ClientObjectType.AUDIOBYTES) {
 				audioObject = (AudioObject) obj;
 				format = audioObject.getMediaFormat();
+				length = audioObject.getLengthSeconds();
 				for (byte[] bytes : audioObject.getMediaBytes()) {
 					key = A1iciaMediaServlet.saveAudioBytes(format, bytes);
 					url = MEDIA_URL + key;
 					urls.add(url);
 					formats.add(format);
+					lengths.add(length);
 				}
 			}
 		}
@@ -150,6 +155,7 @@ final public class MindServiceImpl extends RemoteServiceServlet implements MindS
 		returnResult.setExplain(expl);
 		returnResult.setDatestamp(new Date());
 		returnResult.setUrls(urls);
+		returnResult.setLengths(lengths);
 		serialFormats = new ArrayList<>(formats.size());
 		for (MediaFormat fmt : formats) {
 			switch (fmt) {
@@ -222,21 +228,21 @@ final public class MindServiceImpl extends RemoteServiceServlet implements MindS
 	
 	private static void processTTS(String text, List<String> urls, List<MediaFormat> formats) {
 		String speak;
-		int colonPos;
+//		int colonPos;
 		byte[] audioBytes;
 		Long key;
 		String url;
 		MediaFormat format;
 		
 		SharedUtils.checkNotNull(text);
-		if (text.startsWith("ME")) {
-			colonPos = text.indexOf(':');
-			speak = text.substring(colonPos + 1);
-		} else if (text.startsWith("ALICIA:")) {
-			speak = text.substring(8);
-		} else {
+//		if (text.startsWith("ME")) {
+//			colonPos = text.indexOf(':');
+//			speak = text.substring(colonPos + 1);
+//		} else if (text.startsWith("ALICIA:")) {
+//			speak = text.substring(8);
+//		} else {
 			speak = text;
-		}
+//		}
 		if (speak == null || speak.isEmpty() || speak.equals("null")) {
 			return;
 		}

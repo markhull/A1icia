@@ -29,25 +29,40 @@ import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
+import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class A1iciaCLIConsole extends AbstractExecutionThreadService implements A1iciaRemoteDisplay {
-	protected A1iciaRemote console;
+	private A1iciaRemote remote;
 	private final Console javaConsole;
 	private final ConsoleType whichConsole;
 	@SuppressWarnings("unused")
 	private volatile boolean serverUp;
+	private final String host;
+	private final Integer port;
+	private final Station station;
 	
-	public A1iciaCLIConsole() {
+	public A1iciaCLIConsole(String host, Integer port) {
 
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
+		this.host = host;
+		this.port = port;
+		station = Station.getInstance();
+		station.ensureStationExists();
 		javaConsole = System.console();
         if (javaConsole != null) {
         	whichConsole = ConsoleType.JAVACONSOLE; 
         } else {
         	whichConsole = ConsoleType.STANDARDIO;
         }
-        
 		System.out.println("Welcome to " + getConsoleName() + ".");
+		System.out.println("This station connects to A1icia server at " + host + 
+				" on port " + port);
+		System.out.println("The default language is " + station.getDefaultLanguage().getDisplayName());
+		System.out.println("We currently " + (station.isQuiet() ? "are" : "are not") + 
+				" in quiet mode.");
 		showHelp();
 		System.out.println("Running console " + whichConsole);
 		System.out.println();
@@ -61,22 +76,22 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	@Override
 	protected void startUp() {
 		
-		console = new A1iciaRemote(this);
-		console.startAsync();
-		console.awaitRunning();
+		remote = new A1iciaRemote(host, port, this);
+		remote.startAsync();
+		remote.awaitRunning();
 		
-		console.setUseTTS(true);
-		console.setPlayAudio(true);
-		console.setShowImage(true);
-		console.setShowText(true);
-		console.setPlayVideo(true);
+		remote.setUseTTS(true);
+		remote.setPlayAudio(true);
+		remote.setShowImage(true);
+		remote.setShowText(true);
+		remote.setPlayVideo(true);
 	}
 	
 	@Override
 	protected void shutDown() {
 		
-		console.stopAsync();
-		console.awaitTerminated();
+		remote.stopAsync();
+		remote.awaitTerminated();
 	}
 	
 	@Override
@@ -95,13 +110,18 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		}
 	}
 	
+	protected A1iciaRemote getRemote() {
+	
+		return remote;
+	}
+	
 	private void runJavaConsole() {
 		String input;
 		String userName;
 		String prompt;
 		
 		while (isRunning()) {
-			userName = console.getUserName();
+			userName = remote.getUserName();
 			if (userName == null) {
 				prompt = "Me: ";
 			} else {
@@ -114,7 +134,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 			if (command(input)) {
 				continue;
 			}
-			if (!console.sendText(input)) {
+			if (!remote.sendText(input)) {
 				System.err.println("Can't communicate with server");
 			}
 		}
@@ -135,7 +155,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				if (command(input)) {
 					continue;
 				}
-				if (!console.sendText(input)) {
+				if (!remote.sendText(input)) {
 					System.err.println("Can't communicate with server");
 				}
 			}
@@ -148,8 +168,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	@Override
 	public void receiveText(String text) {
 
-		if (!console.useTTS()) {
-			System.out.println(text);
+		if (!remote.useTTS()) {
+			System.out.println("A1icia: " + text);
 		}
 	}
 
@@ -177,47 +197,52 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		boolean connected;
 		
 		if (text.equalsIgnoreCase("test")) {
-			connected = console.reachableHost();
-			System.out.println("We are " + (connected ? "" : "NOT ") + "connected to the server.");
+			connected = remote.reachableHost();
+			System.out.print("We are " + (connected ? "" : "NOT ") + "connected to the server ");
+			System.out.println("at " + host + 
+					" on port " + port);
+			System.out.println("The language is currently " + remote.getCurrentLanguage().getDisplayName());
+			System.out.println("We currently " + (station.isQuiet() ? "are" : "are not") + 
+					" in quiet mode.");
 			return true;
 		}
 		if (text.equalsIgnoreCase("tts on")) {
-			console.setUseTTS(true);
+			remote.setUseTTS(true);
 			System.out.println("Using TTS");
 			return true;
 		}
 		if (text.equalsIgnoreCase("tts off")) {
-			console.setUseTTS(false);
+			remote.setUseTTS(false);
 			System.out.println("Not using TTS");
 			return true;
 		}
 		if (text.equalsIgnoreCase("audio on")) {
-			console.setPlayAudio(true);
+			remote.setPlayAudio(true);
 			System.out.println("Audio is on");
 			return true;
 		}
 		if (text.equalsIgnoreCase("audio off")) {
-			console.setPlayAudio(false);
+			remote.setPlayAudio(false);
 			System.out.println("Audio is off");
 			return true;
 		}
 		if (text.equalsIgnoreCase("images on")) {
-			console.setShowImage(true);
+			remote.setShowImage(true);
 			System.out.println("Images will be displayed");
 			return true;
 		}
 		if (text.equalsIgnoreCase("images off")) {
-			console.setShowImage(false);
+			remote.setShowImage(false);
 			System.out.println("Images will not be displayed");
 			return true;
 		}
 		if (text.equalsIgnoreCase("text on")) {
-			console.setShowText(true);
+			remote.setShowText(true);
 			System.out.println("Console log will be displayed");
 			return true;
 		}
 		if (text.equalsIgnoreCase("text off")) {
-			console.setShowText(false);
+			remote.setShowText(false);
 			System.out.println("Console log will not be displayed");
 			return true;
 		}
@@ -269,7 +294,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		obj = new LoginObject();
 		obj.setUserName(userName);
 		obj.setPassword(password);
-		if (!console.sendLogin(obj)) {
+		if (!remote.sendLogin(obj)) {
 			System.err.println("Can't communicate with server");
 		}
 	}
@@ -280,7 +305,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		obj = new LoginObject();
 		obj.setUserName(null);
 		obj.setPassword(null);
-		if (!console.sendLogin(obj)) {
+		if (!remote.sendLogin(obj)) {
 			System.err.println("Can't communicate with server");
 		}
 	}

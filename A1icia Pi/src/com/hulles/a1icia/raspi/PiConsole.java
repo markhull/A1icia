@@ -34,8 +34,8 @@ public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 	private final static int PORT = 12348;
 	private final HardwareLayer hardwareLayer;
 	
-	PiConsole(HardwareLayer layer) {
-		super();
+	PiConsole(String host, Integer port, HardwareLayer layer) {
+		super(host, port);
 		
 		SharedUtils.checkNotNull(layer);
 		if (SharedUtils.alreadyRunning(PORT)) {
@@ -55,10 +55,10 @@ public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 	public void motionTriggered() {
 		SerialSpark spark;
 		
-		if (console.serverUp()) {
+		if (getRemote().serverUp()) {
 			spark = new SerialSpark();
 			spark.setName("greet");
-			console.sendCommand(spark, null);
+			getRemote().sendCommand(spark, null);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 
 		spark = new SerialSpark();
 		spark.setName("what_is_pi");
-		console.sendCommand(spark, null);
+		getRemote().sendCommand(spark, null);
 		super.run();
 	}
 	

@@ -108,7 +108,7 @@ public class TTSPico {
         MediaUtils.checkNotNull(text);
         ttsBytes = ttsToBytes(lang, text);
         try {
-			AudioBytePlayer.playAudioFromByteArray(ttsBytes);
+			AudioBytePlayer.playAudioFromByteArray(ttsBytes, null);
 		} catch (Exception ex) {
 			throw new A1iciaMediaException("TTSPico: can't play audio bytes", ex);
 		}

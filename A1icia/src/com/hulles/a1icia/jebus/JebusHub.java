@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.jebus;
 
+import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.jebus.JebusPool.JebusPoolType;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -34,9 +35,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public final class JebusHub {
 	private static final int MAX_HARD_OUTPUT_BUFFER_LIMIT = 64 * 1024 * 1024;
 	private static final int MAX_SOFT_OUTPUT_BUFFER_LIMIT = 16 * 1024 * 1024;
-	private static final String CENTRAL_SERVER = "10.0.0.3"; // get it from AppKeys...
 	private static final String LOCAL_SERVER = "localhost";
-	private static final int CENTRAL_SERVER_PORT = 6379;
 	private static final int LOCAL_SERVER_PORT = 6379;
 	private static JebusPool jebusCentral = null;
 	private static JebusPool jebusLocal = null;
@@ -49,8 +48,13 @@ public final class JebusHub {
 	}
 	
 	public static String getCentralServerName() {
+		Station station;
+		String serverName;
 		
-		return CENTRAL_SERVER;
+		station = Station.getInstance();
+		station.ensureStationExists();
+		serverName = station.getCentralHost() + " port " + station.getCentralPort();
+		return serverName;
 	}
 	
 	/**
@@ -66,9 +70,12 @@ public final class JebusHub {
 		return getJebusCentral(false);
 	}
 	public static JebusPool getJebusCentral(Boolean alsoStartMonitor) {
+		Station station;
 		
 		A1iciaUtils.checkNotNull(alsoStartMonitor);
-		return getJebusCentral(CENTRAL_SERVER, CENTRAL_SERVER_PORT, alsoStartMonitor);
+		station = Station.getInstance();
+		station.ensureStationExists();
+		return getJebusCentral(station.getCentralHost(), station.getCentralPort(), alsoStartMonitor);
 	}
 	public synchronized static JebusPool getJebusCentral(String host, Integer port, Boolean alsoStartMonitor) {
 		
