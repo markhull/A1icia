@@ -267,6 +267,10 @@ public final class Station implements Serializable {
 		now = LocalTime.now();
 		start = getQuietStart();
 		end = getQuietEnd();
+		if (start.equals(end)) {
+			// if both times are equal we don't use quiet time
+			return false;
+		}
 		if (start.isBefore(end)) {
 			// the times don't straddle midnight, example: start 1AM, end 8AM
 			if (now.isAfter(start) && now.isBefore(end)) {

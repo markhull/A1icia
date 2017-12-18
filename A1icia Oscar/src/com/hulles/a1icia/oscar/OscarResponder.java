@@ -48,10 +48,10 @@ public class OscarResponder {
 	OscarResponder() {
 		random = new Random();
 		nameChoices = Arrays.asList(
-				"A1icia, Queen of the Andals and the First Men, Mother of... " +
-						"Actually, it's just A1icia.",
-				"A1icia Hullesdóttir",
-				"Betty. No, wait. A1icia."
+				"Alicia, Queen of the Andals and the First Men, Mother of... " +
+						"Actually, it's just Alicia.",
+				"Alicia Hullesdóttir",
+				"Betty. No, wait. Alicia."
 				);
 		daveChoices = Arrays.asList(
 				"Sorry Dave, won't happen again.",

@@ -23,6 +23,7 @@ import java.io.Closeable;
 import java.util.ResourceBundle;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class A1iciaCLI implements Closeable {
@@ -70,11 +71,30 @@ public class A1iciaCLI implements Closeable {
 	}
 	
 	public static void main(String[] args) {
+		String host;
+		String portStr;
+		Integer port;
+		Station station;
 		
+		station = Station.getInstance();
+		station.ensureStationExists();
+		host = station.getCentralHost();
+		port = station.getCentralPort();
+		for (String arg : args) {
+			if (arg.startsWith("--host=")) {
+				host = arg.substring(7);
+			} else if (arg.startsWith("--port=")) {
+				portStr = arg.substring(7);
+				port = Integer.parseInt(portStr);
+			} else {
+				System.err.println("Bad argument in A1iciaCLI: " + arg);
+				System.exit(1);
+			}
+		}
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
-		cli = new A1iciaCLIConsole();
+		cli = new A1iciaCLIConsole(host, port);
 		cli.startAsync();
 		cli.awaitTerminated();
 	}

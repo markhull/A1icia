@@ -81,6 +81,7 @@ import redis.clients.jedis.Jedis;
 public final class A1iciaRemote extends AbstractExecutionThreadService {
 	final static Logger LOGGER = Logger.getLogger("A1iciaApi.A1iciaRemote");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static String A1ICIA_PREFIX = "A1ICIA: ";
 	JebusListener listener = null;
 	ExecutorService executor;
 	final JebusPool jebusCentral;
@@ -104,14 +105,27 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	private String userName;
 	private volatile boolean serverUp;
 	
-    public A1iciaRemote(A1iciaRemoteDisplay display) {
+	public A1iciaRemote(A1iciaRemoteDisplay display) {
+		this(null, null, display);
+	}
+    public A1iciaRemote(String host, Integer port, A1iciaRemoteDisplay display) {
     	
     	SharedUtils.checkNotNull(display);
+    	SharedUtils.nullsOkay(host);
+    	SharedUtils.nullsOkay(port);
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: Starting up");
 		station = Station.getInstance();
 		station.ensureStationExists();
-		jebusHost = station.getCentralHost();
-		jebusPort = station.getCentralPort();
+		if (host == null) {
+			jebusHost = station.getCentralHost();
+		} else {
+			jebusHost = host;
+		}
+		if (port == null) {
+			jebusPort = station.getCentralPort();
+		} else {
+			jebusPort = port;
+		}
 		language = station.getDefaultLanguage();
 		this.display = display;
 		executor = Executors.newCachedThreadPool();
@@ -281,9 +295,14 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		return userName;
 	}
 	
-	public Station getStation() {
+	protected Station getStation() {
 	
 		return station;
+	}
+	
+	public Language getCurrentLanguage() {
+	
+		return language;
 	}
 	
 	@Override
@@ -406,7 +425,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		return true;
 	}
 	
-	void receiveBytes(String prefix, byte[] responseBytes) {
+	void receiveBytes(byte[] responseBytes) {
 		String text;
 		String expl;
 		Dialog dialog = null;
@@ -419,7 +438,6 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		ChangeLanguageObject changeLanguage;
 		SerialSpark spark;
 		
-		SharedUtils.checkNotNull(prefix);
 		SharedUtils.checkNotNull(responseBytes);
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: in receiveBytes");
 		try { // TODO make me better :)
@@ -440,19 +458,19 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		text = dialogResponse.getMessage();
 		if (text != null) {
 			LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveBytes: text is {0}", text);
-			receive(prefix + text, dialogResponse.getLanguage());
+			receive(text, dialogResponse.getLanguage());
 			if (showText) {
 				if (text.isEmpty()) {
 					text = "...";
 				}
-				textDisplayer.appendText(prefix, a1iciaAttrs);
+				textDisplayer.appendText(A1ICIA_PREFIX, a1iciaAttrs);
 				textDisplayer.appendText(text + "\n");
 			}
 		}
 		expl = dialogResponse.getExplanation();
 		if (expl != null && !expl.isEmpty() && !expl.equals(text)) {
 			if (showText) {
-				textDisplayer.appendText(prefix, a1iciaAttrs);
+				textDisplayer.appendText(A1ICIA_PREFIX, a1iciaAttrs);
 				textDisplayer.appendText(expl + "\n");
 			}
 			display.receiveExplanation(expl);
@@ -467,7 +485,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			return;
 		}
 		if (display.receiveObject(clientObject)) {
-			// client handles the object, we don't need to deal with it further
+			// client handles the object, we don't need to deal with it further;
+			// use case is web server, we don't need to play audio on the server itself
 			return;
 		}		
 		// if the client doesn't handle it, well, we can
@@ -544,6 +563,9 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		receiveCommand(spark);
 	}
 	
+//	private void playAudio(AudioObject audioObject) {
+//		playAudio(audioObject, null);
+//	}
 	private void playAudio(AudioObject audioObject) {
 		AudioFormat audioFormat;
 		SerialAudioFormat serialFormat;
@@ -563,10 +585,12 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			try {
 				LOGGER.log(LOGLEVEL, "A1iciaRemote:playAudio: audio from byte array");
 				if (serialFormat == null) {
-					AudioBytePlayer.playAudioFromByteArray(audioArray);
+					AudioBytePlayer.playAudioFromByteArray(audioArray, 
+							audioObject.getLengthSeconds());
 				} else {
 					audioFormat = MediaUtils.serialToAudioFormat(serialFormat);
-					AudioBytePlayer.playAudioFromByteArray(audioFormat, audioArray);
+					AudioBytePlayer.playAudioFromByteArray(audioFormat, audioArray, 
+							audioObject.getLengthSeconds());
 				}
 			} catch (Exception e) {
 			    throw new A1iciaAPIException("Can't play audio from byte array", e);
@@ -635,7 +659,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		if (text.startsWith("ME")) {
 			colonPos = text.indexOf(':');
 			speech = text.substring(colonPos + 1);
-		} else if (text.startsWith("ALICIA:")) {
+		} else if (text.startsWith("A1ICIA:")) {
 			speech = text.substring(8);
 		} else {
 			speech = text;
@@ -671,7 +695,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
     		executor.submit(new Runnable() {
     			@Override
     			public void run() {
-    	        	receiveBytes("ALICIA: ", msgBytes);
+    	        	receiveBytes(msgBytes);
     			}
     		});
         }

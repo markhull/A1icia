@@ -32,11 +32,17 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 //	private final static Logger logger = Logger.getLogger("A1iciaMagicMirror.MagicMirrorConsole");
 //	private final static Level LOGLEVEL = Level.INFO;
 	private final static int PORT = 12347;
-	private A1iciaRemote console;
+	private A1iciaRemote remote;
 	private final HardwareLayer hardwareLayer;
+	private final String host;
+	private final Integer port;
 	
-	public MagicMirrorConsole(HardwareLayer hardwareLayer) {
+	public MagicMirrorConsole(String host, Integer port, HardwareLayer hardwareLayer) {
 
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
+		this.host = host;
+		this.port = port;
 		SharedUtils.checkNotNull(hardwareLayer);
 		if (SharedUtils.alreadyRunning(PORT)) {
 			System.out.println("A1icia Magic Mirror is already running");
@@ -48,7 +54,7 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	@Override
 	public void receiveText(String text) {
 
-		if (!console.useTTS()) {
+		if (!remote.useTTS()) {
 			throw new A1iciaAPIException("Command line interface not enabled in A1iciaMagicMirror");
 		}
 	}
@@ -57,10 +63,10 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	public void motionTriggered() {
 		SerialSpark spark;
 		
-		if (console.serverUp()) {
+		if (remote.serverUp()) {
 			spark = new SerialSpark();
 			spark.setName("greet");
-			console.sendCommand(spark, null);
+			remote.sendCommand(spark, null);
 		}
 	}
 	
@@ -119,22 +125,22 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	@Override
 	protected void startUp() throws Exception {
 		
-		console = new A1iciaRemote(this);
-		console.startAsync();
-		console.awaitRunning();
+		remote = new A1iciaRemote(host, port, this);
+		remote.startAsync();
+		remote.awaitRunning();
 		
-		console.setShowText(false);
-		console.setShowImage(false); // for now, see next comment
-		console.setPlayVideo(false); // for now, though we could stick it in a frame in MM...
-		console.setPlayAudio(true); // rock on
-		console.setUseTTS(true); // talk on
+		remote.setShowText(false);
+		remote.setShowImage(false); // for now, see next comment
+		remote.setPlayVideo(false); // for now, though we could stick it in a frame in MM...
+		remote.setPlayAudio(true); // rock on
+		remote.setUseTTS(true); // talk on
 	}
 
 	@Override
 	protected void shutDown() throws Exception {
 		
-		console.stopAsync();
-		console.awaitTerminated();
+		remote.stopAsync();
+		remote.awaitTerminated();
 	}
 
 	@Override
@@ -143,7 +149,7 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 
 		spark = new SerialSpark();
 		spark.setName("what_is_pi");
-		console.sendCommand(spark, null);
+		remote.sendCommand(spark, null);
 		while(isRunning()) {}
 	}
 

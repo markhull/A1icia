@@ -307,6 +307,8 @@ public final class MikeRoom extends UrRoom {
 				return createArtistActionPackage(sparkPkg, request);
 			case "play_title":
 				return createTitleActionPackage(sparkPkg, request);
+			case "random_music":
+				return createRandomMusicActionPackage(sparkPkg, request);
 			case "play_video":
 				return createVideoActionPackage(sparkPkg, request);
 			case "speak":
@@ -404,6 +406,53 @@ public final class MikeRoom extends UrRoom {
 			A1iciaUtils.error("MikeRoom:createTitleActionPackage: no spark object");
 		}
 		mediaFile = MediaFile.getMediaFile(matchTarget);
+		if (mediaFile == null) {
+			A1iciaUtils.error("Media file is null in Mike room");
+			return null;
+		}
+		fileName = mediaFile.getFileName();
+		if (fileName == null) {
+			A1iciaUtils.error("File name is null in Mike room");
+			return null;
+		}
+		audioFormat = MediaUtils.getAudioFormat(fileName);
+		audioObject = new AudioObject();
+		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
+		audioObject.setMediaTitle(fileName);
+		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
+		audioObject.setAudioFormat(serialFormat);
+		mediaBytes = MediaUtils.fileToByteArray(fileName);
+		if (mediaBytes.length > MAXHEADROOM) {
+			A1iciaUtils.error("MikeRoom: file exceeds Redis limit");
+			return null;
+		}
+		mediaArrays = new byte[][]{mediaBytes};
+		audioObject.setMediaBytes(mediaArrays);
+		audioObject.setMediaFormat(MediaFormat.MP3);
+		if (!audioObject.isValid()) {
+			A1iciaUtils.error("MikeRoom: invalid media object");
+			return null;
+		}
+		action = new ClientObjectWrapper(audioObject);
+		pkg.setActionObject(action);
+		return pkg;
+	}
+
+	protected static ActionPackage createRandomMusicActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+		ActionPackage pkg;
+		ClientObjectWrapper action = null;
+		AudioObject audioObject;
+		String fileName = null;
+		MediaFile mediaFile;
+		AudioFormat audioFormat;
+		byte[] mediaBytes;
+		byte[][] mediaArrays;
+		SerialAudioFormat serialFormat;
+		
+		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(request);
+		pkg = new ActionPackage(sparkPkg);
+		mediaFile = MediaFile.getRandomMediaFile();
 		if (mediaFile == null) {
 			A1iciaUtils.error("Media file is null in Mike room");
 			return null;
@@ -816,6 +865,7 @@ public final class MikeRoom extends UrRoom {
 		sparks.add(Spark.find("sorry_for_it_all"));
 		sparks.add(Spark.find("dead_sara"));
 		sparks.add(Spark.find("notification_medium"));
+		sparks.add(Spark.find("random_music"));
 		return sparks;
 	}
 

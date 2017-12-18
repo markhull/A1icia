@@ -31,6 +31,7 @@ public class SerialConsoleOut implements Serializable {
 	private String audioURL;
 	private List<String> urls;
 	private List<String> formats;
+	private List<Integer> lengths;
 	
 	public SerialConsoleOut() {
 		// need no-arg constructor
@@ -45,6 +46,17 @@ public class SerialConsoleOut implements Serializable {
 		
 		SharedUtils.checkNotNull(urls);
 		this.urls = urls;
+	}
+
+	public List<Integer> getLengths() {
+		
+		return lengths;
+	}
+
+	public void setLengths(List<Integer> lengths) {
+		
+		SharedUtils.checkNotNull(lengths);
+		this.lengths = lengths;
 	}
 
 	public List<String> getFormats() {

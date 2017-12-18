@@ -43,11 +43,23 @@ public class MediaObject implements A1iciaClientObject {
 	private MediaFormat format;
 	private ClientObjectType type;
 	private String mediaTitle;
+	private Integer lengthSeconds;
 	
 	public MediaObject() {
 		// needs no-arg constructor
 	}
 	
+	public Integer getLengthSeconds() {
+		
+		return lengthSeconds;
+	}
+
+	public void setLengthSeconds(Integer lengthSeconds) {
+		
+		SharedUtils.nullsOkay(lengthSeconds);
+		this.lengthSeconds = lengthSeconds;
+	}
+
 	public MediaFormat getMediaFormat() {
 		
 		return format;

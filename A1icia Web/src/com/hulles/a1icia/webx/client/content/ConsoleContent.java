@@ -109,13 +109,13 @@ public final class ConsoleContent {
         leftPanel.setSpacing(8);
         
         explainPanel = new ScrollPanel();
-        explainPanel.setSize("600px", "100%");
-//        explainPanel.setSize("600px", "600px");
+//        explainPanel.setSize("600px", "100%");
+        explainPanel.setSize("600px", "600px");
         explainPanel.addStyleName(DEFAULT_STYLE_NAME + "-explainPanel");
         explainPanel.add(explainHTML);
         
         messagePanel = new ScrollPanel();
-        messagePanel.setSize("600px", "600px");
+        messagePanel.setSize("600px", "400px");
 //        messagePanel.setSize("600px", "100%");
         messagePanel.addStyleName(DEFAULT_STYLE_NAME + "-messagePanel");
         
@@ -155,6 +155,7 @@ public final class ConsoleContent {
                 textArea.setText("");
                 textArea.setFocus(true);
 				sendButton.setEnabled(false);
+//				startMic();
             }
         });
         
@@ -209,13 +210,13 @@ public final class ConsoleContent {
     		safeText = SafeHtmlUtils.fromString(html);
     	}
 		newMsg = safeText.asString();
-		if (newMsg.startsWith("ME:")) {
-			speak = newMsg.substring(4);
-		} else if (newMsg.startsWith("ALICIA:")) {
-			speak = newMsg.substring(8);
-		} else {
+//		if (newMsg.startsWith("ME:")) {
+//			speak = newMsg.substring(4);
+//		} else if (newMsg.startsWith("A1ICIA:") || newMsg.startsWith("A1icia:")) {
+//			speak = newMsg.substring(8);
+//		} else {
 			speak = newMsg;
-		}
+//		}
 		if ((speak == null) || (speak.isEmpty())) {
 			speak = "...";
 		}
@@ -224,9 +225,10 @@ public final class ConsoleContent {
         messagePanel.scrollToBottom();
     }
     
-    static void playAudio(String elementType, String url) {
+    static void playAudio(String elementType, String url, Integer length) {
         Audio audio;
-   	
+//        Timer timer;
+        
         audio = Audio.createIfSupported();
     	if (audio == null) {
     		return;
@@ -236,34 +238,45 @@ public final class ConsoleContent {
     	audio.addSource(url, elementType);
 //    	audio.load();
     	audio.play();
+    	if (length != null) {
+    		LOGGER.log(Level.INFO, "Setting length to " + length);
+			audio.setCurrentTime(length);
+//    		timer = new Timer() {
+//				@Override
+//				public void run() {
+//				}
+//    		};
+    	}
     	LOGGER.log(LOGLEVEL, "ConsoleContent: through playAudio");
     }
     
     private static native void startMic() /*-{
-		'use strict';
+		//'use strict';
 		
-		navigator.getUserMedia = navigator.getUserMedia ||
-		navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-		
+		navigator.getUserMedia = navigator.mediaDevices.getUserMedia || 
+			navigator.getUserMedia ||
+			navigator.webkitGetUserMedia || 
+			navigator.mozGetUserMedia;
+
 		var n = navigator.getUserMedia({
-		  audio: true
+			audio: true
 		}, function(mediaStream) {
-		  var stream = mediaStream;
-		  var audioElement = document.querySelector('audio');
-		  try {
-		    audioElement.src = window.URL.createObjectURL(stream);
-		  } catch (event0) {
-		    try {
-		      audioElement.mozSrcObject = stream;
-		      audioElement.play();
-		    } catch (event1) {
-		      console.log('Error setting video src: ', event1);
-		    }
-		  }
+			var stream = mediaStream;
+			var audioElement = document.querySelector('audio');
+			try {
+		    	audioElement.src = window.URL.createObjectURL(stream);
+		  	} catch (event0) {
+		    	try {
+		      		audioElement.mozSrcObject = stream;
+		      		audioElement.play();
+		    	} catch (event1) {
+		      		console.log('Error setting video src: ', event1);
+		    	}
+		  	}
 		}, function(error) {
-		  console.log('navigator.getUserMedia error: ', error);
+			console.log('navigator.getUserMedia error: ', error);
 		});
-		
+
 		console.log(n);
 	}-*/;
     
@@ -306,6 +319,7 @@ public final class ConsoleContent {
             public void onSuccess(SerialConsoleOut result) {
             	List<String> urls;
             	List<String> formats;
+            	List<Integer> lengths;
             	
             	if (result == null) {
             		return;
@@ -314,9 +328,10 @@ public final class ConsoleContent {
             	explainAppendHTML(result.getExplain());
             	urls = result.getUrls();
             	formats = result.getFormats();
+            	lengths = result.getLengths();
             	for (int ix=0; ix<urls.size(); ix++) {
                 	LOGGER.log(LOGLEVEL, "pollConsole: adding url = " + urls.get(ix));
-                	playAudio(formats.get(ix), urls.get(ix));
+                	playAudio(formats.get(ix), urls.get(ix), lengths.get(ix));
             	}
             	LOGGER.log(LOGLEVEL, "pollConsole: got " + urls.size() + " urls");
             }

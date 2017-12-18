@@ -27,6 +27,7 @@ package com.hulles.a1icia.raspi;
 import java.util.ResourceBundle;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.remote.Station;
 
 /**
  *
@@ -34,7 +35,7 @@ import com.hulles.a1icia.api.A1iciaConstants;
  */
 public final class A1iciaPi  {
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.raspi.Version";
-	private final static String USAGE = "usage: java -jar A1iciaPi.jar PITYPE [--host=HOST] [--port=PORT]\n\twhere PITYPE = 'console' or 'mirror', HOST = IP address, and PORT = port number";
+	private final static String USAGE = "usage: java -jar A1iciaPi.jar PITYPE [--host=HOST] [--port=PORT]\n\twhere PITYPE = '--console' or '--mirror', HOST = IP address, and PORT = port number";
 	private static PiConsole cli;
 	private static MagicMirrorConsole mirror;
 	
@@ -65,19 +66,29 @@ public final class A1iciaPi  {
     public static void main(String[] args) {
 		WakeUpCall caller;
 		PiType piType = PiType.CONSOLE;
+		String host;
+		String portStr;
+		Integer port;
+		Station station;
 		
-		if (args.length > 0) {
-		    if ("console".equals(args[0])) {
+		station = Station.getInstance();
+		station.ensureStationExists();
+		host = station.getCentralHost();
+		port = station.getCentralPort();
+		for (String arg : args) {
+			if (arg.startsWith("--host=")) {
+				host = arg.substring(7);
+			} else if (arg.startsWith("--port=")) {
+				portStr = arg.substring(7);
+				port = Integer.parseInt(portStr);
+			} else if (arg.equals("--console")) {
 		        piType = PiType.CONSOLE;
-		    } else if ("mirror".equals(args[0])) {
+		    } else if (arg.equals("--mirror")) {
 		        piType = PiType.MIRROR;
 			} else {
 				System.out.println(USAGE);
 				System.exit(1);
 			}
-		} else {
-			System.out.println(USAGE);
-			System.exit(1);
 		}
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
@@ -85,7 +96,7 @@ public final class A1iciaPi  {
 		switch (piType) {
 			case CONSOLE:
 				try (HardwareLayer hardwareLayer = new HardwareLayer()) {
-					cli = new PiConsole(hardwareLayer);
+					cli = new PiConsole(host, port, hardwareLayer);
 					caller = new WakeUpCall(cli);
 					hardwareLayer.setWakeUpCall(caller);
 					cli.startAsync();
@@ -94,7 +105,7 @@ public final class A1iciaPi  {
 				break;
 			case MIRROR:
 				try (HardwareLayer hardwareLayer = new HardwareLayer()) {
-					mirror = new MagicMirrorConsole(hardwareLayer);
+					mirror = new MagicMirrorConsole(host, port, hardwareLayer);
 					caller = new WakeUpCall(mirror);
 					hardwareLayer.setWakeUpCall(caller);
 					mirror.startAsync();
