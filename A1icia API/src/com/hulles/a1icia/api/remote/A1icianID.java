@@ -29,9 +29,9 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import redis.clients.jedis.Jedis;
 
 /**
- * An ID for an A1ician, a client entity that interacts with the A1icia server.
- * These ID is not permanently assigned to the A1ician; it exists for the session (while
- * the A1icia is actively interacting) only.
+ * An ID for an A1ician, a client entity that interacts with A1icia Central.
+ * This ID is not permanently assigned to the A1ician; it exists for the session (while
+ * the A1ician is actively interacting) only.
  * 
  * @author hulles
  *

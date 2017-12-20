@@ -24,7 +24,7 @@ import com.hulles.a1icia.api.shared.SerialSpark;
 
 /**
  * A1iciaRemoteDisplay handles output from the exchange between a remote station and
- * the A1icia server.
+ * A1icia Central.
  * 
  * @author hulles
  *
@@ -47,7 +47,7 @@ public interface A1iciaRemoteDisplay {
 	void receiveExplanation(String text);
 	
 	/**
-	 * Receive a command from the A1icia server. This should return true
+	 * Receive a command from A1icia Central. This should return true
 	 * if the remote display handles the command and doesn't need more processing,
 	 * false otherwise.
 	 * 
@@ -56,7 +56,7 @@ public interface A1iciaRemoteDisplay {
 	boolean receiveCommand(SerialSpark spark);
 	
 	/**
-	 * Receive a media object from the A1icia server. This should return true
+	 * Receive a media object from A1icia Central. This should return true
 	 * if the remote display handles the object and doesn't need more processing,
 	 * false otherwise.
 	 * 

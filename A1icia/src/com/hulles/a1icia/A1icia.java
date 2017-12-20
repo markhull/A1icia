@@ -621,8 +621,8 @@ public class A1icia implements Closeable {
 			sparks.add(Spark.find("like_a_version"));
 			// these sparks are not really "handled" by A1icia, but we want to mark them
 			//    that way for completeness
-			sparks.add(Spark.find("server_startup"));
-			sparks.add(Spark.find("server_shutdown"));
+			sparks.add(Spark.find("central_startup"));
+			sparks.add(Spark.find("central_shutdown"));
 			sparks.add(Spark.find("client_startup"));
 			sparks.add(Spark.find("client_shutdown"));
 			return sparks;

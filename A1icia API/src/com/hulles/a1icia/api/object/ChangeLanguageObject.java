@@ -23,7 +23,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
 /**
- * This object changes languages passed between the A1icia server and remote station.
+ * This object changes languages passed between A1icia Central and remote station.
  * 
  * @author hulles
  *

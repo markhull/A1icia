@@ -22,7 +22,11 @@ package com.hulles.a1icia.cayenne;
 import java.util.Collection;
 
 import org.apache.cayenne.ObjectContext;
+import org.apache.cayenne.configuration.Constants;
+import org.apache.cayenne.configuration.server.ServerModule;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.Module;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
 
@@ -44,22 +48,29 @@ public final class A1iciaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
-    	@SuppressWarnings("unused")
-		PurdahKeys purdah;
+//    	Module securityModule;
     	
     	if (cayenneRuntime == null) {
-    		purdah = PurdahKeys.getInstance();
+//    		securityModule = new SecurityModule();
     		if (!logging) {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+//	    				.addModule(securityModule)
 	    				.addModule(binder -> binder.bind(JdbcEventLogger.class)
 	    						.to(NoopJdbcEventLogger.class))
 	    				.build();
     		} else {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+//	    				.addModule(securityModule)
+//	                    .addModule(binder -> ServerModule.contributeProperties(binder)
+//	                    		.put(Constants.JDBC_USERNAME_PROPERTY, purdah.getDatabaseUser())
+//	                    		.put(Constants.JDBC_PASSWORD_PROPERTY, purdah.getDatabasePassword()))
+//	                    		.put("cayenne.jdbc.username.A1icia.a1icia_datanode", purdah.getDatabaseUser())
+//	                    		.put("cayenne.jdbc.password.A1icia.a1icia_datanode", purdah.getDatabasePassword()))
 	    				.build();
     		}
+    		
     	}
     	return cayenneRuntime;
     }
@@ -128,6 +139,19 @@ public final class A1iciaApplication {
 		
 		getEntityContext().commitChanges();
 	}
+	
+	@SuppressWarnings("unused")
+	private static class SecurityModule implements Module {
+	    @Override
+		public void configure(Binder binder) {
+			PurdahKeys purdah;
+			
+    		purdah = PurdahKeys.getInstance();
+	    	ServerModule.contributeProperties(binder)
+	    		.put(Constants.JDBC_USERNAME_PROPERTY, purdah.getDatabaseUser())
+	    		.put(Constants.JDBC_PASSWORD_PROPERTY, purdah.getDatabasePassword());
+	    }
+	}	
 	
 	/**
 	 * Get a count of the records in the named table

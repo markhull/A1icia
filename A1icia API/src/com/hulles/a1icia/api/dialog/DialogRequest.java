@@ -49,7 +49,6 @@ public class DialogRequest implements Serializable, Dialog {
 	private Language language;
 	
 	public DialogRequest() {
-		
 	}
 	
 	public Language getLanguage() {

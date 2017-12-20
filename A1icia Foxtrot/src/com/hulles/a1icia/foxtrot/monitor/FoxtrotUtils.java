@@ -36,65 +36,6 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 final class FoxtrotUtils {
 	private static final int RUNCOMMANDLEN = 50 * 1024;
-	private static final int KB = 1024;
-	private static final int MB = KB * KB;
-	private static final int MINUTES_IN_HOUR = 60;
-	private static final int MINUTES_IN_DAY = MINUTES_IN_HOUR * 24;
-	private static final String DAYFORMAT = "%,d day(s), %d hour(s), %d minute(s)";
-	private static final String HOURFORMAT = "%d hour(s), %d minute(s)";
-	private static final String MINUTEFORMAT = "%d minute(s)";
-	private static final String GIGABYTEFORMAT = "%.2fGB";
-	private static final String MEGABYTEFORMAT = "%.2fMB";
-	private static final String KILOBYTEFORMAT = "%dKB";
-	    
-    static String formatElapsedMinutes(long timeInMinutes) {
-    	long days = 0;
-    	long hours = 0;
-    	long minutes = 0;
-    	long time;
-    	
-    	A1iciaUtils.checkNotNull(timeInMinutes);
-    	time = timeInMinutes;
-		if (time > MINUTES_IN_DAY) {
-    		days = Math.round(time / MINUTES_IN_DAY);
-    		time -= (days * MINUTES_IN_DAY);
-    	}
-    	if (time > MINUTES_IN_HOUR) {
-    		hours = Math.round(time / MINUTES_IN_HOUR);
-    		time -= (hours * MINUTES_IN_HOUR);
-    	}
-    	minutes = time;
-    	
-    	if (days > 0) {
-    		return String.format(DAYFORMAT, days, hours, minutes);
-    	}
-    	if (hours > 0) {
-    		return String.format(HOURFORMAT, hours, minutes);
-    	}
-    	return String.format(MINUTEFORMAT, minutes);
-    }
-    
-    static String formatElapsedSeconds(long seconds) {
-    	
-    	return A1iciaUtils.formatElapsedMillis(seconds * 1000);
-    }
-    
-	static String formatKb(Long kb) {
-		float amount;
-		float kbf;
-		
-		A1iciaUtils.checkNotNull(kb);
-		kbf = kb;
-		if (kb > MB) {
-			amount = kbf / MB;
-			return String.format(GIGABYTEFORMAT, amount);
-		}
-		if (kb > KB) {
-			amount = kbf / KB;
-			return String.format(MEGABYTEFORMAT, amount);
-		}
-		return String.format(KILOBYTEFORMAT, kb);
-	}
 	
 	static String getStringFromFile(String fileName) {
 		StringBuilder sb;

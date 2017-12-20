@@ -22,7 +22,7 @@ package com.hulles.a1icia.api.object;
 import java.io.Serializable;
 
 /**
- * A generalization of objects passed back and forth between A1icia server and remote stations.
+ * A generalization of objects passed back and forth between A1icia Central and remote stations.
  * 
  * @author hulles
  *

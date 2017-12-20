@@ -22,7 +22,7 @@ package com.hulles.a1icia.api.object;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
- * Request to log a person at a remote station in or out on the A1icia server.
+ * Request to log a person at a remote station in or out on A1icia Central.
  * 
  * @see LoginResponseObject
  * 

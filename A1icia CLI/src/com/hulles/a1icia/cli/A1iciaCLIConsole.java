@@ -58,7 +58,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
         	whichConsole = ConsoleType.STANDARDIO;
         }
 		System.out.println("Welcome to " + getConsoleName() + ".");
-		System.out.println("This station connects to A1icia server at " + host + 
+		System.out.println("This station connects to A1icia Central at " + host + 
 				" on port " + port);
 		System.out.println("The default language is " + station.getDefaultLanguage().getDisplayName());
 		System.out.println("We currently " + (station.isQuiet() ? "are" : "are not") + 
@@ -135,7 +135,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				continue;
 			}
 			if (!remote.sendText(input)) {
-				System.err.println("Can't communicate with server");
+				System.err.println("Can't communicate with A1icia Central");
 			}
 		}
 	}
@@ -156,7 +156,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 					continue;
 				}
 				if (!remote.sendText(input)) {
-					System.err.println("Can't communicate with server");
+					System.err.println("Can't communicate with A1icia Central");
 				}
 			}
 		} catch (IOException e) {
@@ -177,7 +177,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		
 		System.out.print("· Type 'quit' or 'exit' to quit the CLI ");
 		System.out.println("(or just use CTRL+C to quit Java).");
-		System.out.println("· Type 'test' to check connection to server.");
+		System.out.println("· Type 'test' to check connection to A1icia Central.");
     	if (whichConsole == ConsoleType.JAVACONSOLE) { 
 			System.out.println("· Type 'login' to log in.");
 			System.out.println("· Type 'logout' to log out.");
@@ -198,7 +198,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		
 		if (text.equalsIgnoreCase("test")) {
 			connected = remote.reachableHost();
-			System.out.print("We are " + (connected ? "" : "NOT ") + "connected to the server ");
+			System.out.print("We are " + (connected ? "" : "NOT ") + "connected to A1icia Central ");
 			System.out.println("at " + host + 
 					" on port " + port);
 			System.out.println("The language is currently " + remote.getCurrentLanguage().getDisplayName());
@@ -295,7 +295,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		obj.setUserName(userName);
 		obj.setPassword(password);
 		if (!remote.sendLogin(obj)) {
-			System.err.println("Can't communicate with server");
+			System.err.println("Can't communicate with A1icia Central");
 		}
 	}
 	
@@ -306,7 +306,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		obj.setUserName(null);
 		obj.setPassword(null);
 		if (!remote.sendLogin(obj)) {
-			System.err.println("Can't communicate with server");
+			System.err.println("Can't communicate with A1icia Central");
 		}
 	}
 	
@@ -314,10 +314,10 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	public boolean receiveCommand(SerialSpark command) {
 		
 		switch (command.getName()) {
-			case "server_startup":
+			case "central_startup":
 				serverUp = true;
 				return true;
-			case "server_shutdown":
+			case "central_shutdown":
 				serverUp = false;
 				return true;
 			default:

@@ -55,7 +55,7 @@ final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
 	void sendText(String text) {
 		
 		if (!console.sendText(text)) {
-			receiveText("Unable to communicate with server at this time");
+			receiveText("Unable to communicate with A1icia Central at this time");
 		}
 	}
 	

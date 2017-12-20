@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.hulles.a1icia.config.server;
+package com.hulles.a1icia.config.central;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

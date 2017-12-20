@@ -17,12 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package com.hulles.a1icia.config.server;
+package com.hulles.a1icia.config.central;
 
 import java.util.ResourceBundle;
 
 public class Installer {
-	private static final String BUNDLE_NAME = "com.hulles.a1icia.config.server.Version";
+	private static final String BUNDLE_NAME = "com.hulles.a1icia.config.central.Version";
 	
 	public static String getVersionString() {
 		ResourceBundle bundle;

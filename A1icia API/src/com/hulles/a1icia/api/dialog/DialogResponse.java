@@ -38,7 +38,6 @@ public class DialogResponse implements Serializable, Dialog {
 	private Language language;
 	
 	public DialogResponse() {
-		
 	}
 	
 	public Language getLanguage() {

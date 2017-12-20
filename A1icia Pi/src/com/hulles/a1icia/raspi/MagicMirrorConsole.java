@@ -75,12 +75,12 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 
 		SharedUtils.checkNotNull(command);
 		switch (command.getName()) {
-			case "server_startup":
+			case "central_startup":
 				if (!hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_on");
 				}
 				return true;
-			case "server_shutdown":
+			case "central_shutdown":
 				if (hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_off");
 				}
