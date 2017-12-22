@@ -19,7 +19,6 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.dialog;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import com.hulles.a1icia.api.object.A1iciaClientObject;
@@ -37,7 +36,7 @@ import com.hulles.a1icia.media.Language;
  * @author hulles
  *
  */
-public class DialogRequest implements Serializable, Dialog {
+public class DialogRequest extends Dialog {
 	private static final long serialVersionUID = 2902774382678495512L;
 	private Set<SerialSpark> sparks;
 	private String requestString;
@@ -49,8 +48,10 @@ public class DialogRequest implements Serializable, Dialog {
 	private Language language;
 	
 	public DialogRequest() {
+		super();
+		
 	}
-	
+
 	public Language getLanguage() {
 		
 		return language;

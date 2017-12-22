@@ -116,4 +116,10 @@ final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
 		console.stopAsync();
 		console.awaitTerminated();
 	}
+
+	@Override
+	public void receiveRequest(String text) {
+
+		receiveText(text);
+	}
 }

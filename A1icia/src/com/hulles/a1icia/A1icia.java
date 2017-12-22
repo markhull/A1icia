@@ -36,8 +36,15 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.dialog.DialogRequest;
+import com.hulles.a1icia.api.dialog.DialogResponse;
+import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.base.Controller;
+import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.house.A1iciaStationServer;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -55,14 +62,8 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.ticket.Ticket;
+import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.dialog.DialogRequest;
-import com.hulles.a1icia.api.dialog.DialogResponse;
-import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
-import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.cayenne.Spark;
 
 /**
  * This class and this project are totally not named after A1icia Vikander.
@@ -452,9 +453,9 @@ public class A1icia implements Closeable {
 						request.toString());
 				return;
 			}
-			ticket = createNewTicket(request);
+			ticket = createNewTicket(clientRequest);
 			
-			roomRequest = new RoomRequest(ticket);
+			roomRequest = new RoomRequest(ticket, request.getDocumentID());
 			roomRequest.setFromRoom(getThisRoom());
 			roomRequest.setSparkPackages(SparkPackage.getSingletonDefault("respond_to_client"));
 			roomRequest.setMessage("New client request");
@@ -468,13 +469,18 @@ public class A1icia implements Closeable {
 		 * @param request
 		 * @return The ticket
 		 */
-		private Ticket createNewTicket(DialogRequest request) {
+		private Ticket createNewTicket(ClientDialogRequest clientRequest) {
 			Ticket ticket;
+			TicketJournal journal;
+			DialogRequest request;
 			
-			A1iciaUtils.checkNotNull(request);
+			A1iciaUtils.checkNotNull(clientRequest);
+			request = clientRequest.getDialogRequest();
 			ticket = Ticket.createNewTicket(getHall(), getThisRoom());
 			ticket.setFromA1icianID(request.getFromA1icianID());
 			ticket.setPersonUUID(request.getPersonUUID());
+			journal = ticket.getJournal();
+			journal.setClientRequest(clientRequest);
 			return ticket;
 		}
 		

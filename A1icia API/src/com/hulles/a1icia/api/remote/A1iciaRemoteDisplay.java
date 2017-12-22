@@ -39,6 +39,13 @@ public interface A1iciaRemoteDisplay {
 	void receiveText(String text);
 
 	/**
+	 * Add text as a request for action to the remote display.
+	 * 
+	 * @param text
+	 */
+	void receiveRequest(String text);
+
+	/**
 	 * Add an explanation to the remote display, if it's non-null and not the
 	 * same as the message text.
 	 * 

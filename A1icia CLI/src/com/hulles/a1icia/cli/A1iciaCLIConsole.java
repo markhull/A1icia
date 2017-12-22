@@ -343,4 +343,15 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		// we let A1iciaConsole handle the heavy lifting with media objects
 		return false;
 	}
+
+	/**
+	 * Here we have received a request from (presumably) A1icia Central asking for
+	 * input.
+	 * 
+	 */
+	@Override
+	public void receiveRequest(String text) {
+		
+		receiveText(text);
+	}
 }

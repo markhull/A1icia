@@ -51,6 +51,23 @@ public final class JebusApiBible {
     private final static String MEDIAFORMATFIELD = "mediafmt";
     private final static String MEDIABYTESFIELD = "mediabytes";
     
+    private final static String ALICIADOCUMENTKEY = "a1icia:document";
+	
+	/***************************/
+	/***** ALICIA DOCUMENT *****/
+	/***************************/
+	
+	/**
+	 * Get the Jebus key for the document ID counter.
+	 * 
+	 * @return The key
+	 */
+	public static String getA1iciaDocumentCounterKey(JebusPool pool) {
+		
+		matchPool(pool, JebusPoolType.CENTRAL);
+		return ALICIADOCUMENTKEY + ":nextDocumentKey";
+	}
+    
 	/*************************/
 	/***** ALICIA CRYPTO *****/
 	/*************************/

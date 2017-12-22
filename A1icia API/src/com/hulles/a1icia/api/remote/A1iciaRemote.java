@@ -468,7 +468,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			
 			text = dialogRequest.getRequestMessage();
 			lang = dialogRequest.getLanguage();
-			processInputMessage(text, lang);
+			processInputRequest(text, lang);
 			
 			sparks = dialogRequest.getRequestActions();
 			for (SerialSpark ss : sparks) {
@@ -485,8 +485,25 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		SharedUtils.checkNotNull(text);
 		SharedUtils.checkNotNull(lang);
 		if (text != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaRemote: text is {0}", text);
-			receive(text, lang);
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: message text is {0}", text);
+			receiveText(text, lang);
+			if (showText) {
+				if (text.isEmpty()) {
+					text = "...";
+				}
+				textDisplayer.appendText(A1ICIA_PREFIX, a1iciaAttrs);
+				textDisplayer.appendText(text + "\n");
+			}
+		}
+	}
+	
+	private void processInputRequest(String text, Language lang) {
+		
+		SharedUtils.checkNotNull(text);
+		SharedUtils.checkNotNull(lang);
+		if (text != null) {
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: request text is {0}", text);
+			receiveRequest(text, lang);
 			if (showText) {
 				if (text.isEmpty()) {
 					text = "...";
@@ -660,11 +677,21 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		MediaUtils.playMediaBytes(videoBytes, format);
 	}
 	
-	void receive(String text, Language lang) {
+	void receiveText(String text, Language lang) {
 
 		SharedUtils.checkNotNull(text);
-		LOGGER.log(LOGLEVEL, "A1iciaRemote:receive: text is {0}", text);
+		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveText: text is {0}", text);
 		display.receiveText(text);
+		if (useTTS) {
+			processTTS(text, lang);
+		}
+	}
+	
+	void receiveRequest(String text, Language lang) {
+
+		SharedUtils.checkNotNull(text);
+		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveRequest: text is {0}", text);
+		display.receiveRequest(text);
 		if (useTTS) {
 			processTTS(text, lang);
 		}
