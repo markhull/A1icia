@@ -1,5 +1,4 @@
 
-![A1icia Logo](images/A1icia_100H.png)
 
 ## Design Goals
 
