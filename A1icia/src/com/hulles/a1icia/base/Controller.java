@@ -303,7 +303,7 @@ public final class Controller extends AbstractIdleService {
 		// send WHAT_SPARKS request to load sparkRooms
 		ticket = Ticket.createNewTicket(hallBus, Room.CONTROLLER);
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
-		sparksQuery = new RoomRequest(ticket);
+		sparksQuery = new RoomRequest(ticket, null);
 		sparksQuery.setFromRoom(Room.CONTROLLER);
 		sparksQuery.setSparkPackages(SparkPackage.getSingletonDefault("what_sparks"));
 		sparksQuery.setMessage("WHAT_SPARKS query");

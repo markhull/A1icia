@@ -19,16 +19,15 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.dialog;
 
-import java.io.Serializable;
-
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
-public class DialogResponse implements Serializable, Dialog {
+public class DialogResponse extends Dialog {
 	private static final long serialVersionUID = 2837414184795790854L;
+	private final Long responseToRequestID;
 	private String response;
 	private SerialSpark spark;
 	private String explanation;
@@ -38,7 +37,20 @@ public class DialogResponse implements Serializable, Dialog {
 	private Language language;
 	
 	public DialogResponse() {
+		super();
 		
+		responseToRequestID = null;
+	}
+	public DialogResponse(Long requestID) {
+		super();
+		
+		SharedUtils.checkNotNull(requestID);
+		responseToRequestID = requestID;
+	}
+	
+	public Long getResponseToRequestID() {
+		
+		return responseToRequestID;
 	}
 	
 	public Language getLanguage() {

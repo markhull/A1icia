@@ -24,7 +24,7 @@ import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
- * The response from the server to the log in/out request from the remote station.
+ * The response from Alicia Central to the log in/out request from the remote station.
  * 
  * @see LoginObject
  * 

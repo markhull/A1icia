@@ -79,17 +79,17 @@ public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 		LOGGER.log(LOGLEVEL, "PiConsole: in receiveCommand");
 		super.receiveCommand(command);
 		switch (command.getName()) {
-			case "server_startup":
+			case "central_startup":
 				if (!hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_on");
 				}
-				LOGGER.log(LOGLEVEL, "PiConsole: server startup command");
+				LOGGER.log(LOGLEVEL, "PiConsole: A1icia Central startup command");
 				return true;
-			case "server_shutdown":
+			case "central_shutdown":
 				if (hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_off");
 				}
-				LOGGER.log(LOGLEVEL, "PiConsole: server shutdown command");
+				LOGGER.log(LOGLEVEL, "PiConsole: A1icia Central shutdown command");
 				return true;
 			// we don't allow the MOTION and ON LEDs to be set by the Central Scrutinizer
 			case "set_red_LED_on":

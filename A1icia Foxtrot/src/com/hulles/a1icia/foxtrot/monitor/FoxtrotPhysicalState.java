@@ -513,7 +513,7 @@ final public class FoxtrotPhysicalState {
         sb.append("<dd>" + this.getOSFlavor() + "</dd>\n");
 		seconds = this.getUpTimeInSeconds();
 		sb.append("<dt>Up Time</dt>\n");
-		sb.append("<dd>" + FoxtrotUtils.formatElapsedSeconds(seconds) + "</dd>\n");
+		sb.append("<dd>" + A1iciaUtils.formatElapsedSeconds(seconds) + "</dd>\n");
 		sb.append("<dt>CPU Info</dt>\n");
 		sb.append("<dd>");
 		for (Processor cpu : this.getProcessors()) {
@@ -523,16 +523,16 @@ final public class FoxtrotPhysicalState {
 		}
 		sb.append("</dd>\n");
 		sb.append("<dt>Total memory</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getTotalMemoryKb());
+		kbStr = A1iciaUtils.formatKb(this.getTotalMemoryKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>Free memory</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getFreeMemoryKb());
+		kbStr = A1iciaUtils.formatKb(this.getFreeMemoryKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>Total swap</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getTotalSwapKb());
+		kbStr = A1iciaUtils.formatKb(this.getTotalSwapKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>Free swap</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getFreeSwapKb());
+		kbStr = A1iciaUtils.formatKb(this.getFreeSwapKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>Java Vendor</dt>\n");
 		sb.append("<dd>" + this.getJavaVendor() + "</dd>\n");
@@ -547,13 +547,13 @@ final public class FoxtrotPhysicalState {
 		sb.append("<dt>JVM Processors</dt>\n");
 		sb.append("<dd>" + this.getJVMProcessors() + "</dd>\n");
 		sb.append("<dt>JVM Free Memory</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getJVMFreeMemoryKb());
+		kbStr = A1iciaUtils.formatKb(this.getJVMFreeMemoryKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>JVM Max Memory</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getJVMMaxMemoryKb());
+		kbStr = A1iciaUtils.formatKb(this.getJVMMaxMemoryKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		sb.append("<dt>JVM Total Memory</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getJVMTotalMemoryKb());
+		kbStr = A1iciaUtils.formatKb(this.getJVMTotalMemoryKb());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 
 		sb.append("<dt>Database Product</dt>\n");
@@ -574,12 +574,12 @@ final public class FoxtrotPhysicalState {
 		sb.append("<dt>Apache Server Version</dt>\n");
 		sb.append("<dd>" + this.getServerVersion() + "</dd>\n");
 		sb.append("<dt>Apache Total Uptime</dt>\n");
-		etStr = FoxtrotUtils.formatElapsedSeconds(this.getServerUptime());
+		etStr = A1iciaUtils.formatElapsedSeconds(this.getServerUptime());
 		sb.append("<dd>" + etStr + "</dd>\n");
 		sb.append("<dt>Apache Total Accesses</dt>\n");
 		sb.append("<dd>" + this.getServerAccesses() + "</dd>\n");
 		sb.append("<dt>Apache Total kBytes Served</dt>\n");
-		kbStr = FoxtrotUtils.formatKb(this.getServerKBytes());
+		kbStr = A1iciaUtils.formatKb(this.getServerKBytes());
 		sb.append("<dd>" + kbStr + "</dd>\n");
 		
 		
@@ -593,20 +593,20 @@ final public class FoxtrotPhysicalState {
 		}
 		for (FoxtrotFS fs : this.getFileSystems()) {
 			sb.append("<dt>File System " + fs.getFsName() + "</dt>\n");
-			kbStr = FoxtrotUtils.formatKb(fs.getTotalSpaceKb());
+			kbStr = A1iciaUtils.formatKb(fs.getTotalSpaceKb());
 			sb.append("<dd>Total Space " + kbStr);
-			kbStr = FoxtrotUtils.formatKb(fs.getUsedSpaceKb());
+			kbStr = A1iciaUtils.formatKb(fs.getUsedSpaceKb());
 			sb.append(" | Used Space " + kbStr);
-			kbStr = FoxtrotUtils.formatKb(fs.getFreeSpaceKb());
+			kbStr = A1iciaUtils.formatKb(fs.getFreeSpaceKb());
 			sb.append(" | Free Space " + kbStr);
 			sb.append(" | Used " + fs.getUsedPercent() + "%");
 			sb.append(" | Mounted at " + fs.getMountPoint() + "</dd>\n");
 		}
 		for (NetworkDevice device : this.getNetworkDevices()) {
 			sb.append("<dt>Network Device " + device.getDeviceName() + "</dt>\n");
-			kbStr = FoxtrotUtils.formatKb(device.getTransmitKb());
+			kbStr = A1iciaUtils.formatKb(device.getTransmitKb());
 			sb.append("<dd>Transmitted " +  kbStr);
-			kbStr = FoxtrotUtils.formatKb(device.getReceiveKb());
+			kbStr = A1iciaUtils.formatKb(device.getReceiveKb());
 			sb.append(" | Received " + kbStr + "</dd>\n");
 		}
 		sb.append("<dt>Have Internet</dt>\n");

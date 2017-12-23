@@ -126,6 +126,30 @@ public class PurdahKeys implements Serializable {
 		portStr = port.toString();
 		keyMap.put(Keys.DATABASEPORT, portStr);
 	}
+	
+	public String getDatabaseName() {
+		
+		return keyMap.get(Keys.DATABASENAME);
+	}
+	
+	public void setDatabaseName(String name) {
+		
+		SharedUtils.checkNotNull(name);
+		keyMap.put(Keys.DATABASENAME, name);
+	}
+
+	public Boolean getDatabaseUseSSL() {
+		String sslStr;
+		
+		sslStr = keyMap.get(Keys.DATABASEUSESSL);
+		return Boolean.parseBoolean(sslStr);
+	}
+	
+	public void setDatabaseUseSSL(Boolean value) {
+	
+		SharedUtils.checkNotNull(value);
+		keyMap.put(Keys.DATABASEUSESSL, value.toString());
+	}
 
 	public String getIpInfoToken() {
 		
@@ -234,6 +258,8 @@ public class PurdahKeys implements Serializable {
 		DATABASEPORT,
 		DATABASESERVER,
 		DATABASEUSER,
+		DATABASENAME,
+		DATABASEUSESSL,
 		IPINFOKEY,
 		OPENWEATHERID,
 		WOLFRAMALPHAKEY,

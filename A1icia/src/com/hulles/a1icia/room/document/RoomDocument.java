@@ -52,12 +52,16 @@ public abstract class RoomDocument {
 	private Room fromRoom;
 	
 	public RoomDocument(RoomDocumentType type, Ticket ticket) {
-				
+		this(type, ticket, getNewDocumentID());		
+	}
+	public RoomDocument(RoomDocumentType type, Ticket ticket, Long documentID) {
+		
 		A1iciaUtils.checkNotNull(type);
 		A1iciaUtils.nullsOkay(ticket);
+		A1iciaUtils.checkNotNull(documentID);
 		this.type = type;
 		this.ticket = ticket;
-		this.documentID = getNewDocumentID();
+		this.documentID = documentID;
 	}
 	
 	public Long getDocumentID() {

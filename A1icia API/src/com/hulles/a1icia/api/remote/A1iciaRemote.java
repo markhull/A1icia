@@ -430,13 +430,11 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		String expl;
 		Dialog dialog = null;
 		DialogResponse dialogResponse;
-		A1iciaClientObject clientObject;
-		AudioObject audioObject;
-		MediaObject mediaObject;
-		LoginResponseObject loginObject;
-		ClientObjectType objectType;
-		ChangeLanguageObject changeLanguage;
+		DialogRequest dialogRequest;
 		SerialSpark spark;
+		Set<SerialSpark> sparks;
+		A1iciaClientObject clientObject;
+		Language lang;
 		
 		SharedUtils.checkNotNull(responseBytes);
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: in receiveBytes");
@@ -452,13 +450,43 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		}
 		if (dialog instanceof DialogResponse) {
 			dialogResponse = (DialogResponse) dialog;
+			
+			text = dialogResponse.getMessage();
+			lang = dialogResponse.getLanguage();
+			processInputMessage(text, lang);
+			
+			expl = dialogResponse.getExplanation();
+			processInputExplanation(expl, text);
+			
+			spark = dialogResponse.getResponseAction();
+			processInputCommand(spark);
+			
+			clientObject = dialogResponse.getClientObject();
+			processInputClientObject(clientObject);
 		} else {
-			throw new UnsupportedOperationException("Console cannot yet receive DialogRequests");
+			dialogRequest = (DialogRequest) dialog;
+			
+			text = dialogRequest.getRequestMessage();
+			lang = dialogRequest.getLanguage();
+			processInputRequest(text, lang);
+			
+			sparks = dialogRequest.getRequestActions();
+			for (SerialSpark ss : sparks) {
+				processInputCommand(ss);
+			}
+			
+			clientObject = dialogRequest.getClientObject();
+			processInputClientObject(clientObject);
 		}
-		text = dialogResponse.getMessage();
+	}
+	
+	private void processInputMessage(String text, Language lang) {
+		
+		SharedUtils.checkNotNull(text);
+		SharedUtils.checkNotNull(lang);
 		if (text != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveBytes: text is {0}", text);
-			receive(text, dialogResponse.getLanguage());
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: message text is {0}", text);
+			receiveText(text, lang);
 			if (showText) {
 				if (text.isEmpty()) {
 					text = "...";
@@ -467,29 +495,65 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 				textDisplayer.appendText(text + "\n");
 			}
 		}
-		expl = dialogResponse.getExplanation();
+	}
+	
+	private void processInputRequest(String text, Language lang) {
+		
+		SharedUtils.checkNotNull(text);
+		SharedUtils.checkNotNull(lang);
+		if (text != null) {
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: request text is {0}", text);
+			receiveRequest(text, lang);
+			if (showText) {
+				if (text.isEmpty()) {
+					text = "...";
+				}
+				textDisplayer.appendText(A1ICIA_PREFIX, a1iciaAttrs);
+				textDisplayer.appendText(text + "\n");
+			}
+		}
+	}
+	
+	private void processInputExplanation(String expl, String text) {
+		
+		SharedUtils.nullsOkay(expl);
+		SharedUtils.checkNotNull(text);
 		if (expl != null && !expl.isEmpty() && !expl.equals(text)) {
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: explanation is {0}", expl);
 			if (showText) {
 				textDisplayer.appendText(A1ICIA_PREFIX, a1iciaAttrs);
 				textDisplayer.appendText(expl + "\n");
 			}
 			display.receiveExplanation(expl);
 		}
-		spark = dialogResponse.getResponseAction();
+	}
+	
+	private void processInputCommand(SerialSpark spark) {
+		
+		SharedUtils.nullsOkay(spark);
 		if (spark != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveBytes: spark is {0}", spark.getName());
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: spark is {0}", spark.getName());
 			receiveCommand(spark);
 		}
-		clientObject = dialogResponse.getClientObject();
+	}
+	
+	private void processInputClientObject(A1iciaClientObject clientObject) {
+		AudioObject audioObject;
+		MediaObject mediaObject;
+		LoginResponseObject loginObject;
+		ClientObjectType objectType;
+		ChangeLanguageObject changeLanguage;
+		
+		SharedUtils.nullsOkay(clientObject);
 		if (clientObject == null) {
 			return;
 		}
 		if (display.receiveObject(clientObject)) {
-			// client handles the object, we don't need to deal with it further;
+			// A1iciaRemoteDisplay handles the object, we don't need to deal with it further;
 			// use case is web server, we don't need to play audio on the server itself
 			return;
 		}		
-		// if the client doesn't handle it, well, we can
+		// if A1iciaRemoteDisplay doesn't handle it, well, we can, let's roll up our sleeves...
 		objectType = clientObject.getClientObjectType();
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: processing object");
 		switch (objectType) {
@@ -563,9 +627,6 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		receiveCommand(spark);
 	}
 	
-//	private void playAudio(AudioObject audioObject) {
-//		playAudio(audioObject, null);
-//	}
 	private void playAudio(AudioObject audioObject) {
 		AudioFormat audioFormat;
 		SerialAudioFormat serialFormat;
@@ -616,11 +677,21 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		MediaUtils.playMediaBytes(videoBytes, format);
 	}
 	
-	void receive(String text, Language lang) {
+	void receiveText(String text, Language lang) {
 
 		SharedUtils.checkNotNull(text);
-		LOGGER.log(LOGLEVEL, "A1iciaRemote:receive: text is {0}", text);
+		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveText: text is {0}", text);
 		display.receiveText(text);
+		if (useTTS) {
+			processTTS(text, lang);
+		}
+	}
+	
+	void receiveRequest(String text, Language lang) {
+
+		SharedUtils.checkNotNull(text);
+		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveRequest: text is {0}", text);
+		display.receiveRequest(text);
 		if (useTTS) {
 			processTTS(text, lang);
 		}
@@ -633,10 +704,10 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		cmd = spark.getName();
 		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveCommand: command is {0}", cmd);
 		switch (spark.getName()) {
-			case "server_startup":
+			case "central_startup":
 				serverUp = true;
 				break;
-			case "server_shutdown":
+			case "central_shutdown":
 				serverUp = false;
 				break;
 			default:

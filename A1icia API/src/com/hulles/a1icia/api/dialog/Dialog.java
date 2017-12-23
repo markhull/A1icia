@@ -19,8 +19,15 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.dialog;
 
+import java.io.Serializable;
+
+import com.hulles.a1icia.api.jebus.JebusApiBible;
+import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * A generalization of dialog-related documents.
@@ -28,12 +35,33 @@ import com.hulles.a1icia.api.remote.A1icianID;
  * @author hulles
  *
  */
-public interface Dialog {
+public abstract class Dialog implements Serializable {
+	private static final long serialVersionUID = -2608181091469557754L;
+	private final Long documentID;
 
-	public A1iciaClientObject getClientObject();
+	public Dialog() {
+		
+		this.documentID = getNewDocumentID();
+	}
 	
-	public A1icianID getFromA1icianID();
+	public abstract A1iciaClientObject getClientObject();
 	
-	public A1icianID getToA1icianID();
+	public abstract A1icianID getFromA1icianID();
+	
+	public abstract A1icianID getToA1icianID();
+	
+	public Long getDocumentID() {
+		
+		return documentID;
+	}
+	
+	private static long getNewDocumentID() {
+		JebusPool jebusPool;
+		
+		jebusPool = JebusApiHub.getJebusCentral();
+		try (Jedis jebus = jebusPool.getResource()) {
+			return jebus.incr(JebusApiBible.getA1iciaDocumentCounterKey(jebusPool));
+		}		
+	}
 
 }

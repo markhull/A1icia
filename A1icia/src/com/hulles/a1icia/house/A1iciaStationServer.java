@@ -136,8 +136,8 @@ public final class A1iciaStationServer extends UrHouse {
 			promptTimer = new Timer();
 			prompters = new ArrayList<>();
 		}
-		openSpark = Spark.find("server_startup");
-		stationBroadcast("Server starting up....", openSpark);
+		openSpark = Spark.find("central_startup");
+		stationBroadcast("A1icia Central starting up....", openSpark);
 	}
 
 	/**
@@ -148,8 +148,8 @@ public final class A1iciaStationServer extends UrHouse {
 	protected void houseShutdown() {
 		Spark closeSpark;
 		
-		closeSpark = Spark.find("server_shutdown");
-		stationBroadcast("Server shutting down....", closeSpark);
+		closeSpark = Spark.find("central_shutdown");
+		stationBroadcast("A1icia Central shutting down....", closeSpark);
 		if (executor != null) {
 			try {
 			    System.out.println("StationServer: attempting to shutdown executor");

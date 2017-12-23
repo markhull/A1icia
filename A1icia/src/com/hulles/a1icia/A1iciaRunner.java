@@ -25,7 +25,7 @@ import java.io.IOException;
 import com.hulles.a1icia.base.A1iciaException;
 
 /**
- * A1iciaRunner is a simple class with a main method to run the A1icia server.
+ * A1iciaRunner is a simple class with a main method to run A1icia Central.
  * 
  * @author hulles
  */

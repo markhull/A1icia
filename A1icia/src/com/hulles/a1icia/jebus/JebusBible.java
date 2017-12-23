@@ -75,6 +75,8 @@ public final class JebusBible {
 	
 	private final static String ALICIANLPKEY = "a1icia:nlplist";
 	
+	private final static String ALICIAMEDIAFILEUPDATEKEY = "alicia:mediaupdate";
+	
     /************************/
     /***** ALICIA ERROR *****/
     /************************/
@@ -504,6 +506,21 @@ public final class JebusBible {
 		
 		matchPool(pool, JebusPoolType.LOCAL);
 		return ALICIANLPKEY;
+	}
+
+	/************************/
+	/***** ALICIA MEDIA *****/
+	/************************/
+	
+	/**
+	 * We store the date the media library was last updated.
+	 * 
+	 * @return
+	 */
+	public static String getA1iciaMediaFileUpdateKey(JebusPool pool) {
+		
+		matchPool(pool, JebusPoolType.LOCAL);
+		return ALICIAMEDIAFILEUPDATEKEY;
 	}
 	
 	/**************************/

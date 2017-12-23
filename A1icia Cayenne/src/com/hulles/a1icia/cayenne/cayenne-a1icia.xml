@@ -4,15 +4,24 @@
 	 xsi:schemaLocation="http://cayenne.apache.org/schema/10/domain http://cayenne.apache.org/schema/10/domain.xsd"
 	 project-version="10">
 	<map name="a1icia_datamap"/>
+<!-- 	<node name="a1icia_datanode" -->
+<!-- 		 factory="org.apache.cayenne.configuration.server.XMLPoolingDataSourceFactory" -->
+<!-- 		 schema-update-strategy="org.apache.cayenne.access.dbsync.SkipSchemaUpdateStrategy"> -->
+<!-- 		<map-ref name="a1icia_datamap"/> -->
+<!-- 		<data-source> -->
+<!-- 			<driver value="com.mysql.jdbc.Driver"/> -->
+<!-- 			<url value="jdbc:mysql://localhost/a1icia?characterEncoding=UTF-8&amp;&amp;useUnicode=true"/> -->
+<!-- 			<connectionPool min="1" max="6"/> -->
+<!-- 			<login userName="a1icia_user" password="yhxNvFJu"/> -->
+<!-- 		</data-source> -->
+<!-- 	</node> -->
+<!-- 		 adapter="org.apache.cayenne.dba.mysql.MySQLAdapter" -->
 	<node name="a1icia_datanode"
-		 factory="org.apache.cayenne.configuration.server.XMLPoolingDataSourceFactory"
+		 factory="com.hulles.a1icia.cayenne.A1iciaDataSourceFactory"
 		 schema-update-strategy="org.apache.cayenne.access.dbsync.SkipSchemaUpdateStrategy">
 		<map-ref name="a1icia_datamap"/>
 		<data-source>
-			<driver value="com.mysql.jdbc.Driver"/>
-			<url value="jdbc:mysql://localhost/a1icia?characterEncoding=UTF-8&amp;&amp;useUnicode=true"/>
-			<connectionPool min="1" max="6"/>
-			<login userName="a1icia_user" password="yhxNvFJu"/>
+            <url value="I like this better if it works"/>
 		</data-source>
 	</node>
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="a1icia.graph.xml"/>

@@ -21,6 +21,8 @@ package com.hulles.a1icia.mike;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,15 +35,17 @@ import javax.sound.sampled.AudioFormat;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
-import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.MediaFile;
 import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
+import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
 import com.hulles.a1icia.media.audio.SerialAudioFormat;
@@ -55,14 +59,16 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.FuzzyMatch;
 import com.hulles.a1icia.tools.FuzzyMatch.Match;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * Mike Room is our media room. Mike has a library of .wav files that he can broadcast to pretty 
@@ -94,6 +100,7 @@ public final class MikeRoom extends UrRoom {
 	private final List<String> titles;
 	private final ApplicationKeys appKeys;
 	private byte[] introBytes = null;
+	private final JebusPool jebusLocal;
 	
 	public MikeRoom(EventBus bus) {
 		super(bus);
@@ -102,6 +109,7 @@ public final class MikeRoom extends UrRoom {
 		artists = new ArrayList<>(3000);
 		titles = new ArrayList<>(3000);
 		appKeys = ApplicationKeys.getInstance();
+		jebusLocal = JebusHub.getJebusLocal();
 	}
 
 	private String getRandomFileName(List<String> files) {
@@ -137,6 +145,7 @@ public final class MikeRoom extends UrRoom {
 	}
 	
 	public static void logAudioFormat(String fileName) {
+		
 		try {
 			logger.log(LOGLEVEL, MediaUtils.getAudioFormatString(fileName));
 		} catch (Exception e) {
@@ -147,11 +156,26 @@ public final class MikeRoom extends UrRoom {
 	public void updateMediaLibrary() {
 		List<String> audioList;
 		List<String> videoList;
+		String updateKey;
+		String instantStr;
+		Instant timestamp = null;
+		Instant now;
 		
-		audioList = LibraryLister.listFiles(appKeys.getMusicLibrary(), "*.mp3");
-		audioList.stream().forEach(e -> updateAudioItem(e));
-		videoList = LibraryLister.listFiles(appKeys.getVideoLibrary(), "*.{mp4,flv}");
-		videoList.stream().forEach(e -> updateVideoItem(e));
+		updateKey = JebusBible.getA1iciaMediaFileUpdateKey(jebusLocal);
+		now = Instant.now();
+		try (Jedis jebus = jebusLocal.getResource()) {
+			instantStr = jebus.get(updateKey);
+			if (instantStr != null) {
+				timestamp = Instant.parse(instantStr);
+			}
+			if (timestamp == null || timestamp.isBefore(now)) {
+				jebus.set(updateKey, now.plus(7, ChronoUnit.DAYS).toString());
+				audioList = LibraryLister.listFiles(appKeys.getMusicLibrary(), "*.mp3");
+				audioList.stream().forEach(e -> updateAudioItem(e));
+				videoList = LibraryLister.listFiles(appKeys.getVideoLibrary(), "*.{mp4,flv}");
+				videoList.stream().forEach(e -> updateVideoItem(e));
+			}
+		}
 	}
 	
 	private static void updateAudioItem(String fileName) {

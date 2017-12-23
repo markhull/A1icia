@@ -48,6 +48,16 @@ public class RoomRequest extends RoomDocument {
 	public RoomRequest(Ticket ticket) {
 		this(RoomDocumentType.ROOMREQUEST, ticket);
 	}
+	public RoomRequest(RoomDocumentType type, Ticket ticket, Long documentID) {
+		super(type, ticket, documentID);
+		
+		A1iciaUtils.checkNotNull(type);
+		A1iciaUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
+		sparkPackages = new ArrayList<>();
+	}
+	public RoomRequest(Ticket ticket, Long documentID) {
+		this(RoomDocumentType.ROOMREQUEST, ticket, documentID);
+	}
 
 	public String getMessage() {
 		
