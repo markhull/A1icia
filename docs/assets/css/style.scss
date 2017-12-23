@@ -2,3 +2,8 @@
 ---
 
 @import "{{ site.theme }}";
+img {
+  border: none;
+  margin: none;
+  display: inline-block;
+}
