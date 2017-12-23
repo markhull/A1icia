@@ -7,7 +7,7 @@ We're just getting started with the documentation, so please bear with us.
 
 ### Miscellaneous Information
 
-[Design Goals](designgoals.md)
+[Design Goals](designgoals.md)     
 
 ---
 
