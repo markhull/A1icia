@@ -1,1 +1,3 @@
 What the...
+
+[Design Goals](designgoals.md)
