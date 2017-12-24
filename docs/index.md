@@ -1,11 +1,17 @@
+---
+layout: default
+title: Home
+permalink: /home/
+published: true
+---
 
-## Home
+# Home
 
 Welcome to the documentation home of the [A1icia project](https://github.com/markhull/A1icia).
 
 We're just getting started with the documentation, so please bear with us.
 
-### Miscellaneous Information
+## Miscellaneous Information
 
 [Design Goals](designgoals.md)     
 
