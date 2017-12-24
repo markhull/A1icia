@@ -36,7 +36,9 @@ And as far as keeping me company, A1icia's currently about at the tropical fish 
 * A1icia has two built-in web servers and three command line interfaces with which to communicate with the outside world, i.e. you.
 * A1icia is free software, licensed under GPL3.
 
-## Important A1icia Places
+## Directory
+
+* **[A1icia GitHub Project](https://github.com/markhull/A1icia)**
 
 * **[A1icia Documentation](https://markhull.github.io/A1icia)**
 
