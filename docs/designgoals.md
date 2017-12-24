@@ -1,7 +1,10 @@
 ---
+layout: page
+title: Design Goals
+permalink: /about/
+published: true
 ---
 
-## Design Goals
 
 * A1icia should have little to no reliance on external services, preferably no reliance. Thus, no "cloud services". We'll use local TTS and ASR services instead of e.g. Google Voice Cloud Service. As of this writing, the only cloud service that A1icia uses is Google Cloud Translate, and that's just because we haven't found a suitable alternative yet.
 
