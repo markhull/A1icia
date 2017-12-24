@@ -1,8 +1,6 @@
 ---
 layout: page
 title: Design Goals
-permalink: /about/
-published: true
 ---
 
 
