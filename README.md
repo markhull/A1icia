@@ -40,4 +40,4 @@ And as far as keeping me company, A1icia's currently about at the tropical fish 
 
 * **[A1icia Documentation](https://markhull.github.io/A1icia)**
 
-* **[A1icia Wiki](https
+* **[A1icia Wiki](https://github.com/markhull/A1icia/wiki)**
