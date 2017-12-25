@@ -4,3 +4,4 @@ theme: jekyll-theme-slate
 google_analytics: UA-111581872-1
 plugins:
   - jekyll-sitemap
+  - jekyll-feed
