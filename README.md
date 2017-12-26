@@ -5,7 +5,7 @@ A1icia is a professional incarnation of a personal assistant written in Java. Sh
 
 ## So Why Another Personal Assistant?
 
-The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, but still, it's personal information.
+The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, not sure about the others, but still, it's personal information.
 
 ### Use An Existing Project?
 
