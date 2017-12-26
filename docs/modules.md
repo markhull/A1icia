@@ -13,8 +13,8 @@ API | Application Programming Interface | <https://github.com/markhull/A1icia/tr
 Bravo | TensorFlow Image Recognition | <https://github.com/markhull/A1icia/tree/master/A1icia%20Bravo>
 Cayenne | Apache Cayenne-based RDBMS Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
 Central | **Main Module for A1icia** | <https://github.com/markhull/A1icia/tree/master/A1icia%20Central>
-Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
-Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Central Installer | Installer for A1icia Central | <https://github.com/markhull/A1icia/tree/master/A1icia%20Central%20Installer>
+Charlie | Natural Language Processing | <https://github.com/markhull/A1icia/tree/master/A1icia%20Charlie>
 Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
 Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
 Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
