@@ -24,4 +24,13 @@ Echo | Word2Vec | [Source](https://github.com/markhull/A1icia/tree/master/A1icia
 Foxtrot | System Monitor & Hardware Internals | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Foxtrot)
 FX Console | JavaFX Command Line Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20FX%20Console) | yes
 Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
+Hotel | Calendar & Tasks | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Hotel)
+India | Text Responses | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20India)
+Juliet | Non-Factoid Questions & Answers | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Juliet)
+Kilo | Weather | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Kilo)
+Lima | History | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Lima)
+Media | External Media | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Media)
+Mike | Multimedia Services | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Mike)
+Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
+Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
 
