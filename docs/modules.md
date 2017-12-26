@@ -11,4 +11,15 @@ Module | Description | GitHub Link
 Alpha | Aardvark! | <https://github.com/markhull/A1icia/tree/master/A1icia%20Alpha>
 API | Application Programming Interface | <https://github.com/markhull/A1icia/tree/master/A1icia%20API>
 Bravo | TensorFlow Image Recognition | <https://github.com/markhull/A1icia/tree/master/A1icia%20Bravo>
+Cayenne | Apache Cayenne-based RDBMS Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Central | **Main Module for A1icia** | <https://github.com/markhull/A1icia/tree/master/A1icia%20Central>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
+Cayenne | Apache Cayenne MySQL Database Service | <https://github.com/markhull/A1icia/tree/master/A1icia%20Cayenne>
 
