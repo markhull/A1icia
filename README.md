@@ -13,7 +13,7 @@ I really wanted a personal assistant, but one over which I could have complete c
 
 ### Punk DIY Software
 
-So, since I listened to a [Black Flag song once](https://en.wikipedia.org/wiki/DIY_ethic), I decided to write a personal assistant myself in Java that was adaptable enough to do all the things I wanted to do:
+So, since I listened to a [Black Flag song](https://en.wikipedia.org/wiki/DIY_ethic) once, I decided to write a personal assistant myself in Java that was adaptable enough to do all the things I wanted to do:
 
 * experiment with machine learning and AI, 
 * run so-called **IoT** gizmos around the house (like a [Magic Mirror](https://github.com/MichMich/MagicMirror)), 
