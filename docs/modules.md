@@ -8,7 +8,7 @@ This is a list of A1icia modules. In the chart below, I have omitted the "A1icia
 
 Each module is developed as a separate project and packaged as a Java jar file. As you can see, in general modules are named after letters in the NATO phonetic alphabet.
 
-Fortuna is not listed among the modules because it isn't, strictly speaking, an A1icia module. It is however included with the project and the source code for it [can be found here](https://github.com/markhull/A1icia/tree/master/Fortuna).
+**Fortuna** is not listed among the modules because it isn't, strictly speaking, an A1icia module. It is however included with the project and the source code for it [can be found here](https://github.com/markhull/A1icia/tree/master/Fortuna).
 
 Module | Description | GitHub Link | Executable
 --- | --- | --- | ---
