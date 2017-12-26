@@ -31,6 +31,11 @@ Kilo | Weather | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%
 Lima | History | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Lima)
 Media | External Media | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Media)
 Mike | Multimedia Services | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Mike)
-Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
-Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
+Node | Node.js Server | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Node) | yes
+November | Person (User) Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20November)
+Oscar | Constants | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Oscar)
+Overmind | Logic and Decision-Making | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Overmind)
+Papa | Wolfram\|Alpha Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Papa)
+Prong | Communication Security | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Prong)
+November | Person (User) Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20November)
 
