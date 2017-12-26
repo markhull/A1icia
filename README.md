@@ -11,7 +11,7 @@ The essential nature of a "personal assistant" is that it uses **personal inform
 
 I really wanted a personal assistant, but one over which I could have complete control and one that would let me do all the things I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these scripting languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
 
-### Punk DIY Software
+### DIY Punkware
 
 So, since I listened to a [Black Flag song](https://en.wikipedia.org/wiki/DIY_ethic) once, I decided to write a personal assistant myself in Java that was adaptable enough to do all the things I wanted to do:
 
