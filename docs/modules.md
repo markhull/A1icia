@@ -34,7 +34,7 @@ Lima | History | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%
 Media | External Media | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Media)
 Mike | Multimedia Services | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Mike)
 Node | Node.js Server | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Node) | yes
-November | Person (User) Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20November)
+November | User Manager | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20November)
 Oscar | Constants | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Oscar)
 Overmind | Logic and Decision-Making | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Overmind)
 Papa | Wolfram\|Alpha Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Papa)
