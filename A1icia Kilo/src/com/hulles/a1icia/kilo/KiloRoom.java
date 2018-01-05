@@ -26,9 +26,9 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomActionObject;
@@ -179,16 +179,16 @@ public final class KiloRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("weather_forecast"));
-		sparks.add(Spark.find("current_weather"));
-		sparks.add(Spark.find("current_weather_location"));
-		sparks.add(Spark.find("this_location"));
-		sparks.add(Spark.find("current_time"));
-		sparks.add(Spark.find("current_time_location"));
+		sparks.add(SerialSpark.find("weather_forecast"));
+		sparks.add(SerialSpark.find("current_weather"));
+		sparks.add(SerialSpark.find("current_weather_location"));
+		sparks.add(SerialSpark.find("this_location"));
+		sparks.add(SerialSpark.find("current_time"));
+		sparks.add(SerialSpark.find("current_time_location"));
 		return sparks;
 	}
 

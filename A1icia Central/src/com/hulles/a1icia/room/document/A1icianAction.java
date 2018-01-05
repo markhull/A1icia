@@ -19,9 +19,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * This represents an action for a receiving A1ician, for example turning on a red LED. This isn't at
@@ -34,7 +34,7 @@ import com.hulles.a1icia.cayenne.Spark;
 public class A1icianAction extends RoomActionObject {
 	private String message;
 	private String explanation;
-	private Spark clientAction;
+	private SerialSpark clientAction;
 	private A1icianID toA1icianID;
 	
 	public A1icianID getToA1icianID() {
@@ -48,12 +48,12 @@ public class A1icianAction extends RoomActionObject {
 		this.toA1icianID = toA1icianID;
 	}
 
-	public Spark getClientAction() {
+	public SerialSpark getClientAction() {
 		
 		return clientAction;
 	}
 
-	public void setClientAction(Spark action) {
+	public void setClientAction(SerialSpark action) {
 		
 		A1iciaUtils.nullsOkay(action);
 		this.clientAction = action;

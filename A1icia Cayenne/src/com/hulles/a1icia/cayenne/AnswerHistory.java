@@ -28,7 +28,6 @@ import org.apache.cayenne.query.Query;
 import org.apache.cayenne.query.SortOrder;
 
 import com.hulles.a1icia.cayenne.auto._AnswerHistory;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class AnswerHistory extends _AnswerHistory {
@@ -79,21 +78,6 @@ public class AnswerHistory extends _AnswerHistory {
 				.select(context);
 		return dbAnswerHistorys;
     }
-	
-	public SparkObjectType getSparkObjectType() {
-		Short code;
-		
-		code = getSparkObjectTypeCode();
-		return SparkObjectType.findSparkObjectType(code);
-	}
-	
-	public void setSparkObjectType(SparkObjectType type) {
-		Short code;
-		
-		A1iciaUtils.checkNotNull(type);
-		code = type.getStoreID();
-		setSparkObjectTypeCode(code);
-	}
 	
     public void commit() {
     	ObjectContext context;

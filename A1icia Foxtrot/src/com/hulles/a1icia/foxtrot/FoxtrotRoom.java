@@ -25,8 +25,8 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;
 import com.hulles.a1icia.foxtrot.monitor.LinuxMonitor;
 import com.hulles.a1icia.room.Room;
@@ -115,13 +115,13 @@ public final class FoxtrotRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("check_warnings"));
-		sparks.add(Spark.find("how_are_you"));
-		sparks.add(Spark.find("inquire_status"));
+		sparks.add(SerialSpark.find("check_warnings"));
+		sparks.add(SerialSpark.find("how_are_you"));
+		sparks.add(SerialSpark.find("inquire_status"));
 		return sparks;
 	}
 

@@ -32,8 +32,8 @@ import com.google.common.collect.MultimapBuilder;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.document.RoomRequest;
@@ -74,7 +74,7 @@ final class Thimk {
 	 * @param pkgs The list of ActionPackages
 	 * @return The chosen ActionPackage
 	 */
-	static ActionPackage chooseAction(Spark spark, List<ActionPackage> pkgs) {
+	static ActionPackage chooseAction(SerialSpark spark, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		int pkgIx;
 
@@ -98,7 +98,7 @@ final class Thimk {
 	
 	/**
 	 * This method takes all the spark analyses from the various rooms, assuming there are
-	 * some, and ends up with a new action package with a new Spark Analysis that contains 
+	 * some, and ends up with a new action package with a new SerialSpark Analysis that contains 
 	 * at most one spark package per sentence. We do this because it seems to make 
 	 * conversational sense; we can change it later if seems like we could do better.
 	 * 

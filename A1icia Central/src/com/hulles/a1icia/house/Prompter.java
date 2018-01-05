@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.remote.A1icianID;
@@ -34,8 +33,8 @@ import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.media.Language;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Prompter pushes a prompt of one sort or another to an idle console. 
@@ -67,7 +66,7 @@ final class Prompter extends TimerTask {
 		this.nagCounter = 0;
 		this.bus = houseBus;
 		this.language = language;
-		this.promptSpark = Spark.find("prompt").toSerial();
+		this.promptSpark = SerialSpark.find("prompt");
 	}
 
 	A1icianID getA1icianID() {

@@ -21,8 +21,8 @@ package com.hulles.a1icia.room.document;
 
 import java.util.Set;
 
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.cayenne.Spark;
 
 /**
  * This action is a room's response to a "what_sparks" query asking which sparks the room can handle.
@@ -31,18 +31,18 @@ import com.hulles.a1icia.cayenne.Spark;
  *
  */
 public class WhatSparksAction extends RoomActionObject {
-	private Set<Spark> sparks;
+	private Set<SerialSpark> sparks;
 
 	public WhatSparksAction() {
 		
 	}
 	
-	public Set<Spark> getSparks() {
+	public Set<SerialSpark> getSparks() {
 		
 		return sparks;
 	}
 
-	public void setSparks(Set<Spark> sparks) {
+	public void setSparks(Set<SerialSpark> sparks) {
 		
 		A1iciaUtils.checkNotNull(sparks);
 		this.sparks = sparks;

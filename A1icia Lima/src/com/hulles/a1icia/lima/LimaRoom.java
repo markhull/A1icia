@@ -27,9 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.AnswerHistory;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.HistoryUpdate;
@@ -40,7 +40,6 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SparkAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
@@ -81,8 +80,7 @@ public final class LimaRoom extends UrRoom {
 		AnswerHistory answerHistory;
 		List<SparkPackage> sparkPackages;
 		SparkAnalysis sparkAnalysis;
-		Spark sparkResult;
-		SparkObjectType sparkObjectType;
+		SerialSpark sparkResult;
 		SparkPackage sparkPackage;
 		String sparkObject;
 		
@@ -106,14 +104,12 @@ public final class LimaRoom extends UrRoom {
 				if (history.getScore() >= KEEPERSCORE) {
 					LOGGER.log(LOGLEVEL, "LimaRoom: have keeper");
 					answerHistory = history.getHistory();
-					sparkResult = answerHistory.getSpark();
+					sparkResult = answerHistory.getSpark().toSerial();
 					if (sparkResult != null) {
 						sparkObject= answerHistory.getSparkObject();
-						sparkObjectType = answerHistory.getSparkObjectType();
 						sparkPackage = SparkPackage.getNewPackage();
 						sparkPackage.setSpark(sparkResult);
 						sparkPackage.setSparkObject(sparkObject);
-						sparkPackage.setSparkObjectType(sparkObjectType);
 						sparkPackage.setSentencePackage(sentencePackage);
 						sparkPackage.setConfidence(history.getScore());
 						if (!sparkPackage.isValid()) {
@@ -184,12 +180,12 @@ public final class LimaRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("spark_analysis"));
-		sparks.add(Spark.find("update_history"));
+		sparks.add(SerialSpark.find("spark_analysis"));
+		sparks.add(SerialSpark.find("update_history"));
 		return sparks;
 	}
 

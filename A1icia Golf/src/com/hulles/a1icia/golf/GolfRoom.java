@@ -28,8 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -37,8 +37,8 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
-import com.hulles.a1icia.tools.ExternalAperture;
 import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
  * Golf Room performs WikiData queries. So far, its primary function is to look up words
@@ -166,13 +166,13 @@ public final class GolfRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("define_word_or_phrase"));
-		sparks.add(Spark.find("lookup_fact"));
-		sparks.add(Spark.find("who_is"));
+		sparks.add(SerialSpark.find("define_word_or_phrase"));
+		sparks.add(SerialSpark.find("lookup_fact"));
+		sparks.add(SerialSpark.find("who_is"));
 		return sparks;
 	}
 
