@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.NamedTimer;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.cayenne.Task;
 import com.hulles.a1icia.hotel.task.LoadTasks;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -44,7 +44,6 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -157,10 +156,6 @@ public final class HotelRoom extends UrRoom {
 		}
 		// named_timer
 		namedTimerPkg = sparkPkg;
-		if (namedTimerPkg.getSparkObjectType() != SparkObjectType.TIMERNAME) {
-			A1iciaUtils.error("HotelRoom: got named timer spark, but spark object type is not timer name");
-			return null;
-		}
 		timerName = namedTimerPkg.getSparkObject();
 		dbTimer = NamedTimer.findNamedTimer(timerName);
 		if (dbTimer == null) {
@@ -206,7 +201,6 @@ public final class HotelRoom extends UrRoom {
 		mediaRequest = new RoomRequest(ticket);
 		mediaRequest.setFromRoom(getThisRoom());
 		sparkPkg = SparkPackage.getDefaultPackage("notification_medium");
-		sparkPkg.setSparkObjectType(SparkObjectType.AUDIOTITLE);
 		sparkPkg.setSparkObject(notificationTitle);
 		mediaRequest.setSparkPackages(Collections.singletonList(sparkPkg));
 		mediaRequest.setMessage(timerID.toString()); // sort of a kluge, but...
@@ -215,12 +209,12 @@ public final class HotelRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("named_timer"));
-		sparks.add(Spark.find("duration_timer"));
+		sparks.add(SerialSpark.find("named_timer"));
+		sparks.add(SerialSpark.find("duration_timer"));
 		return sparks;
 	}
 

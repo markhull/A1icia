@@ -28,9 +28,7 @@ import java.util.Set;
  * kind to take place: a question that prompts an answer, a command that prompts a response, and
  * so forth.
  *  <p>
- *  SerialSpark is a pared-down version of the main (non-API) A1icia Spark. It extends 
- *  SerialEntity, and cannot update sparks. Note that sparks could be updated anyway, via Redis;
- *  they just can't be modified from this class.
+ *  SerialSpark is a pared-down version of the main (non-API) A1icia Spark. 
  *  
  * @author hulles
  *
@@ -42,9 +40,32 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 	private Boolean externalUse;
 	private Boolean adminOnly;
 	private Boolean loggedIn;
+	private static Set<SerialSpark> sparkSet = null;
 	
     public SerialSpark() {
     	// need no-arg constructor
+    }
+    
+    public static void setSparks(Set<SerialSpark> sparks) {
+    	
+    	SharedUtils.checkNotNull(sparks);
+    	sparkSet = sparks;
+    }
+    
+    public static SerialSpark find(String name) {
+    	SerialSpark spark = null;
+    	
+    	if (sparkSet == null) {
+    		System.err.println("SerialSpark: spark set not loaded");
+    		throw new A1iciaAPIException("SerialSpark: spark set not loaded");
+    	}
+    	for (SerialSpark spk : sparkSet) {
+    		if (spk.is(name)) {
+    			spark = spk;
+    			break;
+    		}
+    	}
+    	return spark;
     }
     
     public boolean is(String name) {
@@ -129,6 +150,38 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		SerialSpark other;
+		
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof SerialSpark)) {
+			return false;
+		}
+		other = (SerialSpark) obj;
+		if (getName() == null) {
+			if (other.getName() != null) {
+				return false;
+			}
+		} else if (!getName().equals(other.getName())) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

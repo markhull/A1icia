@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.MessageAction;
@@ -120,11 +120,11 @@ public final class RomeoRoom extends UrRoom {
 	 * 
 	 */
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("name_that_tune"));
+		sparks.add(SerialSpark.find("name_that_tune"));
 		return sparks;
 	}
 

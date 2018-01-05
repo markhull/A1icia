@@ -26,7 +26,6 @@
 		<db-attribute name="satisfaction" type="INTEGER" length="10"/>
 		<db-attribute name="spark_ID" type="BIGINT" length="10"/>
 		<db-attribute name="spark_object" type="VARCHAR" length="255"/>
-		<db-attribute name="spark_object_type_code" type="SMALLINT" isMandatory="true" length="5"/>
 	</db-entity>
 	<db-entity name="country" catalog="a1icia">
 		<db-attribute name="code2" type="CHAR" isMandatory="true" length="2"/>
@@ -150,7 +149,6 @@
 		<obj-attribute name="posTags" type="java.lang.String" db-attribute-path="pos_tags"/>
 		<obj-attribute name="satisfaction" type="java.lang.Integer" db-attribute-path="satisfaction"/>
 		<obj-attribute name="sparkObject" type="java.lang.String" db-attribute-path="spark_object"/>
-		<obj-attribute name="sparkObjectTypeCode" type="java.lang.Short" db-attribute-path="spark_object_type_code"/>
 	</obj-entity>
 	<obj-entity name="Country" className="com.hulles.a1icia.cayenne.Country" dbEntityName="country">
 		<obj-attribute name="code2" type="java.lang.String" db-attribute-path="code2"/>

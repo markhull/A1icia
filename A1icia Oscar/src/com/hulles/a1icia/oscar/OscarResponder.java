@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.ticket.SparkPackage;
@@ -78,7 +80,7 @@ public class OscarResponder {
 		String response;
 		int responseIx;
 		StringBuilder sb;
-		List<Spark> externalSparks;
+		List<SerialSpark> externalSparks;
 		String helpStr;
 		Set<Integer> helpIxs;
 		int helpSize;
@@ -148,7 +150,7 @@ public class OscarResponder {
 				message = "I was told to pronounce it like \"hull ace\" but I still pronounce it hulles.";
 				break;
 			case "help":
-				externalSparks = Spark.getExternalSparks();
+				externalSparks = new ArrayList<>(Spark.getExternalSparks());
 				helpSize = externalSparks.size();
 				helpIxs = new HashSet<>(HELPS);
 				for (int ix=0; ix<HELPS; ix++) {

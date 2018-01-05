@@ -32,8 +32,8 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
@@ -46,12 +46,11 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SparkAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.ExternalAperture;
 import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
  * Papa|Room is all about Wolfram|Alpha. 
@@ -134,7 +133,6 @@ public final class PapaRoom extends UrRoom {
 				newSparkPkg.setSentencePackage(sentencePackage);
 				newSparkPkg.setConfidence(98);
 				newSparkPkg.setSparkObject(query);
-				newSparkPkg.setSparkObjectType(SparkObjectType.FACTQUERY);
 				if (!newSparkPkg.isValid()) {
 					throw new A1iciaException("PapaRoom: created invalid spark package");
 				}
@@ -165,7 +163,7 @@ public final class PapaRoom extends UrRoom {
 		sentencePkg = sparkPkg.getSentencePackage();
 		if (sentencePkg == null) {
 			A1iciaUtils.error("PapaRoom: null sentence package, should not be true",
-					"Spark is "  + sparkPkg.getName());
+					"SerialSpark is "  + sparkPkg.getName());
 			return null;
 		}
 		// we look up the (fixed) original sentence instead of the sparkObject because
@@ -252,14 +250,14 @@ public final class PapaRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("spark_analysis"));
-		sparks.add(Spark.find("define_word_or_phrase"));
-		sparks.add(Spark.find("who_is"));
-		sparks.add(Spark.find("lookup_fact"));
+		sparks.add(SerialSpark.find("spark_analysis"));
+		sparks.add(SerialSpark.find("define_word_or_phrase"));
+		sparks.add(SerialSpark.find("who_is"));
+		sparks.add(SerialSpark.find("lookup_fact"));
 		return sparks;
 	}
 
