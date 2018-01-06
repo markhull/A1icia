@@ -27,3 +27,8 @@ This is awesome, because it means that A1icia Central can run on very small to v
 * A1iciaMedia.jar
 * guava-23.0.jar
 * mysql-connector-java-5.1.40.jar
+* cayenne-client-4.1.M1.jar
+* cayenne-di-4.1.M1.jar
+* cayenne-server-4.1.M1.jar
+* slf4j-api-1.7.25.jar
+* slf4j-simple-1.7.25.jar
