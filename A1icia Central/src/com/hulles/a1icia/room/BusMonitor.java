@@ -27,6 +27,8 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -36,8 +38,6 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.cayenne.Spark;
 
 /**
  * BusMonitor just lurks around logging whatever is on the hall bus.
@@ -68,7 +68,7 @@ public final class BusMonitor extends UrRoom {
 		List<ActionPackage> pkgs;
 		StringBuffer sb;
 		RoomActionObject actionObj;
-		Spark spark;
+		SerialSpark spark;
 		
 		A1iciaUtils.checkNotNull(document);
 		if (document instanceof RoomAnnouncement) {
@@ -160,7 +160,7 @@ public final class BusMonitor extends UrRoom {
 	 * Return the set of sparks which we handle here, i.e. none (empty set).
 	 */
 	@Override
-	protected Set<Spark> loadSparks() {
+	protected Set<SerialSpark> loadSparks() {
 		
 		return Collections.emptySet();
 	}

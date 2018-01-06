@@ -40,9 +40,9 @@ import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.MediaFile;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
@@ -869,27 +869,27 @@ public final class MikeRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("match_artists_and_titles"));
-		sparks.add(Spark.find("play_artist"));
-		sparks.add(Spark.find("play_title"));
-		sparks.add(Spark.find("play_video"));
-		sparks.add(Spark.find("prompt"));
-		sparks.add(Spark.find("speak"));
-		sparks.add(Spark.find("praise"));
-		sparks.add(Spark.find("exclamation"));
-		sparks.add(Spark.find("nothing_to_do"));
-		sparks.add(Spark.find("pronounce_linux"));
-		sparks.add(Spark.find("pronounce_alicia"));
-		sparks.add(Spark.find("pronounce_hulles"));
-		sparks.add(Spark.find("listen_to_her_heart"));
-		sparks.add(Spark.find("sorry_for_it_all"));
-		sparks.add(Spark.find("dead_sara"));
-		sparks.add(Spark.find("notification_medium"));
-		sparks.add(Spark.find("random_music"));
+		sparks.add(SerialSpark.find("match_artists_and_titles"));
+		sparks.add(SerialSpark.find("play_artist"));
+		sparks.add(SerialSpark.find("play_title"));
+		sparks.add(SerialSpark.find("play_video"));
+		sparks.add(SerialSpark.find("prompt"));
+		sparks.add(SerialSpark.find("speak"));
+		sparks.add(SerialSpark.find("praise"));
+		sparks.add(SerialSpark.find("exclamation"));
+		sparks.add(SerialSpark.find("nothing_to_do"));
+		sparks.add(SerialSpark.find("pronounce_linux"));
+		sparks.add(SerialSpark.find("pronounce_alicia"));
+		sparks.add(SerialSpark.find("pronounce_hulles"));
+		sparks.add(SerialSpark.find("listen_to_her_heart"));
+		sparks.add(SerialSpark.find("sorry_for_it_all"));
+		sparks.add(SerialSpark.find("dead_sara"));
+		sparks.add(SerialSpark.find("notification_medium"));
+		sparks.add(SerialSpark.find("random_music"));
 		return sparks;
 	}
 

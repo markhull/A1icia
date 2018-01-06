@@ -2,13 +2,8 @@ package com.hulles.a1icia.cayenne;
 
 import javax.sql.DataSource;
 
-import org.apache.cayenne.ConfigurationException;
 import org.apache.cayenne.configuration.DataNodeDescriptor;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
-import org.apache.cayenne.conn.DataSourceInfo;
-import org.apache.cayenne.di.Inject;
-import org.apache.cayenne.log.JdbcEventLogger;
-import org.apache.cayenne.resource.ResourceLocator;
 
 import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
@@ -17,26 +12,20 @@ public final class A1iciaDataSourceFactory implements DataSourceFactory {
 //	private final static Logger LOGGER = Logger.getLogger("A1iciaCayenne.A1iciaDataSourceFactory");
 //	private final static Level LOGLEVEL = Level.INFO;
 
-	@Inject
-	protected ResourceLocator resourceLocator;
-
-	@Inject
-	protected JdbcEventLogger jdbcEventLogger;
-
 	@Override
 	public DataSource getDataSource(DataNodeDescriptor nodeDescriptor) throws Exception {
-		DataSourceInfo dataSourceDescriptor;
+//		DataSourceInfo dataSourceDescriptor;
         MysqlConnectionPoolDataSource dataSource;
 		PurdahKeys purdah;
-		String message;
+//		String message;
 		
-		dataSourceDescriptor = nodeDescriptor.getDataSourceDescriptor();
-		if (dataSourceDescriptor == null) {
-			message = "Null dataSourceDescriptor for nodeDescriptor '"
-					+ nodeDescriptor.getName()
-					+ "'";
-			throw new ConfigurationException(message);
-		}
+//		dataSourceDescriptor = nodeDescriptor.getDataSourceDescriptor();
+//		if (dataSourceDescriptor == null) {
+//			message = "Null dataSourceDescriptor for nodeDescriptor '"
+//					+ nodeDescriptor.getName()
+//					+ "'";
+//			throw new ConfigurationException(message);
+//		}
 
 		purdah = PurdahKeys.getInstance();
         dataSource = new MysqlConnectionPoolDataSource();

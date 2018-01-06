@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.AnswerChunk;
 import com.hulles.a1icia.cayenne.AnswerHistory;
+import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.document.HistoryUpdate;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
@@ -177,9 +178,8 @@ public class LimaHistory {
 		logger.log(LOGLEVEL_B, "LimaHistory: should be updating database with " + sparkPkg);
 		A1iciaApplication.setErrorOnUncommittedObjects(false);
 		answerHistory = AnswerHistory.createNew();
-		answerHistory.setSpark(sparkPkg.getSpark());
+		answerHistory.setSpark(Spark.fromSerial(sparkPkg.getSpark()));
 		answerHistory.setSparkObject(sparkPkg.getSparkObject());
-		answerHistory.setSparkObjectType(sparkPkg.getSparkObjectType());
 		answerHistory.setLemmatizedQuestion(sp.getLemmatizedSentence());
 		
 		answerHistory.setPosTags(sp.getPosTagString());

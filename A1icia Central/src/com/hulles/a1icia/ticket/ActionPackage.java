@@ -23,13 +23,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.cayenne.Spark;
 
 import redis.clients.jedis.Jedis;
 /**
@@ -69,7 +69,7 @@ public final class ActionPackage {
 		this.actionObject = actionObject;
 	}
 
-	public Spark getSpark() {
+	public SerialSpark getSpark() {
 		
 		return sparkPackage.getSpark();
 	}
@@ -121,8 +121,8 @@ public final class ActionPackage {
 	 * @param pkgs The list of action packages that possibly contains the named package
 	 * @return The named package, or null if not a member of the list
 	 */
-	public static ActionPackage has(Spark spark, List<ActionPackage> pkgs) {
-		Spark pkgSpark;
+	public static ActionPackage has(SerialSpark spark, List<ActionPackage> pkgs) {
+		SerialSpark pkgSpark;
         
 		A1iciaUtils.checkNotNull(spark);
 		A1iciaUtils.checkNotNull(pkgs);
@@ -143,7 +143,7 @@ public final class ActionPackage {
 	 * @param pkgs The list of packages that may contain the spark
 	 * @return The sublist of packages that contain the spark; empty list if none
 	 */
-	public static List<ActionPackage> hasActions(Spark spark, List<ActionPackage> pkgs) {
+	public static List<ActionPackage> hasActions(SerialSpark spark, List<ActionPackage> pkgs) {
 		List<ActionPackage> subList;
 		
 		A1iciaUtils.checkNotNull(spark);
@@ -165,7 +165,7 @@ public final class ActionPackage {
 	 * @param pkgs The list of packages that possibly contains the named package
 	 * @return The named package, or null if not a member of the list
 	 */
-	public static ActionPackage consume(Spark spark, List<ActionPackage> pkgs) {
+	public static ActionPackage consume(SerialSpark spark, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		
 		A1iciaUtils.checkNotNull(spark);
@@ -188,7 +188,7 @@ public final class ActionPackage {
 	 * @param pkgs The list of packages that possibly contains the spark
 	 * @return The sublist of packages, or an empty list if none
 	 */
-	public static List<ActionPackage> consumeActions(Spark spark, List<ActionPackage> pkgs) {
+	public static List<ActionPackage> consumeActions(SerialSpark spark, List<ActionPackage> pkgs) {
 		List<ActionPackage> subList;
 		ActionPackage pkg;
 		
@@ -214,7 +214,7 @@ public final class ActionPackage {
 	 * @param pkgs The list of action packages that possibly contains the target package
 	 * @return The action package, or null if not a member of the list
 	 */
-	public static ActionPackage consumeFinal(Spark spark, List<ActionPackage> pkgs) {
+	public static ActionPackage consumeFinal(SerialSpark spark, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		ActionPackage foundPkg = null;
 		String errMsg;
@@ -278,7 +278,7 @@ public final class ActionPackage {
 		return pkg;
 	}
 	
-	public static ActionPackage getProxyActionPackage(Spark spark) {
+	public static ActionPackage getProxyActionPackage(SerialSpark spark) {
 		ActionPackage pkg;
 		SparkPackage sparkPkg;
 		

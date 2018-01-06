@@ -33,12 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaGoogleTranslator;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.Dialog;
 import com.hulles.a1icia.api.dialog.DialogHeader;
@@ -47,8 +41,13 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.dialog.DialogSerialization;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSpark;
-import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.jebus.JebusBible;
+import com.hulles.a1icia.jebus.JebusHub;
+import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
+import com.hulles.a1icia.tools.A1iciaGoogleTranslator;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -129,14 +128,14 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	@Override
 	protected void houseStartup() {
-		Spark openSpark;
+		SerialSpark openSpark;
 		
 		executor = Executors.newCachedThreadPool();
 		if (!noPrompts) {
 			promptTimer = new Timer();
 			prompters = new ArrayList<>();
 		}
-		openSpark = Spark.find("central_startup");
+		openSpark = SerialSpark.find("central_startup");
 		stationBroadcast("A1icia Central starting up....", openSpark);
 	}
 
@@ -146,9 +145,9 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	@Override
 	protected void houseShutdown() {
-		Spark closeSpark;
+		SerialSpark closeSpark;
 		
-		closeSpark = Spark.find("central_shutdown");
+		closeSpark = SerialSpark.find("central_shutdown");
 		stationBroadcast("A1icia Central shutting down....", closeSpark);
 		if (executor != null) {
 			try {
@@ -189,7 +188,7 @@ public final class A1iciaStationServer extends UrHouse {
 		A1icianID fromA1icianID;
 		Session session;
 		SerialSpark spark;
-		Spark serverLight;
+		SerialSpark serverLight;
 		Set<SerialSpark> sparksCopy;
 		
 		A1iciaUtils.checkNotNull(requestBytes);
@@ -254,7 +253,7 @@ public final class A1iciaStationServer extends UrHouse {
 			setSession(session);
 			LOGGER.log(LOGLEVEL1, "StationServer: after setSession for " + fromA1icianID);
 			// be nice and send them a green server LED
-			serverLight = Spark.find("set_green_LED_on");
+			serverLight = SerialSpark.find("set_green_LED_on");
 			stationSend(fromA1icianID, "Connecting to running server....", serverLight);
 		}
 		dialogRequest.setRequestActions(sparksCopy);
@@ -288,7 +287,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param message
 	 * @param command
 	 */
-	private void stationBroadcast(String message, Spark command) {
+	private void stationBroadcast(String message, SerialSpark command) {
 		DialogResponse response;
 		
 		A1iciaUtils.checkNotNull(message);
@@ -299,7 +298,7 @@ public final class A1iciaStationServer extends UrHouse {
 		response.setFromA1icianID(a1iciaA1icianID);
 		response.setToA1icianID(broadcastID);
 		if (command != null) {
-			response.setResponseAction(command.toSerial());
+			response.setResponseAction(command);
 		}
 		stationSend(broadcastID, response);
 	}
@@ -312,7 +311,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param message The message to send
 	 * @param command The command to send
 	 */
-	private void stationSend(A1icianID a1icianID, String message, Spark command) {
+	private void stationSend(A1icianID a1icianID, String message, SerialSpark command) {
 		DialogResponse response;
 		
 		A1iciaUtils.checkNotNull(a1icianID);
@@ -324,7 +323,7 @@ public final class A1iciaStationServer extends UrHouse {
 		response.setFromA1icianID(a1iciaA1icianID);
 		response.setToA1icianID(a1icianID);
 		if (command != null) {
-			response.setResponseAction(command.toSerial());
+			response.setResponseAction(command);
 		}
 		stationSend(a1icianID, response);
 	}

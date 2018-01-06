@@ -19,13 +19,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.cayenne;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
-import com.google.common.collect.ImmutableList;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.cayenne.auto._Spark;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -33,71 +33,96 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public class Spark extends _Spark implements Comparable<Spark> {
     private static final long serialVersionUID = 1L; 
     
-    public static Spark findSpark(Integer sparkID) {
-		ObjectContext context;
-		Spark item;
-		
-		A1iciaUtils.checkNotNull(sparkID);
-		context = A1iciaApplication.getEntityContext();
-		item = Cayenne.objectForPK(context, Spark.class, sparkID);
-		return item;
-    }
+//    public static SerialSpark findSpark(Integer sparkID) {
+//		ObjectContext context;
+//		Spark spark;
+//		
+//		A1iciaUtils.checkNotNull(sparkID);
+//		context = A1iciaApplication.getEntityContext();
+//		spark = Cayenne.objectForPK(context, Spark.class, sparkID);
+//		if (spark == null) {
+//			return null;
+//		}
+//		return spark.toSerial();
+//    }
     
-    public static Spark find(String nm) {
+//    public static SerialSpark find(String nm) {
+//		Spark spark;
+//
+//		spark = findRaw(nm);
+//		if (spark == null) {
+//			A1iciaUtils.error("Spark: cannot find spark named " + nm, "Returning null spark");
+//			return null;
+//		}
+//		return spark.toSerial();
+//    }
+    
+    private static Spark findRaw(String nm) {
 		ObjectContext context;
-		Spark item;
+		Spark spark;
 		
 		A1iciaUtils.checkNotNull(nm);
 		context = A1iciaApplication.getEntityContext();
-		item = ObjectSelect
+		spark = ObjectSelect
 				.query(Spark.class)
 				.where(_Spark.NAME.eq(nm))
 				.selectOne(context);
-		if (item == null) {
-			A1iciaUtils.error("Spark: cannot find spark named " + nm, "Returning null spark");
-		}
-		return item;
+		return spark;
     }
     
-	public static List<Spark> getAllSparks() {
+	public static Set<SerialSpark> getAllSparks() {
 		ObjectContext context;
 		List<Spark> dbSparks;
+		Set<SerialSpark> sparks;
+		SerialSpark spark;
 		
 		context = A1iciaApplication.getEntityContext();
 		dbSparks = ObjectSelect
 				.query(Spark.class)
 				.select(context);
-    	return ImmutableList.copyOf(dbSparks);
+		sparks = new HashSet<>(dbSparks.size());
+		for (Spark dbSpark : dbSparks) {
+			spark = dbSpark.toSerial();
+			sparks.add(spark);
+		}
+    	return sparks;
     }
     
-	public static List<Spark> getExternalSparks() {
+	public static Set<SerialSpark> getExternalSparks() {
 		ObjectContext context;
 		List<Spark> dbSparks;
+		Set<SerialSpark> sparks;
+		SerialSpark spark;
 		
 		context = A1iciaApplication.getEntityContext();
 		dbSparks = ObjectSelect
 				.query(Spark.class)
 				.where(_Spark.EXTERNAL.eq(true))
 				.select(context);
-    	return ImmutableList.copyOf(dbSparks);
+		sparks = new HashSet<>(dbSparks.size());
+		for (Spark dbSpark : dbSparks) {
+			spark = dbSpark.toSerial();
+			sparks.add(spark);
+		}
+    	return sparks;
     }
     
-    public boolean is(String nm) {
-    
-    	A1iciaUtils.checkNotNull(nm);
-    	return getName().equals(nm);
-    }
+//    public boolean is(String nm) {
+//    
+//    	A1iciaUtils.checkNotNull(nm);
+//    	return getName().equals(nm);
+//    }
 	
-    public boolean isExternal() {
-    
-    	return getExternal();
-    }
+//    public boolean isExternal() {
+//    
+//    	return getExternal();
+//    }
     
 	public static Spark fromSerial(SerialSpark serialSpark) {
 		Spark spark;
 		
 		A1iciaUtils.checkNotNull(serialSpark);
-		spark = find(serialSpark.getName());
+		spark = findRaw(serialSpark.getName());
 		return spark;
 	}
 	
@@ -114,20 +139,23 @@ public class Spark extends _Spark implements Comparable<Spark> {
 	}
 	
 	public static void dumpSparks() {
-		List<Spark> sparks;
+		Set<SerialSpark> sparks;
 		
 		sparks = getAllSparks();
-		for (Spark spark : sparks) {
+		for (SerialSpark spark : sparks) {
 			java.lang.System.out.println(spark);
 		}
 	}
 
-	public static Spark getProxySpark() {
+	public static SerialSpark getProxySpark() {
 		Spark spark;
 		
 		A1iciaUtils.warning("Getting proxy spark");
-		spark = Spark.find("exclamation");
-		return spark;
+		spark = Spark.findRaw("exclamation");
+		if (spark == null) {
+			return null;
+		}
+		return spark.toSerial();
 	}
 	
 	/**
@@ -219,7 +247,7 @@ public class Spark extends _Spark implements Comparable<Spark> {
 	public static boolean exists(String nm) {
 		Spark spark;
 		
-		spark = find(nm);
+		spark = findRaw(nm);
 		return spark != null;
 	}
 }

@@ -25,8 +25,8 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.ChangeLanguageObject;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -36,7 +36,6 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -125,11 +124,6 @@ public final class OscarRoom extends UrRoom {
 		
 		A1iciaUtils.checkNotNull(sparkPkg);
 		A1iciaUtils.checkNotNull(request);
-		if (sparkPkg.getSparkObjectType() != SparkObjectType.LANGUAGE) {
-			A1iciaUtils.error("Spark object type was not LANGUAGE for change_language, was " + 
-					sparkPkg.getSparkObjectType().getDisplayName());
-			return null;
-		}
 		langStr = sparkPkg.getSparkObject();
 		language = Language.valueOf(langStr);
 		changeLang = new ChangeLanguageObject();
@@ -142,25 +136,25 @@ public final class OscarRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("help"));
-		sparks.add(Spark.find("what_is_your_name"));
-		sparks.add(Spark.find("dislike_pickles"));
-		sparks.add(Spark.find("what_is_your_age"));
-		sparks.add(Spark.find("when_were_you_born"));
-		sparks.add(Spark.find("what_is_pi"));
-		sparks.add(Spark.find("like_waffles"));
-		sparks.add(Spark.find("listen_to_her_heart"));
-		sparks.add(Spark.find("rectum"));
-		sparks.add(Spark.find("personal_assistant"));
-		sparks.add(Spark.find("amanuensis"));
-		sparks.add(Spark.find("pronounce_hulles"));
-		sparks.add(Spark.find("change_language"));
-		sparks.add(Spark.find("like_gophers"));
-		sparks.add(Spark.find("not_dave"));
+		sparks.add(SerialSpark.find("help"));
+		sparks.add(SerialSpark.find("what_is_your_name"));
+		sparks.add(SerialSpark.find("dislike_pickles"));
+		sparks.add(SerialSpark.find("what_is_your_age"));
+		sparks.add(SerialSpark.find("when_were_you_born"));
+		sparks.add(SerialSpark.find("what_is_pi"));
+		sparks.add(SerialSpark.find("like_waffles"));
+		sparks.add(SerialSpark.find("listen_to_her_heart"));
+		sparks.add(SerialSpark.find("rectum"));
+		sparks.add(SerialSpark.find("personal_assistant"));
+		sparks.add(SerialSpark.find("amanuensis"));
+		sparks.add(SerialSpark.find("pronounce_hulles"));
+		sparks.add(SerialSpark.find("change_language"));
+		sparks.add(SerialSpark.find("like_gophers"));
+		sparks.add(SerialSpark.find("not_dave"));
 		return sparks;
 	}
 

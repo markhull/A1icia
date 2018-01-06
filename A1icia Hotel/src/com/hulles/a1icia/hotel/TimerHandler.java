@@ -32,7 +32,7 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -129,7 +129,7 @@ final class TimerHandler implements Closeable {
 	
 	void pushNotification(HotelTimer timer) {
 		ClientDialogResponse clientResponse;
-		Spark spark;
+		SerialSpark spark;
 		MediaObject mediaObject;
 		DialogResponse response;
 		
@@ -142,8 +142,8 @@ final class TimerHandler implements Closeable {
 //		response.setPersonUUID(timer.getPersonUUID());
 		
 		response.setToA1icianID(timer.getA1icianID());
-		spark = Spark.find("wake_up_console");
-		response.setResponseAction(spark.toSerial());
+		spark = SerialSpark.find("wake_up_console");
+		response.setResponseAction(spark);
 		hotelRoom.postRequest(clientResponse);
 		
 		// next we send a blinking LED, a sound clip and a message 
@@ -154,8 +154,8 @@ final class TimerHandler implements Closeable {
 //		response.setPersonUUID(timer.getPersonUUID());
 		response.setExplanation(timer.getName() + " has finished.");
 		response.setToA1icianID(timer.getA1icianID());
-		spark = Spark.find("blink_white_LED");
-		response.setResponseAction(spark.toSerial());
+		spark = SerialSpark.find("blink_white_LED");
+		response.setResponseAction(spark);
 		response.setMessage("Time's up!");
 		// this should set the accompanying bugle call or whatever for the timer
 		mediaObject = (MediaObject) timer.getMediaObject().getClientObject();
@@ -173,7 +173,7 @@ final class TimerHandler implements Closeable {
 			public void run() {
 				ClientDialogResponse clientResponse;
 				DialogResponse response;
-				Spark spark;
+				SerialSpark spark;
 				
 				// we turn off the blinky LED if it wasn't manually cancelled already
 				// TODO consider leaving it on to show that the event occurred
@@ -183,8 +183,8 @@ final class TimerHandler implements Closeable {
 				response.setFromA1icianID(timer.getA1icianID());
 //				response.setPersonUUID(timer.getPersonUUID());
 				response.setToA1icianID(A1iciaConstants.getA1iciaA1icianID());
-				spark = Spark.find("blink_white_LED");
-				response.setResponseAction(spark.toSerial());
+				spark = SerialSpark.find("blink_white_LED");
+				response.setResponseAction(spark);
 				hotelRoom.postRequest(clientResponse);
 			}
 		};
