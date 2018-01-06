@@ -20,3 +20,10 @@ Cayenne is the module that provides RDBMS services to A1icia. A1icia currently u
 
 This is awesome, because it means that A1icia Central can run on very small to very large platforms with no discomfiture. Go A1icia.
 
+## Build Class Path
+* A1iciaAPI.jar
+* A1iciaCentral.jar
+* A1iciaCrypto.jar
+* A1iciaMedia.jar
+* guava-23.0.jar
+* mysql-connector-java-5.1.40.jar
