@@ -68,12 +68,12 @@ public class OscarResponder {
 		int daysAliveYears;
 		int daysAliveMonths;
 		int daysAliveDays;
-		Period appear;
-		int appearYears;
-		int appearMonths;
-		int appearDays;
+//		Period appear;
+//		int appearYears;
+//		int appearMonths;
+//		int appearDays;
 		LocalDate birthDate;
-		LocalDate appearDate;
+//		LocalDate appearDate;
 		String dateStr;
 		DateTimeFormatter formatter;
 		String message = "I don't know.";
@@ -120,25 +120,25 @@ public class OscarResponder {
 				daysAliveDays = daysAlive.getDays();
 				// I know, right? But we *add* days to the birth date to make A1icia seem younger.
 				// I always get that wrong.
-				appearDate = LocalDate.from(birthDate).plusDays(3);
-				appear = Period.between(appearDate, now);
-				appearYears = appear.getYears();
-				appearMonths = appear.getMonths();
-				appearDays = appear.getDays();
+//				appearDate = LocalDate.from(birthDate).plusDays(3);
+//				appear = Period.between(appearDate, now);
+//				appearYears = appear.getYears();
+//				appearMonths = appear.getMonths();
+//				appearDays = appear.getDays();
 				message = "I am " + 
 						(daysAliveYears == 0 ? "" : daysAliveYears + 
 						(daysAliveYears == 1 ? " year, " : " years, ")) + 
 						(daysAliveMonths == 0 ? "" : daysAliveMonths + 
 						(daysAliveMonths == 1 ? " month and " : " months and ")) + 
 						daysAliveDays + (daysAliveDays == 1 ? " day old." : " days old.");
-				if (random.nextBoolean()) {
-					message += " But I'm told I don't look a day over " + 
-							(appearYears == 0 ? "" : appearYears + 
-							(appearYears == 1 ? " year, " : " years, ")) + 
-							(appearMonths == 0 ? "" : appearMonths + 
-							(appearMonths == 1 ? " month and " : " months and ")) + 
-							appearDays + (appearDays == 1 ? " day." : " days.");
-				}
+//				if (random.nextBoolean()) {
+//					message += " But I'm told I don't look a day over " + 
+//							(appearYears == 0 ? "" : appearYears + 
+//							(appearYears == 1 ? " year, " : " years, ")) + 
+//							(appearMonths == 0 ? "" : appearMonths + 
+//							(appearMonths == 1 ? " month and " : " months and ")) + 
+//							appearDays + (appearDays == 1 ? " day." : " days.");
+//				}
 				break;
 			case "dislike_pickles":
 				message = "I don't like pickles because they look funny and they seem evil.";
