@@ -1,4 +1,4 @@
-# A1icia Bravo
+# A1icia Node
 
 This is the Node Module for the [A1icia Project](https://github.com/markhull/A1icia).
 
