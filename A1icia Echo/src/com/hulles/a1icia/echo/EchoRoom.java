@@ -28,8 +28,8 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.echo.EchoAnalysis.VectorLoad;
 import com.hulles.a1icia.echo.w2v.WordDistance;
 import com.hulles.a1icia.echo.w2v.WordToVecSearch;
@@ -232,11 +232,11 @@ public final class EchoRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("match_word_or_phrase"));
+		sparks.add(SerialSpark.find("match_word_or_phrase"));
 		return sparks;
 	}
 

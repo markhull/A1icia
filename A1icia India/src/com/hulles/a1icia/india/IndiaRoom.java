@@ -27,8 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.MessageAction;
@@ -174,20 +174,20 @@ public final class IndiaRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("greet"));
-		sparks.add(Spark.find("prompt"));
-		sparks.add(Spark.find("youre_welcome"));
-		sparks.add(Spark.find("how_are_you"));
-		sparks.add(Spark.find("exclamation"));
-		sparks.add(Spark.find("thank_you"));
-		sparks.add(Spark.find("praise"));
-		sparks.add(Spark.find("are_you_still_there"));
-		sparks.add(Spark.find("nothing_to_do"));
-		sparks.add(Spark.find("random_quotation"));
+		sparks.add(SerialSpark.find("greet"));
+		sparks.add(SerialSpark.find("prompt"));
+		sparks.add(SerialSpark.find("youre_welcome"));
+		sparks.add(SerialSpark.find("how_are_you"));
+		sparks.add(SerialSpark.find("exclamation"));
+		sparks.add(SerialSpark.find("thank_you"));
+		sparks.add(SerialSpark.find("praise"));
+		sparks.add(SerialSpark.find("are_you_still_there"));
+		sparks.add(SerialSpark.find("nothing_to_do"));
+		sparks.add(SerialSpark.find("random_quotation"));
 		return sparks;
 	}
 

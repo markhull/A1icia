@@ -44,7 +44,6 @@ import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.base.Controller;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.house.A1iciaStationServer;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -182,49 +181,16 @@ public class A1icia implements Closeable {
 	 */
 	void forwardRequestToRoom(DialogRequest request) {
 		ClientDialogRequest clientRequest;
-		Set<Spark> sparksIn;
 		
 		if (!request.isValid()) {
 			A1iciaUtils.error("A1icia: DialogRequest is not valid, refusing it",
 					request.toString());
 			return;
 		}
-		sparksIn = getInputSparks(request);
 		clientRequest = new ClientDialogRequest(request);
-		clientRequest.setClientSparks(sparksIn);
 		a1iciaRoom.receiveRequest(clientRequest);
 	}
 	
-	/**
-	 * Convert any SerialSparks in the DialogRequest into regular Sparks.
-	 * 
-	 * @param request The input DialogRequest
-	 * @return A (possibly empty) set of Sparks, or null if the SerialSparks field in the 
-	 * request was null
-	 */
-	private static Set<Spark> getInputSparks(DialogRequest request) {
-		Set<SerialSpark> serialSparks;
-		Set<Spark> sparksIn = null;
-		Spark sparkIn = null;
-		
-		A1iciaUtils.checkNotNull(request);
-		serialSparks = request.getRequestActions();
-		if (serialSparks != null) {
-			sparksIn = new HashSet<>(serialSparks.size());
-			for (SerialSpark serialSpark : serialSparks) {
-				sparkIn = Spark.fromSerial(serialSpark);
-				if (sparkIn == null) {
-					A1iciaUtils.error("Unable to find received spark = " + serialSpark.getName());
-					sparkIn = Spark.find("exclamation");
-				} else if (!sparkIn.isExternal()) {
-					A1iciaUtils.error("Received spark not marked for external use = " + sparkIn.getName());
-					sparkIn = Spark.find("exclamation");
-				}
-				sparksIn.add(sparkIn);
-			}
-		}
-		return sparksIn;
-	}
 	
 	/**
 	 * Forward a response from the room network to the house network. This method
@@ -618,19 +584,19 @@ public class A1icia implements Closeable {
 		 * 
 		 */
 		@Override
-		protected Set<Spark> loadSparks() {
-			Set<Spark> sparks;
+		protected Set<SerialSpark> loadSparks() {
+			Set<SerialSpark> sparks;
 			
 			sparks = new HashSet<>();
-			sparks.add(Spark.find("client_response"));
-			sparks.add(Spark.find("indie_response"));
-			sparks.add(Spark.find("like_a_version"));
+			sparks.add(SerialSpark.find("client_response"));
+			sparks.add(SerialSpark.find("indie_response"));
+			sparks.add(SerialSpark.find("like_a_version"));
 			// these sparks are not really "handled" by A1icia, but we want to mark them
 			//    that way for completeness
-			sparks.add(Spark.find("central_startup"));
-			sparks.add(Spark.find("central_shutdown"));
-			sparks.add(Spark.find("client_startup"));
-			sparks.add(Spark.find("client_shutdown"));
+			sparks.add(SerialSpark.find("central_startup"));
+			sparks.add(SerialSpark.find("central_shutdown"));
+			sparks.add(SerialSpark.find("client_startup"));
+			sparks.add(SerialSpark.find("client_shutdown"));
 			return sparks;
 		}
 

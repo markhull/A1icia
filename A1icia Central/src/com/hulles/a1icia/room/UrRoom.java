@@ -37,6 +37,8 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomRequest;
@@ -45,8 +47,6 @@ import com.hulles.a1icia.room.document.WhatSparksAction;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.cayenne.Spark;
 
 /**
  * UrRoom is the base room (superclass) for all the Mind rooms. It contains the logic to send
@@ -59,7 +59,7 @@ public abstract class UrRoom extends AbstractIdleService {
 	private final static Logger logger = Logger.getLogger("A1icia.UrRoom");
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final EventBus hall;
-	private final ImmutableSet<Spark> roomSparks;
+	private final ImmutableSet<SerialSpark> roomSparks;
 	private final ListMultimap<Long, RoomResponse> responseCabinet;
 	private final ConcurrentMap<Long, RoomRequest> requestCabinet;
 	private final ExecutorService threadPool;
@@ -83,7 +83,7 @@ public abstract class UrRoom extends AbstractIdleService {
 	 * 
 	 * @return The copy of the set
 	 */
-	public Set<Spark> getRoomSparks() {
+	public Set<SerialSpark> getRoomSparks() {
 		
 		return new HashSet<>(roomSparks);
 	}
@@ -293,7 +293,7 @@ public abstract class UrRoom extends AbstractIdleService {
 	
 	protected abstract void processRoomAnnouncement(RoomAnnouncement announcement);
 	
-	protected abstract Set<Spark> loadSparks();
+	protected abstract Set<SerialSpark> loadSparks();
 	
 	/**
 	 * Respond to a WHAT_SPARKS room request.

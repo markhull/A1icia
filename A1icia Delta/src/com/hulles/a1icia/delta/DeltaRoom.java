@@ -28,8 +28,8 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.A1icianAction;
@@ -37,7 +37,6 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkObjectType;
 import com.hulles.a1icia.ticket.SparkPackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -114,17 +113,11 @@ public final class DeltaRoom extends UrRoom {
 		A1icianAction action;
 		String a1icianStr;
 		A1icianID a1icianID;
-		SparkObjectType type;
-		Spark spark;
+		SerialSpark spark;
 		
 		A1iciaUtils.checkNotNull(sparkPkg);
 		A1iciaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "DeltaRoom: in createA1icianActionPackage");
-		type = sparkPkg.getSparkObjectType();
-		if (type != SparkObjectType.ALICIAN) {
-			A1iciaUtils.error("Delta Room: expected ALICIAN spark type, got " + type);
-			return null;
-		}
 		a1icianStr = sparkPkg.getSparkObject();
 		if (a1icianStr == null) {
 			A1iciaUtils.error("Delta Room: a1ician ID sparkObject is null");
@@ -152,33 +145,33 @@ public final class DeltaRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("set_red_LED_on"));
-		sparks.add(Spark.find("set_red_LED_off"));
-		sparks.add(Spark.find("set_green_LED_on"));
-		sparks.add(Spark.find("set_green_LED_off"));
-		sparks.add(Spark.find("set_yellow_LED_on"));
-		sparks.add(Spark.find("set_yellow_LED_off"));
-		sparks.add(Spark.find("set_white_LED_on"));
-		sparks.add(Spark.find("set_white_LED_off"));
-		sparks.add(Spark.find("blink_red_LED"));
-		sparks.add(Spark.find("blink_green_LED"));
-		sparks.add(Spark.find("blink_yellow_LED"));
-		sparks.add(Spark.find("blink_white_LED"));
-		sparks.add(Spark.find("pulse_red_LED"));
-		sparks.add(Spark.find("pulse_green_LED"));
-		sparks.add(Spark.find("pulse_yellow_LED"));
-		sparks.add(Spark.find("pulse_white_LED"));
-		sparks.add(Spark.find("wake_up_console"));
-		sparks.add(Spark.find("pretty_lights_off"));
-		sparks.add(Spark.find("pretty_lights_random"));
-		sparks.add(Spark.find("pretty_lights_spinny"));
-		sparks.add(Spark.find("pretty_lights_color_wipe"));
-		sparks.add(Spark.find("pretty_lights_theater"));
-		sparks.add(Spark.find("pretty_lights_rainbows"));
+		sparks.add(SerialSpark.find("set_red_LED_on"));
+		sparks.add(SerialSpark.find("set_red_LED_off"));
+		sparks.add(SerialSpark.find("set_green_LED_on"));
+		sparks.add(SerialSpark.find("set_green_LED_off"));
+		sparks.add(SerialSpark.find("set_yellow_LED_on"));
+		sparks.add(SerialSpark.find("set_yellow_LED_off"));
+		sparks.add(SerialSpark.find("set_white_LED_on"));
+		sparks.add(SerialSpark.find("set_white_LED_off"));
+		sparks.add(SerialSpark.find("blink_red_LED"));
+		sparks.add(SerialSpark.find("blink_green_LED"));
+		sparks.add(SerialSpark.find("blink_yellow_LED"));
+		sparks.add(SerialSpark.find("blink_white_LED"));
+		sparks.add(SerialSpark.find("pulse_red_LED"));
+		sparks.add(SerialSpark.find("pulse_green_LED"));
+		sparks.add(SerialSpark.find("pulse_yellow_LED"));
+		sparks.add(SerialSpark.find("pulse_white_LED"));
+		sparks.add(SerialSpark.find("wake_up_console"));
+		sparks.add(SerialSpark.find("pretty_lights_off"));
+		sparks.add(SerialSpark.find("pretty_lights_random"));
+		sparks.add(SerialSpark.find("pretty_lights_spinny"));
+		sparks.add(SerialSpark.find("pretty_lights_color_wipe"));
+		sparks.add(SerialSpark.find("pretty_lights_theater"));
+		sparks.add(SerialSpark.find("pretty_lights_rainbows"));
 		return sparks;
 	}
 

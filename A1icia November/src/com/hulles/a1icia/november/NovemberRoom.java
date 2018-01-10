@@ -28,10 +28,10 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.object.LoginResponseObject;
 import com.hulles.a1icia.api.shared.SerialPerson;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Person;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.Room;
@@ -172,11 +172,11 @@ public final class NovemberRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("login"));
+		sparks.add(SerialSpark.find("login"));
 		return sparks;
 	}
 

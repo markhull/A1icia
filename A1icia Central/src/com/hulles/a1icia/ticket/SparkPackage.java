@@ -23,12 +23,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.cayenne.Spark;
 
 import redis.clients.jedis.Jedis;
 
@@ -46,9 +47,8 @@ import redis.clients.jedis.Jedis;
  *
  */
 public class SparkPackage {
-	private Spark spark;
+	private SerialSpark spark;
 	private String sparkObject;
-	private SparkObjectType type;
 	private SentencePackage sentencePackage;	
 	private Integer confidence; // 0 - 100, 100 = certainty
 	private final String idString;
@@ -65,12 +65,12 @@ public class SparkPackage {
 		return idString;
 	}
 
-	public Spark getSpark() {
+	public SerialSpark getSpark() {
 		
 		return spark;
 	}
 
-	public void setSpark(Spark spark) {
+	public void setSpark(SerialSpark spark) {
 		
 		A1iciaUtils.checkNotNull(spark);
 		this.spark = spark;
@@ -85,17 +85,6 @@ public class SparkPackage {
 		
 		A1iciaUtils.nullsOkay(object);
 		this.sparkObject = object;
-	}
-
-	public SparkObjectType getSparkObjectType() {
-		
-		return type;
-	}
-
-	public void setSparkObjectType(SparkObjectType type) {
-		
-		A1iciaUtils.checkNotNull(type);
-		this.type = type;
 	}
 
 	public SentencePackage getSentencePackage() {
@@ -246,30 +235,28 @@ public class SparkPackage {
 		return new SparkPackage();
 	}
 	
-	public static SparkPackage getDefaultPackage(Spark spark) {
+	public static SparkPackage getDefaultPackage(SerialSpark spark) {
 		SparkPackage pkg;
 		
 		A1iciaUtils.checkNotNull(spark);
 		pkg = new SparkPackage();
 		pkg.setSpark(spark);
 		pkg.setConfidence(0);
-		pkg.setSparkObjectType(SparkObjectType.NONE);
 		return pkg;
 	}
 	public static SparkPackage getDefaultPackage(String name) {
 		SparkPackage pkg;
-		Spark spark;
+		SerialSpark spark;
 		
 		A1iciaUtils.checkNotNull(name);
-		spark = Spark.find(name);
+		spark = SerialSpark.find(name);
 		pkg = new SparkPackage();
 		pkg.setSpark(spark);
 		pkg.setConfidence(0);
-		pkg.setSparkObjectType(SparkObjectType.NONE);
 		return pkg;
 	}
 	
-	public static List<SparkPackage> getSingletonDefault(Spark spark) {
+	public static List<SparkPackage> getSingletonDefault(SerialSpark spark) {
 		SparkPackage pkg;
 		
 		A1iciaUtils.checkNotNull(spark);
@@ -278,16 +265,16 @@ public class SparkPackage {
 	}
 	public static List<SparkPackage> getSingletonDefault(String name) {
 		SparkPackage pkg;
-		Spark spark;
+		SerialSpark spark;
 		
 		A1iciaUtils.checkNotNull(name);
-		spark = Spark.find(name);
+		spark = SerialSpark.find(name);
 		pkg = getDefaultPackage(spark);
 		return Collections.singletonList(pkg);
 	}
 	
 	public static SparkPackage getProxyPackage() {
-		Spark spark;
+		SerialSpark spark;
 		
 		spark = Spark.getProxySpark();
 		return getDefaultPackage(spark);
@@ -300,10 +287,6 @@ public class SparkPackage {
 		}
 		
 		// sparkObject can be null
-		
-		if (type == null) {
-			return false;
-		}
 		
 		// sentencePackage can be null
 		

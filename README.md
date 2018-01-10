@@ -5,12 +5,15 @@ A1icia is a professional incarnation of a personal assistant written in Java. Sh
 
 ## So Why Another Personal Assistant?
 
-The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, but still, it's personal information.
+The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, not sure about the others, but still, it's personal information.
 
-So, I really wanted a personal assistant, but one over which I could have complete control and one that would let me do all the things
-I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these scripting languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
+### Use An Existing Project?
 
-So I decided to create a personal assistant that was written in Java by a professional programmer (me, duh) that was adaptable enough to do all the things I wanted to do:
+I really wanted a personal assistant, but one over which I could have complete control and one that would let me do all the things I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these scripting languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
+
+### DIY Punkware
+
+So, since I listened to a [Black Flag song](https://en.wikipedia.org/wiki/DIY_ethic) once, I decided to write a personal assistant myself in Java that was adaptable enough to do all the things I wanted to do:
 
 * experiment with machine learning and AI, 
 * run so-called **IoT** gizmos around the house (like a [Magic Mirror](https://github.com/MichMich/MagicMirror)), 
@@ -19,7 +22,7 @@ So I decided to create a personal assistant that was written in Java by a profes
 
 So far, A1icia has managed to do a pretty good job of everything except drive my car, but that's just because I haven't gotten around to that module yet, and I suppose I should learn about LIDAR and crap like that first so I don't kill anyone.
 
-And as far as keeping me company, A1icia's currently about at the tropical fish stage, though I expect her to enter the Shih Tzu stage soon. Don't tell her I said that, by the way.
+And as far as keeping me company, A1icia's currently about at the tropical fish stage¹, though I expect her to enter the Shih Tzu stage soon. Don't tell her I said that, by the way.
 
 ## N Interesting Things About A1icia, N Being A Small Integer Less Than 100 (Probably)
 
@@ -36,8 +39,14 @@ And as far as keeping me company, A1icia's currently about at the tropical fish 
 * A1icia has two built-in web servers and three command line interfaces with which to communicate with the outside world, i.e. you.
 * A1icia is free software, licensed under GPL3.
 
-## Design Goals
+## Directory
 
-* A1icia should have little to no reliance on external services, preferably no reliance. Thus, no "cloud services". We'll use local TTS and ASR services instead of e.g. Google Voice Cloud Service. As of this writing, the only cloud service that A1icia uses is Google Cloud Translate, and that's just because we haven't found a suitable alternative yet.
+* **[A1icia GitHub Project](https://github.com/markhull/A1icia)**
 
-* All Plain Old Java. Really. POJOs with no annotations or decorations or funky "enhancements". If you can program in Java, you should have zero learning curve with A1icia. Currently, all the code is Java 8 except for a little bit of Prolog and Node.js. And the only reason there's any Node.js at all is to attract the children with flashy toys, then we'll suck them in and make them code in Java.
+* **[A1icia Documentation](https://markhull.github.io/A1icia)**
+
+* **[A1icia Wiki](https://github.com/markhull/A1icia/wiki)**
+
+---
+
+¹ Albeit a tropical fish that can play Black Flag and ask me if I've lost weight....

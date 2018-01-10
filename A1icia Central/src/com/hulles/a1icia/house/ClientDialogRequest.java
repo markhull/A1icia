@@ -19,22 +19,17 @@
  *******************************************************************************/
 package com.hulles.a1icia.house;
 
-import java.util.Set;
-
+import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.room.document.RoomObject;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.dialog.DialogRequest;
-import com.hulles.a1icia.cayenne.Spark;
 
 /**
- * This is just a mostly-wrapper for DialogRequest that implements RoomObject and 
- * converts the SerialSparks to fat Sparks.
+ * This is just a mostly-wrapper for DialogRequest that implements RoomObject.
  * 
  * @author hulles
  *
  */
 public class ClientDialogRequest implements RoomObject {
-	private Set<Spark> sparks;
 	private final DialogRequest dialogRequest;
 	
 	public ClientDialogRequest(DialogRequest request) {
@@ -47,17 +42,6 @@ public class ClientDialogRequest implements RoomObject {
 	
 		return dialogRequest;
 	}
-	
-	public Set<Spark> getClientSparks() {
-		
-		return sparks;
-	}
-	
-	public void setClientSparks(Set<Spark> sparks) {
-		
-		A1iciaUtils.nullsOkay(sparks);
-		this.sparks = sparks;
-	}	
 	
 	@Override
 	public RoomObjectType getRoomObjectType() {

@@ -33,8 +33,8 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.media.Language;
@@ -89,13 +89,14 @@ public class OvermindRoom extends UrRoom {
 	private ActionPackage receiveRequest(SparkPackage sparkPackage, RoomRequest request) {
 		TicketJournal journal;
 		Ticket ticket;
-		Set<Spark> clientSparks;
+		Set<SerialSpark> clientSparks;
 		ActionPackage pkg;
 		ClientDialogRequest clientRequest;
 		List<SparkPackage> sparkPackages;
 		SparkPackage newSparkPackage;
 		MessageAction action;
 		String result;
+		DialogRequest dialogRequest;
 		
 		A1iciaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "Overmind: in receiveRequest");
@@ -118,13 +119,14 @@ public class OvermindRoom extends UrRoom {
 		sparkPackages = request.getSparkPackages();
 		SparkPackage.consumeFinal(sparkPackage.getName(), sparkPackages);
 		
-		clientSparks = clientRequest.getClientSparks();
+		dialogRequest = clientRequest.getDialogRequest();
+		clientSparks = dialogRequest.getRequestActions();
 		if (clientSparks != null && !clientSparks.isEmpty()) {
 			// we got spark(s) up front, so bypass the analysis phase entirely
 			LOGGER.log(LOGLEVEL, "Overmind: got client spark(s), bypassing analysis");
 			sparkPackages = new ArrayList<>();
-			for (Spark s : clientSparks) {
-				LOGGER.log(LOGLEVEL, "Client Spark: " + s.getName());
+			for (SerialSpark s : clientSparks) {
+				LOGGER.log(LOGLEVEL, "Client SerialSpark: " + s.getName());
 				newSparkPackage = SparkPackage.getDefaultPackage(s);
 				if (!newSparkPackage.isValid()) {
 					throw new A1iciaException("Overmind: created invalid spark package 1");
@@ -155,7 +157,7 @@ public class OvermindRoom extends UrRoom {
 		Ticket ticket;
 		NLPAnalysis nlpAnalysis;
 		SparkAnalysis sparkAnalysis;
-		Spark spark;
+		SerialSpark spark;
 		ActionPackage pkg;
 		List<ActionPackage> responsePackages;
 		List<ActionPackage> packageBag;
@@ -187,7 +189,7 @@ public class OvermindRoom extends UrRoom {
 			packageBag = Collections.singletonList(ActionPackage.getProxyActionPackage());
 		}
 		
-		spark = Spark.find("nlp_analysis");
+		spark = SerialSpark.find("nlp_analysis");
 		actionPackages = ActionPackage.consumeActions(spark, packageBag);
 		if (!actionPackages.isEmpty()) {
 			pkg = Thimk.chooseAction(spark, actionPackages);
@@ -196,7 +198,7 @@ public class OvermindRoom extends UrRoom {
 			thimk.decideNlpAnalysisNextAction(uberTicket);
 		}
 
-		spark = Spark.find("spark_analysis");
+		spark = SerialSpark.find("spark_analysis");
 		actionPackages = ActionPackage.consumeActions(spark, packageBag);
 		if (!actionPackages.isEmpty()) {
 			pkg = Thimk.chooseAction(spark, actionPackages);
@@ -205,7 +207,7 @@ public class OvermindRoom extends UrRoom {
 			thimk.decideSparkAnalysisNextAction(uberTicket, sparkPackages);
 		}
 
-		spark = Spark.find("client_response");
+		spark = SerialSpark.find("client_response");
 		actionPackages = ActionPackage.consumeActions(spark, packageBag);
 		if (!actionPackages.isEmpty()) {
 			// back from our request to A1icia with smartening up info
@@ -218,7 +220,7 @@ public class OvermindRoom extends UrRoom {
 			return;
 		}
 
-		spark = Spark.find("update_history");
+		spark = SerialSpark.find("update_history");
 		actionPackages = ActionPackage.consumeActions(spark, packageBag);
 		if (!actionPackages.isEmpty()) {
 			// back from updateHistory
@@ -246,7 +248,7 @@ public class OvermindRoom extends UrRoom {
 		HistoryUpdate historyUpdate;
 		ClientDialogResponse clientAction;
 //		ActionPackage clientPackage;
-//		Spark clientSpark;
+//		SerialSpark clientSpark;
 //		SparkPackage sparkPackage;
 		Ticket historyTicket;
 		
@@ -291,7 +293,7 @@ public class OvermindRoom extends UrRoom {
 	 * @return The ActionPackage we're sending to the client
 	 */
 	private static ClientDialogResponse determineClientAction(Ticket ticket, List<ActionPackage> packageBag) {
-		Set<Spark> sparks;
+		Set<SerialSpark> sparks;
 		StringBuilder messageSb;
 		StringBuilder explanationSb;
 		String msg;
@@ -300,7 +302,7 @@ public class OvermindRoom extends UrRoom {
 		ClientDialogResponse clientAction;
 		DialogResponse response;
 		ActionPackage pkg;
-		Spark clientSpark = null;
+		SerialSpark clientSpark = null;
 		A1icianID overrideA1icianID = null;
 		List<ActionPackage> pkgs;
 		RoomActionObject action;
@@ -318,7 +320,7 @@ public class OvermindRoom extends UrRoom {
 		messageSb = new StringBuilder();
 		explanationSb = new StringBuilder();
 		obj = null;
-		for (Spark spark : sparks) {
+		for (SerialSpark spark : sparks) {
 			if (messageSb.length() > 0) {
 				messageSb.append(".\n");
 				explanationSb.append("\n\n");
@@ -376,7 +378,7 @@ public class OvermindRoom extends UrRoom {
 		response.setMessage(messageSb.toString());
 		response.setExplanation(explanationSb.toString());
 		if (clientSpark != null) {
-			response.setResponseAction(clientSpark.toSerial());
+			response.setResponseAction(clientSpark);
 		}
 		if (obj != null) {
 			response.setClientObject(obj);
@@ -434,11 +436,11 @@ public class OvermindRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<Spark> loadSparks() {
-		Set<Spark> sparks;
+	protected Set<SerialSpark> loadSparks() {
+		Set<SerialSpark> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(Spark.find("respond_to_client"));
+		sparks.add(SerialSpark.find("respond_to_client"));
 		return sparks;
 	}
 

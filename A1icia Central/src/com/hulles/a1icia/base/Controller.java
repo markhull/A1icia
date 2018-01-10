@@ -38,19 +38,9 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
 import com.hulles.a1icia.A1icia;
-import com.hulles.a1icia.room.BusMonitor;
-import com.hulles.a1icia.room.Room;
-import com.hulles.a1icia.room.UrRoom;
-import com.hulles.a1icia.room.document.RoomAnnouncement;
-import com.hulles.a1icia.room.document.RoomRequest;
-import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.WhatSparksAction;
-import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
-import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.alpha.AlphaRoom;
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Spark;
@@ -70,6 +60,17 @@ import com.hulles.a1icia.oscar.OscarRoom;
 import com.hulles.a1icia.overmind.OvermindRoom;
 import com.hulles.a1icia.papa.PapaRoom;
 import com.hulles.a1icia.quebec.QuebecRoom;
+import com.hulles.a1icia.room.BusMonitor;
+import com.hulles.a1icia.room.Room;
+import com.hulles.a1icia.room.UrRoom;
+import com.hulles.a1icia.room.document.RoomAnnouncement;
+import com.hulles.a1icia.room.document.RoomRequest;
+import com.hulles.a1icia.room.document.RoomResponse;
+import com.hulles.a1icia.room.document.WhatSparksAction;
+import com.hulles.a1icia.ticket.ActionPackage;
+import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.Ticket;
+import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tracker.Tracker;
 
 /**
@@ -87,11 +88,18 @@ public final class Controller extends AbstractIdleService {
 	private final AsyncEventBus hallBus;
 	private final ExecutorService busPool;
 	boolean shuttingDownOnClose = false;
-	final SetMultimap<Spark, Room> sparkRooms;
+	final SetMultimap<SerialSpark, Room> sparkRooms;
 	private ControllerRoom controllerRoom;
 	private ServiceManager serviceManager;
 	private final A1icia a1iciaInstance;
 	private volatile static Controller controllerInstance = null;
+	private static Set<SerialSpark> allSparks;
+	
+	static {
+		
+		allSparks = Spark.getAllSparks();
+		SerialSpark.setSparks(allSparks);
+	}
 	
 	public Controller(A1icia a1icia) {
 		
@@ -213,7 +221,7 @@ public final class Controller extends AbstractIdleService {
 	 * @param spark The spark in question
 	 * @return A list of rooms that have advertised they can process the spark
 	 */
-	public Set<Room> getRoomsForSpark(Spark spark) {
+	public Set<Room> getRoomsForSpark(SerialSpark spark) {
 		
 		return sparkRooms.get(spark);
 	}
@@ -303,7 +311,7 @@ public final class Controller extends AbstractIdleService {
 		// send WHAT_SPARKS request to load sparkRooms
 		ticket = Ticket.createNewTicket(hallBus, Room.CONTROLLER);
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
-		sparksQuery = new RoomRequest(ticket, null);
+		sparksQuery = new RoomRequest(ticket);
 		sparksQuery.setFromRoom(Room.CONTROLLER);
 		sparksQuery.setSparkPackages(SparkPackage.getSingletonDefault("what_sparks"));
 		sparksQuery.setMessage("WHAT_SPARKS query");
@@ -331,12 +339,12 @@ public final class Controller extends AbstractIdleService {
 	 *
 	 */
 	public class ControllerRoom extends UrRoom {
-		private final Spark whatSparksSpark;
+		private final SerialSpark whatSparksSpark;
 		
 		ControllerRoom(EventBus bus) {
 			super(bus);
 			
-			whatSparksSpark = Spark.find("what_sparks");
+			whatSparksSpark = SerialSpark.find("what_sparks");
 		}
 		
 		/**
@@ -376,10 +384,9 @@ public final class Controller extends AbstractIdleService {
 			List<ActionPackage> pkgs;
 			ActionPackage pkg;
 			WhatSparksAction action;
-			Set<Spark> sparks;
+			Set<SerialSpark> sparks;
 			Room fromRoom;
 			Ticket ticket = null;
-			List<Spark> allSparks;
 			
 			A1iciaUtils.checkNotNull(responses);
 			ticket = request.getTicket();
@@ -395,7 +402,7 @@ public final class Controller extends AbstractIdleService {
 					sparks = action.getSparks();
 					logger.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from " +
 							fromRoom + ", sparks from action = " + sparks);
-					for (Spark s : sparks) {
+					for (SerialSpark s : sparks) {
 						sparkRooms.put(s, fromRoom);
 					}
 				} else {
@@ -403,14 +410,13 @@ public final class Controller extends AbstractIdleService {
 				}
 			}
 			// we do a couple quick reality checks before we go
-			allSparks = Spark.getAllSparks();
-			for (Spark s : sparkRooms.keySet()) {
+			for (SerialSpark s : sparkRooms.keySet()) {
 				if (!allSparks.contains(s)) {
 					// Type I error
 					A1iciaUtils.error("ControllerRoom: spark " + s.getName() + " is not a valid spark");
 				}
 			}
-			for (Spark s : allSparks) {
+			for (SerialSpark s : allSparks) {
 				if (!sparkRooms.containsKey(s)) {
 					// Type II error
 					A1iciaUtils.error("ControllerRoom: spark " + s.getName() + " not implemented");
@@ -426,11 +432,11 @@ public final class Controller extends AbstractIdleService {
 		 * 
 		 */
 		@Override
-		protected Set<Spark> loadSparks() {
-			Set<Spark> sparks;
+		protected Set<SerialSpark> loadSparks() {
+			Set<SerialSpark> sparks;
 			
 			sparks = new HashSet<>();
-			sparks.add(Spark.find("what_sparks"));
+			sparks.add(SerialSpark.find("what_sparks"));
 			return sparks;
 		}
 
