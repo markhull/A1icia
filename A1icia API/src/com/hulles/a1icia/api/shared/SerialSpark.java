@@ -56,7 +56,6 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
     	SerialSpark spark = null;
     	
     	if (sparkSet == null) {
-    		System.err.println("SerialSpark: spark set not loaded");
     		throw new A1iciaAPIException("SerialSpark: spark set not loaded");
     	}
     	for (SerialSpark spk : sparkSet) {

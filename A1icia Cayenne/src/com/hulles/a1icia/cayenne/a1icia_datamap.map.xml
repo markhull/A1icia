@@ -26,6 +26,7 @@
 		<db-attribute name="satisfaction" type="INTEGER" length="10"/>
 		<db-attribute name="spark_ID" type="BIGINT" length="10"/>
 		<db-attribute name="spark_object" type="VARCHAR" length="255"/>
+		<db-attribute name="spark_object_type_code" type="SMALLINT" isMandatory="true" length="5"/>
 	</db-entity>
 	<db-entity name="country" catalog="a1icia">
 		<db-attribute name="code2" type="CHAR" isMandatory="true" length="2"/>
@@ -149,6 +150,7 @@
 		<obj-attribute name="posTags" type="java.lang.String" db-attribute-path="pos_tags"/>
 		<obj-attribute name="satisfaction" type="java.lang.Integer" db-attribute-path="satisfaction"/>
 		<obj-attribute name="sparkObject" type="java.lang.String" db-attribute-path="spark_object"/>
+		<obj-attribute name="sparkObjectTypeCode" type="short" db-attribute-path="spark_object_type_code"/>
 	</obj-entity>
 	<obj-entity name="Country" className="com.hulles.a1icia.cayenne.Country" dbEntityName="country">
 		<obj-attribute name="code2" type="java.lang.String" db-attribute-path="code2"/>
@@ -183,11 +185,11 @@
 		<obj-attribute name="question" type="java.lang.String" db-attribute-path="question"/>
 		<obj-attribute name="yahooId" type="java.lang.String" db-attribute-path="yahoo_ID"/>
 	</obj-entity>
-	<obj-entity name="OwmCity" className="com.hulles.a1icia.cayenne.OwmCity" dbEntityName="owm_city">
-		<obj-attribute name="latitude" type="java.lang.Float" db-attribute-path="latitude"/>
+	<obj-entity name="OwmZZZCity" className="com.hulles.a1icia.cayenne.OwmZZZCity" dbEntityName="owm_city">
 		<obj-attribute name="longitude" type="java.lang.Float" db-attribute-path="longitude"/>
 		<obj-attribute name="name" type="java.lang.String" db-attribute-path="name"/>
 		<obj-attribute name="owmId" type="java.lang.Integer" db-attribute-path="owm_ID"/>
+		<obj-attribute name="zazz_latitude" type="java.lang.Float" db-attribute-path="latitude"/>
 	</obj-entity>
 	<obj-entity name="Person" className="com.hulles.a1icia.cayenne.Person" dbEntityName="person">
 		<obj-attribute name="avatarBytes" type="byte[]" db-attribute-path="avatar"/>
@@ -292,12 +294,12 @@
 	<obj-relationship name="answerHistory" source="AnswerChunk" target="AnswerHistory" deleteRule="Nullify" db-relationship-path="answerHistory"/>
 	<obj-relationship name="answerChunks" source="AnswerHistory" target="AnswerChunk" deleteRule="Deny" db-relationship-path="answerChunks"/>
 	<obj-relationship name="spark" source="AnswerHistory" target="Spark" deleteRule="Nullify" db-relationship-path="spark"/>
-	<obj-relationship name="owmCities" source="Country" target="OwmCity" deleteRule="Deny" db-relationship-path="owmCities"/>
+	<obj-relationship name="owmCities" source="Country" target="OwmZZZCity" deleteRule="Deny" db-relationship-path="owmCities"/>
 	<obj-relationship name="nfl6Question" source="NbestAnswer" target="Nfl6Question" deleteRule="Nullify" db-relationship-path="nfl6Question"/>
 	<obj-relationship name="nfl6Questions" source="Nfl6Category" target="Nfl6Question" deleteRule="Deny" db-relationship-path="nfl6Questions"/>
 	<obj-relationship name="nbestAnswers" source="Nfl6Question" target="NbestAnswer" deleteRule="Deny" db-relationship-path="nbestAnswers"/>
 	<obj-relationship name="nfl6Category" source="Nfl6Question" target="Nfl6Category" deleteRule="Nullify" db-relationship-path="nfl6Category"/>
-	<obj-relationship name="country" source="OwmCity" target="Country" deleteRule="Nullify" db-relationship-path="country"/>
+	<obj-relationship name="country" source="OwmZZZCity" target="Country" deleteRule="Nullify" db-relationship-path="country"/>
 	<obj-relationship name="tasks" source="Person" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
 	<obj-relationship name="answerHistories" source="Spark" target="AnswerHistory" deleteRule="Deny" db-relationship-path="answerHistories"/>
 	<obj-relationship name="person" source="Task" target="Person" deleteRule="Nullify" db-relationship-path="person"/>

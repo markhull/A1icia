@@ -31,6 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class LibraryLister extends SimpleFileVisitor<Path> {
@@ -60,8 +61,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
         try {
 			Files.walkFileTree(logDirPath, lister);
 		} catch (IOException e) {
-			System.err.println("IO Exception listing library files");
-			e.printStackTrace();
+			throw new A1iciaException("IO Exception listing library files", e);
 		}
         lister.done();
         return lister.getFileNames();
@@ -80,9 +80,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 			try {
 				filePath = file.toRealPath();
 			} catch (IOException e) {
-				System.err.println("Can't create real path to file " + file.getFileName());
-				e.printStackTrace();
-				return;
+				throw new A1iciaException("Can't create real path to file " + file.getFileName());
 			}
 			fileNames.add(filePath.toString());
 		}

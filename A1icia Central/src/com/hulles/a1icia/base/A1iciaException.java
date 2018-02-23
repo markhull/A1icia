@@ -27,16 +27,22 @@ package com.hulles.a1icia.base;
  */
 public final class A1iciaException extends RuntimeException {
 	private static final long serialVersionUID = 1375561019112558941L;
+	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public A1iciaException() {
-		super("500 The Bees They're In My Eyes");
+		super(BEES);
+		
+		System.err.println(BEES);
 	}
 	public A1iciaException(String desc) {
 		super(desc);
+		
+		System.err.println(desc);
 	}
     public A1iciaException(String desc, Throwable ex) {
         super(desc, ex);
         
+        System.err.println(desc);
         ex.printStackTrace();
     }
 }

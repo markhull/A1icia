@@ -9,23 +9,11 @@ import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 
 public final class A1iciaDataSourceFactory implements DataSourceFactory {
-//	private final static Logger LOGGER = Logger.getLogger("A1iciaCayenne.A1iciaDataSourceFactory");
-//	private final static Level LOGLEVEL = Level.INFO;
 
 	@Override
 	public DataSource getDataSource(DataNodeDescriptor nodeDescriptor) throws Exception {
-//		DataSourceInfo dataSourceDescriptor;
         MysqlConnectionPoolDataSource dataSource;
 		PurdahKeys purdah;
-//		String message;
-		
-//		dataSourceDescriptor = nodeDescriptor.getDataSourceDescriptor();
-//		if (dataSourceDescriptor == null) {
-//			message = "Null dataSourceDescriptor for nodeDescriptor '"
-//					+ nodeDescriptor.getName()
-//					+ "'";
-//			throw new ConfigurationException(message);
-//		}
 
 		purdah = PurdahKeys.getInstance();
         dataSource = new MysqlConnectionPoolDataSource();

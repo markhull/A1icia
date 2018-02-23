@@ -301,8 +301,7 @@ public class MediaUtils {
 		}
 		if (stdErr.length() > 0) {
 			LOGGER.log(LOGLEVEL, "statCommand Error: " + stdErr.toString());
-			System.err.println("statCommand Error: " + stdErr.toString());
-			throw new A1iciaMediaException("MediaUtils: standard error not empty");
+			throw new A1iciaMediaException("MediaUtils: standard error not empty: " + stdErr.toString());
 		}
 
 		try {

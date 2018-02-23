@@ -174,8 +174,7 @@ final class FoxtrotUtils {
 			throw new A1iciaException("Can't close runCommand stderr stream");
 		}
 		if (stdErr.length() > 0) {
-			System.err.println("RunCommand Error: " + stdErr.toString());
-			throw new A1iciaException("runCommand produced stderr stream");
+			throw new A1iciaException("runCommand produced stderr stream: " + stdErr.toString());
 		}
 		
 		proc.destroy();
