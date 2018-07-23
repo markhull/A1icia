@@ -26,22 +26,19 @@ import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.WakeUp;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.cli.A1iciaCLIConsole;
 
 public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaMagicMirror.PiConsole");
 	private final static Level LOGLEVEL = Level.FINE;
-	private final static int PORT = 12348;
 	private final HardwareLayer hardwareLayer;
 	
-	PiConsole(String host, Integer port, HardwareLayer layer) {
-		super(host, port);
+	PiConsole(String host, Integer port, Boolean daemon, HardwareLayer layer) {
+		super(host, port, daemon);
 		
 		SharedUtils.checkNotNull(layer);
-		if (SharedUtils.alreadyRunning(PORT)) {
-			System.out.println("A1icia Pi Console is already running");
-			System.exit(1);
-		}
+		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_PI_CONSOLE);
 		this.hardwareLayer = layer;
 	}
 	

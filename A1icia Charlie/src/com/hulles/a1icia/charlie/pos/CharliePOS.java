@@ -21,6 +21,8 @@ package com.hulles.a1icia.charlie.pos;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -42,9 +44,10 @@ final public class CharliePOS {
 		URL posModelURL;
 		POSModel posModel;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             posModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-pos-maxent.bin"));
         } catch (MalformedURLException ex) {

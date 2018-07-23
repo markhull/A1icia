@@ -207,6 +207,8 @@ final public class ResponseGenerator {
 		prompts.add("You can act real rude and totally removed and I can act like I'm in Brazil.");
 		prompts.add("I'd hate to look into her eyes and see an ounce of brain.");
 		prompts.add("I'd just diet in your arms tonight. Must have been some kind of cheese.");
+		prompts.add("If you please, draw me a sheep!");
+		prompts.add("Snake, thought you was dead.");
 	}
 	
 	private void loadYoureWelcomes() {

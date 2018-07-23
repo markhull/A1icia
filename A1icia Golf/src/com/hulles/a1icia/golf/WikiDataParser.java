@@ -38,8 +38,8 @@ import javax.json.JsonValue;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.ExternalAperture;
 import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.tools.ExternalAperture;
 
 import redis.clients.jedis.Jedis;
 
@@ -57,7 +57,6 @@ public class WikiDataParser {
         JsonArray searchBody;
         int bodyCount;
         JsonObject sbo;
-        JsonReader reader;
         StringReader sReader;
         WikiDataSearchResult wdsr;
         List<WikiDataSearchResult> results;
@@ -67,9 +66,9 @@ public class WikiDataParser {
 		
 		A1iciaUtils.checkNotNull(searchResult);
         sReader = new StringReader(searchResult);
-        reader = Json.createReader(sReader);
-        search = reader.readObject();
-        reader.close();
+        try (JsonReader reader = Json.createReader(sReader)) {
+        	search = reader.readObject();
+        }
         logger.log(LOGLEVEL,"Searchinfo: search:" + search.getJsonObject("searchinfo").getJsonString("search"));
         logger.log(LOGLEVEL,"Search-continue: " + search.getJsonNumber("search-continue"));
         logger.log(LOGLEVEL,"Success: " + search.getJsonNumber("success"));
@@ -99,7 +98,6 @@ public class WikiDataParser {
 	public static List<WikiDataEntity> parseEntities(String entityStr, boolean isSecondaryLookup) {
         JsonObject entity;
         JsonObject entityBody;
-        JsonReader reader;
         Collection<JsonValue> values;
         StringReader sReader;
         List<WikiDataEntity> results;
@@ -113,9 +111,9 @@ public class WikiDataParser {
 			sdf.applyPattern(DATEPARSE);
 		}
         sReader = new StringReader(entityStr);
-        reader = Json.createReader(sReader);
-        entity = reader.readObject();
-        reader.close();
+        try (JsonReader reader = Json.createReader(sReader)) {
+        	entity = reader.readObject();
+        }
         logger.log(LOGLEVEL,"Success: " + entity.getJsonNumber("success"));
         entityBody = entity.getJsonObject("entities");
         values = entityBody.values();
@@ -131,6 +129,7 @@ public class WikiDataParser {
         return results;
 	}
 
+	@SuppressWarnings("resource")
 	private static WikiDataEntity parseEntity(JsonObject entity) {
 		JsonObject labels;
 		String label;

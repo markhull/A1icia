@@ -34,6 +34,7 @@ import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.Serialization;
 
 import redis.clients.jedis.Jedis;
@@ -148,8 +149,7 @@ public class A1iciaCrypto {
 	    if (appKeys == null) {
 	    	appKeys = ApplicationKeys.getInstance();
 	    }
-    	fileName = appKeys.getA1iciaAESKeyPath();
-        // fileName = "/media/hulles/persistence/a1icia_aeskey";
+    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
     	
     	aesBytes = fileToByteArray(fileName);
 		if (aesBytes != null) {
@@ -189,7 +189,7 @@ public class A1iciaCrypto {
 	    if (appKeys == null) {
 	    	appKeys = ApplicationKeys.getInstance();
 	    }
-    	fileName = appKeys.getA1iciaAESKeyPath();
+    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
         // fileName = "/media/hulles/persistence/a1icia_aeskey";
 	    aesBytes = Serialization.serialize(key);
 	    byteArrayToFile(aesBytes, fileName);

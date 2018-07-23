@@ -329,7 +329,7 @@ public class OvermindRoom extends UrRoom {
 			expl = null;
 			pkgs = ActionPackage.hasActions(spark, packageBag);
 			if (pkgs.isEmpty()) {
-				A1iciaUtils.error("Unhandled spark in Thimk.processRoomActions = " +
+				A1iciaUtils.error("Unhandled spark in Overmind.determineClientAction = " +
 						spark.getName());
 				msg = "Ich bin ein Ausländer. Und ich bin die eigentliche A1icia.";
 				expl = "Overmind: something went awry in the Overmind.";

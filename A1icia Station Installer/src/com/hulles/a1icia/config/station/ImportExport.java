@@ -31,7 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.jebus.JebusApiBible;
 import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
@@ -43,6 +46,9 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import redis.clients.jedis.Jedis;
 
 public class ImportExport {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaStationInstaller.ImportExport");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = Level.INFO;
 	private final static Charset CHARSET = Charset.forName("UTF-8");
 	
 	public ImportExport() {
@@ -86,8 +92,15 @@ public class ImportExport {
 		    	if (line.isEmpty()) {
 		    		continue;
 		    	}
-		    	keyValue = line.split("=");
-		    	if (keyValue[0].equals("STATIONID") && keyValue.length == 1) {
+		    	if (line.startsWith("#")) {
+		    		// it's a comment
+		    		continue;
+		    	}
+		    	keyValue = line.split("=", 2);
+		    	LOGGER.log(LOGLEVEL, "IMPORT: Line is " + line + ", values = " + keyValue.length);
+		    	LOGGER.log(LOGLEVEL, "IMPORT: Key is " + keyValue[0] + ", Value is " + keyValue[1]);
+		    	if (keyValue[0].equals("STATIONID") && (keyValue.length == 1 || keyValue[1].isEmpty())) {
+		    		LOGGER.log(LOGLEVEL, "Generating UUID");
 		    		// for "STATIONID=", we can help out by generating our own UUID
 		    		stringMap.put(keyValue[0], UUID.randomUUID().toString());
 		    	} else {

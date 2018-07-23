@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.echo.EchoAnalysis.VectorLoad;
@@ -134,26 +135,29 @@ public final class EchoRoom extends UrRoom {
 		loader = new Thread() {
 			@Override
 			public void run() {
+				String w2vPath;
+				
 				switch (WHICHLOAD) {
 					case LITTLEGINA:
 						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Little Gina");
-						searcher.loadFile(appKeys.getLittleGinaPath());
+						w2vPath = appKeys.getKey(ApplicationKey.LITTLEGINA);
 						break;
 					case GOOGLENEWS:
 						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Google News");
-						searcher.loadFile(appKeys.getGoogleNewsPath());
+						w2vPath = appKeys.getKey(ApplicationKey.GOOGLENEWS);
 						break;
 					case FREEBASE:
 						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Freebase");
-						searcher.loadFile(appKeys.getFreebasePath());
+						w2vPath = appKeys.getKey(ApplicationKey.FREEBASE);
 						break;
 					case BIGJOAN:
 						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Big Joan");
-						searcher.loadFile(appKeys.getBigJoanPath());
+						w2vPath = appKeys.getKey(ApplicationKey.BIGJOAN);
 						break;
 					default:
-						break;
+						throw new A1iciaException("Bad word2vec path");
 				}
+				searcher.loadFile(w2vPath);
 				LOGGER.log(LOGLEVEL, "Finished w2v load");
 				ready = true;
 			}

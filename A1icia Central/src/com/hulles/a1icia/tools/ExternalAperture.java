@@ -36,6 +36,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 
 /**
  * ExternalAperture is where ALL external access in A1icia occurs, except for A1iciaGoogleTranslate,
@@ -51,7 +53,8 @@ final public class ExternalAperture {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.ExternalAperture");
 	@SuppressWarnings("unused")
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	private final static String WIKIDATA_ID = "https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&languages=en&format=json&props=aliases|labels|descriptions|claims|datatype&ids=%s";
+	
+/*	private final static String WIKIDATA_ID = "https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&languages=en&format=json&props=aliases|labels|descriptions|claims|datatype&ids=%s";
 	private final static String WIKIDATA_TITLE = "https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&languages=en&format=json&props=aliases|labels|descriptions|claims|datatype&titles=%s&normalize=";
 	private final static String WIKIDATA_SEARCH = "https://www.wikidata.org/w/api.php?action=wbsearchentities&language=en&search=%s&format=json&limit=12";
 	
@@ -67,7 +70,7 @@ final public class ExternalAperture {
 	private final static String WOLFRAM_SPOKEN = "https://api.wolframalpha.com/v2/spoken?i=%s&appid=%s";
 	private final static String WOLFRAM_SIMPLE = "https://api.wolframalpha.com/v2/simple?i=%s&appid=%s";
 	private final static String WOLFRAM_SHORT = "https://api.wolframalpha.com/v2/result?i=%s&appid=%s";
-
+*/
 	private ExternalAperture() {
 	}
 	
@@ -110,10 +113,14 @@ final public class ExternalAperture {
 	 */
 	public static String getCurrentWeatherOWM(Integer cityID, String appID) {
 		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 		
 		A1iciaUtils.checkNotNull(cityID);
 		A1iciaUtils.checkNotNull(appID);
-		urlString = String.format(OWMCURRENT, cityID, appID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.OWMCURRENT);
+		urlString = String.format(urlTemplate, cityID, appID);
 		return getURLStringResult(urlString);
 	}
 
@@ -126,10 +133,14 @@ final public class ExternalAperture {
 	 */
 	public static String getForecastOWM(Integer cityID, String appID) {
 		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 		
 		A1iciaUtils.checkNotNull(cityID);
 		A1iciaUtils.checkNotNull(appID);
-		urlString = String.format(OWMFORECAST, cityID, appID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.OWMFORECAST);
+		urlString = String.format(urlTemplate, cityID, appID);
 		return getURLStringResult(urlString);
 	}
 	
@@ -141,9 +152,13 @@ final public class ExternalAperture {
 	 */
 	public static String searchWikiData(String target) {
 		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 		A1iciaUtils.checkNotNull(target);
-		urlString = String.format(WIKIDATA_SEARCH, target);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATASEARCH);
+		urlString = String.format(urlTemplate, target);
 		return getURLStringResult(urlString);
 	}
 
@@ -155,9 +170,13 @@ final public class ExternalAperture {
 	 */
 	public static String getWikiDataByTitle(String title) {
 		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 		A1iciaUtils.checkNotNull(title);
-		urlString = String.format(WIKIDATA_TITLE, title);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATATITLE);
+		urlString = String.format(urlTemplate, title);
 		return getURLStringResult(urlString);
 	}
 
@@ -170,9 +189,13 @@ final public class ExternalAperture {
 	 */
 	public static String getWikiDataByID(String qID) {
 		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 		A1iciaUtils.checkNotNull(qID);
-		urlString = String.format(WIKIDATA_ID, qID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATAID);
+		urlString = String.format(urlTemplate, qID);
 		return getURLStringResult(urlString);
 	}
 
@@ -184,9 +207,13 @@ final public class ExternalAperture {
 	 */
 	public static String getCurrentLocation(String ipinfoToken) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(ipinfoToken);
-		urlString = String.format(LOCATIONURL, ipinfoToken);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.LOCATIONURL);
+		urlString = String.format(urlTemplate, ipinfoToken);
 		return getURLStringResult(urlString);
 	}
 
@@ -202,10 +229,14 @@ final public class ExternalAperture {
 	 */
 	public static String getWolframValidateQuery(String query, String wolframID) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(query);
 	    A1iciaUtils.checkNotNull(wolframID);
-		urlString = String.format(WOLFRAM_VALIDATE, query, wolframID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMVALIDATE);
+		urlString = String.format(urlTemplate, query, wolframID);
 		return getURLStringResult(urlString);
 	}
 
@@ -220,10 +251,14 @@ final public class ExternalAperture {
 	 */
 	public static String getWolframSpokenQuery(String query, String wolframID) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(query);
 	    A1iciaUtils.checkNotNull(wolframID);
-		urlString = String.format(WOLFRAM_SPOKEN, query, wolframID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSPOKEN);
+		urlString = String.format(urlTemplate, query, wolframID);
 		System.out.println("***** url = " + urlString);
 		return getURLStringResult(urlString);
 	}
@@ -238,10 +273,14 @@ final public class ExternalAperture {
 	 */
 	public static BufferedImage getWolframSimpleQuery(String query, String wolframID) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(query);
 	    A1iciaUtils.checkNotNull(wolframID);
-		urlString = String.format(WOLFRAM_SIMPLE, query, wolframID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSIMPLE);
+		urlString = String.format(urlTemplate, query, wolframID);
 		System.out.println("***** url = " + urlString);
 		return getURLImageResult(urlString);
 	}
@@ -256,10 +295,14 @@ final public class ExternalAperture {
 	 */
 	public static String getWolframShortQuery(String query, String wolframID) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(query);
 	    A1iciaUtils.checkNotNull(wolframID);
-		urlString = String.format(WOLFRAM_SHORT, query, wolframID);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSHORT);
+		urlString = String.format(urlTemplate, query, wolframID);
 		System.out.println("***** url = " + urlString);
 		return getURLStringResult(urlString);
 	}
@@ -273,13 +316,32 @@ final public class ExternalAperture {
 	 */
 	public static String getWolframQuery(String query, String wolframID) {
 	    String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
 	    
 	    A1iciaUtils.checkNotNull(query);
 	    A1iciaUtils.checkNotNull(wolframID);
-//		urlString = String.format(WOLFRAM_QUERY, wolframID, query);
-		urlString = String.format(WOLFRAM_QUERY, query, wolframID);  // pi, 3.141592653589793
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMQUERY);
+		urlString = String.format(urlTemplate, query, wolframID);  // pi, 3.141592653589793
 		System.out.println("***** url = " + urlString);
 		return getURLStringResult(urlString);
+	}
+
+	/**
+	 * Query Mozilla DeepSpeech server.
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public static String queryDeepSpeech(byte[] audio) {
+		String urlString;
+		ApplicationKeys appKeys;
+		
+		A1iciaUtils.checkNotNull(audio);
+		appKeys = ApplicationKeys.getInstance();
+		urlString = appKeys.getKey(ApplicationKey.DEEPSPEECH);
+		return postURLStringResult(urlString, audio, "application/octet-stream");
 	}
 
 	/**
@@ -316,13 +378,17 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			A1iciaUtils.error("Bad URL in postURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
+					", query: " + query + ", content type: " + contentType, ex);
 			return null;
 		}
 		try {
 			conn = url.openConnection();			
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception opening connection in postURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
+					", query: " + query + ", content type: " + contentType, ex);
 			return null;
 		}
 		
@@ -334,7 +400,9 @@ final public class ExternalAperture {
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception connecting connection in postURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
+					", query: " + query + ", content type: " + contentType, ex);
 			return null;
 		}
 		
@@ -344,7 +412,9 @@ final public class ExternalAperture {
 				out.flush();
 			}
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception writing output stream in postURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
+					", query: " + query + ", content type: " + contentType, ex);
 			return null;
 		}
 			  
@@ -357,20 +427,109 @@ final public class ExternalAperture {
 							break;
 						}
 						sb.append(line);
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException ex) {
+						ex.printStackTrace();
+						A1iciaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
+								", query: " + query + ", content type: " + contentType, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception reading input stream in postURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
+					", query: " + query + ", content type: " + contentType, ex);
+			return null;
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * This is a helper function that returns a String result from an HTTP POST.
+	 * It accepts a byte array (audio e.g.) as input.
+	 * @see postURLStringResult(String, String, String)
+	 * 
+	 * @param urlString The string URL
+	 * @param query The query to post
+	 * @param contentType The content type, for the POST parameter; "plain/text" e.g.
+	 * @return The result
+	 */
+	private static String postURLStringResult(String urlString, byte[] bytes, String contentType) {
+		URL url;
+		URLConnection conn;
+		StringBuilder sb;
+		String line = null;
+	    
+		A1iciaUtils.checkNotNull(urlString);
+	    A1iciaUtils.checkNotNull(bytes);
+	    A1iciaUtils.checkNotNull(contentType);
+		sb = new StringBuilder();
+		try {
+			url = new URL(urlString);
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();
+			A1iciaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
+					", content type: " + contentType, ex);
+			return null;
+		}
+		try {
+			conn = url.openConnection();			
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
+					", content type: " + contentType, ex);
+			return null;
+		}
+		
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		conn.setRequestProperty("Transfer-Encoding", "chunked");
+		conn.setRequestProperty("Content-Type", contentType);
+		try {
+			conn.connect();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
+					", content type: " + contentType, ex);
+			return null;
+		}
+		
+		try (OutputStream outStream = conn.getOutputStream()) {
+			outStream.write(bytes);
+			outStream.flush();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
+					", content type: " + contentType, ex);
+			return null;
+		}
+			  
+		try (InputStream inStream = conn.getInputStream()) { 
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(inStream))) {
+				while (true) {
+					try {
+						line = in.readLine();
+						if (line == null) {
+							break;
+						}
+						sb.append(line);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+						A1iciaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
+								", content type: " + contentType, ex);
+					}
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
+					", content type: " + contentType, ex);
 			return null;
 		}
 		return sb.toString();
 	}
 
 	/**
-	 * This is a helper function that returns a String result to an HTTP GET call. It uses java.net.URL
+	 * This is a helper function that returns a String result from an HTTP GET call. It uses java.net.URL
 	 * to do the GET.
 	 * 
 	 * @param query The URL (including the query) as a string
@@ -386,7 +545,8 @@ final public class ExternalAperture {
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			A1iciaUtils.error("Bad URL in getURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("Bad URL in postURLStringResult\nquery: " + query, ex);
 			return null;
 		}
 		try (InputStream inStream = url.openStream()) { 
@@ -398,13 +558,15 @@ final public class ExternalAperture {
 							break;
 						}
 						sb.append(line);
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException ex) {
+						ex.printStackTrace();
+						A1iciaUtils.error("I/O Exception reading input stream in getURLStringResult\nquery: " + query, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception reading input stream in getURLStringResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception creating input stream in getURLStringResult\nquery: " + query, ex);
 			return null;
 		}
 		return sb.toString();
@@ -426,13 +588,15 @@ final public class ExternalAperture {
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			A1iciaUtils.error("Bad URL in getURLImageResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("Bad URL in getURLImageResult\nquery: " + query, ex);
 			return null;
 		}
 		try {
 			image = ImageIO.read(url);
 		} catch (IOException ex) {
-			A1iciaUtils.error("I/O Exception reading input stream in getURLImageResult", ex);
+			ex.printStackTrace();
+			A1iciaUtils.error("I/O Exception reading input stream in getURLImageResult\nquery: " + query, ex);
 			return null;
 		}
 		return image;

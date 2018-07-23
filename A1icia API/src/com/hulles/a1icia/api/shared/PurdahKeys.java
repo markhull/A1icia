@@ -43,7 +43,7 @@ import redis.clients.jedis.Jedis;
 public class PurdahKeys implements Serializable {
 	private static final long serialVersionUID = 2753315524334338502L;
 	private static PurdahKeys instance = null;
-	private Map<Keys, String> keyMap;
+	private Map<PurdahKey, String> keyMap;
 
 	public PurdahKeys() {
 		// needs explicit no-args constructor
@@ -57,65 +57,67 @@ public class PurdahKeys implements Serializable {
 		return instance;
 	}
 	
-	public String getWolframAlphaID() {
+	public String getPurdahKey(PurdahKey key) {
 		
-		return keyMap.get(Keys.WOLFRAMALPHAKEY);
+		SharedUtils.checkNotNull(key);
+		return keyMap.get(key);
 	}
 
-	public void setWolframAlphaID(String id) {
+	public void setPurdahKey(PurdahKey key, String value) {
 		
-		SharedUtils.checkNotNull(id);
-		keyMap.put(Keys.WOLFRAMALPHAKEY, id);
+		SharedUtils.checkNotNull(key);
+		SharedUtils.checkNotNull(value);
+		keyMap.put(key, value);
 	}
 
-	public String getWolframRemoteID() {
+/*	public String getWolframRemoteID() {
 		
-		return keyMap.get(Keys.WOLFRAMALPHAREMOTEKEY);
+		return keyMap.get(PurdahKey.WOLFRAMALPHAREMOTEKEY);
 	}
 
 	public void setWolframRemoteID(String id) {
 		
 		SharedUtils.checkNotNull(id);
-		keyMap.put(Keys.WOLFRAMALPHAREMOTEKEY, id);
+		keyMap.put(PurdahKey.WOLFRAMALPHAREMOTEKEY, id);
 	}
 
 	public String getDatabaseUser() {
 		
-		return keyMap.get(Keys.DATABASEUSER);
+		return keyMap.get(PurdahKey.DATABASEUSER);
 	}
 
 	public void setDatabaseUser(String user) {
 		
 		SharedUtils.checkNotNull(user);
-		keyMap.put(Keys.DATABASEUSER, user);
+		keyMap.put(PurdahKey.DATABASEUSER, user);
 	}
 
 	public String getDatabasePassword() {
 		
-		return keyMap.get(Keys.DATABASEPW);
+		return keyMap.get(PurdahKey.DATABASEPW);
 	}
 
 	public void setDatabasePassword(String password) {
 		
 		SharedUtils.checkNotNull(password);
-		keyMap.put(Keys.DATABASEPW, password);
+		keyMap.put(PurdahKey.DATABASEPW, password);
 	}
 
 	public String getDatabaseServer() {
 		
-		return keyMap.get(Keys.DATABASESERVER);
+		return keyMap.get(PurdahKey.DATABASESERVER);
 	}
 
 	public void setDatabaseServer(String server) {
 		
 		SharedUtils.checkNotNull(server);
-		keyMap.put(Keys.DATABASESERVER, server);
+		keyMap.put(PurdahKey.DATABASESERVER, server);
 	}
 
 	public Integer getDatabasePort() {
 		String portStr;
 		
-		portStr = keyMap.get(Keys.DATABASEPORT);
+		portStr = keyMap.get(PurdahKey.DATABASEPORT);
 		return Integer.parseInt(portStr);
 	}
 
@@ -124,55 +126,55 @@ public class PurdahKeys implements Serializable {
 		
 		SharedUtils.checkNotNull(port);
 		portStr = port.toString();
-		keyMap.put(Keys.DATABASEPORT, portStr);
+		keyMap.put(PurdahKey.DATABASEPORT, portStr);
 	}
 	
 	public String getDatabaseName() {
 		
-		return keyMap.get(Keys.DATABASENAME);
+		return keyMap.get(PurdahKey.DATABASENAME);
 	}
 	
 	public void setDatabaseName(String name) {
 		
 		SharedUtils.checkNotNull(name);
-		keyMap.put(Keys.DATABASENAME, name);
+		keyMap.put(PurdahKey.DATABASENAME, name);
 	}
 
 	public Boolean getDatabaseUseSSL() {
 		String sslStr;
 		
-		sslStr = keyMap.get(Keys.DATABASEUSESSL);
+		sslStr = keyMap.get(PurdahKey.DATABASEUSESSL);
 		return Boolean.parseBoolean(sslStr);
 	}
 	
 	public void setDatabaseUseSSL(Boolean value) {
 	
 		SharedUtils.checkNotNull(value);
-		keyMap.put(Keys.DATABASEUSESSL, value.toString());
+		keyMap.put(PurdahKey.DATABASEUSESSL, value.toString());
 	}
 
 	public String getIpInfoToken() {
 		
-		return keyMap.get(Keys.IPINFOKEY);
+		return keyMap.get(PurdahKey.IPINFOKEY);
 	}
 
 	public void setIpInfoToken(String token) {
 		
 		SharedUtils.checkNotNull(token);
-		keyMap.put(Keys.IPINFOKEY, token);
+		keyMap.put(PurdahKey.IPINFOKEY, token);
 	}
 
 	public String getOpenWeatherID() {
 		
-		return keyMap.get(Keys.OPENWEATHERID);
+		return keyMap.get(PurdahKey.OPENWEATHERID);
 	}
 
 	public void setOpenWeatherID(String openWeatherID) {
 		
 		SharedUtils.checkNotNull(openWeatherID);
-		keyMap.put(Keys.OPENWEATHERID, openWeatherID);
+		keyMap.put(PurdahKey.OPENWEATHERID, openWeatherID);
 	}
-
+*/
 	public static void setInstance(PurdahKeys keys) {
 		
 		SharedUtils.checkNotNull(keys);
@@ -221,14 +223,14 @@ public class PurdahKeys implements Serializable {
 	 * @return True if our map was updated, false otherwise
 	 */
 	public boolean setKeyMap(Map<String, String> stringMap) {
-		Map<Keys, String> newMap;
-		Keys key;
+		Map<PurdahKey, String> newMap;
+		PurdahKey key;
 		
 		SharedUtils.checkNotNull(stringMap);
 		newMap = new HashMap<>(stringMap.size());
 		for (Entry<String, String> entry : stringMap.entrySet()) {
 			try {
-				key = Keys.valueOf(entry.getKey());
+				key = PurdahKey.valueOf(entry.getKey());
 			} catch (IllegalArgumentException e) {
 				return false;
 			}
@@ -247,13 +249,13 @@ public class PurdahKeys implements Serializable {
 		Map<String, String> stringMap;
 		
 		stringMap = new HashMap<>(keyMap.size());
-		for (Entry<Keys, String> entry : keyMap.entrySet()) {
+		for (Entry<PurdahKey, String> entry : keyMap.entrySet()) {
 			stringMap.put(entry.getKey().name(), entry.getValue());
 		}
 		return stringMap;
 	}
 	
-	private enum Keys {
+	public enum PurdahKey {
 		DATABASEPW,
 		DATABASEPORT,
 		DATABASESERVER,

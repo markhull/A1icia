@@ -32,6 +32,7 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -95,8 +96,8 @@ public final class PapaRoom extends UrRoom {
 	 * @param request
 	 * @return A SparkAnalysis package
 	 */
-	@SuppressWarnings({ "static-method", "unused" })
-	private ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	@SuppressWarnings("unused")
+	private static ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
 		ActionPackage actionPkg;
 		SparkAnalysis analysis;
 		Ticket ticket;
@@ -175,7 +176,7 @@ public final class PapaRoom extends UrRoom {
 		}
 		encodedQuery = encodeQuery(lookupString);
 		// FIXME We should send the first result ("spoken" query) on ahead of the send result;
-		//  the seconde query takes much longer
+		//  the second query takes much longer
 		responseText = ExternalAperture.getWolframSpokenQuery(encodedQuery, wolframKey);
 		responseImage = ExternalAperture.getWolframSimpleQuery(encodedQuery, wolframKey);
 		if (responseImage == null) {
@@ -199,12 +200,13 @@ public final class PapaRoom extends UrRoom {
 		//    we'll fix it
 		mediaObject.setClientObjectType(ClientObjectType.IMAGEBYTES);
 		mediaObject.setMediaFormat(MediaFormat.GIF);
-		if (mediaObject.isValid()) {
+		if (!mediaObject.isValid()) {
 			A1iciaUtils.error("PapaRoom: invalid media object");
 			return null;
 		}
 		action = new ClientObjectWrapper(mediaObject);
 		action.setMessage(message);
+		action.setExplanation("This information is from Wolfram|Alpha via Papa.");
 		pkg.setActionObject(action);
 		return pkg;
 	}
@@ -240,8 +242,8 @@ public final class PapaRoom extends UrRoom {
 		//   that in November's contructor, but just note that the comes-first relationship
 		//   is there
 		pKeys = PurdahKeys.getInstance();
-		wolframKey = pKeys.getWolframAlphaID();
-		wolframRemoteKey = pKeys.getWolframRemoteID();
+		wolframKey = pKeys.getPurdahKey(PurdahKey.WOLFRAMALPHAKEY);
+		wolframRemoteKey = pKeys.getPurdahKey(PurdahKey.WOLFRAMALPHAREMOTEKEY);
 	}
 
 	@Override

@@ -20,6 +20,8 @@
 package com.hulles.a1icia.charlie.doccat;
 
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,9 +50,10 @@ final public class DocumentSampleGenerator {
 		String line;
 		URL textURL;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             textURL = new URL(ApplicationKeys.toURL(openNLPPath + "/affirmatives.txt"));
         } catch (MalformedURLException ex) {

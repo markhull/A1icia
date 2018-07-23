@@ -20,6 +20,7 @@
 package com.hulles.a1icia.house;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,12 +43,16 @@ import com.hulles.a1icia.api.dialog.DialogSerialization;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.delta.TranscriberDemo;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
+import com.hulles.a1icia.media.MediaFormat;
+import com.hulles.a1icia.media.MediaUtils;
 import com.hulles.a1icia.tools.A1iciaGoogleTranslator;
 import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.tools.ExternalAperture;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -74,6 +79,8 @@ public final class A1iciaStationServer extends UrHouse {
 	private final A1icianID a1iciaA1icianID;
 	private final A1icianID broadcastID;
 	private final Boolean noPrompts;
+//	private A1iciaGoogleSpeech googleSpeech = null;
+	private final static boolean USEDEEPSPEECH = false;
 	
 	public A1iciaStationServer(EventBus bus, Boolean noPrompts) {
 		super(bus);
@@ -137,6 +144,7 @@ public final class A1iciaStationServer extends UrHouse {
 		}
 		openSpark = SerialSpark.find("central_startup");
 		stationBroadcast("A1icia Central starting up....", openSpark);
+//		googleSpeech = new A1iciaGoogleSpeech();
 	}
 
 	/**
@@ -149,6 +157,7 @@ public final class A1iciaStationServer extends UrHouse {
 		
 		closeSpark = SerialSpark.find("central_shutdown");
 		stationBroadcast("A1icia Central shutting down....", closeSpark);
+//		googleSpeech.close();
 		if (executor != null) {
 			try {
 			    System.out.println("StationServer: attempting to shutdown executor");
@@ -275,6 +284,7 @@ public final class A1iciaStationServer extends UrHouse {
 	        promptTimer.schedule(prompter, PROMPTDELAY, NAGDELAY);
 	        prompters.add(prompter);
 		}
+		speechToText(dialogRequest, session.getLanguage());
         translateRequest(dialogRequest, session.getLanguage());
 		LOGGER.log(LOGLEVEL1, "StationServer: posting dialog request for " + fromA1icianID);
         getStreet().post(dialogRequest);
@@ -363,8 +373,43 @@ public final class A1iciaStationServer extends UrHouse {
 	}
 	
 	/**
+	 * Convert an audio file included in the DialogRequest to text.
+	 * 
+	 * @param request The request containing the audio file
+	 * @param lang The language in which the speech is recorded
+	 */
+	private static void speechToText(DialogRequest request, Language lang) {
+		byte[] audioBytes;
+		String audioText = null;
+		Path tempFile;
+		
+		A1iciaUtils.checkNotNull(request);
+		A1iciaUtils.checkNotNull(lang);
+		audioBytes = request.getRequestAudio();
+		if (audioBytes != null) {
+			if (USEDEEPSPEECH) {
+				try {
+					audioText = ExternalAperture.queryDeepSpeech(audioBytes);
+				} catch (Exception ex) {
+					A1iciaUtils.error("A1iciaStationServer: unable to transcribe audio", ex);
+					return;
+				}
+			} else {
+				// Use Sphinx4
+				tempFile = MediaUtils.byteArrayToFile(audioBytes, MediaFormat.WAV);
+				audioText = TranscriberDemo.transcribe(tempFile.toFile());
+			}
+	        LOGGER.log(Level.INFO, "StationServer: audioText is \"" + audioText + "\"");
+			if (audioText.length() > 0) {
+				// note that this overwrites any message text that was also sent in the DialogRequest...
+				request.setRequestMessage(audioText);
+			}
+		}
+	}
+	
+	/**
 	 * Translate a DialogRequest from another language into American English. We currently provide
-	 * a console warning because this is an expensive operation.
+	 * a console warning because this is an expensive operation, relatively speaking.
 	 * 
 	 * @param request The request to translate
 	 * @param lang The language from which to translate
@@ -372,6 +417,7 @@ public final class A1iciaStationServer extends UrHouse {
 	private static void translateRequest(DialogRequest request, Language lang) {
 		String translation;
 		
+		A1iciaUtils.checkNotNull(request);
 		A1iciaUtils.checkNotNull(lang);
 		if ((lang != Language.AMERICAN_ENGLISH) && (lang != Language.BRITISH_ENGLISH)) {
 			LOGGER.log(Level.WARNING, "StationServer: translating request from " + lang.getDisplayName() + 

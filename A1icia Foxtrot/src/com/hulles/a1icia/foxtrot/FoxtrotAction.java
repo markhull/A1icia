@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -46,6 +46,13 @@ public class FoxtrotAction extends RoomActionObject {
 		this.state = state;
 	}
 
+	/*
+	 * Get a human-(or, more precisely, A1icia-)readable message constructed from the 
+	 * FoxtrotPhysicalState data.
+	 * 
+	 * (non-Javadoc)
+	 * @see com.hulles.a1icia.room.document.RoomActionObject#getMessage()
+	 */
 	@Override
 	public String getMessage() {
 		int possibleScore = 0;
@@ -126,7 +133,7 @@ public class FoxtrotAction extends RoomActionObject {
 		sb.append(possibleScore);
 		sb.append(" on my self-assessment just now. ");
 		sb.append("So, I guess I'm doing ");
-		totalScore = (score / possibleScore) * 100f;
+		totalScore = (score / possibleScore) * 100;
 		if (totalScore < 30) {
 			sb.append("poorly.\n");
 		} else if (totalScore < 50) {

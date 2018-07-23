@@ -21,6 +21,8 @@
 package com.hulles.a1icia.bravo;
 
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -45,8 +47,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  * 
  */
 public class InceptionLabeller {
-	private final static String INCEPTIONGRAPHURL = "/tensorflow_inception_graph.pb";
-	private final static String LABELSTRINGSURL = "/imagenet_comp_graph_label_strings.txt";
+//	private final static String INCEPTIONGRAPHURL = "/tensorflow_inception_graph.pb";
+//	private final static String LABELSTRINGSURL = "/imagenet_comp_graph_label_strings.txt";
 	
 	public static String analyzeImage(byte[] imageBytes) {
 		byte[] graphDef;
@@ -58,13 +60,17 @@ public class InceptionLabeller {
 		URI labelsURI;
 		ApplicationKeys appKeys;
         String inceptionPath;
+        String modelUrl;
+        String labelUrl;
         
         A1iciaUtils.checkNotNull(imageBytes);
         appKeys = ApplicationKeys.getInstance();
-        inceptionPath = appKeys.getInceptionPath();
+        inceptionPath = appKeys.getKey(ApplicationKey.INCEPTIONPATH);
+        modelUrl = appKeys.getKey(ApplicationKey.INCEPTIONGRAPHURL);
+        labelUrl = appKeys.getKey(ApplicationKey.INCEPTIONLABELURL);
 		try {
-			modelURI = new URI(inceptionPath + INCEPTIONGRAPHURL);
-			labelsURI = new URI(inceptionPath + LABELSTRINGSURL);
+			modelURI = new URI(inceptionPath + modelUrl);
+			labelsURI = new URI(inceptionPath + labelUrl);
 		} catch (URISyntaxException e) {
 			throw new A1iciaException("Can't create URIs in InceptionLabeller", e);
 		}

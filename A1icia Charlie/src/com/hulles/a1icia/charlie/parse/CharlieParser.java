@@ -21,6 +21,8 @@ package com.hulles.a1icia.charlie.parse;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -47,9 +49,10 @@ final public class CharlieParser {
 		SentenceModel sentenceModel;
 		TokenizerModel tokenizerModel;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             sentenceModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-sent.bin"));
             tokenModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-token.bin"));

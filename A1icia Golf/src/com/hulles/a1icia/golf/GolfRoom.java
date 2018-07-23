@@ -140,6 +140,7 @@ public final class GolfRoom extends UrRoom {
 			}
 		}
 		response.setMessage(result);
+		response.setExplanation("This information is from WikiData via Golf.");
 		response.setSearchResults(searchResults);
 		pkg.setActionObject(response);
 		return pkg;

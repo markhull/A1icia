@@ -21,6 +21,8 @@ package com.hulles.a1icia.charlie.doccat;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,9 +53,10 @@ final public class CharlieDocCat {
 		URL catModelURL;
 		DoccatModel catModel;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             catModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/mydoccat.bin"));
         } catch (MalformedURLException ex) {

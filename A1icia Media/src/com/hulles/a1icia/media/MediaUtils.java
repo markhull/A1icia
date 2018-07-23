@@ -69,18 +69,24 @@ public class MediaUtils {
 		MediaUtils.statCommand(args);
     }
 
-	public static byte[] fileToByteArray(String path) {
-		Path infile;
+	public static byte[] pathToByteArray(Path path) {
 		byte[] bytes = null;
 		
 		MediaUtils.checkNotNull(path);
-		infile = Paths.get(path);
 		try {
-			bytes = Files.readAllBytes(infile);
+			bytes = Files.readAllBytes(path);
 		} catch (IOException e) {
-			throw new A1iciaMediaException("MediaUtils: can't convert file to byte array", e);
+			throw new A1iciaMediaException("MediaUtils: can't convert path to byte array", e);
 		}
 		return bytes;
+	}
+
+	public static byte[] fileToByteArray(String pathName) {
+		Path infile;
+		
+		MediaUtils.checkNotNull(pathName);
+		infile = Paths.get(pathName);
+		return pathToByteArray(infile);
 	}
 
 	public static void byteArrayToFile(byte[] bytes, String path) {

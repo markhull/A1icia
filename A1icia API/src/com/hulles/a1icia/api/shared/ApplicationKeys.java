@@ -44,7 +44,7 @@ import redis.clients.jedis.Jedis;
 public class ApplicationKeys implements Serializable {
 	private static final long serialVersionUID = -8756835735170481101L;
 	private static ApplicationKeys instance = null;
-	private Map<Keys, String> keyMap;
+	private Map<ApplicationKey, String> keyMap;
     
 	public ApplicationKeys() {
 		// need explicit no-arg constructor
@@ -73,148 +73,18 @@ public class ApplicationKeys implements Serializable {
         return url;
     }
     
-    public String getInceptionPath() {
+    public String getKey(ApplicationKey key) {
         
-        return keyMap.get(Keys.INCEPTIONPATH);
+		SharedUtils.checkNotNull(key);
+        return keyMap.get(key);
     }
 
-    public void setInceptionPath(String path) {
+    public void setKey(ApplicationKey key, String value) {
         
-        SharedUtils.checkNotNull(path);
-        keyMap.put(Keys.INCEPTIONPATH, path);
+		SharedUtils.checkNotNull(key);
+        SharedUtils.checkNotNull(value);
+        keyMap.put(key, value);
     }
-
-    public String getOpenNLPPath() {
-        
-        return keyMap.get(Keys.OPENNLPPATH);
-    }
-
-    public void setOpenNLPPath(String path) {
-        
-        SharedUtils.checkNotNull(path);
-        keyMap.put(Keys.OPENNLPPATH, path);
-    }
-
-    public String getTrackerImagePath() {
-        
-        return keyMap.get(Keys.TRACKERPATH);
-    }
-
-    public void setTrackerImagePath(String path) {
-        
-        SharedUtils.checkNotNull(path);
-        keyMap.put(Keys.TRACKERPATH, path);
-    }
-
-	public String getMikeLibrary() {
-		
-		return keyMap.get(Keys.MIKELIBRARY);
-	}
-
-	public void setMikeLibrary(String library) {
-		
-		SharedUtils.checkNotNull(library);
-		keyMap.put(Keys.MIKELIBRARY, library);
-	}
-
-	public String getMusicLibrary() {
-		
-		return keyMap.get(Keys.MUSICLIBRARY);
-	}
-
-	public void setMusicLibrary(String library) {
-		
-		SharedUtils.checkNotNull(library);
-		keyMap.put(Keys.MUSICLIBRARY, library);
-	}
-
-	public String getVideoLibrary() {
-		
-		return keyMap.get(Keys.VIDEOLIBRARY);
-	}
-
-	public void setVideoLibrary(String library) {
-		
-		SharedUtils.checkNotNull(library);
-		keyMap.put(Keys.VIDEOLIBRARY, library);
-	}
-
-	public String getDefaultOWMCity() {
-		
-		return keyMap.get(Keys.OWMCITY);
-	}
-
-	public void setDefaultOWMCity(String city) {
-		
-		SharedUtils.checkNotNull(city);
-		keyMap.put(Keys.OWMCITY, city);
-	}
-
-	public String getLittleGinaPath() {
-		
-		return keyMap.get(Keys.LITTLEGINA);
-	}
-
-	public void setLittleGinaPath(String path) {
-		
-		SharedUtils.checkNotNull(path);
-		keyMap.put(Keys.LITTLEGINA, path);
-	}
-
-	public String getGoogleNewsPath() {
-		
-		return keyMap.get(Keys.GOOGLENEWS);
-	}
-
-	public void setGoogleNewsPath(String path) {
-		
-		SharedUtils.checkNotNull(path);
-		keyMap.put(Keys.GOOGLENEWS, path);
-	}
-
-	public String getFreebasePath() {
-		
-		return keyMap.get(Keys.FREEBASE);
-	}
-
-	public void setFreebasePath(String path) {
-		
-		SharedUtils.checkNotNull(path);
-		keyMap.put(Keys.FREEBASE, path);
-	}
-
-	public String getBigJoanPath() {
-		
-		return keyMap.get(Keys.BIGJOAN);
-	}
-
-	public void setBigJoanPath(String path) {
-		
-		SharedUtils.checkNotNull(path);
-		keyMap.put(Keys.BIGJOAN, path);
-	}
-
-	public String getSystemPersonUUID() {
-		
-		return keyMap.get(Keys.SYSTEMPERSONUUID);
-	}
-
-	public void setSystemPersonUUID(String uuid) {
-		
-		SharedUtils.checkNotNull(uuid);
-		keyMap.put(Keys.SYSTEMPERSONUUID, uuid);
-	}
-	
-	public String getA1iciaAESKeyPath() {
-	
-		return keyMap.get(Keys.AESKEYPATH);
-	}
-
-	public void setA1iciaAESKeyPath(String path) {
-	
-		SharedUtils.checkNotNull(path);
-		keyMap.put(Keys.AESKEYPATH, path);
-	}
 
 	@SuppressWarnings("resource")
 	private static ApplicationKeys getJebusAppKeys() {
@@ -267,14 +137,14 @@ public class ApplicationKeys implements Serializable {
 	 * @return True if our map was updated, false otherwise
 	 */
 	public boolean setKeyMap(Map<String, String> stringMap) {
-		Map<Keys, String> newMap;
-		Keys key;
+		Map<ApplicationKey, String> newMap;
+		ApplicationKey key;
 		
 		SharedUtils.checkNotNull(stringMap);
 		newMap = new HashMap<>(stringMap.size());
 		for (Entry<String, String> entry : stringMap.entrySet()) {
 			try {
-				key = Keys.valueOf(entry.getKey());
+				key = ApplicationKey.valueOf(entry.getKey());
 			} catch (IllegalArgumentException e) {
 				return false;
 			}
@@ -293,13 +163,13 @@ public class ApplicationKeys implements Serializable {
 		Map<String, String> stringMap;
 		
 		stringMap = new HashMap<>(keyMap.size());
-		for (Entry<Keys, String> entry : keyMap.entrySet()) {
+		for (Entry<ApplicationKey, String> entry : keyMap.entrySet()) {
 			stringMap.put(entry.getKey().name(), entry.getValue());
 		}
 		return stringMap;
 	}
 	
-	private enum Keys {
+	public enum ApplicationKey {
 		AESKEYPATH,
 		BIGJOAN,
 		OWMCITY,
@@ -311,9 +181,25 @@ public class ApplicationKeys implements Serializable {
 		MIKELIBRARY,
 		VIDEOLIBRARY,
 		MUSICLIBRARY,
-		SYSTEMPERSONUUID,
+//		SYSTEMPERSONUUID,
 		INCEPTIONPATH,
+		INCEPTIONGRAPHURL,
+		INCEPTIONLABELURL,
 		OPENNLPPATH,
-		TRACKERPATH
+		TRACKERPATH,
+		// from ExternalAperture
+		WIKIDATAID,
+		WIKIDATATITLE,
+		WIKIDATASEARCH,
+		OWMCURRENT,
+		OWMFORECAST,
+		OWMICON,
+		LOCATIONURL,
+		WOLFRAMVALIDATE,
+		WOLFRAMQUERY,
+		WOLFRAMSPOKEN,
+		WOLFRAMSIMPLE,
+		WOLFRAMSHORT,
+		DEEPSPEECH
 	}
 }

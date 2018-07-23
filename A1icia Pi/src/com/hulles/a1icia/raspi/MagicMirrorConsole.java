@@ -27,27 +27,29 @@ import com.hulles.a1icia.api.remote.WakeUp;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 
 public class MagicMirrorConsole extends AbstractExecutionThreadService implements A1iciaRemoteDisplay, WakeUppable {
 //	private final static Logger logger = Logger.getLogger("A1iciaMagicMirror.MagicMirrorConsole");
 //	private final static Level LOGLEVEL = Level.INFO;
-	private final static int PORT = 12347;
 	private A1iciaRemote remote;
-	private final HardwareLayer hardwareLayer;
+	private final HardwareLayerMirror hardwareLayer;
 	private final String host;
 	private final Integer port;
+	@SuppressWarnings("unused")
+	// the daemon flag is currently unused, since the mirror console is an A1iciaRemoteDisplay, not a console per se
+	private final Boolean daemon;
 	
-	public MagicMirrorConsole(String host, Integer port, HardwareLayer hardwareLayer) {
+	public MagicMirrorConsole(String host, Integer port, Boolean daemon, HardwareLayerMirror hardwareLayer) {
 
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
+		SharedUtils.checkNotNull(daemon);
+		SharedUtils.checkNotNull(hardwareLayer);
+		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_MAGIC_MIRROR);
 		this.host = host;
 		this.port = port;
-		SharedUtils.checkNotNull(hardwareLayer);
-		if (SharedUtils.alreadyRunning(PORT)) {
-			System.out.println("A1icia Magic Mirror is already running");
-			System.exit(1);
-		}
+		this.daemon = daemon;
 		this.hardwareLayer = hardwareLayer;
 	}
 

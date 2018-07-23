@@ -40,7 +40,7 @@ public class DumpTasks {
 		ICalendar ical;
 		List<VTodo> todos;
 		
-		fileName = "/home/hulles/Public/Home.ics";
+		fileName = "/home/hulles/Public/MyHome.ics";
 		try (Reader reader = new FileReader(fileName)) {
 			ical = Biweekly.parse(reader).first();
 			System.out.println("ToDo's:");

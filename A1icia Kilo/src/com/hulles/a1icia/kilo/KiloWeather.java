@@ -42,6 +42,7 @@ import javax.json.JsonReader;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.kilo.KiloForecastAction.ThreeHrForecast;
 import com.hulles.a1icia.kilo.KiloWeatherAction.WeatherCondition;
 import com.hulles.a1icia.tools.ExternalAperture;
@@ -103,9 +104,11 @@ public class KiloWeather {
 		Iterator<KiloWeatherAction> weatherIterator;
 		KiloWeatherAction searchWeather = null;
 		PurdahKeys purdahKeys;
+		String openWeatherId;
 		
 		A1iciaUtils.checkNotNull(cityID);
 		purdahKeys = PurdahKeys.getInstance();
+		openWeatherId = purdahKeys.getPurdahKey(PurdahKey.OPENWEATHERID);
 		if (currentWeatherQueue == null) {
 			currentWeatherQueue = Collections.synchronizedList(new LinkedList<>());
 		}
@@ -131,7 +134,7 @@ public class KiloWeather {
 		owmWeather.setCityID(cityID);
 		owmWeather.setLocalDateTime(LocalDateTime.now());
 		sb = new StringBuilder();
-		weatherJSON = ExternalAperture.getCurrentWeatherOWM(cityID, purdahKeys.getOpenWeatherID());
+		weatherJSON = ExternalAperture.getCurrentWeatherOWM(cityID, openWeatherId);
 		System.out.println(weatherJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(weatherJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
@@ -258,9 +261,11 @@ public class KiloWeather {
 		ThreeHrForecast hrForecast;
 		String dateText;
 		PurdahKeys purdahKeys;
+		String openWeatherId;
 		
 		purdahKeys = PurdahKeys.getInstance();
-		forecastJSON = ExternalAperture.getForecastOWM(cityID, purdahKeys.getOpenWeatherID());
+		openWeatherId = purdahKeys.getPurdahKey(PurdahKey.OPENWEATHERID);
+		forecastJSON = ExternalAperture.getForecastOWM(cityID, openWeatherId);
 		System.out.println(forecastJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(forecastJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {

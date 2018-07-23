@@ -37,6 +37,7 @@ import com.google.common.graph.ValueGraphBuilder;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.graphviz.Graph;
 import com.hulles.a1icia.graphviz.GraphViz;
@@ -77,13 +78,13 @@ public final class Tracker extends AbstractIdleService {
 	
 	public Tracker(EventBus bus) {
 		ApplicationKeys appKeys;
-
+		
 		A1iciaUtils.checkNotNull(bus);
 		this.bus = bus;
 		ticketMap = new ConcurrentHashMap<>();
 		jebusPool = JebusHub.getJebusLocal();
 		appKeys = ApplicationKeys.getInstance();
-		imagePath = appKeys.getTrackerImagePath();
+		imagePath = appKeys.getKey(ApplicationKey.TRACKERPATH);
 		executor = Executors.newCachedThreadPool();
 	}
 	

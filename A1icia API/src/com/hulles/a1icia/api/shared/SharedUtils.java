@@ -29,6 +29,7 @@ public class SharedUtils implements Serializable {
 	private static final long serialVersionUID = 8123983689858668155L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;
+	public final static int EXIT_ALREADY_RUNNING = 1;
 	
 	// see guava SharedUtils, this is just adapted from there
 	public static <T> void checkNotNull(T reference) {
@@ -42,10 +43,11 @@ public class SharedUtils implements Serializable {
 		// doesn't do anything, just indicates we don't use checkNotNull
 	}
 	
-	public static boolean alreadyRunning(int port) {
-		
+	public static boolean alreadyRunning(PortCheck portCheck) {
+	
+		checkNotNull(portCheck);
 		try {
-			canary = new ServerSocket(port, 10, InetAddress.getLocalHost());
+			canary = new ServerSocket(portCheck.getPortNumber(), 10, InetAddress.getLocalHost());
 		} catch (UnknownHostException e) {
 			// shouldn't happen, it's localhost
 			throw new A1iciaAPIException();
@@ -54,5 +56,41 @@ public class SharedUtils implements Serializable {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void exitIfAlreadyRunning(PortCheck portCheck) {
+		
+		checkNotNull(portCheck);
+		if (alreadyRunning(PortCheck.A1ICIA)) {
+			System.err.println("A1icia is already running");
+			System.exit(EXIT_ALREADY_RUNNING);
+		}
+	}
+	
+	public enum PortCheck {
+	    A1ICIA(12345, "A1icia"),
+	    A1ICIA_CLI(12346, "A1icia CLI"),
+	    A1ICIA_MAGIC_MIRROR(12347, "A1icia Magic Mirror"),
+	    A1ICIA_PI_CONSOLE(12348, "A1icia Pi Console"),
+	    
+	    A1ICIA_NODE(12349, "A1icia Node Server");
+	    private int portNumber;
+	    private final String displayName;
+
+	    private PortCheck(int portNumber, String displayName) {
+
+	    	this.portNumber = portNumber;
+	        this.displayName = displayName;
+	    }
+
+	    public int getPortNumber() {
+	    	
+	        return portNumber;
+	    }
+
+	    public String getDisplayName() {
+	    	
+	        return displayName;
+	    }
 	}
 }

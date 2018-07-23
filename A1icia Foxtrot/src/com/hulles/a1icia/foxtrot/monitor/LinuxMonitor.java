@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -34,10 +34,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.dummy.DummyDataSource;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
@@ -48,15 +52,26 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 final public class LinuxMonitor {
+	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LinuxMonitor");
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	final static Level LOGLEVEL = Level.INFO;
 	private static final int KB = 1024;
 	private final FoxtrotPhysicalState foxtrotState;
     private static final Pattern DISTRIBUTION =
-            Pattern.compile("DISTRIB_DESCRIPTION=\"(.*)\"", Pattern.MULTILINE);
+            Pattern.compile("DISTRIB_DESCRIPTION=\"(.*)\"$", Pattern.MULTILINE);
+    private static final Pattern PRETTYNAME =
+            Pattern.compile("PRETTY_NAME=\"(.*)\"$", Pattern.MULTILINE);
+    private static final String APACHENAME = "Apache";
     private static final String APACHEURL = "http://localhost/server-status?auto";
     private static final String APACHEVERSION = "ServerVersion:";
     private static final String APACHEUPTIME = "ServerUptimeSeconds:";
     private static final String APACHETOTALACCESSES = "Total Accesses:";
     private static final String APACHETOTALKBYTES = "Total kBytes:";
+    private static final String NGINXURL = "http://localhost/nginx_status";
+    private static final String NGINXNAME = "nginx";
+    private static final String NGINXACTIVE = "Active connections:";
+    private static final String NGINXSERVER = "server accepts handled requests";
+    private static final String NGINXREADING = "Reading:";
     private String databaseUser = null;
     private String databasePassword = null;
     private String databaseServer = null;
@@ -102,13 +117,23 @@ final public class LinuxMonitor {
     	updateSensors();
     	updateDiskSpace();
     	updateNetwork();
+    	updateLanHosts();
     	updateDatabase();
-    	updateApacheStatus();
+    	if (!updateApacheStatus()) {
+    		updateNginxStatus();
+    	}
     }
     
     public FoxtrotPhysicalState getFoxtrotPhysicalState() {
     	updateVolatileValues();
     	return foxtrotState;
+    }
+    
+    private void updateLanHosts() {
+    	Set<String> hosts;
+    	
+    	hosts = LanScanner.getLanHosts();
+    	foxtrotState.setLanHosts(hosts);
     }
     
     private void updateJava() {
@@ -135,7 +160,10 @@ final public class LinuxMonitor {
         
         distribution = FoxtrotUtils.matchPatternInFile(DISTRIBUTION, "/etc/lsb-release");
         if (distribution == null) {
-        	throw new A1iciaException("No distribution info from /etc/lsb-release");
+        	distribution = FoxtrotUtils.matchPatternInFile(PRETTYNAME, "/etc/os-release");
+        }
+        if (distribution == null) {
+        	throw new A1iciaException("No distribution info from /etc/lsb-release or /etc/os-release");
         }
         return distribution;
 	}
@@ -315,13 +343,11 @@ final public class LinuxMonitor {
 		String label;
 		String[] tokens;
 		Float floatVal;
-		BufferedReader inStream;
 		
 		sensorValues = new HashMap<>();
 		result = FoxtrotUtils.runCommand("sensors -uA");
 		resultString = result.toString();
-		inStream = new BufferedReader(new StringReader(resultString));
-		try {
+		try (BufferedReader inStream = new BufferedReader(new StringReader(resultString))) {
 			while ((line = inStream.readLine()) != null) {
 				tokens = line.split(":");
 				label = tokens[0].trim();
@@ -386,13 +412,11 @@ final public class LinuxMonitor {
 		Long value;
 		Integer percent;
 		String[] tokens;
-		BufferedReader inStream;
 		
 		fileSystems = new ArrayList<>();
 		result = FoxtrotUtils.runCommand("df");
 		resultString = result.toString();
-		inStream = new BufferedReader(new StringReader(resultString));
-		try {
+		try (BufferedReader inStream = new BufferedReader(new StringReader(resultString))) {
 			while ((line = inStream.readLine()) != null) {
 				tokens = line.split("\\s+");
 				fsName = tokens[0].trim();
@@ -487,16 +511,17 @@ final public class LinuxMonitor {
 		}
 	}
 
-	private void updateApacheStatus() {
+	private boolean updateApacheStatus() {
 		List<String> statusLines;
 		String serverName;
 		String workStr;
 		Long value;
 		
-		statusLines = getApacheStatus();
+		statusLines = getWebServerStatus(APACHEURL);
 		if (statusLines.isEmpty()) {
-			return;
+			return false;
 		}
+		foxtrotState.setWebServer(APACHENAME);
 		serverName = statusLines.remove(0);
 		foxtrotState.setServerName(serverName);
 		for (String line : statusLines) {
@@ -520,40 +545,98 @@ final public class LinuxMonitor {
 				foxtrotState.setServerKBytes(value);
 			}
 		}
+		return true;
+	}
+
+	// to enable nginx status page, see e.g. https://www.tecmint.com/enable-nginx-status-page/
+	private boolean updateNginxStatus() {
+		List<String> statusLines;
+		Long value;
+		String[] counts;
+		
+		statusLines = getWebServerStatus(NGINXURL);
+		if (statusLines.isEmpty()) {
+			return false;
+		}
+		foxtrotState.setWebServer(NGINXNAME);
+		foxtrotState.setServerName(null);
+		foxtrotState.setServerVersion(null);
+		foxtrotState.setServerKBytes(null);
+		foxtrotState.setServerUptime(null);
+		for (String line : statusLines) {
+			if (line.startsWith(NGINXACTIVE)) {
+//				workStr = line.substring(NGINXACTIVE.length() + 1);
+			} else if (line.startsWith(NGINXSERVER)) {
+				// do nothing, header line
+			} else if (line.startsWith(NGINXREADING)) {
+				// line looks like:
+				// Reading: 6 Writing: 179 Waiting: 106
+				// ...we don't currently do anything with these stats
+			} else {
+				counts = line.split("\\s+");
+				LOGGER.log(LOGLEVEL, "line = [" + line + "]");
+				LOGGER.log(LOGLEVEL, "counts.length = " + counts.length);
+				for (String count : counts) {
+					LOGGER.log(LOGLEVEL, "counts value = [" + count + "]");
+				}
+				// with split there is an initial space element in the array at pos 0
+				if (counts.length == 4) {
+					try {
+						// accepts
+						value = Long.parseLong(counts[1]);
+						LOGGER.log(LOGLEVEL, "value 1 = " + value);
+					} catch (NumberFormatException e) {
+						continue;
+					}
+					try {
+						// handled
+						value = Long.parseLong(counts[2]);
+						LOGGER.log(LOGLEVEL, "value 2 = " + value);
+					} catch (NumberFormatException e) {
+						continue;
+					}
+					try {
+						// requests
+						value = Long.parseLong(counts[3]);
+						LOGGER.log(LOGLEVEL, "value 3 = " + value);
+						foxtrotState.setServerAccesses(value);
+					} catch (NumberFormatException e) {
+						continue;
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
-	private static List<String> getApacheStatus() {
+	private static List<String> getWebServerStatus(String urlStr) {
 		URL url;
-		InputStream inStream;
 		String line = null;
 	    List<String> statusLines;
 	    
+	    
+		A1iciaUtils.checkNotNull(urlStr);
 	    statusLines = new ArrayList<>(40);
 		try {
-			url = new URL(APACHEURL);
+			url = new URL(urlStr);
 		} catch (MalformedURLException ex) {
-			throw new A1iciaException("Bad URL in updateApacheStatus");
+			throw new A1iciaException("Bad URL in getWebServerStatus", ex);
 		}
-		try { 
-			inStream = url.openStream();
-		} catch (IOException ex) {
-			throw new A1iciaException("I/O Exception creating input stream in updateApacheStatus");
-		}
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(inStream))){
-			while (true) {
-				line = in.readLine();
-				if (line == null) {
-					break;
+		try (InputStream inStream = url.openStream()) {
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(inStream))){
+				while (true) {
+					line = in.readLine();
+					if (line == null) {
+						break;
+					}
+					statusLines.add(line);
 				}
-				statusLines.add(line);
+			} catch (IOException ex) {
+				throw new A1iciaException("I/O Exception reading input stream in getWebServerStatus", ex);
 			}
-		} catch (IOException e) {
-			throw new A1iciaException("I/O Exception reading input stream in updateApacheStatus");
-		}
-		try {
-			inStream.close();
 		} catch (IOException ex) {
-			throw new A1iciaException("I/O Exception closing input stream in updateApacheStatus");
+			return statusLines;
+//			throw new A1iciaException("I/O Exception creating input stream in updateApacheStatus", ex);
 		}
 		return statusLines;
 	}

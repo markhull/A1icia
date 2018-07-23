@@ -40,6 +40,7 @@ public class DialogRequest extends Dialog {
 	private static final long serialVersionUID = 2902774382678495512L;
 	private Set<SerialSpark> sparks;
 	private String requestString;
+	private byte[] requestAudio;
 	private A1iciaClientObject requestObject;
 	private A1icianID fromA1icianID;
 	private SerialUUID<SerialPerson> personUUID;
@@ -52,33 +53,63 @@ public class DialogRequest extends Dialog {
 		
 	}
 
+	/**
+	 * Get the original language of the DialogRequest
+	 * 
+	 * @return The language
+	 */
 	public Language getLanguage() {
 		
 		return language;
 	}
 
+	/**
+	 * Set the original language of the DialogRequest
+	 * 
+	 * @param language The language
+	 */
 	public void setLanguage(Language language) {
 		
 		SharedUtils.checkNotNull(language);
 		this.language = language;
 	}
 
+	/**
+	 * Get the Station UUID of the originator
+	 * 
+	 * @return The UUID
+	 */
 	public SerialUUID<SerialStation> getStationUUID() {
 		
 		return stationUUID;
 	}
 
+	/**
+	 * Set the Station UUID of the originator
+	 * 
+	 * @param uuid The UUID
+	 */
 	public void setStationUUID(SerialUUID<SerialStation> uuid) {
 		
 		SharedUtils.checkNotNull(uuid);
 		this.stationUUID = uuid;
 	}
 
+	/**
+	 * Get the UUID of the originating person, if known.
+	 * 
+	 * @return The UUID
+	 */
 	public SerialUUID<SerialPerson> getPersonUUID() {
 		
 		return personUUID;
 	}
 
+	/**
+	 * Set the UUID of the originating person, or null if the person is not known.
+	 * 
+	 * @param personUUID The UUID
+	 */
 	public void setPersonUUID(SerialUUID<SerialPerson> personUUID) {
 		
 		SharedUtils.nullsOkay(personUUID);
@@ -131,6 +162,17 @@ public class DialogRequest extends Dialog {
 		this.requestString = msg;
 	}
 	
+	public byte[] getRequestAudio() {
+		
+		return requestAudio;
+	}
+
+	public void setRequestAudio(byte[] audio) {
+		
+		SharedUtils.nullsOkay(audio);
+		this.requestAudio = audio;
+	}
+
 	@Override
 	public A1iciaClientObject getClientObject() {
 		
