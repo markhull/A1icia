@@ -23,8 +23,8 @@ The following software is required for the installation of A1icia Central:
 * [MariaDb 10.1.34+](https://mariadb.org/) (preferred) or [MySQL 5.7+](https://www.mysql.com/)
 * [Redis 4.0.10+](https://redis.io/)
 
-* A1iciaExec.jar, an uber-jar with all Java dependencies included
-* A1iciaCentralInstaller.jar, the means by which A1icia Central is configured
+* **A1iciaExec.jar**, an uber-jar with all Java dependencies included
+* **A1iciaCentralInstaller.jar**, the means by which A1icia Central is configured
 
 Note: If you need to install any of the above packages, you should probably use your distro's repositories to do so, but as always, YMMV.
 
