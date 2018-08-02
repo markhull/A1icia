@@ -3,8 +3,6 @@ layout: page
 title: Installing A1icia Central
 ---
 
-# Installing A1icia Central
-
 This document explains how to install A1icia Central on a computer. To date we have only installed A1icia Central on Linux machines, but A1icia should be (mostly) platform-agnostic.
 
 ## Hardware Requirements
@@ -13,7 +11,7 @@ The hardware requirements have not as yet been codified, but A1icia Central has 
 
 A Local Area Network (LAN) is required for remote stations to communicate with A1icia Central.
 
-An Internet connection is required to access (e.g.) OpenWeatherMap, WikiData, and Wolfram|Alpha.
+An Internet connection is required to access (e.g.) OpenWeatherMap, WikiData, and Wolfram\|Alpha.
 
 ## Software Requirements
 
@@ -25,6 +23,9 @@ The following software is required for the installation of A1icia Central:
 
 * **A1iciaExec.jar**, an uber-jar with all Java dependencies included
 * **A1iciaCentralInstaller.jar**, the means by which A1icia Central is configured
+* **appkeys.txt**, A1icia's configuration file with physical file locations etc., used by A1iciaCentralInstaller
+* **purdahkeys.txt**, A1icia's encrypted configuration file with private keys, used by A1iciaCentralInstaller
+* **a1icia_aes**, An encryption key for the Purdah
 
 Note: If you need to install any of the above packages, you should probably use your distro's repositories to do so, but as always, YMMV.
 
