@@ -21,6 +21,8 @@ package com.hulles.a1icia.charlie.ner;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -79,9 +81,10 @@ final public class CharlieNER {
 		Dictionary locationDictionary;
 		
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             personModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-ner-person.bin"));
             locationModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-ner-location.bin"));

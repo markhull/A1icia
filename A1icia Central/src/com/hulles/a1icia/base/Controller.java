@@ -93,7 +93,7 @@ public final class Controller extends AbstractIdleService {
 	private ServiceManager serviceManager;
 	private final A1icia a1iciaInstance;
 	private volatile static Controller controllerInstance = null;
-	private static Set<SerialSpark> allSparks;
+	static Set<SerialSpark> allSparks;
 	
 	static {
 		
@@ -297,6 +297,8 @@ public final class Controller extends AbstractIdleService {
 		Ticket ticket;
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
+		Long startupTime;
+		Long totalStartupTime = 0L;
 		
 		services = loadServices(hallBus);
 		serviceManager = new ServiceManager(services);
@@ -304,9 +306,17 @@ public final class Controller extends AbstractIdleService {
 		serviceManager.awaitHealthy();
 		startupTimes = serviceManager.startupTimes().entrySet();
 		for (Entry<Service,Long> entry : startupTimes) {
+			startupTime = entry.getValue();
+			totalStartupTime += startupTime;
 			logger.log(Level.INFO, entry.getKey() + " started in " + 
-					A1iciaUtils.formatElapsedMillis(entry.getValue()));
+					A1iciaUtils.formatElapsedMillis(startupTime));
 		}
+		// Note that the total of startup times is not the same as the total 
+		//    elapsed startup time thanks to the miracle of parallel processing....
+		// The total of startup times IS useful to compare startup speeds for different 
+		//    servers, however....
+		logger.log(Level.INFO, "Total of startup times is " + 
+				A1iciaUtils.formatElapsedMillis(totalStartupTime));
 		
 		// send WHAT_SPARKS request to load sparkRooms
 		ticket = Ticket.createNewTicket(hallBus, Room.CONTROLLER);

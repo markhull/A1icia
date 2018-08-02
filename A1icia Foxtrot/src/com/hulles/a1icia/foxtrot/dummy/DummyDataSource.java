@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.

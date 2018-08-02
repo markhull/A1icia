@@ -35,7 +35,6 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
 
-import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.Gender;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
@@ -52,11 +51,9 @@ public class Person extends _Person {
     private static final String DEFAULT_PASSWORD = "xx";
     private static final String DEFAULT_EMAIL = "NewPerson@example.com";
     private static final DateFormat dateToString = DateFormat.getDateInstance();
-    private final ApplicationKeys appKeys;
     
     public Person() {
     	
-    	appKeys = ApplicationKeys.getInstance();
     }
     
     public static Person getSystemPerson() {
@@ -361,7 +358,7 @@ public class Person extends _Person {
 
     public boolean iAmTheCentralScrutinizer() {
     	
-    	return this.getPersonUuid().equals(appKeys.getSystemPersonUUID());
+    	return this.equals(getSystemPerson());
     }
     
     public static String getDateString(LocalDate date) {

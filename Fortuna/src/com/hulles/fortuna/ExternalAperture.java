@@ -37,9 +37,7 @@ final public class ExternalAperture {
 	
 	static String[] getMOTD() {
 		URL url;
-		InputStream inStream;
 		JsonObject motdObj;
-		JsonReader reader;
 		String message;
 		String source;
 		String[] result;
@@ -58,21 +56,14 @@ final public class ExternalAperture {
 			System.err.println("Bad URL in getMOTD");
 			return null;
 		}
-		try { 
-			inStream = url.openStream();
+		try (InputStream inStream = url.openStream()) { 
+			try (JsonReader reader = Json.createReader(inStream)) {
+				motdObj = reader.readObject();
+				message = motdObj.getString("text");
+				source = motdObj.getString("source");
+			}
 		} catch (IOException ex) {
 			System.err.println("I/O Exception creating input stream in getMOTD");
-			return null;
-		}
-		reader = Json.createReader(inStream);
-		motdObj = reader.readObject();
-		message = motdObj.getString("text");
-		source = motdObj.getString("source");
-		reader.close();
-		try {
-			inStream.close();
-		} catch (IOException ex) {
-			System.err.println("I/O Exception closing input stream in getMOTD");
 			return null;
 		}
 		result = new String[2];

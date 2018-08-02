@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
@@ -119,7 +120,7 @@ public final class KiloRoom extends UrRoom {
 		
 		A1iciaUtils.checkNotNull(sparkPkg);
 		A1iciaUtils.checkNotNull(request);
-		idStr = appKeys.getDefaultOWMCity();
+		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getForecastWeather(Integer.parseInt(idStr));
 		pkg = new ActionPackage(sparkPkg);
 		pkg.setActionObject(action);
@@ -133,7 +134,7 @@ public final class KiloRoom extends UrRoom {
 		
 		A1iciaUtils.checkNotNull(sparkPkg);
 		A1iciaUtils.checkNotNull(request);
-		idStr = appKeys.getDefaultOWMCity();
+		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getCurrentWeather(Integer.parseInt(idStr));
 		pkg = new ActionPackage(sparkPkg);
 		pkg.setActionObject(action);

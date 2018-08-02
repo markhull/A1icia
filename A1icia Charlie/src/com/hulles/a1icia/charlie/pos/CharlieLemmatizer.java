@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Lemma;
@@ -50,9 +51,10 @@ public class CharlieLemmatizer {
 //		String pos = null;
 //		String lemma = null;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             lemmatizerModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-lemmatizer.bin"));
         } catch (MalformedURLException ex) {

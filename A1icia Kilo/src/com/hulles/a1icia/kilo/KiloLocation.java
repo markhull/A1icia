@@ -28,6 +28,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 public class KiloLocation {
@@ -44,7 +45,7 @@ public class KiloLocation {
 		
 		action = new KiloLocationAction();
 		purdahKeys = PurdahKeys.getInstance();
-		locationJSON = ExternalAperture.getCurrentLocation(purdahKeys.getIpInfoToken());
+		locationJSON = ExternalAperture.getCurrentLocation(purdahKeys.getPurdahKey(PurdahKey.IPINFOKEY));
 		try (BufferedReader reader = new BufferedReader(new StringReader(locationJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
 				locObj = jsonReader.readObject();

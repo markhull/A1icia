@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,26 +32,29 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.io.MoreFiles;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
-final class FoxtrotUtils {
+public final class FoxtrotUtils {
 	private static final int RUNCOMMANDLEN = 50 * 1024;
 	
 	static String getStringFromFile(String fileName) {
-		StringBuilder sb;
-		List<String> lines;
+		Path filePath;
+		String out = null;
 		
 		A1iciaUtils.checkNotNull(fileName);
-		lines = getLinesFromFile(fileName);
-		if (lines == null) {
+		filePath = Paths.get(fileName);
+		if (!Files.exists(filePath)) {
 			return null;
 		}
-		sb = new StringBuilder();
-		for (String result : lines) {
-			sb.append(result);
+		try {
+			out = MoreFiles.asCharSource(filePath, StandardCharsets.UTF_8).read();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new A1iciaException("IOException reading file " + fileName);
 		}
-		return sb.toString();
+		return out;
 	}
 	
 	static List<String> getLinesFromFile(String fileName) {
@@ -59,8 +63,12 @@ final class FoxtrotUtils {
 		
 		A1iciaUtils.checkNotNull(fileName);
 		filePath = Paths.get(fileName);
+		if (!Files.exists(filePath)) {
+			return null;
+		}
 		try {
-			results = Files.readAllLines(filePath);
+//			results = Files.readAllLines(filePath);
+			results = MoreFiles.asCharSource(filePath, StandardCharsets.UTF_8).readLines();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new A1iciaException("IOException reading file " + fileName);
@@ -68,7 +76,7 @@ final class FoxtrotUtils {
 		return results;
 	}
 	
-	static String matchPatternInFile(Pattern pattern, String fileName) {
+	public static String matchPatternInFile(Pattern pattern, String fileName) {
 		String result;
 		Matcher matcher;
 		String firstMatch;
@@ -77,7 +85,8 @@ final class FoxtrotUtils {
 		A1iciaUtils.checkNotNull(fileName);
 		result = getStringFromFile(fileName);
 		if (result == null) {
-			throw new A1iciaException("No input from file " + fileName);
+			return null;
+//			throw new A1iciaException("No input from file " + fileName);
 		}
         matcher = pattern.matcher(result);
         matcher.find();
@@ -174,8 +183,7 @@ final class FoxtrotUtils {
 			throw new A1iciaException("Can't close runCommand stderr stream");
 		}
 		if (stdErr.length() > 0) {
-			System.err.println("RunCommand Error: " + stdErr.toString());
-			throw new A1iciaException("runCommand produced stderr stream");
+			A1iciaUtils.error("runCommand produced stderr stream, as follows:", stdErr.toString());
 		}
 		
 		proc.destroy();

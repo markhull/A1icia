@@ -37,11 +37,21 @@ public class DialogHeader implements Serializable {
 	private static final long serialVersionUID = 1127382284278136055L;
 	private A1icianID toA1icianID;
 	
+	/**
+	 * Get the ID of the A1ician for whom the dialog is intended
+	 * 
+	 * @return The A1ician's ID
+	 */
 	public A1icianID getToA1icianID() {
 		
 		return toA1icianID;
 	}
 
+	/**
+	 * Set the ID of the A1ician to whom the dialog is intended
+	 * 
+	 * @param a1icianID The ID of the A1ician
+	 */
 	public void setToA1icianID(A1icianID a1icianID) {
 		
 		SharedUtils.checkNotNull(a1icianID);

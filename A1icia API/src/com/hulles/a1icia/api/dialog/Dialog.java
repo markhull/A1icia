@@ -55,6 +55,11 @@ public abstract class Dialog implements Serializable {
 		return documentID;
 	}
 	
+	/**
+	 * Create and return a new document ID, using Jebus
+	 * 
+	 * @return The ID
+	 */
 	private static long getNewDocumentID() {
 		JebusPool jebusPool;
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -29,7 +29,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaTimer;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -50,14 +53,26 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  * [actually just changed it to cached, and it's even slightly faster than fixed(8000)]
  * scan the two common site-local nets, and make it pretty for A1icia. She likes pretty.
  * 
+ * @author hulles
+ * 
  */
 
 public final class LanScanner {
+	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LanScanner");
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static int THREADCOUNT = 8000;
 	private final String submask;
 	private final ExecutorService scanExecutor;
 	final Set<String> liveHosts;
 
+	/**
+	 * We use a thread cache here for the Executor, which provides awesome performance. Don't believe
+	 * it? Use a FixedThreadPool and set the commented-out THREADCOUNT above to the number of 
+	 * cores in your PC + 1 (e.g.) and run it again.
+	 * 
+	 * @see https://markhull.github.io/2017/12/21/Divergent.html
+	 * @param ip
+	 */
 	LanScanner(String ip) {
 		String[] ipBytes;
 		
@@ -73,18 +88,23 @@ public final class LanScanner {
 		} else {
 			throw new A1iciaException();
 		}
-		System.out.println("Scan being performed on submask : " + submask);
+		LOGGER.log(LOGLEVEL, "Scan being performed on submask : " + submask);
 	}
 
+	/**
+	 * Scan the specified subnet (10.0. e.g.) for live hosts
+	 * @return
+	 */
 	private Set<String> getLiveHosts() {
 		List<Future<ScanResult>> futures;
 		String ip;
 		ScanResult scanResult;
 		
 		futures = new ArrayList<>();
-		for (int firstByte = 0; firstByte < 20; firstByte++) {
-			for (int secondByte = 0; secondByte < 255; secondByte++) {
-				ip = this.submask + "." + firstByte + "." + secondByte;
+		for (int thirdByte = 0; thirdByte < 20; thirdByte++) {
+//		for (int thirdByte = 0; thirdByte < 255; thirdByte++) {
+			for (int fourthByte = 0; fourthByte < 255; fourthByte++) {
+				ip = this.submask + "." + thirdByte + "." + fourthByte;
 				futures.add(hostScan(ip));
 			}
 		}
@@ -153,7 +173,7 @@ public final class LanScanner {
 		A1iciaTimer.stopTimer(ip);
 		
 		for (String host : upHosts) {
-			System.out.println("Host " + host + " is up");
+			LOGGER.log(LOGLEVEL, "Host " + host + " is up");
 		}
 		return upHosts;
 	}

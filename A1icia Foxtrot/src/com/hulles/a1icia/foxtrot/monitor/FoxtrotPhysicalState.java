@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -21,6 +21,7 @@ package com.hulles.a1icia.foxtrot.monitor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -57,7 +58,8 @@ final public class FoxtrotPhysicalState {
 	private String javaUserHome;
 	private String javaUserName;
 	
-	// Apache 2
+	// Web Server
+	private String webServer;
 	private String serverName;
 	private String serverVersion;
 	private Long serverUptime;
@@ -70,6 +72,9 @@ final public class FoxtrotPhysicalState {
 	private Long jvmTotalMemoryKb;
 	private Long jvmMaxMemoryKb;
 
+	// volatile
+	private Set<String> lanHosts;
+	
 	private Map<String, SensorValue> sensorValues;
 	private List<FoxtrotFS> fileSystems;
 	private List<NetworkDevice> networkDevices;
@@ -205,6 +210,17 @@ final public class FoxtrotPhysicalState {
 		this.freeSwapKb = freeSwapKb;
 	}
 
+	public String getWebServer() {
+		
+		return webServer;
+	}
+
+	public void setWebServer(String name) {
+		
+		A1iciaUtils.checkNotNull(name);
+		this.webServer = name;
+	}
+
 	public String getServerName() {
 		
 		return serverName;
@@ -212,7 +228,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerName(String serverName) {
 		
-		A1iciaUtils.checkNotNull(serverName);
+		A1iciaUtils.nullsOkay(serverName);
 		this.serverName = serverName;
 	}
 
@@ -223,7 +239,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerVersion(String serverVersion) {
 		
-		A1iciaUtils.checkNotNull(serverVersion);
+		A1iciaUtils.nullsOkay(serverVersion);
 		this.serverVersion = serverVersion;
 	}
 
@@ -234,7 +250,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerUptime(Long serverUptime) {
 		
-		A1iciaUtils.checkNotNull(serverUptime);
+		A1iciaUtils.nullsOkay(serverUptime);
 		this.serverUptime = serverUptime;
 	}
 
@@ -256,7 +272,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerKBytes(Long serverKBytes) {
 		
-		A1iciaUtils.checkNotNull(serverKBytes);
+		A1iciaUtils.nullsOkay(serverKBytes);
 		this.serverKBytes = serverKBytes;
 	}
 
@@ -425,6 +441,17 @@ final public class FoxtrotPhysicalState {
 		this.dbUserName = dbUserName;
 	}
 
+	public Set<String> getLanHosts() {
+		
+		return lanHosts;
+	}
+
+	public void setLanHosts(Set<String> lanHosts) {
+		
+		A1iciaUtils.checkNotNull(lanHosts);
+		this.lanHosts = lanHosts;
+	}
+
 	public List<NetworkDevice> getNetworkDevices() {
 		
 		return networkDevices;
@@ -569,19 +596,32 @@ final public class FoxtrotPhysicalState {
 		sb.append("<dt>Database URL</dt>\n");
 		sb.append("<dd>" + this.getDbURL() + "</dd>\n");
 
-		sb.append("<dt>Apache Server Name</dt>\n");
-		sb.append("<dd>" + this.getServerName() + "</dd>\n");
-		sb.append("<dt>Apache Server Version</dt>\n");
-		sb.append("<dd>" + this.getServerVersion() + "</dd>\n");
-		sb.append("<dt>Apache Total Uptime</dt>\n");
-		etStr = A1iciaUtils.formatElapsedSeconds(this.getServerUptime());
-		sb.append("<dd>" + etStr + "</dd>\n");
-		sb.append("<dt>Apache Total Accesses</dt>\n");
-		sb.append("<dd>" + this.getServerAccesses() + "</dd>\n");
-		sb.append("<dt>Apache Total kBytes Served</dt>\n");
-		kbStr = A1iciaUtils.formatKb(this.getServerKBytes());
-		sb.append("<dd>" + kbStr + "</dd>\n");
-		
+		if (this.getWebServer() != null) {
+			sb.append("<dt>Web Server</dt>\n");
+			sb.append("<dd>" + this.getWebServer() + "</dd>\n");
+		}
+		if (this.getServerName() != null) {
+			sb.append("<dt>Web Server Host Name</dt>\n");
+			sb.append("<dd>" + this.getServerName() + "</dd>\n");
+		}
+		if (this.getServerVersion() != null) {
+			sb.append("<dt>Web Server Version</dt>\n");
+			sb.append("<dd>" + this.getServerVersion() + "</dd>\n");
+		}
+		if (this.getServerUptime() != null) {
+			sb.append("<dt>Web Server Total Uptime</dt>\n");
+			etStr = A1iciaUtils.formatElapsedSeconds(this.getServerUptime());
+			sb.append("<dd>" + etStr + "</dd>\n");
+		}
+		if (this.getServerAccesses() != null) {
+			sb.append("<dt>Web Server Total Accesses</dt>\n");
+			sb.append("<dd>" + this.getServerAccesses() + "</dd>\n");
+		}
+		if (this.getServerKBytes() != null) {
+			sb.append("<dt>Web Server Total kBytes Served</dt>\n");
+			kbStr = A1iciaUtils.formatKb(this.getServerKBytes());
+			sb.append("<dd>" + kbStr + "</dd>\n");
+		}		
 		
 		for (SensorValue sv : this.getSensorValues().values()) {
 			sb.append("<dt>Sensor " + sv.getLabel() + "</dt>\n");
@@ -608,6 +648,10 @@ final public class FoxtrotPhysicalState {
 			sb.append("<dd>Transmitted " +  kbStr);
 			kbStr = A1iciaUtils.formatKb(device.getReceiveKb());
 			sb.append(" | Received " + kbStr + "</dd>\n");
+		}
+		sb.append("<dt>Current LAN Host IPs</dt>\n");
+		for (String host : this.getLanHosts()) {
+			sb.append("<dd>" +  host + "</dd>\n");
 		}
 		sb.append("<dt>Have Internet</dt>\n");
 		sb.append("<dd>"+ this.haveInternet() + "</dd>\n");

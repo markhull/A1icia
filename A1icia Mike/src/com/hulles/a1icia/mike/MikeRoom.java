@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -40,6 +41,7 @@ import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.MediaFile;
@@ -160,6 +162,10 @@ public final class MikeRoom extends UrRoom {
 		String instantStr;
 		Instant timestamp = null;
 		Instant now;
+		String musicLib;
+		String videoLib;
+		List<MediaFile> mediaFiles;
+		MediaFile mediaFile;
 		
 		updateKey = JebusBible.getA1iciaMediaFileUpdateKey(jebusLocal);
 		now = Instant.now();
@@ -170,10 +176,32 @@ public final class MikeRoom extends UrRoom {
 			}
 			if (timestamp == null || timestamp.isBefore(now)) {
 				jebus.set(updateKey, now.plus(7, ChronoUnit.DAYS).toString());
-				audioList = LibraryLister.listFiles(appKeys.getMusicLibrary(), "*.mp3");
+				musicLib = appKeys.getKey(ApplicationKey.MUSICLIBRARY);
+				
+				// get list of audio library files and update the database with them
+				audioList = LibraryLister.listFiles(musicLib, "*.mp3");
 				audioList.stream().forEach(e -> updateAudioItem(e));
-				videoList = LibraryLister.listFiles(appKeys.getVideoLibrary(), "*.{mp4,flv}");
+				// now get rid of any audio files in the database that don't exist in the library
+				mediaFiles = MediaFile.getAudioFiles();
+				for (Iterator<MediaFile> iter = mediaFiles.iterator(); iter.hasNext(); ) {
+					mediaFile = iter.next();
+					if (!audioList.contains(mediaFile.getFileName())) {
+						iter.remove();
+					}
+				}
+				
+				// get list of video library files and update the database with them
+				videoLib = appKeys.getKey(ApplicationKey.VIDEOLIBRARY);
+				videoList = LibraryLister.listFiles(videoLib, "*.{mp4,flv}");
 				videoList.stream().forEach(e -> updateVideoItem(e));
+				// now get rid of any video files in the database that don't exist in the library
+				mediaFiles = MediaFile.getVideoFiles();
+				for (Iterator<MediaFile> iter = mediaFiles.iterator(); iter.hasNext(); ) {
+					mediaFile = iter.next();
+					if (!audioList.contains(mediaFile.getFileName())) {
+						iter.remove();
+					}
+				}
 			}
 		}
 	}
@@ -285,7 +313,7 @@ public final class MikeRoom extends UrRoom {
 		String lib;
 		String fileName;
 		
-		lib = appKeys.getMikeLibrary();
+		lib = appKeys.getKey(ApplicationKey.MIKELIBRARY);
 		acknowledgments = LibraryLister.listFiles(lib + "acknowledgment");
 		exclamations = LibraryLister.listFiles(lib + "exclamation");
 		musicClips = LibraryLister.listFiles(lib + "music_clips");
@@ -637,7 +665,6 @@ public final class MikeRoom extends UrRoom {
 			target = "listen_to_her_heart.wav";
 		} else if (sparkPkg.is("sorry_for_it_all")) {
 			target = "sorry_for_it_all.mp4";
-			System.out.println("Looking for " + target);
 		} else if (sparkPkg.is("dead_sara")) {
 			target = "masse_color1.jpg";
 		} else if (sparkPkg.is("pronounce_alicia")) {

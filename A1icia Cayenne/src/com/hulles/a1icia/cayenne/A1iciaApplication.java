@@ -22,15 +22,9 @@ package com.hulles.a1icia.cayenne;
 import java.util.Collection;
 
 import org.apache.cayenne.ObjectContext;
-import org.apache.cayenne.configuration.Constants;
-import org.apache.cayenne.configuration.server.ServerModule;
 import org.apache.cayenne.configuration.server.ServerRuntime;
-import org.apache.cayenne.di.Binder;
-import org.apache.cayenne.di.Module;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
-
-import com.hulles.a1icia.api.shared.PurdahKeys;
 
 public final class A1iciaApplication {
     private static ObjectContext entityContext = null;
@@ -43,31 +37,23 @@ public final class A1iciaApplication {
 	}
 	
     /**
-     * Return the project's Cayenne ServerRuntime object, for use in creating local ObjectContexts e.g.
+     * Return the project's Cayenne ServerRuntime object, for use in creating local 
+     * ObjectContexts e.g.
      * 
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
-//    	Module securityModule;
     	
     	if (cayenneRuntime == null) {
-//    		securityModule = new SecurityModule();
     		if (!logging) {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
-//	    				.addModule(securityModule)
 	    				.addModule(binder -> binder.bind(JdbcEventLogger.class)
 	    						.to(NoopJdbcEventLogger.class))
 	    				.build();
     		} else {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
-//	    				.addModule(securityModule)
-//	                    .addModule(binder -> ServerModule.contributeProperties(binder)
-//	                    		.put(Constants.JDBC_USERNAME_PROPERTY, purdah.getDatabaseUser())
-//	                    		.put(Constants.JDBC_PASSWORD_PROPERTY, purdah.getDatabasePassword()))
-//	                    		.put("cayenne.jdbc.username.A1icia.a1icia_datanode", purdah.getDatabaseUser())
-//	                    		.put("cayenne.jdbc.password.A1icia.a1icia_datanode", purdah.getDatabasePassword()))
 	    				.build();
     		}
     		
@@ -140,43 +126,4 @@ public final class A1iciaApplication {
 		getEntityContext().commitChanges();
 	}
 	
-	@SuppressWarnings("unused")
-	private static class SecurityModule implements Module {
-	    @Override
-		public void configure(Binder binder) {
-			PurdahKeys purdah;
-			
-    		purdah = PurdahKeys.getInstance();
-	    	ServerModule.contributeProperties(binder)
-	    		.put(Constants.JDBC_USERNAME_PROPERTY, purdah.getDatabaseUser())
-	    		.put(Constants.JDBC_PASSWORD_PROPERTY, purdah.getDatabasePassword());
-	    }
-	}	
-	
-	/**
-	 * Get a count of the records in the named table
-	 * 
-	 * @param sqlTableName The SQL name (vs. the Cayenne name) of the table
-	 * @return The number of rows
-	 */
-/*    public static Long getRecordCount(String sqlTableName) {
-     	ObjectContext context;
-    	DataRow row;
-    	Long result;
-    	String selectStr;
-    	String stmt;
-    	
-    	SharedUtils.checkNotNull(sqlTableName);
-    	context = CambioApplication.getEntityContext();
-    	selectStr = "SELECT COUNT(*) AS `count` FROM `%s`";
-    	stmt = String.format(selectStr, sqlTableName);
-    	row = SQLSelect.dataRowQuery(stmt).selectFirst(context);
-     	result = (Long) row.get("count");
-    	return result;
-    }
-*/
-/*        long count = ObjectSelect.query(Artist.class)
-                .where(Artist.ARTIST_NAME.like("a%"))
-                .selectCount(context);
-*/
 }

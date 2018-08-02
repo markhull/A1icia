@@ -141,10 +141,19 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	
 	@Override
 	protected void startUp() {
-    	AttributeSet defaultAttrs;
     	SerialSpark spark;
     	
 		a1icianID = A1icianID.createA1icianID();
+		LOGGER.log(LOGLEVEL, "A1iciaRemote: Started");
+		serverUp = true;
+		spark = new SerialSpark();
+		spark.setName("client_startup");
+		sendCommand(spark, null);
+    }
+	
+	private void startTextDisplayer() {
+    	AttributeSet defaultAttrs;
+    	
 		textDisplayer = new SwingTextDisplayer(null, "Console Log");
 		defaultAttrs = textDisplayer.getDefaultAttributeSet();
 		meAttrs = new SimpleAttributeSet(defaultAttrs);
@@ -153,13 +162,13 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		a1iciaAttrs = new SimpleAttributeSet(defaultAttrs);
 		StyleConstants.setForeground(a1iciaAttrs, Color.RED);
 		StyleConstants.setBold(a1iciaAttrs, true);
+		textDisplayer.startup();
+	}
+	
+	private void startImageDisplayer() {
+		
 		imageDisplayer = new SwingImageDisplayer();
-		LOGGER.log(LOGLEVEL, "A1iciaRemote: Started");
-		serverUp = true;
-		spark = new SerialSpark();
-		spark.setName("client_startup");
-		sendCommand(spark, null);
-    }
+	}
 	
 	@Override
 	protected void shutDown() {
@@ -254,7 +263,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		this.showImage = displayImage;
 		if (displayImage) {
 			if (imageDisplayer == null) {
-				imageDisplayer = new SwingImageDisplayer();
+				startImageDisplayer();
 			} 
 		} else {
 			if (imageDisplayer != null) {
@@ -274,9 +283,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		this.showText = displayText;
 		if (showText) {
 			if (textDisplayer == null) {
-				textDisplayer = new SwingTextDisplayer(null, "Console Log");
+				startTextDisplayer();
 			} 
-			textDisplayer.startup();
 		} else {
 			if (textDisplayer != null) {
 				textDisplayer.shutdown();
@@ -347,6 +355,22 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			}
 			textDisplayer.appendText(message + "\n");
 		}
+		return sendRequest(request);
+	}
+    
+	public boolean sendAudio(byte[] audioBytes) {
+		DialogRequest request;
+		Set<SerialSpark> sparks;
+		
+		SharedUtils.checkNotNull(audioBytes);
+		if (!serverUp) {
+			return false;
+		}
+		request = buildRequest();
+		sparks = Collections.emptySet();
+		request.setRequestActions(sparks);
+		request.setRequestAudio(audioBytes);
+		request.setRequestMessage("AUDIO FILE");
 		return sendRequest(request);
 	}
     

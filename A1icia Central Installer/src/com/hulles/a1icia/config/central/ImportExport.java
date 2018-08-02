@@ -119,7 +119,7 @@ public class ImportExport {
 		try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
 		    line = null;
 		    while ((line = reader.readLine()) != null) {
-		    	keyValue = line.split("=");
+		    	keyValue = line.split("=", 2);
 		        stringMap.put(keyValue[0], keyValue[1]);
 		    }
 		}
@@ -201,7 +201,11 @@ public class ImportExport {
 		    	if (line.isEmpty()) {
 		    		continue;
 		    	}
-		    	keyValue = line.split("=");
+		    	if (line.startsWith("#")) {
+		    		// it's a comment
+		    		continue;
+		    	}
+		    	keyValue = line.split("=", 2);
 		        stringMap.put(keyValue[0], keyValue[1]);
 		    }
 		}

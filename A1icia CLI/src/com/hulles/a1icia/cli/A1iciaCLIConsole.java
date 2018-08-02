@@ -43,20 +43,26 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	private final Integer port;
 	private final Station station;
 	
-	public A1iciaCLIConsole(String host, Integer port) {
+	public A1iciaCLIConsole(String host, Integer port, Boolean daemon) {
 
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
+		SharedUtils.checkNotNull(daemon);
 		this.host = host;
 		this.port = port;
 		station = Station.getInstance();
 		station.ensureStationExists();
-		javaConsole = System.console();
-        if (javaConsole != null) {
-        	whichConsole = ConsoleType.JAVACONSOLE; 
-        } else {
-        	whichConsole = ConsoleType.STANDARDIO;
-        }
+		if (daemon) {
+			whichConsole = ConsoleType.DAEMON;
+			javaConsole = null;
+		} else {
+			javaConsole = System.console();
+	        if (javaConsole != null) {
+	        	whichConsole = ConsoleType.JAVACONSOLE; 
+	        } else {
+	        	whichConsole = ConsoleType.STANDARDIO;
+	        }
+		}
 		System.out.println("Welcome to " + getConsoleName() + ".");
 		System.out.println("This station connects to A1icia Central at " + host + 
 				" on port " + port);
@@ -68,7 +74,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		System.out.println();
 	}
 	
-	protected String getConsoleName() {
+	protected static String getConsoleName() {
 	
 		return "the A1icia command-line interface";
 	}
@@ -82,9 +88,9 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		
 		remote.setUseTTS(true);
 		remote.setPlayAudio(true);
-		remote.setShowImage(true);
-		remote.setShowText(true);
-		remote.setPlayVideo(true);
+		remote.setShowImage(false);
+		remote.setShowText(false);
+		remote.setPlayVideo(false);
 	}
 	
 	@Override
@@ -104,6 +110,9 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 			case STANDARDIO:
 				runStandardIn();
 				break;
+			case DAEMON:
+				runDaemon();
+				break;
 			default:
 				System.err.println("System error: bad console type, exiting");
 				this.stopAsync();
@@ -113,6 +122,11 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	protected A1iciaRemote getRemote() {
 	
 		return remote;
+	}
+	
+	private void runDaemon() {
+	
+		while(isRunning()) {}
 	}
 	
 	private void runJavaConsole() {
@@ -334,7 +348,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 
 	enum ConsoleType {
 		JAVACONSOLE,
-		STANDARDIO
+		STANDARDIO,
+		DAEMON
 	}
 
 	@Override

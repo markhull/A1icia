@@ -19,6 +19,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.cayenne;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -81,6 +82,78 @@ public class MediaFile extends _MediaFile {
 				.where(_MediaFile.ARTIST.likeIgnoreCase(artist))
 				.select(context);
 		return dbMediaFiles;
+    }
+    public static List<MediaFile> getMediaFiles(MediaFormat format) {
+		ObjectContext context;
+		List<MediaFile> dbMediaFiles = null;
+		
+		A1iciaUtils.checkNotNull(format);
+		context = A1iciaApplication.getEntityContext();
+		dbMediaFiles = ObjectSelect
+				.query(MediaFile.class)
+				.where(_MediaFile.FORMAT_CODE.eq(format.name()))
+				.select(context);
+		return dbMediaFiles;
+    }
+    
+    public static List<MediaFile> getAudioFiles() {
+		ObjectContext context;
+		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> mediaFiles;
+		MediaFormat format;
+		
+		context = A1iciaApplication.getEntityContext();
+		dbMediaFiles = ObjectSelect
+				.query(MediaFile.class)
+				.select(context);
+		mediaFiles = new ArrayList<>(dbMediaFiles.size());
+		for (MediaFile mf : dbMediaFiles) {
+			format = mf.getFormat();
+			if (format.isAudio()) {
+				mediaFiles.add(mf);
+			}
+		}
+		return mediaFiles;
+    }
+    
+    public static List<MediaFile> getVideoFiles() {
+		ObjectContext context;
+		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> mediaFiles;
+		MediaFormat format;
+		
+		context = A1iciaApplication.getEntityContext();
+		dbMediaFiles = ObjectSelect
+				.query(MediaFile.class)
+				.select(context);
+		mediaFiles = new ArrayList<>(dbMediaFiles.size());
+		for (MediaFile mf : dbMediaFiles) {
+			format = mf.getFormat();
+			if (format.isVideo()) {
+				mediaFiles.add(mf);
+			}
+		}
+		return mediaFiles;
+    }
+    
+    public static List<MediaFile> getImageFiles() {
+		ObjectContext context;
+		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> mediaFiles;
+		MediaFormat format;
+		
+		context = A1iciaApplication.getEntityContext();
+		dbMediaFiles = ObjectSelect
+				.query(MediaFile.class)
+				.select(context);
+		mediaFiles = new ArrayList<>(dbMediaFiles.size());
+		for (MediaFile mf : dbMediaFiles) {
+			format = mf.getFormat();
+			if (format.isImage()) {
+				mediaFiles.add(mf);
+			}
+		}
+		return mediaFiles;
     }
     
     public static MediaFile getMediaFile(String title) {

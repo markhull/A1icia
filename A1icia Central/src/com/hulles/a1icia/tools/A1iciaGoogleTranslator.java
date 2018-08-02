@@ -26,6 +26,7 @@ import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.Translate.TranslateOption;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.media.Language;
 
 /**
@@ -38,9 +39,9 @@ import com.hulles.a1icia.media.Language;
  *
  */
 public class A1iciaGoogleTranslator {
-	private static Translate translate = null;
+	private static Translate translateService = null;
 	private final static String DEFAULT_FORMAT = "text";
-	
+	private final static String AUTH_ENV = "GOOGLE_APPLICATION_CREDENTIALS";
 	/**
 	 * Provide a list of Google Cloud Translate supported languages.
 	 * 
@@ -50,10 +51,13 @@ public class A1iciaGoogleTranslator {
 		List<com.google.cloud.translate.Language> langs;
 		List<String> names;
 		
-		if (translate == null) {
-			translate = TranslateOptions.getDefaultInstance().getService();
+		if (translateService == null) {
+			if (System.getenv(AUTH_ENV) == null) {
+				throw new A1iciaException("You need to set your Google auth credentials environment variable");
+			}
+			translateService = TranslateOptions.getDefaultInstance().getService();
 		}
-		langs = translate.listSupportedLanguages();
+		langs = translateService.listSupportedLanguages();
 		names = new ArrayList<>(langs.size());
 		for (com.google.cloud.translate.Language lang : langs) {
 			names.add(lang.getName());
@@ -82,13 +86,16 @@ public class A1iciaGoogleTranslator {
 		if (text == null || text.isEmpty()) {
 			return null;
 		}
-		if (translate == null) {
-			translate = TranslateOptions.getDefaultInstance().getService();
+		if (translateService == null) {
+			if (System.getenv(AUTH_ENV) == null) {
+				throw new A1iciaException("You need to set your Google auth credentials environment variable");
+			}
+			translateService = TranslateOptions.getDefaultInstance().getService();
 		}
 		format = TranslateOption.format(DEFAULT_FORMAT);
 		source = TranslateOption.sourceLanguage(from.getGoogleName());
 		target = TranslateOption.targetLanguage(to.getGoogleName());
-		translation = translate.translate(text, source, target, format);
+		translation = translateService.translate(text, source, target, format);
 		return translation.getTranslatedText();
 	}
 	
@@ -120,13 +127,16 @@ public class A1iciaGoogleTranslator {
 			A1iciaUtils.error("A1iciaGoogleTranslator: format s/b either 'html' or 'text', got " + fmt);
 			return null;
 		}
-		if (translate == null) {
-			translate = TranslateOptions.getDefaultInstance().getService();
+		if (translateService == null) {
+			if (System.getenv(AUTH_ENV) == null) {
+				throw new A1iciaException("You need to set your Google auth credentials environment variable");
+			}
+			translateService = TranslateOptions.getDefaultInstance().getService();
 		}
 		format = TranslateOption.format(fmt);
 		source = TranslateOption.sourceLanguage(from.getGoogleName());
 		target = TranslateOption.targetLanguage(to.getGoogleName());
-		translation = translate.translate(text, source, target, format);
+		translation = translateService.translate(text, source, target, format);
 		return translation.getTranslatedText();
 	}
 }

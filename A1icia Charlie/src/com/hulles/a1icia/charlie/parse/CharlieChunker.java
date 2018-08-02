@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -44,9 +45,10 @@ final public class CharlieChunker {
 		URL chunkerModelURL;
 		ChunkerModel chunkerModel;
 		ApplicationKeys appKeys;
+        String openNLPPath;
         
         appKeys = ApplicationKeys.getInstance();
-        String openNLPPath = appKeys.getOpenNLPPath();
+        openNLPPath = appKeys.getKey(ApplicationKey.OPENNLPPATH);
         try {
             chunkerModelURL = new URL(ApplicationKeys.toURL(openNLPPath + "/en-chunker.bin"));
         } catch (MalformedURLException ex) {

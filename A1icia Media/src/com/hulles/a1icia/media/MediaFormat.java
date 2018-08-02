@@ -42,4 +42,38 @@ public enum MediaFormat {
         return extension;
     }
 
+    public Boolean isAudio() {
+    	
+    	switch (this) {
+	    	case MP3:
+	    	case WAV:
+	    		return true;
+    		default:
+    			return false;
+    	}
+    }
+
+    public Boolean isImage() {
+    	
+    	switch (this) {
+	    	case PNG:
+	    	case JPG:
+	    	case GIF:
+	    		return true;
+    		default:
+    			return false;
+    	}
+    }
+
+    public Boolean isVideo() {
+    	
+    	switch (this) {
+	    	case MOV:
+	    	case MP4:
+	    	case FLV:
+	    		return true;
+    		default:
+    			return false;
+    	}
+    }
 }

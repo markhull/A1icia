@@ -42,6 +42,7 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.base.Controller;
 import com.hulles.a1icia.house.A1iciaStationServer;
@@ -79,8 +80,6 @@ public class A1icia implements Closeable {
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
 //	private final static int THREADCOUNT = 12;
-	private static final int PORT = 12345;		// random large port number
-	private final static int EXIT_ALREADY_RUNNING = 1;
 	private final AsyncEventBus streetBus;
 	final A1icianID a1icianID;
 	private final ExecutorService busPool;
@@ -99,10 +98,7 @@ public class A1icia implements Closeable {
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
-		if (SharedUtils.alreadyRunning(PORT)) {
-			System.err.println("A1icia is already running");
-			System.exit(EXIT_ALREADY_RUNNING);
-		}
+		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA);
 		a1icianID = A1iciaConstants.getA1iciaA1icianID();
 //		busPool = Executors.newFixedThreadPool(THREADCOUNT);
 		busPool = Executors.newCachedThreadPool();

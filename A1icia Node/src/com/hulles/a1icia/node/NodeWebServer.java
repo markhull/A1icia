@@ -31,26 +31,24 @@ import com.eclipsesource.v8.V8;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 
 public final class NodeWebServer {
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.node.Version";
 //	private static final String MEDIA_URL = "a1icia/services/media?mmd=";
 //	private static final boolean USE_TTS = true;
-	private final static int PORT = 12349;
 	private NodeJS nodeJS;
 	
 	public NodeWebServer() {
 		
-		if (SharedUtils.alreadyRunning(PORT)) {
-			System.out.println("A1iciaWebServer is already running");
-			System.exit(1);
-		}
+		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_NODE);
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
 	}	
 	
 	// it sucks that we need to do this just to get a file for the j2v8 exec method...
+	//  TODO: Let's change that.
 	private File getResourceAsFile(String resourcePath) {
 		ClassLoader cl;
 		File tempFile;

@@ -25,18 +25,15 @@ import java.util.ResourceBundle;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 
 public class A1iciaCLI implements Closeable {
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.cli.Version";
-	private final static int PORT = 12346;
 	private static A1iciaCLIConsole cli;
 	
 	A1iciaCLI() {
 
-		if (SharedUtils.alreadyRunning(PORT)) {
-			System.out.println("A1iciaCLI is already running");
-			System.exit(1);
-		}
+		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_CLI);
 	}
 	
     @Override
@@ -75,17 +72,21 @@ public class A1iciaCLI implements Closeable {
 		String portStr;
 		Integer port;
 		Station station;
+		Boolean daemon;
 		
 		station = Station.getInstance();
 		station.ensureStationExists();
 		host = station.getCentralHost();
 		port = station.getCentralPort();
+		daemon = false;
 		for (String arg : args) {
 			if (arg.startsWith("--host=")) {
 				host = arg.substring(7);
 			} else if (arg.startsWith("--port=")) {
 				portStr = arg.substring(7);
 				port = Integer.parseInt(portStr);
+			} else if (arg.equals("--daemon")) {
+				daemon = true;
 			} else {
 				System.err.println("Bad argument in A1iciaCLI: " + arg);
 				System.exit(1);
@@ -94,13 +95,8 @@ public class A1iciaCLI implements Closeable {
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
-		cli = new A1iciaCLIConsole(host, port);
+		cli = new A1iciaCLIConsole(host, port, daemon);
 		cli.startAsync();
 		cli.awaitTerminated();
-	}
-
-	enum ConsoleType {
-		JAVACONSOLE,
-		STANDARDIO
 	}
 }

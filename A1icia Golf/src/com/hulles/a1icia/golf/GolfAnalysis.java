@@ -26,6 +26,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class GolfAnalysis extends RoomActionObject {
 	private String message;
+	private String explanation;
 	private List<WikiDataSearchResult> searchResults;
 	
 	@Override
@@ -54,7 +55,13 @@ public class GolfAnalysis extends RoomActionObject {
 	@Override
 	public String getExplanation() {
 
-		return message;
+		return explanation;
+	}
+
+	public void setExplanation(String explanation) {
+		
+		A1iciaUtils.checkNotNull(explanation);
+		this.explanation = explanation;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.api.shared.SerialSpark;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;
@@ -51,6 +52,11 @@ public final class FoxtrotRoom extends UrRoom {
 		
 	}
 
+	/*
+	 * Create the action package for Foxtrot-handled sparks.
+	 * (non-Javadoc)
+	 * @see com.hulles.a1icia.room.UrRoom#createActionPackage(com.hulles.a1icia.ticket.SparkPackage, com.hulles.a1icia.room.document.RoomRequest)
+	 */
 	@Override
 	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
 
@@ -58,13 +64,19 @@ public final class FoxtrotRoom extends UrRoom {
 			case "check_warnings":
 			case "how_are_you":
 			case "inquire_status":
-				return createStatusActionPackage(sparkPkg, request);
+				return createStatusActionPackage(sparkPkg);
 			default:
 				throw new A1iciaException("Received unknown spark in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createStatusActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	/**
+	 * Create an action package for status-related sparks
+	 * 
+	 * @param sparkPkg The initiating spark package
+	 * @return The action package
+	 */
+	private ActionPackage createStatusActionPackage(SparkPackage sparkPkg) {
 		ActionPackage pkg;
 		FoxtrotAction action;
 		FoxtrotPhysicalState state;
@@ -89,20 +101,28 @@ public final class FoxtrotRoom extends UrRoom {
 				getThisRoom().getDisplayName());
 	}
 
+	/*
+	 * Start up the Foxtrot room and initialize the system monitor. We currently only support
+	 * the Linux system monitor.
+	 * (non-Javadoc)
+	 * @see com.hulles.a1icia.room.UrRoom#roomStartup()
+	 */
 	@Override
 	protected void roomStartup() {
 		String osName;
 		PurdahKeys purdahKeys;
+		String portStr;
 		
 		purdahKeys = PurdahKeys.getInstance();
 		osName = System.getProperty("os.name");
 		switch (osName) {
 			case "Linux":
 				sysMonitor = new LinuxMonitor();
-				sysMonitor.setDatabaseUser(purdahKeys.getDatabaseUser());
-				sysMonitor.setDatabasePassword(purdahKeys.getDatabasePassword());
-				sysMonitor.setDatabaseServer(purdahKeys.getDatabaseServer());
-				sysMonitor.setDatabasePort(purdahKeys.getDatabasePort());
+				sysMonitor.setDatabaseUser(purdahKeys.getPurdahKey(PurdahKey.DATABASEUSER));
+				sysMonitor.setDatabasePassword(purdahKeys.getPurdahKey(PurdahKey.DATABASEPW));
+				sysMonitor.setDatabaseServer(purdahKeys.getPurdahKey(PurdahKey.DATABASESERVER));
+				portStr = purdahKeys.getPurdahKey(PurdahKey.DATABASEPORT);
+				sysMonitor.setDatabasePort(Integer.parseInt(portStr));
 				break;
 			default:
 				throw new UnsupportedOperationException("This operating system is not supported");
@@ -114,6 +134,11 @@ public final class FoxtrotRoom extends UrRoom {
 		
 	}
 	
+	/*
+	 * Load the sparks we handle.
+	 * (non-Javadoc)
+	 * @see com.hulles.a1icia.room.UrRoom#loadSparks()
+	 */
 	@Override
 	protected Set<SerialSpark> loadSparks() {
 		Set<SerialSpark> sparks;

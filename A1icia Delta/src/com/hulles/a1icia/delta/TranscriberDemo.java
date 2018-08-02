@@ -21,7 +21,14 @@ package com.hulles.a1icia.delta;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
@@ -29,19 +36,60 @@ import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.result.WordResult;
 
 public class TranscriberDemo {       
-
-	private static void transcribe() throws Exception {
-		SpeechResult result;
+	private static StreamSpeechRecognizer recognizer;
+	
+	static {
 		Configuration configuration;
-		StreamSpeechRecognizer recognizer;
-		
+				
 		configuration = new Configuration();
 		configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 		configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
 		configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+		try {
+			recognizer = new StreamSpeechRecognizer(configuration);
+		} catch (IOException ex) {
+			recognizer = null;
+		}
+	}
+	
+	public static String transcribe(File speechFile) {
+		SpeechResult result;
+		List<String> results;
+		String hypothesis;
+		StringBuilder sb;
+		
+		A1iciaUtils.checkNotNull(speechFile);
+		results = new ArrayList<>();
+		try (InputStream stream = new FileInputStream(speechFile)) {
+			recognizer.startRecognition(stream);
+			while ((result = recognizer.getResult()) != null) {
+				hypothesis = result.getHypothesis();
+				results.add(hypothesis);
+				System.out.format("Hypothesis: %s\n", hypothesis);
+			}
+			recognizer.stopRecognition();
+		} catch (FileNotFoundException e) {
+			throw new A1iciaException("Unable to find speech file", e);
+		} catch (IOException e) {
+			throw new A1iciaException("IO exception transcribing speech file", e);
+		}
+		if (results.isEmpty()) {
+			return null;
+		}
+		sb = new StringBuilder();
+		for (String s : results) {
+			if (sb.length() > 0) {
+				sb.append(". ");
+			}
+			sb.append(s);
+		}
+		return sb.toString();
+	}
+	
+	private static void transcribeTest() throws Exception {
+		SpeechResult result;
 
-		recognizer = new StreamSpeechRecognizer(configuration);
-		try (InputStream stream = new FileInputStream(new File("/home/hulles/lookdave.wav"))) {
+		try (InputStream stream = new FileInputStream(new File("/home/hulles/Media/sheep.wav"))) {
 			recognizer.startRecognition(stream);
 			while ((result = recognizer.getResult()) != null) {
 				System.out.format("Hypothesis: %s\n", result.getHypothesis());
@@ -52,12 +100,12 @@ public class TranscriberDemo {
 			}
 			recognizer.stopRecognition();
 		}
-
 	}
+	
 	public static void main(String[] args) {
 		
 		try {
-			TranscriberDemo.transcribe();
+			TranscriberDemo.transcribeTest();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
