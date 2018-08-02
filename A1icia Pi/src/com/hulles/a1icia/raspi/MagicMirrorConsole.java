@@ -25,7 +25,7 @@ import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.WakeUp;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 
@@ -63,17 +63,17 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	
 	@Override
 	public void motionTriggered() {
-		SerialSpark spark;
+		SerialSememe sememe;
 		
 		if (remote.serverUp()) {
-			spark = new SerialSpark();
-			spark.setName("greet");
-			remote.sendCommand(spark, null);
+			sememe = new SerialSememe();
+			sememe.setName("greet");
+			remote.sendCommand(sememe, null);
 		}
 	}
 	
 	@Override
-	public boolean receiveCommand(SerialSpark command) {
+	public boolean receiveCommand(SerialSememe command) {
 
 		SharedUtils.checkNotNull(command);
 		switch (command.getName()) {
@@ -147,11 +147,11 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 
 	@Override
 	protected void run() throws Exception {
-		SerialSpark spark;
+		SerialSememe sememe;
 
-		spark = new SerialSpark();
-		spark.setName("what_is_pi");
-		remote.sendCommand(spark, null);
+		sememe = new SerialSememe();
+		sememe.setName("what_is_pi");
+		remote.sendCommand(sememe, null);
 		while(isRunning()) {}
 	}
 

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 final public class ResponseGenerator {
@@ -52,13 +52,13 @@ final public class ResponseGenerator {
 		random = new Random();
 	}
 	
-	public String generateResponse(SparkPackage sparkPkg, String toName) {
+	public String generateResponse(SememePackage sememePkg, String toName) {
 		String response = null;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.nullsOkay(toName);
-		logger.log(LOGLEVEL, "ResponseGenerator generateResponse spark is "+ sparkPkg.getName());
-		switch (sparkPkg.getName()) {
+		logger.log(LOGLEVEL, "ResponseGenerator generateResponse sememe is "+ sememePkg.getName());
+		switch (sememePkg.getName()) {
 			case "are_you_still_there":
 			case "greet":
 				response = genGreeting(toName);
@@ -83,8 +83,8 @@ final public class ResponseGenerator {
 				response = genExclamation(toName);
 				break;
 			default:
-				throw new A1iciaException("Unexpected spark in generateResponse = " +
-						sparkPkg.getName());
+				throw new A1iciaException("Unexpected sememe in generateResponse = " +
+						sememePkg.getName());
 		}
 		logger.log(LOGLEVEL, "ResponseGenerator generateResponse response is "+ response);
 		return response;

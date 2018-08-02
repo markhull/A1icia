@@ -26,85 +26,85 @@ import java.util.Set;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
-import com.hulles.a1icia.api.shared.SerialSpark;
-import com.hulles.a1icia.cayenne.auto._Spark;
+import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.cayenne.auto._Sememe;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
-public class Spark extends _Spark implements Comparable<Spark> {
+public class Sememe extends _Sememe implements Comparable<Sememe> {
     private static final long serialVersionUID = 1L; 
     
-//    public static SerialSpark findSpark(Integer sparkID) {
+//    public static SerialSememe findSememe(Integer sememeID) {
 //		ObjectContext context;
-//		Spark spark;
+//		Sememe sememe;
 //		
-//		A1iciaUtils.checkNotNull(sparkID);
+//		A1iciaUtils.checkNotNull(sememeID);
 //		context = A1iciaApplication.getEntityContext();
-//		spark = Cayenne.objectForPK(context, Spark.class, sparkID);
-//		if (spark == null) {
+//		sememe = Cayenne.objectForPK(context, Sememe.class, sememeID);
+//		if (sememe == null) {
 //			return null;
 //		}
-//		return spark.toSerial();
+//		return sememe.toSerial();
 //    }
     
-//    public static SerialSpark find(String nm) {
-//		Spark spark;
+//    public static SerialSememe find(String nm) {
+//		Sememe sememe;
 //
-//		spark = findRaw(nm);
-//		if (spark == null) {
-//			A1iciaUtils.error("Spark: cannot find spark named " + nm, "Returning null spark");
+//		sememe = findRaw(nm);
+//		if (sememe == null) {
+//			A1iciaUtils.error("Sememe: cannot find sememe named " + nm, "Returning null sememe");
 //			return null;
 //		}
-//		return spark.toSerial();
+//		return sememe.toSerial();
 //    }
     
-    private static Spark findRaw(String nm) {
+    private static Sememe findRaw(String nm) {
 		ObjectContext context;
-		Spark spark;
+		Sememe sememe;
 		
 		A1iciaUtils.checkNotNull(nm);
 		context = A1iciaApplication.getEntityContext();
-		spark = ObjectSelect
-				.query(Spark.class)
-				.where(_Spark.NAME.eq(nm))
+		sememe = ObjectSelect
+				.query(Sememe.class)
+				.where(_Sememe.NAME.eq(nm))
 				.selectOne(context);
-		return spark;
+		return sememe;
     }
     
-	public static Set<SerialSpark> getAllSparks() {
+	public static Set<SerialSememe> getAllSememes() {
 		ObjectContext context;
-		List<Spark> dbSparks;
-		Set<SerialSpark> sparks;
-		SerialSpark spark;
+		List<Sememe> dbSememes;
+		Set<SerialSememe> sememes;
+		SerialSememe sememe;
 		
 		context = A1iciaApplication.getEntityContext();
-		dbSparks = ObjectSelect
-				.query(Spark.class)
+		dbSememes = ObjectSelect
+				.query(Sememe.class)
 				.select(context);
-		sparks = new HashSet<>(dbSparks.size());
-		for (Spark dbSpark : dbSparks) {
-			spark = dbSpark.toSerial();
-			sparks.add(spark);
+		sememes = new HashSet<>(dbSememes.size());
+		for (Sememe dbSememe : dbSememes) {
+			sememe = dbSememe.toSerial();
+			sememes.add(sememe);
 		}
-    	return sparks;
+    	return sememes;
     }
     
-	public static Set<SerialSpark> getExternalSparks() {
+	public static Set<SerialSememe> getExternalSememes() {
 		ObjectContext context;
-		List<Spark> dbSparks;
-		Set<SerialSpark> sparks;
-		SerialSpark spark;
+		List<Sememe> dbSememes;
+		Set<SerialSememe> sememes;
+		SerialSememe sememe;
 		
 		context = A1iciaApplication.getEntityContext();
-		dbSparks = ObjectSelect
-				.query(Spark.class)
-				.where(_Spark.EXTERNAL.eq(true))
+		dbSememes = ObjectSelect
+				.query(Sememe.class)
+				.where(_Sememe.EXTERNAL.eq(true))
 				.select(context);
-		sparks = new HashSet<>(dbSparks.size());
-		for (Spark dbSpark : dbSparks) {
-			spark = dbSpark.toSerial();
-			sparks.add(spark);
+		sememes = new HashSet<>(dbSememes.size());
+		for (Sememe dbSememe : dbSememes) {
+			sememe = dbSememe.toSerial();
+			sememes.add(sememe);
 		}
-    	return sparks;
+    	return sememes;
     }
     
 //    public boolean is(String nm) {
@@ -118,48 +118,48 @@ public class Spark extends _Spark implements Comparable<Spark> {
 //    	return getExternal();
 //    }
     
-	public static Spark fromSerial(SerialSpark serialSpark) {
-		Spark spark;
+	public static Sememe fromSerial(SerialSememe serialSememe) {
+		Sememe sememe;
 		
-		A1iciaUtils.checkNotNull(serialSpark);
-		spark = findRaw(serialSpark.getName());
-		return spark;
+		A1iciaUtils.checkNotNull(serialSememe);
+		sememe = findRaw(serialSememe.getName());
+		return sememe;
 	}
 	
-	public SerialSpark toSerial() {
-		SerialSpark serialSpark;
+	public SerialSememe toSerial() {
+		SerialSememe serialSememe;
 		
-		serialSpark = new SerialSpark();
-		serialSpark.setName(getName());
-		serialSpark.setCanonicalForm(getCanonicalForm());
-		serialSpark.setExternalUse(getExternal());
-		serialSpark.setAdminOnly(adminOnly);
-		serialSpark.setLoggedIn(loggedIn);
-		return serialSpark;
+		serialSememe = new SerialSememe();
+		serialSememe.setName(getName());
+		serialSememe.setCanonicalForm(getCanonicalForm());
+		serialSememe.setExternalUse(getExternal());
+		serialSememe.setAdminOnly(adminOnly);
+		serialSememe.setLoggedIn(loggedIn);
+		return serialSememe;
 	}
 	
-	public static void dumpSparks() {
-		Set<SerialSpark> sparks;
+	public static void dumpSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = getAllSparks();
-		for (SerialSpark spark : sparks) {
-			java.lang.System.out.println(spark);
+		sememes = getAllSememes();
+		for (SerialSememe sememe : sememes) {
+			java.lang.System.out.println(sememe);
 		}
 	}
 
-	public static SerialSpark getProxySpark() {
-		Spark spark;
+	public static SerialSememe getProxySememe() {
+		Sememe sememe;
 		
-		A1iciaUtils.warning("Getting proxy spark");
-		spark = Spark.findRaw("exclamation");
-		if (spark == null) {
+		A1iciaUtils.warning("Getting proxy sememe");
+		sememe = Sememe.findRaw("exclamation");
+		if (sememe == null) {
 			return null;
 		}
-		return spark.toSerial();
+		return sememe.toSerial();
 	}
 	
 	/**
-	 * Override the toString method in Object to print the Spark name and canonical form.
+	 * Override the toString method in Object to print the Sememe name and canonical form.
 	 * 
 	 */
 	@Override
@@ -184,10 +184,10 @@ public class Spark extends _Spark implements Comparable<Spark> {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Spark)) {
+		if (!(obj instanceof Sememe)) {
 			return false;
 		}
-		Spark other = (Spark) obj;
+		Sememe other = (Sememe) obj;
 		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -199,15 +199,15 @@ public class Spark extends _Spark implements Comparable<Spark> {
 	}
 
 	/**
-	 * This compareTo compares Sparks on their names.
+	 * This compareTo compares Sememes on their names.
 	 * It is case-insensitive.
 	 * 
 	 */
 	@Override
-	public int compareTo(Spark otherSpark) {
+	public int compareTo(Sememe otherSememe) {
 		
-		A1iciaUtils.checkNotNull(otherSpark);
-        return this.getName().compareToIgnoreCase(otherSpark.getName());
+		A1iciaUtils.checkNotNull(otherSememe);
+        return this.getName().compareToIgnoreCase(otherSememe.getName());
 	}
 	
     public void commit() {
@@ -232,22 +232,22 @@ public class Spark extends _Spark implements Comparable<Spark> {
     	context.commitChanges();
 	}
 
-	public static Spark createNew(String sparkName) {
+	public static Sememe createNew(String sememeName) {
     	ObjectContext context;
-    	Spark dbSpark;
+    	Sememe dbSememe;
     	
-    	A1iciaUtils.checkNotNull(sparkName);
+    	A1iciaUtils.checkNotNull(sememeName);
     	context = A1iciaApplication.getEntityContext();
-        dbSpark = context.newObject(Spark.class);
-        dbSpark.setName(sparkName);
+        dbSememe = context.newObject(Sememe.class);
+        dbSememe.setName(sememeName);
     	// NOT committed yet
-    	return dbSpark;
+    	return dbSememe;
 	}
 
 	public static boolean exists(String nm) {
-		Spark spark;
+		Sememe sememe;
 		
-		spark = findRaw(nm);
-		return spark != null;
+		sememe = findRaw(nm);
+		return sememe != null;
 	}
 }

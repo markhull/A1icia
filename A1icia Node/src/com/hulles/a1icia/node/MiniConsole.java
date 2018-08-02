@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 
 final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
 	private final A1iciaRemote console;
@@ -91,7 +91,7 @@ final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
 	}
 	
 	@Override
-	public boolean receiveCommand(SerialSpark spark) {
+	public boolean receiveCommand(SerialSememe sememe) {
 		
 		return false;
 	}

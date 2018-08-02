@@ -40,10 +40,10 @@ import com.google.common.util.concurrent.ServiceManager;
 import com.hulles.a1icia.A1icia;
 import com.hulles.a1icia.alpha.AlphaRoom;
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
-import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.charlie.CharlieRoom;
 import com.hulles.a1icia.delta.DeltaRoom;
 import com.hulles.a1icia.echo.EchoRoom;
@@ -66,9 +66,9 @@ import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.WhatSparksAction;
+import com.hulles.a1icia.room.document.WhatSememesAction;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tracker.Tracker;
@@ -88,17 +88,17 @@ public final class Controller extends AbstractIdleService {
 	private final AsyncEventBus hallBus;
 	private final ExecutorService busPool;
 	boolean shuttingDownOnClose = false;
-	final SetMultimap<SerialSpark, Room> sparkRooms;
+	final SetMultimap<SerialSememe, Room> sememeRooms;
 	private ControllerRoom controllerRoom;
 	private ServiceManager serviceManager;
 	private final A1icia a1iciaInstance;
 	private volatile static Controller controllerInstance = null;
-	static Set<SerialSpark> allSparks;
+	static Set<SerialSememe> allSememes;
 	
 	static {
 		
-		allSparks = Spark.getAllSparks();
-		SerialSpark.setSparks(allSparks);
+		allSememes = Sememe.getAllSememes();
+		SerialSememe.setSememes(allSememes);
 	}
 	
 	public Controller(A1icia a1icia) {
@@ -112,7 +112,7 @@ public final class Controller extends AbstractIdleService {
 		addDelayedShutdownHook(busPool);
 		A1iciaApplication.setJdbcLogging(false); 
 		hallBus = new AsyncEventBus("MindBus", busPool);
-		sparkRooms = MultimapBuilder.hashKeys().enumSetValues(Room.class).build();
+		sememeRooms = MultimapBuilder.hashKeys().enumSetValues(Room.class).build();
 		controllerInstance = this;
 	}
 	
@@ -216,14 +216,14 @@ public final class Controller extends AbstractIdleService {
 	}
 
 	/**
-	 * Return a set of rooms that can process the spark.
+	 * Return a set of rooms that can process the sememe.
 	 * 
-	 * @param spark The spark in question
-	 * @return A list of rooms that have advertised they can process the spark
+	 * @param sememe The sememe in question
+	 * @return A list of rooms that have advertised they can process the sememe
 	 */
-	public Set<Room> getRoomsForSpark(SerialSpark spark) {
+	public Set<Room> getRoomsForSememe(SerialSememe sememe) {
 		
-		return sparkRooms.get(spark);
+		return sememeRooms.get(sememe);
 	}
 	
 	/**
@@ -287,13 +287,13 @@ public final class Controller extends AbstractIdleService {
 	}
 
 	/**
-	 * Create a ServiceManager and start all the room services. We also send a "what_sparks"
-	 * request to see what sparks each room advertises that it can handle.
+	 * Create a ServiceManager and start all the room services. We also send a "what_sememes"
+	 * request to see what sememes each room advertises that it can handle.
 	 * 
 	 */
 	@Override
 	protected void startUp() throws Exception {
-		RoomRequest sparksQuery;
+		RoomRequest sememesQuery;
 		Ticket ticket;
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
@@ -318,14 +318,14 @@ public final class Controller extends AbstractIdleService {
 		logger.log(Level.INFO, "Total of startup times is " + 
 				A1iciaUtils.formatElapsedMillis(totalStartupTime));
 		
-		// send WHAT_SPARKS request to load sparkRooms
+		// send WHAT_SPARKS request to load sememeRooms
 		ticket = Ticket.createNewTicket(hallBus, Room.CONTROLLER);
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
-		sparksQuery = new RoomRequest(ticket);
-		sparksQuery.setFromRoom(Room.CONTROLLER);
-		sparksQuery.setSparkPackages(SparkPackage.getSingletonDefault("what_sparks"));
-		sparksQuery.setMessage("WHAT_SPARKS query");
-		controllerRoom.sendParentRequest(sparksQuery);
+		sememesQuery = new RoomRequest(ticket);
+		sememesQuery.setFromRoom(Room.CONTROLLER);
+		sememesQuery.setSememePackages(SememePackage.getSingletonDefault("what_sememes"));
+		sememesQuery.setMessage("WHAT_SPARKS query");
+		controllerRoom.sendParentRequest(sememesQuery);
 	}
 
 	/**
@@ -349,18 +349,18 @@ public final class Controller extends AbstractIdleService {
 	 *
 	 */
 	public class ControllerRoom extends UrRoom {
-		private final SerialSpark whatSparksSpark;
+		private final SerialSememe whatSememesSememe;
 		
 		ControllerRoom(EventBus bus) {
 			super(bus);
 			
-			whatSparksSpark = SerialSpark.find("what_sparks");
+			whatSememesSememe = SerialSememe.find("what_sememes");
 		}
 		
 		/**
-		 * Send the "what_sparks" request on behalf of the Controller proper.
+		 * Send the "what_sememes" request on behalf of the Controller proper.
 		 * 
-		 * @param request The "what_sparks" request
+		 * @param request The "what_sememes" request
 		 */
 		void sendParentRequest(RoomRequest request) {
 			
@@ -386,15 +386,15 @@ public final class Controller extends AbstractIdleService {
 		}
 	
 		/**
-		 * Process all the room responses we received from our "what_sparks" request.
+		 * Process all the room responses we received from our "what_sememes" request.
 		 * 
 		 */
 		@Override
 		public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
 			List<ActionPackage> pkgs;
 			ActionPackage pkg;
-			WhatSparksAction action;
-			Set<SerialSpark> sparks;
+			WhatSememesAction action;
+			Set<SerialSememe> sememes;
 			Room fromRoom;
 			Ticket ticket = null;
 			
@@ -406,30 +406,30 @@ public final class Controller extends AbstractIdleService {
 			for (RoomResponse rr : responses) {
 				fromRoom = rr.getFromRoom();
 				pkgs = rr.getActionPackages();
-				pkg = ActionPackage.has(whatSparksSpark, pkgs);
+				pkg = ActionPackage.has(whatSememesSememe, pkgs);
 				if (pkg != null) {
-					action = (WhatSparksAction) pkg.getActionObject();
-					sparks = action.getSparks();
+					action = (WhatSememesAction) pkg.getActionObject();
+					sememes = action.getSememes();
 					logger.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from " +
-							fromRoom + ", sparks from action = " + sparks);
-					for (SerialSpark s : sparks) {
-						sparkRooms.put(s, fromRoom);
+							fromRoom + ", sememes from action = " + sememes);
+					for (SerialSememe s : sememes) {
+						sememeRooms.put(s, fromRoom);
 					}
 				} else {
-					A1iciaUtils.error("Controller: unable to find what_sparks in action packages");
+					A1iciaUtils.error("Controller: unable to find what_sememes in action packages");
 				}
 			}
 			// we do a couple quick reality checks before we go
-			for (SerialSpark s : sparkRooms.keySet()) {
-				if (!allSparks.contains(s)) {
+			for (SerialSememe s : sememeRooms.keySet()) {
+				if (!allSememes.contains(s)) {
 					// Type I error
-					A1iciaUtils.error("ControllerRoom: spark " + s.getName() + " is not a valid spark");
+					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " is not a valid sememe");
 				}
 			}
-			for (SerialSpark s : allSparks) {
-				if (!sparkRooms.containsKey(s)) {
+			for (SerialSememe s : allSememes) {
+				if (!sememeRooms.containsKey(s)) {
 					// Type II error
-					A1iciaUtils.error("ControllerRoom: spark " + s.getName() + " not implemented");
+					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " not implemented");
 				}
 			}
 			if (ticket != null) {
@@ -438,16 +438,16 @@ public final class Controller extends AbstractIdleService {
 		}
 
 		/**
-		 * Load the list of sparks that we can handle (just one, "what_sparks").
+		 * Load the list of sememes that we can handle (just one, "what_sememes").
 		 * 
 		 */
 		@Override
-		protected Set<SerialSpark> loadSparks() {
-			Set<SerialSpark> sparks;
+		protected Set<SerialSememe> loadSememes() {
+			Set<SerialSememe> sememes;
 			
-			sparks = new HashSet<>();
-			sparks.add(SerialSpark.find("what_sparks"));
-			return sparks;
+			sememes = new HashSet<>();
+			sememes.add(SerialSememe.find("what_sememes"));
+			return sememes;
 		}
 
 		/**
@@ -456,7 +456,7 @@ public final class Controller extends AbstractIdleService {
 		 * 
 		 */
 		@Override
-		public ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+		public ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 			throw new A1iciaException("Request not implemented in " + 
 					getThisRoom().getDisplayName());
 		}

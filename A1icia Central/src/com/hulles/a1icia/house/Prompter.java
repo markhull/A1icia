@@ -30,7 +30,7 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.remote.Station;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.media.Language;
@@ -49,7 +49,7 @@ final class Prompter extends TimerTask {
 	private final static int MAXNAGS = 2;
 	private final A1icianID a1icianID;
 	private int nagCounter;
-	final SerialSpark promptSpark;
+	final SerialSememe promptSememe;
 	private final EventBus bus;
 	private final SerialUUID<SerialStation> stationID;
 	private final Language language;
@@ -66,7 +66,7 @@ final class Prompter extends TimerTask {
 		this.nagCounter = 0;
 		this.bus = houseBus;
 		this.language = language;
-		this.promptSpark = SerialSpark.find("prompt");
+		this.promptSememe = SerialSememe.find("prompt");
 	}
 
 	A1icianID getA1icianID() {
@@ -77,15 +77,15 @@ final class Prompter extends TimerTask {
 	@Override
 	public void run() {
 		DialogRequest dialogRequest;
-		Set<SerialSpark> sparks;
+		Set<SerialSememe> sememes;
 		
 		if (nagCounter > MAXNAGS) {
 			LOGGER.log(LOGLEVEL, "Cancelling timer");
 			this.cancel();
 		}
 		dialogRequest = new DialogRequest();
-		sparks = Collections.singleton(promptSpark);
-		dialogRequest.setRequestActions(sparks);
+		sememes = Collections.singleton(promptSememe);
+		dialogRequest.setRequestActions(sememes);
 		dialogRequest.setRequestMessage(null);
 		dialogRequest.setFromA1icianID(a1icianID);
 		dialogRequest.setStationUUID(stationID);

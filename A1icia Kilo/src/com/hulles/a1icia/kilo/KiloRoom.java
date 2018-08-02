@@ -27,7 +27,7 @@ import java.util.Set;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
 import com.hulles.a1icia.room.Room;
@@ -37,7 +37,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -77,92 +77,92 @@ public final class KiloRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "weather_forecast":
-				return createForecastActionPackage(sparkPkg, request);
+				return createForecastActionPackage(sememePkg, request);
 			case "current_weather":
-				return createWeatherActionPackage(sparkPkg, request);
+				return createWeatherActionPackage(sememePkg, request);
 			case "this_location":
-				return createLocationActionPackage(sparkPkg, request);
+				return createLocationActionPackage(sememePkg, request);
 			case "current_time":
-				return createTimeActionPackage(sparkPkg, request);
+				return createTimeActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private static ActionPackage createTimeActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createTimeActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		KiloTimeAction action;
 		LocalDateTime now;
 		KiloLocationAction locationAction;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		locationAction = KiloLocation.getLocation();
 		action = new KiloTimeAction();
 		action.setLocation(locationAction.getCity());
 		now = LocalDateTime.now();
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		action.setLocalDateTime(now);
 		pkg.setActionObject(action);
 		return pkg;
 	}
 	
-	private ActionPackage createForecastActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createForecastActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		RoomActionObject action;
 		String idStr;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getForecastWeather(Integer.parseInt(idStr));
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(action);
 		return pkg;
 	}
 
-	private ActionPackage createWeatherActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createWeatherActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		RoomActionObject action;
 		String idStr;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getCurrentWeather(Integer.parseInt(idStr));
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(action);
 		return pkg;
 	}
 
-	private static ActionPackage createLocationActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createLocationActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		RoomActionObject action;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		action = KiloLocation.getLocation();
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(action);
 		return pkg;
 	}
 	
 	@SuppressWarnings("unused")
-	private static KiloLocationAction findLocation(String sparkObject) {
+	private static KiloLocationAction findLocation(String sememeObject) {
 		List<OwmCity> cities;
 		KiloLocationAction action;
 		OwmCity match;
 		
-		A1iciaUtils.checkNotNull(sparkObject);
-		cities = OwmCity.getOwmCities(sparkObject);
+		A1iciaUtils.checkNotNull(sememeObject);
+		cities = OwmCity.getOwmCities(sememeObject);
 		if (cities.isEmpty()) {
-			// whoever created the initial spark package should have vetted
+			// whoever created the initial sememe package should have vetted
 			//    the city already, from NER e.g.
 			A1iciaUtils.error("KiloRoom:findLocation: location not found");
 			return null;
@@ -180,17 +180,17 @@ public final class KiloRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("weather_forecast"));
-		sparks.add(SerialSpark.find("current_weather"));
-		sparks.add(SerialSpark.find("current_weather_location"));
-		sparks.add(SerialSpark.find("this_location"));
-		sparks.add(SerialSpark.find("current_time"));
-		sparks.add(SerialSpark.find("current_time_location"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("weather_forecast"));
+		sememes.add(SerialSememe.find("current_weather"));
+		sememes.add(SerialSememe.find("current_weather_location"));
+		sememes.add(SerialSememe.find("this_location"));
+		sememes.add(SerialSememe.find("current_time"));
+		sememes.add(SerialSememe.find("current_time_location"));
+		return sememes;
 	}
 
 	@Override

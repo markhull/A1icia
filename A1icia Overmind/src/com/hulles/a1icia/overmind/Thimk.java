@@ -32,15 +32,15 @@ import com.google.common.collect.MultimapBuilder;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.document.RoomRequest;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -70,23 +70,23 @@ final class Thimk {
 	 * ActionPackages. Currently it is a random selection; eventually A1icia
 	 * will decide which one is best.
 	 * 
-	 * @param spark The spark common to the ActionPackages
+	 * @param sememe The sememe common to the ActionPackages
 	 * @param pkgs The list of ActionPackages
 	 * @return The chosen ActionPackage
 	 */
-	static ActionPackage chooseAction(SerialSpark spark, List<ActionPackage> pkgs) {
+	static ActionPackage chooseAction(SerialSememe sememe, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		int pkgIx;
 
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		LOGGER.log(LOGLEVEL, "Thimk: chooseAction");
 		if (pkgs.size() == 1) {
 			// easy decision
 			pkg = pkgs.get(0);
-		} else if (spark.is("spark_analysis")) {
+		} else if (sememe.is("sememe_analysis")) {
 			// here, instead of returning an existing action package we're going to create a new one
-			pkg = unifySparkAnalyses(pkgs);
+			pkg = unifySememeAnalyses(pkgs);
 		} else {
 			// for now, just grab a random package; this is where A1icia will
 			//    get to pick, eventually
@@ -97,71 +97,71 @@ final class Thimk {
 	}
 	
 	/**
-	 * This method takes all the spark analyses from the various rooms, assuming there are
-	 * some, and ends up with a new action package with a new SerialSpark Analysis that contains 
-	 * at most one spark package per sentence. We do this because it seems to make 
+	 * This method takes all the sememe analyses from the various rooms, assuming there are
+	 * some, and ends up with a new action package with a new SerialSememe Analysis that contains 
+	 * at most one sememe package per sentence. We do this because it seems to make 
 	 * conversational sense; we can change it later if seems like we could do better.
 	 * 
 	 * @param actionPackages
 	 * @return
 	 */
-	private static ActionPackage unifySparkAnalyses(List<ActionPackage> actionPackages) {
-		ListMultimap<String, SparkPackage> sentenceSparkPackages;
-		SparkAnalysis analysis;
-		List<SparkPackage> sparkPackages;
-		List<SparkPackage> unifiedSparkPackages;
-		SparkAnalysis unifiedAnalysis;
+	private static ActionPackage unifySememeAnalyses(List<ActionPackage> actionPackages) {
+		ListMultimap<String, SememePackage> sentenceSememePackages;
+		SememeAnalysis analysis;
+		List<SememePackage> sememePackages;
+		List<SememePackage> unifiedSememePackages;
+		SememeAnalysis unifiedAnalysis;
 		ActionPackage newActionPackage;
-		SparkPackage newSparkPkg;
+		SememePackage newSememePkg;
 		SentencePackage sentencePackage;
 		
 		A1iciaUtils.checkNotNull(actionPackages);
-		unifiedSparkPackages = new ArrayList<>();
-		sentenceSparkPackages = MultimapBuilder.hashKeys().arrayListValues().build();
+		unifiedSememePackages = new ArrayList<>();
+		sentenceSememePackages = MultimapBuilder.hashKeys().arrayListValues().build();
 		for (ActionPackage pkg : actionPackages) {
-			analysis = (SparkAnalysis) pkg.getActionObject();
-			sparkPackages = analysis.getSparkPackages();
-			for (SparkPackage sparkPkg : sparkPackages) {
-				sentencePackage = sparkPkg.getSentencePackage();
+			analysis = (SememeAnalysis) pkg.getActionObject();
+			sememePackages = analysis.getSememePackages();
+			for (SememePackage sememePkg : sememePackages) {
+				sentencePackage = sememePkg.getSentencePackage();
 				if (sentencePackage == null) {
-					A1iciaUtils.error("Thimk: null sentence package for spark " + sparkPkg.getName(),
+					A1iciaUtils.error("Thimk: null sentence package for sememe " + sememePkg.getName(),
 							"This should not be the case at this point in the analysis.");
 				} else {
-					sentenceSparkPackages.put(sentencePackage.getSentencePackageID(), sparkPkg);
+					sentenceSememePackages.put(sentencePackage.getSentencePackageID(), sememePkg);
 				}
 			}
 		}
-		for (String sentencePackageID : sentenceSparkPackages.keySet()) {
-			LOGGER.log(LOGLEVEL, "Thimk unifySparkAnalyses: sentencePackageID = " + sentencePackageID);
-			sparkPackages = sentenceSparkPackages.get(sentencePackageID);
-			LOGGER.log(LOGLEVEL, "Thimk unifySparkAnalyses: spark packages count = " + sparkPackages.size());
-			for (SparkPackage sp : sparkPackages) {
-				LOGGER.log(LOGLEVEL, "Thimk unifySparkAnalyses: spark package " + sp.getName() + 
+		for (String sentencePackageID : sentenceSememePackages.keySet()) {
+			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sentencePackageID = " + sentencePackageID);
+			sememePackages = sentenceSememePackages.get(sentencePackageID);
+			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe packages count = " + sememePackages.size());
+			for (SememePackage sp : sememePackages) {
+				LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe package " + sp.getName() + 
 						" score is " + sp.getConfidence());
 			}
-			if (sparkPackages.isEmpty()) {
+			if (sememePackages.isEmpty()) {
 				continue;
 			}
-			if (sparkPackages.size() == 1) {
-				unifiedSparkPackages.add(sparkPackages.get(0));
+			if (sememePackages.size() == 1) {
+				unifiedSememePackages.add(sememePackages.get(0));
 				continue;
 			}
-			// fine, we have multiple spark packages for a sentence; we need to pick one
-			Collections.sort(sparkPackages, new Comparator<SparkPackage>() {
+			// fine, we have multiple sememe packages for a sentence; we need to pick one
+			Collections.sort(sememePackages, new Comparator<SememePackage>() {
 				@Override
-				public int compare(SparkPackage o1, SparkPackage o2) {
+				public int compare(SememePackage o1, SememePackage o2) {
 					return o2.getConfidence().compareTo(o1.getConfidence());
 				}
 			});
-			unifiedSparkPackages.add(sparkPackages.get(0));
+			unifiedSememePackages.add(sememePackages.get(0));
 		}
-		unifiedAnalysis = new SparkAnalysis();
-		unifiedAnalysis.setSparkPackages(unifiedSparkPackages);
-		newSparkPkg = SparkPackage.getDefaultPackage("spark_analysis");
-		if (!newSparkPkg.isValid()) {
-			throw new A1iciaException("Thimk: created invalid spark package");
+		unifiedAnalysis = new SememeAnalysis();
+		unifiedAnalysis.setSememePackages(unifiedSememePackages);
+		newSememePkg = SememePackage.getDefaultPackage("sememe_analysis");
+		if (!newSememePkg.isValid()) {
+			throw new A1iciaException("Thimk: created invalid sememe package");
 		}
-		newActionPackage = new ActionPackage(newSparkPkg);
+		newActionPackage = new ActionPackage(newSememePkg);
 		newActionPackage.setActionObject(unifiedAnalysis);
 		// whew
 		return newActionPackage;
@@ -178,7 +178,7 @@ final class Thimk {
 		RoomRequest newRequest;
 		String msg;
 		A1iciaClientObject obj;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 		DialogRequest dialogRequest;
 		
 		A1iciaUtils.checkNotNull(ticket);
@@ -190,8 +190,8 @@ final class Thimk {
 		if ((msg == null || msg.isEmpty()) && obj == null) {
 			// nothing to do
 			LOGGER.log(LOGLEVEL, "Thimk: nothing to do");
-			sparkPackages = SparkPackage.getSingletonDefault("nothing_to_do");
-			overmind.terminatePipeline(ticket, sparkPackages);
+			sememePackages = SememePackage.getSingletonDefault("nothing_to_do");
+			overmind.terminatePipeline(ticket, sememePackages);
 			return;
 		}
 		
@@ -200,8 +200,8 @@ final class Thimk {
 		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction, msg = " + msg);
 		newRequest = new RoomRequest(ticket);
 		newRequest.setFromRoom(Room.OVERMIND);
-		sparkPackages = SparkPackage.getSingletonDefault("nlp_analysis");
-		newRequest.setSparkPackages(sparkPackages);
+		sememePackages = SememePackage.getSingletonDefault("nlp_analysis");
+		newRequest.setSememePackages(sememePackages);
 		newRequest.setMessage(msg);
 		newRequest.setRoomObject(null);
 		overmind.sendRoomRequest(newRequest);
@@ -214,34 +214,34 @@ final class Thimk {
 	 */
 	void decideNlpAnalysisNextAction(Ticket ticket) {
 		RoomRequest newRequest;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 
 		A1iciaUtils.checkNotNull(ticket);
 		LOGGER.log(LOGLEVEL, "Thimk: decideNlpAnalysisNextAction");
 		
-		// Next, we ask for a spark analysis, to match up sparks with our input sentences
+		// Next, we ask for a sememe analysis, to match up sememes with our input sentences
 		newRequest = new RoomRequest(ticket);
 		// we proxy the From room back to Overmind (we're not a full-fledged Room (yet))
 		newRequest.setFromRoom(Room.OVERMIND);
-		sparkPackages = SparkPackage.getSingletonDefault("spark_analysis");
-		newRequest.setSparkPackages(sparkPackages);
-		newRequest.setMessage("Asking for spark analysis");
+		sememePackages = SememePackage.getSingletonDefault("sememe_analysis");
+		newRequest.setSememePackages(sememePackages);
+		newRequest.setMessage("Asking for sememe analysis");
 		overmind.sendRoomRequest(newRequest);		
 	}
 	
 	/**
-	 * Decide what to do after receiving the spark analysis.
+	 * Decide what to do after receiving the sememe analysis.
 	 * This is currently the end of the pipeline, so we proceed in a calm and 
 	 * orderly fashion to the exit.
 	 * 
 	 * @param ticket The associated ticket
-	 * @param sparkPackages The accumulated spark packages
+	 * @param sememePackages The accumulated sememe packages
 	 */
-	void decideSparkAnalysisNextAction(Ticket ticket, List<SparkPackage> sparkPackages) {
+	void decideSememeAnalysisNextAction(Ticket ticket, List<SememePackage> sememePackages) {
 		
 		A1iciaUtils.checkNotNull(ticket);
-		LOGGER.log(LOGLEVEL, "Thimk: decideSparkAnalysisNextAction");
-		overmind.terminatePipeline(ticket, sparkPackages);
+		LOGGER.log(LOGLEVEL, "Thimk: decideSememeAnalysisNextAction");
+		overmind.terminatePipeline(ticket, sememePackages);
 	}
 
 }

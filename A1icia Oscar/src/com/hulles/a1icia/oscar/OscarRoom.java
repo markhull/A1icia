@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.ChangeLanguageObject;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
@@ -36,7 +36,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -75,11 +75,11 @@ public final class OscarRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "change_language":
-				return createLanguageActionPackage(sparkPkg, request);
+				return createLanguageActionPackage(sememePkg, request);
 			case "help":
 			case "what_is_your_age":
 			case "what_is_your_name":
@@ -94,68 +94,68 @@ public final class OscarRoom extends UrRoom {
 			case "pronounce_hulles":
 			case "like_gophers":
 			case "not_dave":
-				return createConstantsActionPackage(sparkPkg, request);
+				return createConstantsActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createConstantsActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createConstantsActionPackage(SememePackage sememePkg, RoomRequest request) {
 		String message;
 		ActionPackage pkg;
 		MessageAction action;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
-		message = chooser.respondTo(sparkPkg);
+		message = chooser.respondTo(sememePkg);
 		action.setMessage(message);
 		pkg.setActionObject(action);
 		return pkg;
 	}
 
-	private static ActionPackage createLanguageActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createLanguageActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		Language language;
 		String langStr;
 		ChangeLanguageObject changeLang;
 		ClientObjectWrapper clientChange;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		langStr = sparkPkg.getSparkObject();
+		langStr = sememePkg.getSememeObject();
 		language = Language.valueOf(langStr);
 		changeLang = new ChangeLanguageObject();
 		changeLang.setNewLanguage(language);
 		clientChange = new ClientObjectWrapper(changeLang);
 		clientChange.setMessage("Changed language to " + language.getDisplayName());
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(clientChange);
 		return pkg;
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("help"));
-		sparks.add(SerialSpark.find("what_is_your_name"));
-		sparks.add(SerialSpark.find("dislike_pickles"));
-		sparks.add(SerialSpark.find("what_is_your_age"));
-		sparks.add(SerialSpark.find("when_were_you_born"));
-		sparks.add(SerialSpark.find("what_is_pi"));
-		sparks.add(SerialSpark.find("like_waffles"));
-		sparks.add(SerialSpark.find("listen_to_her_heart"));
-		sparks.add(SerialSpark.find("rectum"));
-		sparks.add(SerialSpark.find("personal_assistant"));
-		sparks.add(SerialSpark.find("amanuensis"));
-		sparks.add(SerialSpark.find("pronounce_hulles"));
-		sparks.add(SerialSpark.find("change_language"));
-		sparks.add(SerialSpark.find("like_gophers"));
-		sparks.add(SerialSpark.find("not_dave"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("help"));
+		sememes.add(SerialSememe.find("what_is_your_name"));
+		sememes.add(SerialSememe.find("dislike_pickles"));
+		sememes.add(SerialSememe.find("what_is_your_age"));
+		sememes.add(SerialSememe.find("when_were_you_born"));
+		sememes.add(SerialSememe.find("what_is_pi"));
+		sememes.add(SerialSememe.find("like_waffles"));
+		sememes.add(SerialSememe.find("listen_to_her_heart"));
+		sememes.add(SerialSememe.find("rectum"));
+		sememes.add(SerialSememe.find("personal_assistant"));
+		sememes.add(SerialSememe.find("amanuensis"));
+		sememes.add(SerialSememe.find("pronounce_hulles"));
+		sememes.add(SerialSememe.find("change_language"));
+		sememes.add(SerialSememe.find("like_gophers"));
+		sememes.add(SerialSememe.find("not_dave"));
+		return sememes;
 	}
 
 	@Override

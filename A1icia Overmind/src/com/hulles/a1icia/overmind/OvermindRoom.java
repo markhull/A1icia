@@ -33,7 +33,7 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -49,9 +49,9 @@ import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -76,24 +76,24 @@ public class OvermindRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPackage, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePackage, RoomRequest request) {
 
-		switch (sparkPackage.getName()) {
+		switch (sememePackage.getName()) {
 			case "respond_to_client":
-				return receiveRequest(sparkPackage, request);
+				return receiveRequest(sememePackage, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage receiveRequest(SparkPackage sparkPackage, RoomRequest request) {
+	private ActionPackage receiveRequest(SememePackage sememePackage, RoomRequest request) {
 		TicketJournal journal;
 		Ticket ticket;
-		Set<SerialSpark> clientSparks;
+		Set<SerialSememe> clientSememes;
 		ActionPackage pkg;
 		ClientDialogRequest clientRequest;
-		List<SparkPackage> sparkPackages;
-		SparkPackage newSparkPackage;
+		List<SememePackage> sememePackages;
+		SememePackage newSememePackage;
 		MessageAction action;
 		String result;
 		DialogRequest dialogRequest;
@@ -114,33 +114,33 @@ public class OvermindRoom extends UrRoom {
 		clientRequest = (ClientDialogRequest) request.getRoomObject();
 		journal.setClientRequest(clientRequest);
 		
-		// sparkPackage is "respond_to_client"
-		LOGGER.log(LOGLEVEL, "Overmind: going to consume spark package");
-		sparkPackages = request.getSparkPackages();
-		SparkPackage.consumeFinal(sparkPackage.getName(), sparkPackages);
+		// sememePackage is "respond_to_client"
+		LOGGER.log(LOGLEVEL, "Overmind: going to consume sememe package");
+		sememePackages = request.getSememePackages();
+		SememePackage.consumeFinal(sememePackage.getName(), sememePackages);
 		
 		dialogRequest = clientRequest.getDialogRequest();
-		clientSparks = dialogRequest.getRequestActions();
-		if (clientSparks != null && !clientSparks.isEmpty()) {
-			// we got spark(s) up front, so bypass the analysis phase entirely
-			LOGGER.log(LOGLEVEL, "Overmind: got client spark(s), bypassing analysis");
-			sparkPackages = new ArrayList<>();
-			for (SerialSpark s : clientSparks) {
-				LOGGER.log(LOGLEVEL, "Client SerialSpark: " + s.getName());
-				newSparkPackage = SparkPackage.getDefaultPackage(s);
-				if (!newSparkPackage.isValid()) {
-					throw new A1iciaException("Overmind: created invalid spark package 1");
+		clientSememes = dialogRequest.getRequestActions();
+		if (clientSememes != null && !clientSememes.isEmpty()) {
+			// we got sememe(s) up front, so bypass the analysis phase entirely
+			LOGGER.log(LOGLEVEL, "Overmind: got client sememe(s), bypassing analysis");
+			sememePackages = new ArrayList<>();
+			for (SerialSememe s : clientSememes) {
+				LOGGER.log(LOGLEVEL, "Client SerialSememe: " + s.getName());
+				newSememePackage = SememePackage.getDefaultPackage(s);
+				if (!newSememePackage.isValid()) {
+					throw new A1iciaException("Overmind: created invalid sememe package 1");
 				}
-				sparkPackages.add(newSparkPackage);
+				sememePackages.add(newSememePackage);
 			}
-			terminatePipeline(ticket, sparkPackages);
+			terminatePipeline(ticket, sememePackages);
 		} else {
-			LOGGER.log(LOGLEVEL, "Overmind: no client sparks, on to Thimk");
+			LOGGER.log(LOGLEVEL, "Overmind: no client sememes, on to Thimk");
 			thimk.decideClientRequestNextAction(ticket, clientRequest);
 		}
 		
 		//    ....better slaves for our robot colony
-		pkg = new ActionPackage(sparkPackage);
+		pkg = new ActionPackage(sememePackage);
 		action = new MessageAction();
 		result = "plié";
 		action.setMessage(result);
@@ -156,13 +156,13 @@ public class OvermindRoom extends UrRoom {
 		Ticket uberTicket;
 		Ticket ticket;
 		NLPAnalysis nlpAnalysis;
-		SparkAnalysis sparkAnalysis;
-		SerialSpark spark;
+		SememeAnalysis sememeAnalysis;
+		SerialSememe sememe;
 		ActionPackage pkg;
 		List<ActionPackage> responsePackages;
 		List<ActionPackage> packageBag;
 		List<ActionPackage> actionPackages;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 		
 		A1iciaUtils.checkNotNull(responses);
 		uberTicket = request.getTicket();
@@ -184,31 +184,31 @@ public class OvermindRoom extends UrRoom {
 		}
 		// at this point we're done with the list of RoomResponses, BTW
 		if (packageBag.isEmpty()) {
-			// no room matched the spark(s)
-			A1iciaUtils.error("Empty packageBag -- unhandled spark(s)");
+			// no room matched the sememe(s)
+			A1iciaUtils.error("Empty packageBag -- unhandled sememe(s)");
 			packageBag = Collections.singletonList(ActionPackage.getProxyActionPackage());
 		}
 		
-		spark = SerialSpark.find("nlp_analysis");
-		actionPackages = ActionPackage.consumeActions(spark, packageBag);
+		sememe = SerialSememe.find("nlp_analysis");
+		actionPackages = ActionPackage.consumeActions(sememe, packageBag);
 		if (!actionPackages.isEmpty()) {
-			pkg = Thimk.chooseAction(spark, actionPackages);
+			pkg = Thimk.chooseAction(sememe, actionPackages);
 			nlpAnalysis = (NLPAnalysis) pkg.getActionObject();
 			NLPAnalyzer.processAnalysis(uberTicket, nlpAnalysis);
 			thimk.decideNlpAnalysisNextAction(uberTicket);
 		}
 
-		spark = SerialSpark.find("spark_analysis");
-		actionPackages = ActionPackage.consumeActions(spark, packageBag);
+		sememe = SerialSememe.find("sememe_analysis");
+		actionPackages = ActionPackage.consumeActions(sememe, packageBag);
 		if (!actionPackages.isEmpty()) {
-			pkg = Thimk.chooseAction(spark, actionPackages);
-			sparkAnalysis = (SparkAnalysis) pkg.getActionObject();
-			sparkPackages = sparkAnalysis.getSparkPackages();
-			thimk.decideSparkAnalysisNextAction(uberTicket, sparkPackages);
+			pkg = Thimk.chooseAction(sememe, actionPackages);
+			sememeAnalysis = (SememeAnalysis) pkg.getActionObject();
+			sememePackages = sememeAnalysis.getSememePackages();
+			thimk.decideSememeAnalysisNextAction(uberTicket, sememePackages);
 		}
 
-		spark = SerialSpark.find("client_response");
-		actionPackages = ActionPackage.consumeActions(spark, packageBag);
+		sememe = SerialSememe.find("client_response");
+		actionPackages = ActionPackage.consumeActions(sememe, packageBag);
 		if (!actionPackages.isEmpty()) {
 			// back from our request to A1icia with smartening up info
 			if (!packageBag.isEmpty()) {
@@ -220,8 +220,8 @@ public class OvermindRoom extends UrRoom {
 			return;
 		}
 
-		spark = SerialSpark.find("update_history");
-		actionPackages = ActionPackage.consumeActions(spark, packageBag);
+		sememe = SerialSememe.find("update_history");
+		actionPackages = ActionPackage.consumeActions(sememe, packageBag);
 		if (!actionPackages.isEmpty()) {
 			// back from updateHistory
 			if (!packageBag.isEmpty()) {
@@ -237,7 +237,7 @@ public class OvermindRoom extends UrRoom {
 		if (!packageBag.isEmpty()) {
 			LOGGER.log(LOGLEVEL, "Overmind: advancing to processRoomActions with packages:");
 			for (ActionPackage p : packageBag) {
-				LOGGER.log(LOGLEVEL, "Package: " + p.getSpark().getName());
+				LOGGER.log(LOGLEVEL, "Package: " + p.getSememe().getName());
 			}
 			processRoomActions(uberTicket, packageBag);
 		}
@@ -248,8 +248,8 @@ public class OvermindRoom extends UrRoom {
 		HistoryUpdate historyUpdate;
 		ClientDialogResponse clientAction;
 //		ActionPackage clientPackage;
-//		SerialSpark clientSpark;
-//		SparkPackage sparkPackage;
+//		SerialSememe clientSememe;
+//		SememePackage sememePackage;
 		Ticket historyTicket;
 		
 		A1iciaUtils.checkNotNull(uberTicket);
@@ -265,7 +265,7 @@ public class OvermindRoom extends UrRoom {
 		historyTicket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
 		limaRequest = new RoomRequest(historyTicket);
 		limaRequest.setFromRoom(getThisRoom());
-		limaRequest.setSparkPackages(SparkPackage.getSingletonDefault("update_history"));
+		limaRequest.setSememePackages(SememePackage.getSingletonDefault("update_history"));
 		historyUpdate = new HistoryUpdate(uberTicket);
 		limaRequest.setRoomObject(historyUpdate);
 		sendRoomRequest(limaRequest);
@@ -278,7 +278,7 @@ public class OvermindRoom extends UrRoom {
 		A1iciaUtils.checkNotNull(response);
 		roomRequest = new RoomRequest(ticket);
 		roomRequest.setFromRoom(getThisRoom());
-		roomRequest.setSparkPackages(SparkPackage.getSingletonDefault("client_response"));
+		roomRequest.setSememePackages(SememePackage.getSingletonDefault("client_response"));
 		roomRequest.setMessage("Client response");
 		roomRequest.setRoomObject(response);
 		sendRoomRequest(roomRequest);
@@ -293,7 +293,7 @@ public class OvermindRoom extends UrRoom {
 	 * @return The ActionPackage we're sending to the client
 	 */
 	private static ClientDialogResponse determineClientAction(Ticket ticket, List<ActionPackage> packageBag) {
-		Set<SerialSpark> sparks;
+		Set<SerialSememe> sememes;
 		StringBuilder messageSb;
 		StringBuilder explanationSb;
 		String msg;
@@ -302,7 +302,7 @@ public class OvermindRoom extends UrRoom {
 		ClientDialogResponse clientAction;
 		DialogResponse response;
 		ActionPackage pkg;
-		SerialSpark clientSpark = null;
+		SerialSememe clientSememe = null;
 		A1icianID overrideA1icianID = null;
 		List<ActionPackage> pkgs;
 		RoomActionObject action;
@@ -313,28 +313,28 @@ public class OvermindRoom extends UrRoom {
 		A1iciaUtils.checkNotNull(ticket);
 		A1iciaUtils.checkNotNull(packageBag);
 		journal = ticket.getJournal();
-		sparks = new HashSet<>();
-		packageBag.stream().forEach(p -> sparks.add(p.getSpark()));
+		sememes = new HashSet<>();
+		packageBag.stream().forEach(p -> sememes.add(p.getSememe()));
 		
 		LOGGER.log(LOGLEVEL, "Overmind: determineClientAction");
 		messageSb = new StringBuilder();
 		explanationSb = new StringBuilder();
 		obj = null;
-		for (SerialSpark spark : sparks) {
+		for (SerialSememe sememe : sememes) {
 			if (messageSb.length() > 0) {
 				messageSb.append(".\n");
 				explanationSb.append("\n\n");
 			}
 			msg = null;
 			expl = null;
-			pkgs = ActionPackage.hasActions(spark, packageBag);
+			pkgs = ActionPackage.hasActions(sememe, packageBag);
 			if (pkgs.isEmpty()) {
-				A1iciaUtils.error("Unhandled spark in Overmind.determineClientAction = " +
-						spark.getName());
+				A1iciaUtils.error("Unhandled sememe in Overmind.determineClientAction = " +
+						sememe.getName());
 				msg = "Ich bin ein Ausländer. Und ich bin die eigentliche A1icia.";
 				expl = "Overmind: something went awry in the Overmind.";
 			} else {
-				pkg = Thimk.chooseAction(spark, pkgs);
+				pkg = Thimk.chooseAction(sememe, pkgs);
 				action = pkg.getActionObject();
 				msg = action.getMessage();
 				expl = action.getExplanation();
@@ -349,7 +349,7 @@ public class OvermindRoom extends UrRoom {
 				if (action instanceof A1icianAction) {
 					LOGGER.log(LOGLEVEL, "Overmind: at A1icianAction statement");
 					remoteObject = (A1icianAction) action;
-					clientSpark = remoteObject.getClientAction();
+					clientSememe = remoteObject.getClientAction();
 					overrideA1icianID = remoteObject.getToA1icianID();
 					LOGGER.log(LOGLEVEL, "Overmind: overrideA1icianID = " + overrideA1icianID);
 				}
@@ -377,8 +377,8 @@ public class OvermindRoom extends UrRoom {
 		}
 		response.setMessage(messageSb.toString());
 		response.setExplanation(explanationSb.toString());
-		if (clientSpark != null) {
-			response.setResponseAction(clientSpark);
+		if (clientSememe != null) {
+			response.setResponseAction(clientSememe);
 		}
 		if (obj != null) {
 			response.setClientObject(obj);
@@ -387,39 +387,39 @@ public class OvermindRoom extends UrRoom {
 	}
 	
 	/**
-	 * This terminates the analysis phase. Now we have all the spark packages, so we'll
-	 * initiate the process that assigns actions to the sparks.
+	 * This terminates the analysis phase. Now we have all the sememe packages, so we'll
+	 * initiate the process that assigns actions to the sememes.
 	 * 
 	 * @param ticket The ticket from HistoryAnalyzer
 	 */
-	void terminatePipeline(Ticket ticket, List<SparkPackage> sparkPackages) {	
+	void terminatePipeline(Ticket ticket, List<SememePackage> sememePackages) {	
 		RoomRequest respondRequest;
 		TicketJournal journal;
 		ClientDialogRequest clientRequest;
-		SparkPackage aardPkg;
+		SememePackage aardPkg;
 		DialogRequest dialogRequest;
 		
 		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(sparkPackages);
+		A1iciaUtils.checkNotNull(sememePackages);
 		// Now we're ready to assemble whatever we need to respond to the client.
 		//    At this point, the ticket journal should have all of the sentence packages
-		//    completed with a spark for each one, and a set of sparks upon which to act (the
-		//    journal sparks).
-		if (sparkPackages.isEmpty()) {
-			A1iciaUtils.error("OvermindRoom: terminatePipeline -- no spark packages for ticket " + 
-					ticket, "Using aardvark spark package");
-			aardPkg = SparkPackage.getDefaultPackage("aardvark");
+		//    completed with a sememe for each one, and a set of sememes upon which to act (the
+		//    journal sememes).
+		if (sememePackages.isEmpty()) {
+			A1iciaUtils.error("OvermindRoom: terminatePipeline -- no sememe packages for ticket " + 
+					ticket, "Using aardvark sememe package");
+			aardPkg = SememePackage.getDefaultPackage("aardvark");
 			if (!aardPkg.isValid()) {
-				throw new A1iciaException("Overmind: created invalid spark package 3");
+				throw new A1iciaException("Overmind: created invalid sememe package 3");
 			}
-			sparkPackages.add(aardPkg);
+			sememePackages.add(aardPkg);
 		}
 		journal = ticket.getJournal();
 
 		// here we just make one action-related request and let the rooms answer how they see fit
 		respondRequest = new RoomRequest(ticket);
 		respondRequest.setFromRoom(getThisRoom());
-		respondRequest.setSparkPackages(sparkPackages);
+		respondRequest.setSememePackages(sememePackages);
 		clientRequest = journal.getClientRequest();
 		dialogRequest = clientRequest.getDialogRequest();
 		respondRequest.setMessage(dialogRequest.getRequestMessage());
@@ -436,12 +436,12 @@ public class OvermindRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("respond_to_client"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("respond_to_client"));
+		return sememes;
 	}
 
 	@Override

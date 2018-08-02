@@ -38,14 +38,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.WhatSparksAction;
+import com.hulles.a1icia.room.document.WhatSememesAction;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -58,19 +58,23 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public abstract class UrRoom extends AbstractIdleService {
 	private final static Logger logger = Logger.getLogger("A1icia.UrRoom");
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = Level.INFO;
 	private final EventBus hall;
-	private final ImmutableSet<SerialSpark> roomSparks;
+	private final ImmutableSet<SerialSememe> roomSememes;
 	private final ListMultimap<Long, RoomResponse> responseCabinet;
 	private final ConcurrentMap<Long, RoomRequest> requestCabinet;
 	private final ExecutorService threadPool;
 	boolean shuttingDownOnClose = false;
 	
 	public UrRoom(EventBus hall) {
+		Set<SerialSememe> sememes;
 		
 		A1iciaUtils.checkNotNull(hall);
 		this.hall = hall;
 		hall.register(this);
-		roomSparks = ImmutableSet.copyOf(loadSparks());
+		sememes = loadSememes();
+		logger.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
+		roomSememes = ImmutableSet.copyOf(sememes);
 		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
 		requestCabinet = new ConcurrentHashMap<>();
 //		threadPool = Executors.newFixedThreadPool(THREADCOUNT);
@@ -79,13 +83,13 @@ public abstract class UrRoom extends AbstractIdleService {
 	}
 	
 	/**
-	 * Returns a new MUTABLE COPY of roomSparks
+	 * Returns a new MUTABLE COPY of roomSememes
 	 * 
 	 * @return The copy of the set
 	 */
-	public Set<SerialSpark> getRoomSparks() {
+	public Set<SerialSememe> getRoomSememes() {
 		
-		return new HashSet<>(roomSparks);
+		return new HashSet<>(roomSememes);
 	}
 	
 	/**
@@ -168,8 +172,8 @@ public abstract class UrRoom extends AbstractIdleService {
 		RoomRequest roomRequest;
 		RoomAnnouncement announcement;
 		RoomResponse roomResponse;
-		List<SparkPackage> sparkPackages;
-		SparkPackage sparkPackage;
+		List<SememePackage> sememePackages;
+		SememePackage sememePackage;
 		List<RoomResponse> collectedResponses;
 		Long responseTo;
 		Room toRoom;
@@ -229,18 +233,18 @@ public abstract class UrRoom extends AbstractIdleService {
 					": document is RoomRequest");
 			roomRequest = (RoomRequest) document;
 			// we trap WHAT_SPARKS before it gets to processRoomRequest
-			sparkPackages = roomRequest.getSparkPackages(); 
-			sparkPackage = SparkPackage.consume("what_sparks", sparkPackages);
-			if (sparkPackage != null) {
+			sememePackages = roomRequest.getSememePackages(); 
+			sememePackage = SememePackage.consume("what_sememes", sememePackages);
+			if (sememePackage != null) {
 				logger.log(LOGLEVEL, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-						": spark is WHAT_SPARKS");
-				returnSparks(roomRequest, sparkPackage);
+						": sememe is WHAT_SPARKS");
+				returnSememes(roomRequest, sememePackage);
 			}
-			if (!sparkPackages.isEmpty()) {
+			if (!sememePackages.isEmpty()) {
 				threadPool.submit(new Runnable() {
 					@Override
 					public void run() {
-						processRoomRequest(sparkPackages, roomRequest);
+						processRoomRequest(sememePackages, roomRequest);
 					}
 				});
 			}
@@ -250,12 +254,12 @@ public abstract class UrRoom extends AbstractIdleService {
 	}
 	
 	/**
-	 * Process the updated set of spark packages from the room request.
+	 * Process the updated set of sememe packages from the room request.
 	 * 
 	 * @param updatedPkgs
 	 * @param request
 	 */
-	protected final void processRoomRequest(List<SparkPackage> updatedPkgs, RoomRequest request) {
+	protected final void processRoomRequest(List<SememePackage> updatedPkgs, RoomRequest request) {
 		RoomResponse response;
 		ActionPackage pkg;
 		
@@ -264,15 +268,15 @@ public abstract class UrRoom extends AbstractIdleService {
 		response = new RoomResponse(request);
 		response.setFromRoom(getThisRoom());
 		logger.log(Level.FINE, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-				": evaluating sparks = " + updatedPkgs);
-		for (SparkPackage sparkPkg : updatedPkgs) {
-			if (roomSparks.contains(sparkPkg.getSpark())) {
-				logger.log(LOGLEVEL, "This should be a good spark/room: " + 
-						sparkPkg.getName() + " / " + getThisRoom());
-				pkg = createActionPackage(sparkPkg, request);
+				": evaluating sememes = " + updatedPkgs);
+		for (SememePackage sememePkg : updatedPkgs) {
+			if (roomSememes.contains(sememePkg.getSememe())) {
+				logger.log(LOGLEVEL, "This should be a good sememe/room: " + 
+						sememePkg.getName() + " / " + getThisRoom());
+				pkg = createActionPackage(sememePkg, request);
 				logger.log(LOGLEVEL, "Got actionpackage back from " + getThisRoom());
 				if (pkg != null) {
-					logger.log(LOGLEVEL, "Adding actionpackage for " + sparkPkg.getName() + 
+					logger.log(LOGLEVEL, "Adding actionpackage for " + sememePkg.getName() + 
 							" from " + getThisRoom());
 					response.addActionPackage(pkg);
 				}
@@ -287,35 +291,35 @@ public abstract class UrRoom extends AbstractIdleService {
 	
 	protected abstract void roomShutdown();
 	
-	protected abstract ActionPackage createActionPackage(SparkPackage spark, RoomRequest request);
+	protected abstract ActionPackage createActionPackage(SememePackage sememe, RoomRequest request);
 	
 	protected abstract void processRoomResponses(RoomRequest request, List<RoomResponse> response);
 	
 	protected abstract void processRoomAnnouncement(RoomAnnouncement announcement);
 	
-	protected abstract Set<SerialSpark> loadSparks();
+	protected abstract Set<SerialSememe> loadSememes();
 	
 	/**
 	 * Respond to a WHAT_SPARKS room request.
 	 * 
 	 * @param request The incoming request
-	 * @param whatSparks The spark initiating the response
+	 * @param whatSememes The sememe initiating the response
 	 */
-	private void returnSparks(RoomRequest request, SparkPackage whatSparks) {
-		RoomResponse sparksResponse;
-		WhatSparksAction sparksAction;
+	private void returnSememes(RoomRequest request, SememePackage whatSememes) {
+		RoomResponse sememesResponse;
+		WhatSememesAction sememesAction;
 		ActionPackage pkg;
 		
 		logger.log(LOGLEVEL, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-				": in returnSparks");
-		sparksAction = new WhatSparksAction();
-		sparksAction.setSparks(roomSparks);
-		pkg = new ActionPackage(whatSparks);
-		pkg.setActionObject(sparksAction);
-		sparksResponse = new RoomResponse(request);
-		sparksResponse.addActionPackage(pkg);
-		sparksResponse.setFromRoom(getThisRoom());
-		sendRoomResponse(sparksResponse);
+				": in returnSememes");
+		sememesAction = new WhatSememesAction();
+		sememesAction.setSememes(roomSememes);
+		pkg = new ActionPackage(whatSememes);
+		pkg.setActionObject(sememesAction);
+		sememesResponse = new RoomResponse(request);
+		sememesResponse.addActionPackage(pkg);
+		sememesResponse.setFromRoom(getThisRoom());
+		sendRoomResponse(sememesResponse);
 	}
 
 	static void shutdownAndAwaitTermination(ExecutorService pool) {

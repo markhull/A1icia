@@ -21,7 +21,7 @@ package com.hulles.a1icia.api.dialog;
 
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
@@ -29,7 +29,7 @@ public class DialogResponse extends Dialog {
 	private static final long serialVersionUID = 2837414184795790854L;
 	private final Long responseToRequestID;
 	private String response;
-	private SerialSpark spark;
+	private SerialSememe sememe;
 	private String explanation;
 	private A1iciaClientObject responseObject;
 	private A1icianID fromA1icianID;
@@ -76,9 +76,9 @@ public class DialogResponse extends Dialog {
 		this.fromA1icianID = a1icianID;
 	}
 	
-	public SerialSpark getResponseAction() {
+	public SerialSememe getResponseAction() {
 		
-		return spark;
+		return sememe;
 	}
 	
 	@Override
@@ -93,10 +93,10 @@ public class DialogResponse extends Dialog {
 		this.toA1icianID = a1icianID;
 	}
 	
-	public void setResponseAction(SerialSpark spark) {
+	public void setResponseAction(SerialSememe sememe) {
 		
-		SharedUtils.nullsOkay(spark);
-		this.spark = spark;
+		SharedUtils.nullsOkay(sememe);
+		this.sememe = sememe;
 	}
 	
 	
@@ -167,11 +167,11 @@ public class DialogResponse extends Dialog {
 		StringBuilder sb;
 			
 		sb = new StringBuilder("DIALOG RESPONSE\n");
-		sb.append("Spark: ");
-		if (spark == null) {
+		sb.append("Sememe: ");
+		if (sememe == null) {
 			sb.append("NULL");
 		} else {
-			sb.append(spark.getName());
+			sb.append(sememe.getName());
 		}
 		sb.append("\nLanguage: ");
 		if (language == null) {

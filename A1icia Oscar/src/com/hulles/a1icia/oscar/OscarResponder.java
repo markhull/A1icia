@@ -33,10 +33,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.cayenne.Spark;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.cayenne.Sememe;
+import com.hulles.a1icia.ticket.SememePackage;
 
 public class OscarResponder {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOscar.OscarResponder");
@@ -62,7 +62,7 @@ public class OscarResponder {
 				);
 	}
 	
-	String respondTo(SparkPackage sparkPkg) {
+	String respondTo(SememePackage sememePkg) {
 		LocalDate now;
 		Period daysAlive;
 		int daysAliveYears;
@@ -80,14 +80,14 @@ public class OscarResponder {
 		String response;
 		int responseIx;
 		StringBuilder sb;
-		List<SerialSpark> externalSparks;
+		List<SerialSememe> externalSememes;
 		String helpStr;
 		Set<Integer> helpIxs;
 		int helpSize;
 		Integer helpIx;
-		String sparkCanonicalForm;
+		String sememeCanonicalForm;
 		
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "what_is_pi":
 				message = "The value of pi is approximately ";
 				message += String.valueOf(Math.PI);
@@ -150,8 +150,8 @@ public class OscarResponder {
 				message = "I was told to pronounce it like \"hull ace\" but I still pronounce it hulles.";
 				break;
 			case "help":
-				externalSparks = new ArrayList<>(Spark.getExternalSparks());
-				helpSize = externalSparks.size();
+				externalSememes = new ArrayList<>(Sememe.getExternalSememes());
+				helpSize = externalSememes.size();
 				helpIxs = new HashSet<>(HELPS);
 				for (int ix=0; ix<HELPS; ix++) {
 					helpIx = random.nextInt(helpSize);
@@ -159,8 +159,8 @@ public class OscarResponder {
 				}
 				sb = new StringBuilder("You can say or type things like:\n\n");
 				for (Integer hIx : helpIxs) {
-					sparkCanonicalForm = externalSparks.get(hIx).getCanonicalForm();
-					helpStr = sparkCanonicalForm.replaceAll("[\\{\\}]", "");
+					sememeCanonicalForm = externalSememes.get(hIx).getCanonicalForm();
+					helpStr = sememeCanonicalForm.replaceAll("[\\{\\}]", "");
 					LOGGER.log(LOGLEVEL, "HELP: " + helpStr);
 					sb.append(helpStr);
 					sb.append("\n");

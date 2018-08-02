@@ -29,12 +29,12 @@ import java.util.logging.Logger;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.AnswerChunk;
 import com.hulles.a1icia.cayenne.AnswerHistory;
-import com.hulles.a1icia.cayenne.Spark;
+import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.room.document.HistoryUpdate;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SentencePackage.SentenceChunk;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.FuzzyMatch;
@@ -123,7 +123,7 @@ public class LimaHistory {
 		Ticket ticket;
 		TicketJournal journal;
 		List<SentencePackage> sentencePackages;
-		SparkPackage sparkPkg;
+		SememePackage sememePkg;
 		List<ActionPackage> actionPackages;
 		SentencePackage spPkg;
 		
@@ -142,13 +142,13 @@ public class LimaHistory {
 		for (SentencePackage sp : sentencePackages) {
 			for (ActionPackage ap : actionPackages) {
 				logger.log(LOGLEVEL_B, "LimaHistory: got action package " + ap.getName());
-				sparkPkg = ap.getSparkPackage();
-				logger.log(LOGLEVEL_B, "LimaHistory: got spark package " + sparkPkg.getName());
-				spPkg = sparkPkg.getSentencePackage();
+				sememePkg = ap.getSememePackage();
+				logger.log(LOGLEVEL_B, "LimaHistory: got sememe package " + sememePkg.getName());
+				spPkg = sememePkg.getSentencePackage();
 				if (spPkg != null) {
 					if (spPkg.getSentencePackageID().equals(sp.getSentencePackageID())) {
 						logger.log(LOGLEVEL_B, "LimaHistory: got matching sentence package " +
-								sparkPkg.getName());
+								sememePkg.getName());
 						update(sp, ap);
 						// we could do a break, but let's let it run in case we ever have more
 						//    than one action per sentence
@@ -159,7 +159,7 @@ public class LimaHistory {
 	}
 
 	private void update(SentencePackage sp, ActionPackage ap) {
-		SparkPackage sparkPkg;
+		SememePackage sememePkg;
 		AnswerHistory answerHistory;
 		List<SentenceChunk> chunks;
 		AnswerChunk answerChunk;
@@ -167,7 +167,7 @@ public class LimaHistory {
 		
 		A1iciaUtils.checkNotNull(sp);
 		A1iciaUtils.checkNotNull(ap);
-		sparkPkg = ap.getSparkPackage();
+		sememePkg = ap.getSememePackage();
 		fixedSentence = sp.getStrippedSentence();
 		logger.log(LOGLEVEL_B, "LimaHistory: updating");
 		answerHistory = AnswerHistory.findAnswerHistory(fixedSentence);
@@ -175,17 +175,17 @@ public class LimaHistory {
 			// we already have it
 			return;
 		}
-		logger.log(LOGLEVEL_B, "LimaHistory: should be updating database with " + sparkPkg);
+		logger.log(LOGLEVEL_B, "LimaHistory: should be updating database with " + sememePkg);
 		A1iciaApplication.setErrorOnUncommittedObjects(false);
 		answerHistory = AnswerHistory.createNew();
-		answerHistory.setSpark(Spark.fromSerial(sparkPkg.getSpark()));
-		answerHistory.setSparkObject(sparkPkg.getSparkObject());
+		answerHistory.setSememe(Sememe.fromSerial(sememePkg.getSememe()));
+		answerHistory.setSememeObject(sememePkg.getSememeObject());
 		answerHistory.setLemmatizedQuestion(sp.getLemmatizedSentence());
 		
 		answerHistory.setPosTags(sp.getPosTagString());
 		answerHistory.setOriginalQuestion(fixedSentence);
 		answerHistory.setSatisfaction(0); // FIXME how do we get this?
-		logger.log(LOGLEVEL_B, "LimaHistory: should have updated database with " + sparkPkg);
+		logger.log(LOGLEVEL_B, "LimaHistory: should have updated database with " + sememePkg);
 		
 		chunks = sp.getChunks();
 		if (chunks != null) {

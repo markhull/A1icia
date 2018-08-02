@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.NamedTimer;
 import com.hulles.a1icia.cayenne.Task;
@@ -44,7 +44,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -127,36 +127,36 @@ public final class HotelRoom extends UrRoom {
 	}
 	
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "named_timer":
 			case "duration_timer":
-				return createTimerActionPackage(sparkPkg, request);
+				return createTimerActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createTimerActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createTimerActionPackage(SememePackage sememePkg, RoomRequest request) {
 		String result = null;
 		MessageAction response;
 		ActionPackage pkg;
 		NamedTimer dbTimer;
-		SparkPackage namedTimerPkg;
+		SememePackage namedTimerPkg;
 		String timerName;
 		A1icianID a1icianID;
 		Ticket ticket;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		if (sparkPkg.is("duration_timer")) {
-			A1iciaUtils.error("HotelRoom: got duration timer spark, but we can't handle that yet");
+		if (sememePkg.is("duration_timer")) {
+			A1iciaUtils.error("HotelRoom: got duration timer sememe, but we can't handle that yet");
 			return null;
 		}
 		// named_timer
-		namedTimerPkg = sparkPkg;
-		timerName = namedTimerPkg.getSparkObject();
+		namedTimerPkg = sememePkg;
+		timerName = namedTimerPkg.getSememeObject();
 		dbTimer = NamedTimer.findNamedTimer(timerName);
 		if (dbTimer == null) {
 			A1iciaUtils.error("HotelRoom: can't find timer named " + timerName + " in database");
@@ -165,7 +165,7 @@ public final class HotelRoom extends UrRoom {
 		ticket = request.getTicket();
 		a1icianID = ticket.getFromA1icianID();
 		timerHandler.setNewTimer(a1icianID, timerName, dbTimer.getDurationMs());
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		response = new MessageAction();
 		result = timerName + " timer is set.";
 		response.setMessage(result);
@@ -182,7 +182,7 @@ public final class HotelRoom extends UrRoom {
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
 		roomRequest = new RoomRequest(ticket);
 		roomRequest.setFromRoom(getThisRoom());
-		roomRequest.setSparkPackages(SparkPackage.getSingletonDefault("indie_response"));
+		roomRequest.setSememePackages(SememePackage.getSingletonDefault("indie_response"));
 		roomRequest.setMessage("Indie client response");
 		roomRequest.setRoomObject(response);
 		sendRoomRequest(roomRequest);
@@ -191,7 +191,7 @@ public final class HotelRoom extends UrRoom {
 	public void getMedia(Long timerID, String notificationTitle) {
 		RoomRequest mediaRequest;
 		Ticket ticket;
-		SparkPackage sparkPkg;
+		SememePackage sememePkg;
 		
 		A1iciaUtils.checkNotNull(timerID);
 		A1iciaUtils.checkNotNull(notificationTitle);
@@ -200,22 +200,22 @@ public final class HotelRoom extends UrRoom {
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
 		mediaRequest = new RoomRequest(ticket);
 		mediaRequest.setFromRoom(getThisRoom());
-		sparkPkg = SparkPackage.getDefaultPackage("notification_medium");
-		sparkPkg.setSparkObject(notificationTitle);
-		mediaRequest.setSparkPackages(Collections.singletonList(sparkPkg));
+		sememePkg = SememePackage.getDefaultPackage("notification_medium");
+		sememePkg.setSememeObject(notificationTitle);
+		mediaRequest.setSememePackages(Collections.singletonList(sememePkg));
 		mediaRequest.setMessage(timerID.toString()); // sort of a kluge, but...
 //		mediaRequest.setMindObject(response);
 		sendRoomRequest(mediaRequest);
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("named_timer"));
-		sparks.add(SerialSpark.find("duration_timer"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("named_timer"));
+		sememes.add(SerialSememe.find("duration_timer"));
+		return sememes;
 	}
 
 	@Override

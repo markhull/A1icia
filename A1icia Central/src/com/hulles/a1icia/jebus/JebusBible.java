@@ -63,7 +63,7 @@ public final class JebusBible {
     
     private final static String ALICIASENTENCEKEY = "a1icia:sentence";
     
-    private final static String ALICIASPARKKEY = "a1icia:spark";
+    private final static String ALICIASPARKKEY = "a1icia:sememe";
     
     private final static String ALICIAACTIONKEY = "a1icia:action";
     
@@ -341,14 +341,14 @@ public final class JebusBible {
 	/********************************/
 	
 	/**
-	 * Get the Jebus key for the spark package ID counter.
+	 * Get the Jebus key for the sememe package ID counter.
 	 * 
 	 * @return The key
 	 */
-	public static String getA1iciaSparkCounterKey(JebusPool pool) {
+	public static String getA1iciaSememeCounterKey(JebusPool pool) {
 		
 		matchPool(pool, JebusPoolType.CENTRAL);
-		return ALICIASPARKKEY + ":nextSparkKey";
+		return ALICIASPARKKEY + ":nextSememeKey";
 	}
 	
 	/********************************/

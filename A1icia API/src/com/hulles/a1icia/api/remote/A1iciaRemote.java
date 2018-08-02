@@ -56,7 +56,7 @@ import com.hulles.a1icia.api.object.LoginResponseObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.SerialPerson;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
@@ -141,14 +141,14 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	
 	@Override
 	protected void startUp() {
-    	SerialSpark spark;
+    	SerialSememe sememe;
     	
 		a1icianID = A1icianID.createA1icianID();
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: Started");
 		serverUp = true;
-		spark = new SerialSpark();
-		spark.setName("client_startup");
-		sendCommand(spark, null);
+		sememe = new SerialSememe();
+		sememe.setName("client_startup");
+		sendCommand(sememe, null);
     }
 	
 	private void startTextDisplayer() {
@@ -172,11 +172,11 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	
 	@Override
 	protected void shutDown() {
-		SerialSpark spark;
+		SerialSememe sememe;
 		
-		spark = new SerialSpark();
-		spark.setName("client_shutdown");
-		sendCommand(spark, null);
+		sememe = new SerialSememe();
+		sememe.setName("client_shutdown");
+		sendCommand(sememe, null);
 		if (executor != null) {
 			try {
 				LOGGER.log(LOGLEVEL, "attempting to shutdown executor");
@@ -335,15 +335,15 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
     
 	public boolean sendText(String message) {
 		DialogRequest request;
-		Set<SerialSpark> sparks;
+		Set<SerialSememe> sememes;
 		
 		SharedUtils.checkNotNull(message);
 		if (!serverUp) {
 			return false;
 		}
 		request = buildRequest();
-		sparks = Collections.emptySet();
-		request.setRequestActions(sparks);
+		sememes = Collections.emptySet();
+		request.setRequestActions(sememes);
 		request.setRequestMessage(message);
 		if (showText) {
 			if (userName == null) {
@@ -360,15 +360,15 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
     
 	public boolean sendAudio(byte[] audioBytes) {
 		DialogRequest request;
-		Set<SerialSpark> sparks;
+		Set<SerialSememe> sememes;
 		
 		SharedUtils.checkNotNull(audioBytes);
 		if (!serverUp) {
 			return false;
 		}
 		request = buildRequest();
-		sparks = Collections.emptySet();
-		request.setRequestActions(sparks);
+		sememes = Collections.emptySet();
+		request.setRequestActions(sememes);
 		request.setRequestAudio(audioBytes);
 		request.setRequestMessage("AUDIO FILE");
 		return sendRequest(request);
@@ -377,40 +377,40 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	/** Send a command and an optional message to the host. We currently 
 	 * support just one action per request.
 	 * 
-	 * @param spark The spark to send
+	 * @param sememe The sememe to send
 	 */
-	public boolean sendCommand(SerialSpark spark, String message) {
+	public boolean sendCommand(SerialSememe sememe, String message) {
 		DialogRequest request;
-		Set<SerialSpark> sparks;
+		Set<SerialSememe> sememes;
 		
-		SharedUtils.checkNotNull(spark);
+		SharedUtils.checkNotNull(sememe);
 		SharedUtils.nullsOkay(message);
 		if (!serverUp) {
 			return false;
 		}
 		request = buildRequest();
-		sparks = Collections.singleton(spark);
+		sememes = Collections.singleton(sememe);
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: Sending command");
-		request.setRequestActions(sparks);
+		request.setRequestActions(sememes);
 		request.setRequestMessage(message);
 		return sendRequest(request);
 	}
     
 	public boolean sendLogin(LoginObject object) {
 		DialogRequest request;
-		Set<SerialSpark> sparks;
-		SerialSpark spark;
+		Set<SerialSememe> sememes;
+		SerialSememe sememe;
 		
 		SharedUtils.checkNotNull(object);
 		if (!serverUp) {
 			return false;
 		}
 		request = buildRequest();
-		spark = new SerialSpark();
-		spark.setName("login");
-		sparks = Collections.singleton(spark);
+		sememe = new SerialSememe();
+		sememe.setName("login");
+		sememes = Collections.singleton(sememe);
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: Sending login");
-		request.setRequestActions(sparks);
+		request.setRequestActions(sememes);
 		request.setClientObject(object);
 		return sendRequest(request);
 	}
@@ -455,8 +455,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		Dialog dialog = null;
 		DialogResponse dialogResponse;
 		DialogRequest dialogRequest;
-		SerialSpark spark;
-		Set<SerialSpark> sparks;
+		SerialSememe sememe;
+		Set<SerialSememe> sememes;
 		A1iciaClientObject clientObject;
 		Language lang;
 		
@@ -482,8 +482,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			expl = dialogResponse.getExplanation();
 			processInputExplanation(expl, text);
 			
-			spark = dialogResponse.getResponseAction();
-			processInputCommand(spark);
+			sememe = dialogResponse.getResponseAction();
+			processInputCommand(sememe);
 			
 			clientObject = dialogResponse.getClientObject();
 			processInputClientObject(clientObject);
@@ -494,8 +494,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			lang = dialogRequest.getLanguage();
 			processInputRequest(text, lang);
 			
-			sparks = dialogRequest.getRequestActions();
-			for (SerialSpark ss : sparks) {
+			sememes = dialogRequest.getRequestActions();
+			for (SerialSememe ss : sememes) {
 				processInputCommand(ss);
 			}
 			
@@ -552,12 +552,12 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		}
 	}
 	
-	private void processInputCommand(SerialSpark spark) {
+	private void processInputCommand(SerialSememe sememe) {
 		
-		SharedUtils.nullsOkay(spark);
-		if (spark != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaRemote: spark is {0}", spark.getName());
-			receiveCommand(spark);
+		SharedUtils.nullsOkay(sememe);
+		if (sememe != null) {
+			LOGGER.log(LOGLEVEL, "A1iciaRemote: sememe is {0}", sememe.getName());
+			receiveCommand(sememe);
 		}
 	}
 	
@@ -644,11 +644,11 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	}
 	
 	private void sendQuietCommand() {
-		SerialSpark spark;
+		SerialSememe sememe;
 		
-		spark = new SerialSpark();
-		spark.setName("pulse_yellow_LED");
-		receiveCommand(spark);
+		sememe = new SerialSememe();
+		sememe.setName("pulse_yellow_LED");
+		receiveCommand(sememe);
 	}
 	
 	private void playAudio(AudioObject audioObject) {
@@ -721,13 +721,13 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		}
 	}
 	
-	void receiveCommand(SerialSpark spark) {
+	void receiveCommand(SerialSememe sememe) {
 		String cmd;
 		
-		SharedUtils.checkNotNull(spark);
-		cmd = spark.getName();
+		SharedUtils.checkNotNull(sememe);
+		cmd = sememe.getName();
 		LOGGER.log(LOGLEVEL, "A1iciaRemote:receiveCommand: command is {0}", cmd);
-		switch (spark.getName()) {
+		switch (sememe.getName()) {
 			case "central_startup":
 				serverUp = true;
 				break;
@@ -737,7 +737,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 			default:
 				break;
 		}
-		display.receiveCommand(spark);
+		display.receiveCommand(sememe);
 	}
 	
 	private void processTTS(String text, Language lang) {

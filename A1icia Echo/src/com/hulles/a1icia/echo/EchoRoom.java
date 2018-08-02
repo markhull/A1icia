@@ -29,7 +29,7 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.echo.EchoAnalysis.VectorLoad;
 import com.hulles.a1icia.echo.w2v.WordDistance;
@@ -40,7 +40,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -172,17 +172,17 @@ public final class EchoRoom extends UrRoom {
 	}
 	
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "match_word_or_phrase":
-				return createMatchesActionPackage(sparkPkg, request);
+				return createMatchesActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createMatchesActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createMatchesActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		EchoAnalysis analysis;
 		WordMatchingRequest analysisRequest;
@@ -192,9 +192,9 @@ public final class EchoRoom extends UrRoom {
 		String wordB;
 		String wordC;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		analysis = new EchoAnalysis(WHICHLOAD);
 		analysisRequest = (WordMatchingRequest) request.getRoomObject();
 		if (!ready) {
@@ -236,12 +236,12 @@ public final class EchoRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("match_word_or_phrase"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("match_word_or_phrase"));
+		return sememes;
 	}
 
 	@Override

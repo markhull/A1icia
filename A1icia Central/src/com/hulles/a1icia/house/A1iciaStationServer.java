@@ -41,7 +41,7 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.dialog.DialogSerialization;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.delta.TranscriberDemo;
 import com.hulles.a1icia.jebus.JebusBible;
@@ -135,15 +135,15 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	@Override
 	protected void houseStartup() {
-		SerialSpark openSpark;
+		SerialSememe openSememe;
 		
 		executor = Executors.newCachedThreadPool();
 		if (!noPrompts) {
 			promptTimer = new Timer();
 			prompters = new ArrayList<>();
 		}
-		openSpark = SerialSpark.find("central_startup");
-		stationBroadcast("A1icia Central starting up....", openSpark);
+		openSememe = SerialSememe.find("central_startup");
+		stationBroadcast("A1icia Central starting up....", openSememe);
 //		googleSpeech = new A1iciaGoogleSpeech();
 	}
 
@@ -153,10 +153,10 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	@Override
 	protected void houseShutdown() {
-		SerialSpark closeSpark;
+		SerialSememe closeSememe;
 		
-		closeSpark = SerialSpark.find("central_shutdown");
-		stationBroadcast("A1icia Central shutting down....", closeSpark);
+		closeSememe = SerialSememe.find("central_shutdown");
+		stationBroadcast("A1icia Central shutting down....", closeSememe);
 //		googleSpeech.close();
 		if (executor != null) {
 			try {
@@ -196,9 +196,9 @@ public final class A1iciaStationServer extends UrHouse {
 		Prompter prompter;
 		A1icianID fromA1icianID;
 		Session session;
-		SerialSpark spark;
-		SerialSpark serverLight;
-		Set<SerialSpark> sparksCopy;
+		SerialSememe sememe;
+		SerialSememe serverLight;
+		Set<SerialSememe> sememesCopy;
 		
 		A1iciaUtils.checkNotNull(requestBytes);
 		LOGGER.log(LOGLEVEL1, "StationServer: got station input...");
@@ -221,10 +221,10 @@ public final class A1iciaStationServer extends UrHouse {
 		}
 		fromA1icianID = dialogRequest.getFromA1icianID();
 		LOGGER.log(LOGLEVEL1, "StationServer: dialog request from " + fromA1icianID);
-		sparksCopy = new HashSet<>(dialogRequest.getRequestActions());
-		spark = SerialSpark.consume("client_startup", sparksCopy);
-		LOGGER.log(LOGLEVEL1, "StationServer: consumed startup , spark = " + spark);
-		if (spark != null) {
+		sememesCopy = new HashSet<>(dialogRequest.getRequestActions());
+		sememe = SerialSememe.consume("client_startup", sememesCopy);
+		LOGGER.log(LOGLEVEL1, "StationServer: consumed startup , sememe = " + sememe);
+		if (sememe != null) {
 			// it's a new session
 			LOGGER.log(LOGLEVEL1, "StationServer: starting new session for " + fromA1icianID);
 			session = Session.getSession(fromA1icianID);
@@ -235,8 +235,8 @@ public final class A1iciaStationServer extends UrHouse {
 			return; // we don't need to pass this along, at least for now
 		} else if (isOurSession(fromA1icianID)) {
 			session = getSession(fromA1icianID);
-			spark = SerialSpark.consume("client_shutdown", sparksCopy);
-			if (spark != null) {
+			sememe = SerialSememe.consume("client_shutdown", sememesCopy);
+			if (sememe != null) {
 				// close the session
 				LOGGER.log(LOGLEVEL1, "StationServer: closing session for " + fromA1icianID);
 				removeSession(session);
@@ -262,10 +262,10 @@ public final class A1iciaStationServer extends UrHouse {
 			setSession(session);
 			LOGGER.log(LOGLEVEL1, "StationServer: after setSession for " + fromA1icianID);
 			// be nice and send them a green server LED
-			serverLight = SerialSpark.find("set_green_LED_on");
+			serverLight = SerialSememe.find("set_green_LED_on");
 			stationSend(fromA1icianID, "Connecting to running server....", serverLight);
 		}
-		dialogRequest.setRequestActions(sparksCopy);
+		dialogRequest.setRequestActions(sememesCopy);
 		LOGGER.log(LOGLEVEL1, "StationServer: made it past session checks for " + fromA1icianID);
 		
 		if (!noPrompts) {
@@ -297,7 +297,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param message
 	 * @param command
 	 */
-	private void stationBroadcast(String message, SerialSpark command) {
+	private void stationBroadcast(String message, SerialSememe command) {
 		DialogResponse response;
 		
 		A1iciaUtils.checkNotNull(message);
@@ -321,7 +321,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param message The message to send
 	 * @param command The command to send
 	 */
-	private void stationSend(A1icianID a1icianID, String message, SerialSpark command) {
+	private void stationSend(A1icianID a1icianID, String message, SerialSememe command) {
 		DialogResponse response;
 		
 		A1iciaUtils.checkNotNull(a1icianID);

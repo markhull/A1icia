@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -33,22 +33,22 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 /**
- * An ActionPackage is a bundle consisting of a spark (in a SparkPackage) and a corresponding
- * RoomActionObject that is the result of the spark.
+ * An ActionPackage is a bundle consisting of a sememe (in a SememePackage) and a corresponding
+ * RoomActionObject that is the result of the sememe.
  * 
  * @author hulles
  *
  */
 public final class ActionPackage {
-	private final SparkPackage sparkPackage;
+	private final SememePackage sememePackage;
 	private RoomActionObject actionObject;
 	private final String idString;
 	
-	public ActionPackage(SparkPackage pkg) {
+	public ActionPackage(SememePackage pkg) {
 		long idValue;
 		
 		A1iciaUtils.checkNotNull(pkg);
-		this.sparkPackage = pkg;
+		this.sememePackage = pkg;
 		idValue = getNewActionPackageID();
 		this.idString = "AP" + idValue;
 	}
@@ -69,19 +69,19 @@ public final class ActionPackage {
 		this.actionObject = actionObject;
 	}
 
-	public SerialSpark getSpark() {
+	public SerialSememe getSememe() {
 		
-		return sparkPackage.getSpark();
+		return sememePackage.getSememe();
 	}
 	
-	public SparkPackage getSparkPackage() {
+	public SememePackage getSememePackage() {
 		
-		return sparkPackage;
+		return sememePackage;
 	}
 	
 	public String getName() {
 	
-		return sparkPackage.getName();
+		return sememePackage.getName();
 	}
 	
 	@Override
@@ -117,18 +117,18 @@ public final class ActionPackage {
 	/**
 	 * Return the action package if it's in the list, null otherwise.
 	 * 
-	 * @param spark The action package spark
+	 * @param sememe The action package sememe
 	 * @param pkgs The list of action packages that possibly contains the named package
 	 * @return The named package, or null if not a member of the list
 	 */
-	public static ActionPackage has(SerialSpark spark, List<ActionPackage> pkgs) {
-		SerialSpark pkgSpark;
+	public static ActionPackage has(SerialSememe sememe, List<ActionPackage> pkgs) {
+		SerialSememe pkgSememe;
         
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		for (ActionPackage pkg : pkgs) {
-            pkgSpark = pkg.getSpark();
-			if (pkgSpark.equals(spark)) {
+            pkgSememe = pkg.getSememe();
+			if (pkgSememe.equals(sememe)) {
 				return pkg;
 			}
 		}
@@ -137,20 +137,20 @@ public final class ActionPackage {
 	
 	/**
 	 * Return a sublist of ActionPackages from the provided list of ActionPackages
-	 *     such that the spark of the returned packages equals the provided spark.
+	 *     such that the sememe of the returned packages equals the provided sememe.
 	 *     
-	 * @param spark The target spark
-	 * @param pkgs The list of packages that may contain the spark
-	 * @return The sublist of packages that contain the spark; empty list if none
+	 * @param sememe The target sememe
+	 * @param pkgs The list of packages that may contain the sememe
+	 * @return The sublist of packages that contain the sememe; empty list if none
 	 */
-	public static List<ActionPackage> hasActions(SerialSpark spark, List<ActionPackage> pkgs) {
+	public static List<ActionPackage> hasActions(SerialSememe sememe, List<ActionPackage> pkgs) {
 		List<ActionPackage> subList;
 		
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		subList = new ArrayList<>();
 		for (ActionPackage pkg : pkgs) {
-			if (pkg.getSpark().equals(spark)) {
+			if (pkg.getSememe().equals(sememe)) {
 				subList.add(pkg);
 			}
 		}
@@ -158,21 +158,21 @@ public final class ActionPackage {
 	}
 	
 	/**
-	 * Remove and return the action package with this spark if it's in the list, otherwise
+	 * Remove and return the action package with this sememe if it's in the list, otherwise
 	 * return null.
 	 * 
-	 * @param spark The action package spark
+	 * @param sememe The action package sememe
 	 * @param pkgs The list of packages that possibly contains the named package
 	 * @return The named package, or null if not a member of the list
 	 */
-	public static ActionPackage consume(SerialSpark spark, List<ActionPackage> pkgs) {
+	public static ActionPackage consume(SerialSememe sememe, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
-			if (pkg.getSpark().equals(spark)) {
+			if (pkg.getSememe().equals(sememe)) {
 				iter.remove();
 				return pkg;
 			}
@@ -181,23 +181,23 @@ public final class ActionPackage {
 	}
 	
 	/**
-	 * Remove and return the action packages with this spark from the packages
+	 * Remove and return the action packages with this sememe from the packages
 	 * in the provided list, otherwise return null.
 	 * 
-	 * @param spark The target spark
-	 * @param pkgs The list of packages that possibly contains the spark
+	 * @param sememe The target sememe
+	 * @param pkgs The list of packages that possibly contains the sememe
 	 * @return The sublist of packages, or an empty list if none
 	 */
-	public static List<ActionPackage> consumeActions(SerialSpark spark, List<ActionPackage> pkgs) {
+	public static List<ActionPackage> consumeActions(SerialSememe sememe, List<ActionPackage> pkgs) {
 		List<ActionPackage> subList;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		subList = new ArrayList<>();
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
-			if (pkg.getSpark().equals(spark)) {
+			if (pkg.getSememe().equals(sememe)) {
 				subList.add(pkg);
 				iter.remove();
 			}
@@ -206,24 +206,24 @@ public final class ActionPackage {
 	}
 
 	/**
-	 * Remove and return the action package with this spark if it's in the list, otherwise
+	 * Remove and return the action package with this sememe if it's in the list, otherwise
 	 * return null. That package should be the last one in the list; i.e. the
 	 * set should be empty after its removal.
 	 * 
-	 * @param spark The spark
+	 * @param sememe The sememe
 	 * @param pkgs The list of action packages that possibly contains the target package
 	 * @return The action package, or null if not a member of the list
 	 */
-	public static ActionPackage consumeFinal(SerialSpark spark, List<ActionPackage> pkgs) {
+	public static ActionPackage consumeFinal(SerialSememe sememe, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		ActionPackage foundPkg = null;
 		String errMsg;
 		
-		A1iciaUtils.checkNotNull(spark);
+		A1iciaUtils.checkNotNull(sememe);
 		A1iciaUtils.checkNotNull(pkgs);
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
-			if (pkg.getSpark().equals(spark)) {
+			if (pkg.getSememe().equals(sememe)) {
 				foundPkg = pkg;
 				iter.remove();
 				break;
@@ -231,11 +231,11 @@ public final class ActionPackage {
 		}
 		if (foundPkg != null && !pkgs.isEmpty()) {
 			errMsg = "ActionPackage set not empty after consumeFinal:\n";
-			errMsg += "Found package spark is " + foundPkg.getSpark().getName();
+			errMsg += "Found package sememe is " + foundPkg.getSememe().getName();
 			errMsg += "\n";
 			for (ActionPackage p : pkgs) {
-				errMsg += "Remaining package for spark is ";
-				errMsg += p.getSpark().getName();
+				errMsg += "Remaining package for sememe is ";
+				errMsg += p.getSememe().getName();
 				errMsg += "\n";
 			}
 			throw new A1iciaException(errMsg);
@@ -246,13 +246,13 @@ public final class ActionPackage {
 	// TODO change this to isValid to be consistent, but make sure that's true first
 	public boolean isReady() {
 		
-		if (sparkPackage == null) {
-			A1iciaUtils.error("ActionPackage: spark package is null in packageIsReady");
+		if (sememePackage == null) {
+			A1iciaUtils.error("ActionPackage: sememe package is null in packageIsReady");
 			return false;
 		}
 		if (getActionObject() == null) {
-			A1iciaUtils.error("ActionPackage: missing 'action object' in action package for spark " +
-					sparkPackage.getSpark().getName());
+			A1iciaUtils.error("ActionPackage: missing 'action object' in action package for sememe " +
+					sememePackage.getSememe().getName());
 			return false;
 		}
 		return true;
@@ -262,28 +262,28 @@ public final class ActionPackage {
 	
 	public static ActionPackage getProxyActionPackage() {
 		ActionPackage pkg;
-		SparkPackage spark;
+		SememePackage sememe;
 		
-		spark = SparkPackage.getProxyPackage();
-		pkg = new ActionPackage(spark);
+		sememe = SememePackage.getProxyPackage();
+		pkg = new ActionPackage(sememe);
 		pkg.setActionObject(new ProxyAction());
 		return pkg;
 	}
 	
-	public static ActionPackage getProxyActionPackage(SparkPackage sparkPackage) {
+	public static ActionPackage getProxyActionPackage(SememePackage sememePackage) {
 		ActionPackage pkg;
 		
-		pkg = new ActionPackage(sparkPackage);
+		pkg = new ActionPackage(sememePackage);
 		pkg.setActionObject(new ProxyAction());
 		return pkg;
 	}
 	
-	public static ActionPackage getProxyActionPackage(SerialSpark spark) {
+	public static ActionPackage getProxyActionPackage(SerialSememe sememe) {
 		ActionPackage pkg;
-		SparkPackage sparkPkg;
+		SememePackage sememePkg;
 		
-		sparkPkg = SparkPackage.getDefaultPackage(spark);
-		pkg = new ActionPackage(sparkPkg);
+		sememePkg = SememePackage.getDefaultPackage(sememe);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(new ProxyAction());
 		return pkg;
 	}

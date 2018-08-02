@@ -30,7 +30,7 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.media.MediaUtils;
@@ -42,10 +42,10 @@ import com.hulles.a1icia.room.document.RoomObject;
 import com.hulles.a1icia.room.document.RoomObject.RoomObjectType;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -77,15 +77,15 @@ public final class BravoRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
-			case "spark_analysis":
-				return createAnalysisActionPackage(sparkPkg, request);
+		switch (sememePkg.getName()) {
+			case "sememe_analysis":
+				return createAnalysisActionPackage(sememePkg, request);
 			case "classify_image":
-				return createClassifyImageActionPackage(sparkPkg, request);
+				return createClassifyImageActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 	
@@ -93,18 +93,18 @@ public final class BravoRoom extends UrRoom {
 	 * Create an analysis based on what we know -- if there's an image from the client, it
 	 * seems likely that there might be a "classify image" or equivalent among the sentences.
 	 * 
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
-	 * @return A SparkAnalysis package
+	 * @return A SememeAnalysis package
 	 */
-	private static ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
-		SparkAnalysis analysis;
+		SememeAnalysis analysis;
 		Ticket ticket;
 		TicketJournal journal;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 		List<SentencePackage> sentencePackages;
-		SparkPackage classifyPkg;
+		SememePackage classifyPkg;
 		ClientDialogRequest clientObject;
 		DialogRequest dialogRequest;
 		A1iciaClientObject requestObject;
@@ -112,7 +112,7 @@ public final class BravoRoom extends UrRoom {
 		int confidence;
 //		List<String> context;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
@@ -123,17 +123,17 @@ public final class BravoRoom extends UrRoom {
 			// sorry, can't help you
 			return null;
 		}
-		actionPkg = new ActionPackage(sparkPkg);
-		sparkPackages = new ArrayList<>();
+		actionPkg = new ActionPackage(sememePkg);
+		sememePackages = new ArrayList<>();
 		sentencePackages = journal.getSentencePackages();
 //		context = journal.getContext();
-		analysis = new SparkAnalysis();
+		analysis = new SememeAnalysis();
 		for (SentencePackage sp : sentencePackages) {
 //			classifyRequestLikelihood = SentenceAnalyzer.isImageClassification(context, 
 //					sp.getAnalysis());
 			classifyRequestLikelihood = 75;
 			if (classifyRequestLikelihood > LIKELIHOOD_CUTOFF) {
-				classifyPkg = SparkPackage.getDefaultPackage("classify_image");
+				classifyPkg = SememePackage.getDefaultPackage("classify_image");
 				classifyPkg.setSentencePackage(sp);
 				confidence = classifyRequestLikelihood + 10; // it did have an image, after all
 				if (confidence > 100) {
@@ -141,17 +141,17 @@ public final class BravoRoom extends UrRoom {
 				}
 				classifyPkg.setConfidence(confidence);
 				if (!classifyPkg.isValid()) {
-					throw new A1iciaException("BravoRoom: created invalid spark package");
+					throw new A1iciaException("BravoRoom: created invalid sememe package");
 				}
-				sparkPackages.add(classifyPkg);
+				sememePackages.add(classifyPkg);
 			}
 		}
-		analysis.setSparkPackages(sparkPackages);
+		analysis.setSememePackages(sememePackages);
 		actionPkg.setActionObject(analysis);
 		return actionPkg;
 	}
 
-	private static ActionPackage createClassifyImageActionPackage(SparkPackage sparkPkg, 
+	private static ActionPackage createClassifyImageActionPackage(SememePackage sememePkg, 
 			RoomRequest request) {
 		RoomObject object;
 		Image image;
@@ -160,9 +160,9 @@ public final class BravoRoom extends UrRoom {
 		String classification = null;
 		ActionPackage pkg;
 
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		object = request.getRoomObject();
 		if (object.getRoomObjectType() != RoomObjectType.IMAGEINPUT) {
 			A1iciaUtils.error("Bad object in BravoRoom");
@@ -202,13 +202,13 @@ public final class BravoRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("spark_analysis"));
-		sparks.add(SerialSpark.find("classify_image"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("sememe_analysis"));
+		sememes.add(SerialSememe.find("classify_image"));
+		return sememes;
 	}
 
 	@Override

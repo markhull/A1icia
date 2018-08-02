@@ -33,7 +33,7 @@ import redis.clients.jedis.Jedis;
  * 
  * 1) Don't talk about RoomDocument.
  * 2) Every RoomRequest is always addressed to ALL rooms. The way a room reacts to the 
- *      RoomRequest depends upon what sparks it bears.
+ *      RoomRequest depends upon what sememes it bears.
  * 3) The RoomDocument always has the real room that it's from as the request sender. 
  * 		No forwarding allowed.
  * 3.5) Every RoomResponse is ALWAYS made to the request sender. (No forwarding.)

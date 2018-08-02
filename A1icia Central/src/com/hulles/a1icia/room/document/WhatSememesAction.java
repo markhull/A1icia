@@ -21,31 +21,31 @@ package com.hulles.a1icia.room.document;
 
 import java.util.Set;
 
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
- * This action is a room's response to a "what_sparks" query asking which sparks the room can handle.
+ * This action is a room's response to a "what_sememes" query asking which sememes the room can handle.
  * 
  * @author hulles
  *
  */
-public class WhatSparksAction extends RoomActionObject {
-	private Set<SerialSpark> sparks;
+public class WhatSememesAction extends RoomActionObject {
+	private Set<SerialSememe> sememes;
 
-	public WhatSparksAction() {
+	public WhatSememesAction() {
 		
 	}
 	
-	public Set<SerialSpark> getSparks() {
+	public Set<SerialSememe> getSememes() {
 		
-		return sparks;
+		return sememes;
 	}
 
-	public void setSparks(Set<SerialSpark> sparks) {
+	public void setSememes(Set<SerialSememe> sememes) {
 		
-		A1iciaUtils.checkNotNull(sparks);
-		this.sparks = sparks;
+		A1iciaUtils.checkNotNull(sememes);
+		this.sememes = sememes;
 	}
 
 	@Override

@@ -22,13 +22,13 @@ package com.hulles.a1icia.room.document;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * A RoomRequest is a request to the various rooms for action of some kind or another. 
- * The sparks say what kind of action is required.
+ * The sememes say what kind of action is required.
  * 
  * @author hulles
  *
@@ -36,14 +36,14 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public class RoomRequest extends RoomDocument {
 	private String message;
 	private RoomObject roomObject;
-	private final List<SparkPackage> sparkPackages;
+	private final List<SememePackage> sememePackages;
 	
 	public RoomRequest(RoomDocumentType type, Ticket ticket) {
 		super(type, ticket);
 		
 		A1iciaUtils.checkNotNull(type);
 		A1iciaUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
-		sparkPackages = new ArrayList<>();
+		sememePackages = new ArrayList<>();
 	}
 	public RoomRequest(Ticket ticket) {
 		this(RoomDocumentType.ROOMREQUEST, ticket);
@@ -53,7 +53,7 @@ public class RoomRequest extends RoomDocument {
 		
 		A1iciaUtils.checkNotNull(type);
 		A1iciaUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
-		sparkPackages = new ArrayList<>();
+		sememePackages = new ArrayList<>();
 	}
 	public RoomRequest(Ticket ticket, Long documentID) {
 		this(RoomDocumentType.ROOMREQUEST, ticket, documentID);
@@ -82,36 +82,36 @@ public class RoomRequest extends RoomDocument {
 	}
 	
 	/**
-	 * Return a MUTABLE COPY of the request's spark packages.
+	 * Return a MUTABLE COPY of the request's sememe packages.
 	 * 
 	 * @return The copy of the set
 	 */
-	public List<SparkPackage> getSparkPackages() {
+	public List<SememePackage> getSememePackages() {
 		
-		return new ArrayList<>(sparkPackages);
+		return new ArrayList<>(sememePackages);
 	}
 	
-	public void setSparkPackages(List<SparkPackage> pkgs) {
+	public void setSememePackages(List<SememePackage> pkgs) {
 		
 		A1iciaUtils.checkNotNull(pkgs);
-		this.sparkPackages.clear();
-		this.sparkPackages.addAll(pkgs);
+		this.sememePackages.clear();
+		this.sememePackages.addAll(pkgs);
 	}
 
-	public void addSparkPackage(SparkPackage sparkPackage) {
+	public void addSememePackage(SememePackage sememePackage) {
 	
-		this.sparkPackages.add(sparkPackage);
+		this.sememePackages.add(sememePackage);
 	}
 	
 	@Override
 	public boolean documentIsReady() {
 		
-		if (message == null && roomObject == null && sparkPackages == null) {
+		if (message == null && roomObject == null && sememePackages == null) {
 			A1iciaUtils.error("No payload");
 			return false;
 		}		
-		if (sparkPackages == null || sparkPackages.isEmpty()) {
-			A1iciaUtils.error("Null or empty spark packages");
+		if (sememePackages == null || sememePackages.isEmpty()) {
+			A1iciaUtils.error("Null or empty sememe packages");
 			return false;
 		}
 		return super.documentIsReady();

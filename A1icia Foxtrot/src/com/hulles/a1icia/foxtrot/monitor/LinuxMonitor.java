@@ -41,6 +41,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
+import org.mariadb.jdbc.MariaDbDataSource;
+
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.dummy.DummyDataSource;
@@ -49,7 +51,6 @@ import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.NetworkDevice;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.Processor;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.SensorValue;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 final public class LinuxMonitor {
 	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LinuxMonitor");
@@ -455,7 +456,11 @@ final public class LinuxMonitor {
         DatabaseMetaData metaData = null;
         DataSource source;
 		
-		source = getNonPoolingDataSource();
+		try {
+			source = getNonPoolingDataSource();
+		} catch (SQLException e) {
+			throw new A1iciaException("Can't get non-pooling data source", e);
+		}
 		if (source instanceof DummyDataSource) {
 			return;
 		}
@@ -476,7 +481,11 @@ final public class LinuxMonitor {
 	private Boolean haveDatabase() {
         DataSource source;
 		
-		source = getNonPoolingDataSource();
+		try {
+			source = getNonPoolingDataSource();
+		} catch (SQLException e) {
+			throw new A1iciaException("Can't get non-pooling data source", e);
+		}
 		if (source instanceof DummyDataSource) {
 			return false;
 		}
@@ -641,11 +650,11 @@ final public class LinuxMonitor {
 		return statusLines;
 	}
 	
-    private DataSource getNonPoolingDataSource() {
+    private DataSource getNonPoolingDataSource() throws SQLException {
 //        DummyDataSource source;
-    	MysqlDataSource source;
+		MariaDbDataSource source;
     	
-        source = new MysqlDataSource();
+        source = new MariaDbDataSource();
 //        source = new DummyDataSource();
         if (databaseUser == null || 
         		databasePassword == null || 

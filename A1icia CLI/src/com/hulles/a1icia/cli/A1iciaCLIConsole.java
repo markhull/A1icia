@@ -30,7 +30,7 @@ import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.Station;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class A1iciaCLIConsole extends AbstractExecutionThreadService implements A1iciaRemoteDisplay {
@@ -74,7 +74,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		System.out.println();
 	}
 	
-	protected static String getConsoleName() {
+	@SuppressWarnings("static-method")
+	protected String getConsoleName() {
 	
 		return "the A1icia command-line interface";
 	}
@@ -325,7 +326,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	}
 	
 	@Override
-	public boolean receiveCommand(SerialSpark command) {
+	public boolean receiveCommand(SerialSememe command) {
 		
 		switch (command.getName()) {
 			case "central_startup":

@@ -24,7 +24,7 @@ import java.util.Set;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -38,7 +38,7 @@ import com.hulles.a1icia.media.Language;
  */
 public class DialogRequest extends Dialog {
 	private static final long serialVersionUID = 2902774382678495512L;
-	private Set<SerialSpark> sparks;
+	private Set<SerialSememe> sememes;
 	private String requestString;
 	private byte[] requestAudio;
 	private A1iciaClientObject requestObject;
@@ -140,15 +140,15 @@ public class DialogRequest extends Dialog {
 		this.toA1icianID = a1icianID;
 	}
 	
-	public Set<SerialSpark> getRequestActions() {
+	public Set<SerialSememe> getRequestActions() {
 		
-		return sparks;
+		return sememes;
 	}
 	
-	public void setRequestActions(Set<SerialSpark> sparks) {
+	public void setRequestActions(Set<SerialSememe> sememes) {
 		
-		SharedUtils.nullsOkay(sparks);
-		this.sparks = sparks;
+		SharedUtils.nullsOkay(sememes);
+		this.sememes = sememes;
 	}
 	
 	public String getRequestMessage() {
@@ -224,14 +224,14 @@ public class DialogRequest extends Dialog {
 		StringBuilder sb;
 		
 		sb = new StringBuilder("DIALOG REQUEST\n");
-		if (sparks == null) {
-			sb.append("Sparks: NULL\n");
-		} else if (sparks.isEmpty()) {
-			sb.append("Sparks: EMPTY\n");
+		if (sememes == null) {
+			sb.append("Sememes: NULL\n");
+		} else if (sememes.isEmpty()) {
+			sb.append("Sememes: EMPTY\n");
 		} else {
-			for (SerialSpark spark : sparks) {
-				sb.append("Spark: ");
-				sb.append(spark.getName());
+			for (SerialSememe sememe : sememes) {
+				sb.append("Sememe: ");
+				sb.append(sememe.getName());
 				sb.append("\n");
 			}
 		}

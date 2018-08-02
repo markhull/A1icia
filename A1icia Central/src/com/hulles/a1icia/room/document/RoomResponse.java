@@ -98,7 +98,7 @@ public final class RoomResponse extends RoomDocument {
 			return false;
 		}
 		// it's possible that actionPackages could be empty, if the room
-		//    had no response for any of the sparks -- it's effectively a
+		//    had no response for any of the sememes -- it's effectively a
 		//    null response to the request
 		if (getActionPackages() == null) {
 			A1iciaUtils.error("No action packages");

@@ -33,7 +33,7 @@ import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.media.MediaFormat;
@@ -44,10 +44,10 @@ import com.hulles.a1icia.room.document.ClientObjectWrapper;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -73,17 +73,17 @@ public final class PapaRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
-			case "spark_analysis":
-				return createAnalysisActionPackage(sparkPkg, request);
+		switch (sememePkg.getName()) {
+			case "sememe_analysis":
+				return createAnalysisActionPackage(sememePkg, request);
 			case "lookup_fact":
 			case "define_word_or_phrase":
 			case "who_is":
-				return createLookupActionPackage(sparkPkg, request);
+				return createLookupActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 	
@@ -92,32 +92,32 @@ public final class PapaRoom extends UrRoom {
  	 * send each sentence to their FastQuery service and they tell us if the sentence can be
  	 * treated as a legitimate data query. Usually under 10ms, they say.
  	 *   
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
-	 * @return A SparkAnalysis package
+	 * @return A SememeAnalysis package
 	 */
 	@SuppressWarnings("unused")
-	private static ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
-		SparkAnalysis analysis;
+		SememeAnalysis analysis;
 		Ticket ticket;
 		TicketJournal journal;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 		List<SentencePackage> sentencePackages;
-		SparkPackage newSparkPkg;
+		SememePackage newSememePkg;
 		String responseXML;
 		String query;
 		String responseMagic;
 		String encodedQuery;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
-		actionPkg = new ActionPackage(sparkPkg);
-		sparkPackages = new ArrayList<>();
+		actionPkg = new ActionPackage(sememePkg);
+		sememePackages = new ArrayList<>();
 		sentencePackages = journal.getSentencePackages();
-		analysis = new SparkAnalysis();
+		analysis = new SememeAnalysis();
 		for (SentencePackage sentencePackage : sentencePackages) {
 			query = sentencePackage.getStrippedSentence(); // use (mostly) raw input for this
 			encodedQuery = encodeQuery(query);
@@ -130,22 +130,22 @@ public final class PapaRoom extends UrRoom {
 //			System.out.println();
 			responseMagic = "Parse XML and get results dammit";
 			if (responseMagic.isEmpty()) {
-				newSparkPkg = SparkPackage.getDefaultPackage("lookup_fact");
-				newSparkPkg.setSentencePackage(sentencePackage);
-				newSparkPkg.setConfidence(98);
-				newSparkPkg.setSparkObject(query);
-				if (!newSparkPkg.isValid()) {
-					throw new A1iciaException("PapaRoom: created invalid spark package");
+				newSememePkg = SememePackage.getDefaultPackage("lookup_fact");
+				newSememePkg.setSentencePackage(sentencePackage);
+				newSememePkg.setConfidence(98);
+				newSememePkg.setSememeObject(query);
+				if (!newSememePkg.isValid()) {
+					throw new A1iciaException("PapaRoom: created invalid sememe package");
 				}
-				sparkPackages.add(newSparkPkg);
+				sememePackages.add(newSememePkg);
 			}
 		}
-		analysis.setSparkPackages(sparkPackages);
+		analysis.setSememePackages(sememePackages);
 		actionPkg.setActionObject(analysis);
 		return actionPkg;
 	}
 
-	private ActionPackage createLookupActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createLookupActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action;
 		MediaObject mediaObject;
@@ -158,16 +158,16 @@ public final class PapaRoom extends UrRoom {
 		SentencePackage sentencePkg;
 		byte[][] imageArrays;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		sentencePkg = sparkPkg.getSentencePackage();
+		pkg = new ActionPackage(sememePkg);
+		sentencePkg = sememePkg.getSentencePackage();
 		if (sentencePkg == null) {
 			A1iciaUtils.error("PapaRoom: null sentence package, should not be true",
-					"SerialSpark is "  + sparkPkg.getName());
+					"SerialSememe is "  + sememePkg.getName());
 			return null;
 		}
-		// we look up the (fixed) original sentence instead of the sparkObject because
+		// we look up the (fixed) original sentence instead of the sememeObject because
 		//    we are a manly heroic room, unlike some others I could name (*golf*).
 		lookupString = sentencePkg.getStrippedSentence();
 		if (lookupString == null) {
@@ -252,15 +252,15 @@ public final class PapaRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("spark_analysis"));
-		sparks.add(SerialSpark.find("define_word_or_phrase"));
-		sparks.add(SerialSpark.find("who_is"));
-		sparks.add(SerialSpark.find("lookup_fact"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("sememe_analysis"));
+		sememes.add(SerialSememe.find("define_word_or_phrase"));
+		sememes.add(SerialSememe.find("who_is"));
+		sememes.add(SerialSememe.find("lookup_fact"));
+		return sememes;
 	}
 
 	@Override
