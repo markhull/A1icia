@@ -28,3 +28,4 @@ The following software is required for the installation of A1icia Central:
 
 Note: If you need to install any of the above packages, you should probably use your distro's repositories to do so, but as always, YMMV.
 
+Note: Be sure to read [Notes on A1icia Central's File Descriptor Usage](https://github.com/markhull/A1icia/wiki/Notes-on-A1icia-Central's-File-Descriptor-Usage) in the Wiki.
