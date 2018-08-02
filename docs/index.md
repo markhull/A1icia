@@ -11,6 +11,10 @@ Welcome to the documentation home of the [A1icia project](https://github.com/mar
 
 [Module Directory](modules.md)
 
+## A1icia Central Installation
+
+[Installing A1icia Central](centralinstallation.md)
+
 ## Miscellaneous Information
 
 [Design Goals](designgoals.md)     
