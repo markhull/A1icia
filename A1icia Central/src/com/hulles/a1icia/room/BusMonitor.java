@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -36,7 +36,7 @@ import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -68,7 +68,7 @@ public final class BusMonitor extends UrRoom {
 		List<ActionPackage> pkgs;
 		StringBuffer sb;
 		RoomActionObject actionObj;
-		SerialSpark spark;
+		SerialSememe sememe;
 		
 		A1iciaUtils.checkNotNull(document);
 		if (document instanceof RoomAnnouncement) {
@@ -78,8 +78,8 @@ public final class BusMonitor extends UrRoom {
 		} else	if (document instanceof RoomRequest) {
 			request = (RoomRequest) document;
 			sb = new StringBuffer();
-			sb.append("\nSpark Packages: ");
-			for (SparkPackage sp : request.getSparkPackages()) {
+			sb.append("\nSememe Packages: ");
+			for (SememePackage sp : request.getSememePackages()) {
 				sb.append(sp.getName());
 				sb.append(" ");
 			}
@@ -97,12 +97,12 @@ public final class BusMonitor extends UrRoom {
 				pkgs = response.getActionPackages();
 				sb = new StringBuffer();
 				for (ActionPackage pkg : pkgs) {
-					spark = pkg.getSpark();
-					if (spark.is("what_sparks") && !SHOWWHATSPARKS) {
+					sememe = pkg.getSememe();
+					if (sememe.is("what_sememes") && !SHOWWHATSPARKS) {
 						continue;
 					}
 					sb.append("\nAction Package for ");
-					sb.append(pkg.getSpark().getName());
+					sb.append(pkg.getSememe().getName());
 					sb.append("\n\tMessage: ");
 					actionObj = pkg.getActionObject();
 					sb.append(actionObj.getMessage());
@@ -147,20 +147,20 @@ public final class BusMonitor extends UrRoom {
 	}
 
 	/**
-	 * BusMonitor does not react to sparks, although it could someday.
+	 * BusMonitor does not react to sememes, although it could someday.
 	 * 
 	 */
 	@Override
-	public ActionPackage createActionPackage(SparkPackage pkg, RoomRequest request) {
+	public ActionPackage createActionPackage(SememePackage pkg, RoomRequest request) {
 		throw new A1iciaException("Request not implemented in " + 
 				getThisRoom().getDisplayName());
 	}
 
 	/**
-	 * Return the set of sparks which we handle here, i.e. none (empty set).
+	 * Return the set of sememes which we handle here, i.e. none (empty set).
 	 */
 	@Override
-	protected Set<SerialSpark> loadSparks() {
+	protected Set<SerialSememe> loadSememes() {
 		
 		return Collections.emptySet();
 	}

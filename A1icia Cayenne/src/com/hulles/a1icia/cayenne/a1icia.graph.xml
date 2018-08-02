@@ -13,7 +13,7 @@
 		<entity name="task" x="10.0" y="10.0" width="103.0" height="197.0"/>
 		<entity name="owm_city" x="10.0" y="10.0" width="78.0" height="122.0"/>
 		<entity name="task_priority" x="10.0" y="10.0" width="114.0" height="92.0"/>
-		<entity name="spark" x="10.0" y="10.0" width="96.0" height="122.0"/>
+		<entity name="sememe" x="10.0" y="10.0" width="96.0" height="122.0"/>
 		<entity name="nfl6_question" x="10.0" y="10.0" width="104.0" height="107.0"/>
 		<entity name="person" x="10.0" y="10.0" width="123.0" height="287.0"/>
 		<entity name="alarm" x="905.0" y="35.0" width="72.0" height="92.0"/>

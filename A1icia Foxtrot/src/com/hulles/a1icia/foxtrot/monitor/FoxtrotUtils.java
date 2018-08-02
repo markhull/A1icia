@@ -132,8 +132,6 @@ public final class FoxtrotUtils {
 		Process proc;
 		StringBuilder stdOut;
 		StringBuilder stdErr;
-		BufferedReader inStream; // input from our POV, output to proc
-		BufferedReader errStream; // input from our POV, output to proc
 		char[] charBuffer;
 		int bufLen;
 		
@@ -146,38 +144,33 @@ public final class FoxtrotUtils {
 			e.printStackTrace();
 			throw new A1iciaException("Can't start runCommand process: lm-sensors installed?");
 		}
-		inStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		errStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-		
-		stdOut = new StringBuilder(RUNCOMMANDLEN);
-		charBuffer = new char[1024];
-		try {
-			while ((bufLen = inStream.read(charBuffer)) > 0) {
-				stdOut.append(charBuffer, 0, bufLen);
+		try (BufferedReader inStream = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+			stdOut = new StringBuilder(RUNCOMMANDLEN);
+			charBuffer = new char[1024];
+			try {
+				while ((bufLen = inStream.read(charBuffer)) > 0) {
+					stdOut.append(charBuffer, 0, bufLen);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new A1iciaException("Can't read runCommand stream");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't read runCommand stream");
-		}
-		try {
-			inStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new A1iciaException("Can't close runCommand stdout stream");
 		}
 		
-		stdErr = new StringBuilder();
-		charBuffer = new char[1024];
-		try {
-			while ((bufLen = errStream.read(charBuffer)) > 0) {
-				stdErr.append(charBuffer, 0, bufLen);
+		try (BufferedReader errStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()))) {
+			stdErr = new StringBuilder();
+			charBuffer = new char[1024];
+			try {
+				while ((bufLen = errStream.read(charBuffer)) > 0) {
+					stdErr.append(charBuffer, 0, bufLen);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new A1iciaException("Can't read stderr");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't read stderr");
-		}
-		try {
-			errStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new A1iciaException("Can't close runCommand stderr stream");

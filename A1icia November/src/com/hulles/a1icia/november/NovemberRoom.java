@@ -28,7 +28,7 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.object.LoginResponseObject;
 import com.hulles.a1icia.api.shared.SerialPerson;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Person;
@@ -44,7 +44,7 @@ import com.hulles.a1icia.room.document.RoomDocumentType;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -81,17 +81,17 @@ public final class NovemberRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "login":
-				return createLoginActionPackage(sparkPkg, request);
+				return createLoginActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createLoginActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createLoginActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientDialogRequest cdr;
 		DialogRequest dialogRequest;
@@ -103,12 +103,12 @@ public final class NovemberRoom extends UrRoom {
 		ClientObjectWrapper clientObject;
 		String message;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		cdr = (ClientDialogRequest) request.getRoomObject();
 		dialogRequest = cdr.getDialogRequest();
 		loginObject = (LoginObject) dialogRequest.getClientObject();
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		responseObject = new LoginResponseObject();
 		userName = loginObject.getUserName();
 		password = loginObject.getPassword();
@@ -172,12 +172,12 @@ public final class NovemberRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("login"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("login"));
+		return sememes;
 	}
 
 	@Override

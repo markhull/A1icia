@@ -9,11 +9,11 @@
 		 schema-update-strategy="org.apache.cayenne.access.dbsync.SkipSchemaUpdateStrategy">
 		<map-ref name="fortuna"/>
 		<data-source>
-			<driver value="com.mysql.jdbc.Driver"/>
-			<url value="jdbc:mysql://localhost/fortuna?characterEncoding=UTF-8"/>
+			<driver value="org.mariadb.jdbc.Driver"/>
+			<url value="jdbc:mariadb://localhost/fortuna?characterEncoding=UTF-8"/>
 			<connectionPool min="1" max="1"/>
 			<login userName="fortuna_user" password="i9n2MZ3c"/>
 		</data-source>
 	</node>
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Fortuna.graph.xml"/>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="fortuna.graph.xml"/>
 </domain>

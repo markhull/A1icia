@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -33,7 +33,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -51,35 +51,35 @@ public final class RomeoRoom extends UrRoom {
 
 	/**
 	 * Here we create an ActionPackage from Alpha, either an analysis or an action, depending 
-	 * on the spark that we receive, and return it to UrRoom.
+	 * on the sememe that we receive, and return it to UrRoom.
 	 * 
 	 */
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "name_that_tune":
-				return createNTTActionPackage(sparkPkg, request);
+				return createNTTActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
 	/**
-	 * Create an action package for the "aardvark" spark, which consists of saying some form
+	 * Create an action package for the "aardvark" sememe, which consists of saying some form
 	 * of the word "aardvark".
 	 * 
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
 	 * @return
 	 */
-	private static ActionPackage createNTTActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createNTTActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		MessageAction action;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		action.setMessage("Okay, get ready.");
 		action.setExplanation("You have to guess the song coming up.");
@@ -116,16 +116,16 @@ public final class RomeoRoom extends UrRoom {
 	}
 
 	/**
-	 * Advertise which sparks we handle.
+	 * Advertise which sememes we handle.
 	 * 
 	 */
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("name_that_tune"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("name_that_tune"));
+		return sememes;
 	}
 
 	/**

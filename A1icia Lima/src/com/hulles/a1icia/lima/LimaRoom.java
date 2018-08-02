@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.AnswerHistory;
 import com.hulles.a1icia.room.Room;
@@ -37,10 +37,10 @@ import com.hulles.a1icia.room.document.MessageAction;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -70,7 +70,7 @@ public final class LimaRoom extends UrRoom {
 		limaHistory = new LimaHistory();
 	}
 
-	private ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		List<ScratchAnswerHistory> historyList;
 		ActionPackage pkg;
 		Ticket ticket;
@@ -78,21 +78,21 @@ public final class LimaRoom extends UrRoom {
 		ScratchAnswerHistory history;
 		List<SentencePackage> sentencePackages;
 		AnswerHistory answerHistory;
-		List<SparkPackage> sparkPackages;
-		SparkAnalysis sparkAnalysis;
-		SerialSpark sparkResult;
-		SparkPackage sparkPackage;
-		String sparkObject;
+		List<SememePackage> sememePackages;
+		SememeAnalysis sememeAnalysis;
+		SerialSememe sememeResult;
+		SememePackage sememePackage;
+		String sememeObject;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "LimaRoom: in createAnalysisActionPackage");
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
-		pkg = new ActionPackage(sparkPkg);
-		sparkPackages = new ArrayList<>();
+		pkg = new ActionPackage(sememePkg);
+		sememePackages = new ArrayList<>();
 		sentencePackages = journal.getSentencePackages();
-		sparkAnalysis = new SparkAnalysis();
+		sememeAnalysis = new SememeAnalysis();
 		for (SentencePackage sentencePackage : sentencePackages) {
 			
 			historyList = limaHistory.getMatchingHistory(sentencePackage);
@@ -104,41 +104,41 @@ public final class LimaRoom extends UrRoom {
 				if (history.getScore() >= KEEPERSCORE) {
 					LOGGER.log(LOGLEVEL, "LimaRoom: have keeper");
 					answerHistory = history.getHistory();
-					sparkResult = answerHistory.getSpark().toSerial();
-					if (sparkResult != null) {
-						sparkObject= answerHistory.getSparkObject();
-						sparkPackage = SparkPackage.getNewPackage();
-						sparkPackage.setSpark(sparkResult);
-						sparkPackage.setSparkObject(sparkObject);
-						sparkPackage.setSentencePackage(sentencePackage);
-						sparkPackage.setConfidence(history.getScore());
-						if (!sparkPackage.isValid()) {
-							throw new A1iciaException("LimaRoom: created invalid spark package");
+					sememeResult = answerHistory.getSememe().toSerial();
+					if (sememeResult != null) {
+						sememeObject= answerHistory.getSememeObject();
+						sememePackage = SememePackage.getNewPackage();
+						sememePackage.setSememe(sememeResult);
+						sememePackage.setSememeObject(sememeObject);
+						sememePackage.setSentencePackage(sentencePackage);
+						sememePackage.setConfidence(history.getScore());
+						if (!sememePackage.isValid()) {
+							throw new A1iciaException("LimaRoom: created invalid sememe package");
 						}
-						sparkPackages.add(sparkPackage);
+						sememePackages.add(sememePackage);
 					}
 				}
 			}
 		}
-		sparkAnalysis.setSparkPackages(sparkPackages);
-		pkg.setActionObject(sparkAnalysis);
-		LOGGER.log(LOGLEVEL, "LimaRoom: returning " + sparkPackages.size() + " spark packages");
+		sememeAnalysis.setSememePackages(sememePackages);
+		pkg.setActionObject(sememeAnalysis);
+		LOGGER.log(LOGLEVEL, "LimaRoom: returning " + sememePackages.size() + " sememe packages");
 		return pkg;
 	}
 
-	private ActionPackage createUpdateActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createUpdateActionPackage(SememePackage sememePkg, RoomRequest request) {
 		HistoryUpdate historyUpdate;
 		MessageAction updateResponse;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "Lima Room: in createUpdatePackage");
 		historyUpdate = (HistoryUpdate) request.getRoomObject();
 		limaHistory.addHistory(historyUpdate);
 		updateResponse = new MessageAction();
 		updateResponse.setMessage("Mischief managed");
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(updateResponse);
 		return pkg;
 	}	
@@ -167,26 +167,26 @@ public final class LimaRoom extends UrRoom {
 	}
 	
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
-			case "spark_analysis":
-				return createAnalysisActionPackage(sparkPkg, request);
+		switch (sememePkg.getName()) {
+			case "sememe_analysis":
+				return createAnalysisActionPackage(sememePkg, request);
 			case "update_history":
-				return createUpdateActionPackage(sparkPkg, request);
+				return createUpdateActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("spark_analysis"));
-		sparks.add(SerialSpark.find("update_history"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("sememe_analysis"));
+		sememes.add(SerialSememe.find("update_history"));
+		return sememes;
 	}
 
 	@Override

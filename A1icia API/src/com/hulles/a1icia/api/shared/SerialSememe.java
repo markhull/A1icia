@@ -24,47 +24,70 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Spark is an important class in A1icia. It represents an object that causes an action of some
+ * Sememe is an important class in A1icia. It represents an object that causes an action of some
  * kind to take place: a question that prompts an answer, a command that prompts a response, and
  * so forth.
  *  <p>
- *  SerialSpark is a pared-down version of the main (non-API) A1icia Spark. 
+ *  SerialSememe is a pared-down version of the main (non-API) A1icia Sememe. 
  *  
  * @author hulles
  *
  */
-public class SerialSpark implements Serializable, Comparable<SerialSpark> {
+public class SerialSememe implements Serializable, Comparable<SerialSememe> {
 	private static final long serialVersionUID = 980860858637714677L;
-	private String sparkName;
+	private String sememeName;
 	private String canonicalForm;
 	private Boolean externalUse;
 	private Boolean adminOnly;
 	private Boolean loggedIn;
-	private static Set<SerialSpark> sparkSet = null;
+	private static Set<SerialSememe> sememeSet = null;
 	
-    public SerialSpark() {
+    public SerialSememe() {
     	// need no-arg constructor
     }
     
-    public static void setSparks(Set<SerialSpark> sparks) {
+    public static void setSememes(Set<SerialSememe> sememes) {
     	
-    	SharedUtils.checkNotNull(sparks);
-    	sparkSet = sparks;
+    	SharedUtils.checkNotNull(sememes);
+    	sememeSet = sememes;
     }
     
-    public static SerialSpark find(String name) {
-    	SerialSpark spark = null;
+    /**
+     * Find a sememe in the set of all sememes. If not found, return null.
+     * @param name The name of the sememe
+     * @return The sememe, or null if not found
+     */
+    public static SerialSememe possiblyFind(String name) {
+    	SerialSememe sememe = null;
     	
-    	if (sparkSet == null) {
-    		throw new A1iciaAPIException("SerialSpark: spark set not loaded");
+    	SharedUtils.checkNotNull(name);
+    	if (sememeSet == null) {
+    		throw new A1iciaAPIException("SerialSememe: sememe set not loaded");
     	}
-    	for (SerialSpark spk : sparkSet) {
+    	for (SerialSememe spk : sememeSet) {
     		if (spk.is(name)) {
-    			spark = spk;
+    			sememe = spk;
     			break;
     		}
     	}
-    	return spark;
+    	return sememe;
+    }
+    
+
+    /**
+     * Find a sememe in the set of all sememes. If the name is not found, throw an {@link A1iciaAPIException}.
+     * @param name The name of the sememe to find
+     * @return The sememe
+     */
+    public static SerialSememe find(String name) {
+    	SerialSememe sememe = null;
+    	
+    	SharedUtils.checkNotNull(name);
+    	sememe = possiblyFind(name);
+    	if (sememe == null) {
+    		throw new A1iciaAPIException("Unable to find sememe named " + name);
+    	}
+    	return sememe;
     }
     
     public boolean is(String name) {
@@ -86,13 +109,13 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 
 	public String getName() {
     	
-		return sparkName;
+		return sememeName;
 	}
 
-	public void setName(String sparkName) {
+	public void setName(String sememeName) {
 		
-		SharedUtils.checkNotNull(sparkName);
-		this.sparkName = sparkName;
+		SharedUtils.checkNotNull(sememeName);
+		this.sememeName = sememeName;
 	}
 
 	public String getCanonicalForm() {
@@ -129,23 +152,23 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 	}
 	
 	/**
-	 * Remove and return SerialSpark if it's in the list, otherwise
+	 * Remove and return SerialSememe if it's in the list, otherwise
 	 * return null.
 	 * 
-	 * @param name The spark name
-	 * @param sparks The set of sparks that possibly contains the named spark
-	 * @return The named spark, or null if not a member of the set
+	 * @param name The sememe name
+	 * @param sememes The set of sememes that possibly contains the named sememe
+	 * @return The named sememe, or null if not a member of the set
 	 */
-	public static SerialSpark consume(String name, Set<SerialSpark> sparks) {
-		SerialSpark spark;
+	public static SerialSememe consume(String name, Set<SerialSememe> sememes) {
+		SerialSememe sememe;
 		
 		SharedUtils.checkNotNull(name);
-		SharedUtils.checkNotNull(sparks);
-		for (Iterator<SerialSpark> iter = sparks.iterator(); iter.hasNext(); ) {
-			spark = iter.next();
-			if (spark.is(name)) {
+		SharedUtils.checkNotNull(sememes);
+		for (Iterator<SerialSememe> iter = sememes.iterator(); iter.hasNext(); ) {
+			sememe = iter.next();
+			if (sememe.is(name)) {
 				iter.remove();
-				return spark;
+				return sememe;
 			}
 		}
 		return null;
@@ -161,7 +184,7 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 
 	@Override
 	public boolean equals(Object obj) {
-		SerialSpark other;
+		SerialSememe other;
 		
 		if (this == obj) {
 			return true;
@@ -169,10 +192,10 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof SerialSpark)) {
+		if (!(obj instanceof SerialSememe)) {
 			return false;
 		}
-		other = (SerialSpark) obj;
+		other = (SerialSememe) obj;
 		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -184,15 +207,36 @@ public class SerialSpark implements Serializable, Comparable<SerialSpark> {
 	}
 
 	/**
-	 * This compareTo compares Sparks on their names.
+	 * This compareTo compares sememes on their names.
 	 * It is case-insensitive.
 	 * 
 	 */
 	@Override
-	public int compareTo(SerialSpark otherSpark) {
+	public int compareTo(SerialSememe otherSememe) {
 		
-		SharedUtils.checkNotNull(otherSpark);
-        return this.getName().compareToIgnoreCase(otherSpark.getName());
+		SharedUtils.checkNotNull(otherSememe);
+        return this.getName().compareToIgnoreCase(otherSememe.getName());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb;
+		
+		sb = new StringBuilder();
+		sb.append("SEMEME: Name: ");
+		sb.append(this.getName());
+		sb.append(" Canonical Form: ");
+		sb.append(this.getCanonicalForm());
+		if (this.getAdminOnly()) {
+			sb.append(" (admin only)");
+		}
+		if (this.getExternalUse()) {
+			sb.append(" (external use)");
+		}
+		if (this.getLoggedIn()) {
+			sb.append(" (logged in)");
+		}
+		return sb.toString();
 	}
 
 }

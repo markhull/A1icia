@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -32,7 +32,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -82,17 +82,17 @@ public final class JulietRoom extends UrRoom {
 	}
 	
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "what_about":
-				return createWhatAboutActionPackage(sparkPkg, request);
+				return createWhatAboutActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	private ActionPackage createWhatAboutActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createWhatAboutActionPackage(SememePackage sememePkg, RoomRequest request) {
 		String result = null;
 		String clientMsg;
 		List<ScratchNfl6Question> questions;
@@ -100,9 +100,9 @@ public final class JulietRoom extends UrRoom {
 		ScratchNfl6Question question;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		response = new JulietAnalysis();
 		clientMsg = request.getMessage().trim();
 		if (!clientMsg.isEmpty()) {
@@ -129,12 +129,12 @@ public final class JulietRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("what_about"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("what_about"));
+		return sememes;
 	}
 
 	@Override

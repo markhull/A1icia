@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -35,9 +35,9 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SentenceMeaningAnalysis;
 import com.hulles.a1icia.room.document.SentenceMeaningAnalysis.SentenceMeaningQuery;
 import com.hulles.a1icia.room.document.SentenceMeaningRequest;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
@@ -60,68 +60,68 @@ public final class QuebecRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
-			case "spark_analysis":
-				return createAnalysisActionPackage(sparkPkg, request);
+		switch (sememePkg.getName()) {
+			case "sememe_analysis":
+				return createAnalysisActionPackage(sememePkg, request);
 			case "sentence_means":
-				return createSentenceMeaningActionPackage(sparkPkg, request);
+				return createSentenceMeaningActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 	
 	/**
 	 * Here we carefully consider each sentence package in the ticket journal and determine
-	 * the best spark package for the essence and nuances of the... just kidding. 
-	 * Actually we stick "aardvark" in as the best spark package for each sentence.
+	 * the best sememe package for the essence and nuances of the... just kidding. 
+	 * Actually we stick "aardvark" in as the best sememe package for each sentence.
 	 * Because we can.
 	 * 
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
-	 * @return A SparkAnalysis package
+	 * @return A SememeAnalysis package
 	 */
-	private static ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
-		SparkAnalysis analysis;
+		SememeAnalysis analysis;
 //		Ticket ticket;
 //		TicketJournal journal;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 //		List<SentencePackage> sentencePackages;
-//		SparkPackage aardPkg;
+//		SememePackage aardPkg;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 //		ticket = request.getTicket();
 //		journal = ticket.getJournal();
-		actionPkg = new ActionPackage(sparkPkg);
-		sparkPackages = new ArrayList<>();
+		actionPkg = new ActionPackage(sememePkg);
+		sememePackages = new ArrayList<>();
 //		sentencePackages = journal.getSentencePackages();
-		analysis = new SparkAnalysis();
+		analysis = new SememeAnalysis();
 //		for (SentencePackage sentencePackage : sentencePackages) {
-//			aardPkg = SparkPackage.getDefaultPackage("aardvark");
+//			aardPkg = SememePackage.getDefaultPackage("aardvark");
 //			aardPkg.setSentencePackage(sentencePackage);
 //			aardPkg.setConfidence(5); // hey, it *might* be the best one
 //			if (!aardPkg.isValid()) {
-//				throw new A1iciaException("QuebecRoom: created invalid spark package");
+//				throw new A1iciaException("QuebecRoom: created invalid sememe package");
 //			}
-//			sparkPackages.add(aardPkg);
+//			sememePackages.add(aardPkg);
 //		}
-		analysis.setSparkPackages(sparkPackages);
+		analysis.setSememePackages(sememePackages);
 		actionPkg.setActionObject(analysis);
 		return actionPkg;
 	}
 
-	private static ActionPackage createSentenceMeaningActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createSentenceMeaningActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		SentenceMeaningRequest meaningRequest;
 		SentenceMeaningAnalysis  meaningResult;
 		SentenceMeaningQuery query;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		meaningRequest = (SentenceMeaningRequest) request.getRoomObject();
 		query = meaningRequest.getSentenceMeaningQuery();
 		meaningResult = new SentenceMeaningAnalysis(query);
@@ -152,13 +152,13 @@ public final class QuebecRoom extends UrRoom {
 	}
 
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("spark_analysis"));
-		sparks.add(SerialSpark.find("sentence_means"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("sememe_analysis"));
+		sememes.add(SerialSememe.find("sentence_means"));
+		return sememes;
 	}
 
 	@Override

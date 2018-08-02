@@ -26,7 +26,7 @@ import java.util.Set;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;
 import com.hulles.a1icia.foxtrot.monitor.LinuxMonitor;
@@ -36,7 +36,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 
 /**
  * Foxtrot Room is where A1icia can query herself about her own status and health. 
@@ -55,10 +55,10 @@ public final class FoxtrotRoom extends UrRoom {
 	/*
 	 * Create the action package for Foxtrot-handled sparks.
 	 * (non-Javadoc)
-	 * @see com.hulles.a1icia.room.UrRoom#createActionPackage(com.hulles.a1icia.ticket.SparkPackage, com.hulles.a1icia.room.document.RoomRequest)
+	 * @see com.hulles.a1icia.room.UrRoom#createActionPackage(com.hulles.a1icia.ticket.SememePackage, com.hulles.a1icia.room.document.RoomRequest)
 	 */
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sparkPkg, RoomRequest request) {
 
 		switch (sparkPkg.getName()) {
 			case "check_warnings":
@@ -76,7 +76,7 @@ public final class FoxtrotRoom extends UrRoom {
 	 * @param sparkPkg The initiating spark package
 	 * @return The action package
 	 */
-	private ActionPackage createStatusActionPackage(SparkPackage sparkPkg) {
+	private ActionPackage createStatusActionPackage(SememePackage sparkPkg) {
 		ActionPackage pkg;
 		FoxtrotAction action;
 		FoxtrotPhysicalState state;
@@ -137,16 +137,16 @@ public final class FoxtrotRoom extends UrRoom {
 	/*
 	 * Load the sparks we handle.
 	 * (non-Javadoc)
-	 * @see com.hulles.a1icia.room.UrRoom#loadSparks()
+	 * @see com.hulles.a1icia.room.UrRoom#loadSememes()
 	 */
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sparks;
 		
 		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("check_warnings"));
-		sparks.add(SerialSpark.find("how_are_you"));
-		sparks.add(SerialSpark.find("inquire_status"));
+		sparks.add(SerialSememe.find("check_warnings"));
+		sparks.add(SerialSememe.find("how_are_you"));
+		sparks.add(SerialSememe.find("inquire_status"));
 		return sparks;
 	}
 

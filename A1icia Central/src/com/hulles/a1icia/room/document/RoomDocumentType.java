@@ -37,7 +37,7 @@ public enum RoomDocumentType {
     LOGGEDOUT, // An A1ician was logged out
 	
 	// REQUESTS
-	WHATSPARKS, // Request asking who responds to what sparks
+	WHATSPARKS, // Request asking who responds to what sememes
 	ROOMREQUEST, // Request from a room asking for responses
 	
 	// RESPONSES

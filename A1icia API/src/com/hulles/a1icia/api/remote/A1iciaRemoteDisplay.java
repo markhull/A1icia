@@ -20,7 +20,7 @@
 package com.hulles.a1icia.api.remote;
 
 import com.hulles.a1icia.api.object.A1iciaClientObject;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 
 /**
  * A1iciaRemoteDisplay handles output from the exchange between a remote station and
@@ -58,16 +58,16 @@ public interface A1iciaRemoteDisplay {
 	 * if the remote display handles the command and doesn't need more processing,
 	 * false otherwise.
 	 * 
-	 * @param spark
+	 * @param sememe
 	 */
-	boolean receiveCommand(SerialSpark spark);
+	boolean receiveCommand(SerialSememe sememe);
 	
 	/**
 	 * Receive a media object from A1icia Central. This should return true
 	 * if the remote display handles the object and doesn't need more processing,
 	 * false otherwise.
 	 * 
-	 * @param spark
+	 * @param sememe
 	 */
 	boolean receiveObject(A1iciaClientObject object);
 }

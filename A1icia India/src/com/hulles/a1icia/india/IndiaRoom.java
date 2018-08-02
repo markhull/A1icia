@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -36,7 +36,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.fortuna.Fortuna;
 import com.hulles.fortuna.SerialFortune;
@@ -87,12 +87,12 @@ public final class IndiaRoom extends UrRoom {
 	}
 	
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		logger.log(LOGLEVEL, "IndiaRoom: receiving " + sparkPkg.getName());
-		switch (sparkPkg.getName()) {
+		logger.log(LOGLEVEL, "IndiaRoom: receiving " + sememePkg.getName());
+		switch (sememePkg.getName()) {
 			case "greet":
 			case "youre_welcome":
 			case "how_are_you":
@@ -101,16 +101,16 @@ public final class IndiaRoom extends UrRoom {
 			case "are_you_still_there":
 			case "nothing_to_do":
 			case "thank_you":
-				return createRandomActionPackage(sparkPkg, request);
+				return createRandomActionPackage(sememePkg, request);
 			case "prompt":
 				if (useQuoteForPrompt()) {
-					return createQuotationActionPackage(sparkPkg, request);
+					return createQuotationActionPackage(sememePkg, request);
 				}
-				return createRandomActionPackage(sparkPkg, request);
+				return createRandomActionPackage(sememePkg, request);
 			case "random_quotation":
-				return createQuotationActionPackage(sparkPkg, request);
+				return createQuotationActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
@@ -124,7 +124,7 @@ public final class IndiaRoom extends UrRoom {
 		return false;
 	}
 	
-	private ActionPackage createRandomActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createRandomActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		String message;
 		@SuppressWarnings("unused")
@@ -132,35 +132,35 @@ public final class IndiaRoom extends UrRoom {
 		MessageAction action;
 		String msgIn;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		logger.log(LOGLEVEL, "IndiaRoom: evaluating " + sparkPkg.getName());
-		pkg = new ActionPackage(sparkPkg);
+		logger.log(LOGLEVEL, "IndiaRoom: evaluating " + sememePkg.getName());
+		pkg = new ActionPackage(sememePkg);
 		msgIn = request.getMessage();
 		if (msgIn == null) {
 			name = null;
 		} else {
 			name = msgIn.trim();
 		}
-		message = generator.generateResponse(sparkPkg, "Dave");
+		message = generator.generateResponse(sememePkg, "Dave");
 		action = new MessageAction();
 		action.setMessage(message);
 		pkg.setActionObject(action);
-		logger.log(LOGLEVEL, "IndiaRoom: returning package for " + sparkPkg.getName());
+		logger.log(LOGLEVEL, "IndiaRoom: returning package for " + sememePkg.getName());
 		return pkg;
 	}
 
-	private static ActionPackage createQuotationActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createQuotationActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		String message;
 		MessageAction action;
 		String expl;
 		SerialFortune fortune;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		logger.log(LOGLEVEL, "IndiaRoom: getting random quotation");
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		fortune = Fortuna.getFortune();
 //		message = fortune.getText(); 
 		expl = "\"" + fortune.getText() + "\" ‒ " + fortune.getSource();
@@ -169,26 +169,26 @@ public final class IndiaRoom extends UrRoom {
 		action.setMessage(message);
 		action.setExplanation(expl);
 		pkg.setActionObject(action);
-		logger.log(LOGLEVEL, "IndiaRoom: returning package for " + sparkPkg.getName());
+		logger.log(LOGLEVEL, "IndiaRoom: returning package for " + sememePkg.getName());
 		return pkg;
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("greet"));
-		sparks.add(SerialSpark.find("prompt"));
-		sparks.add(SerialSpark.find("youre_welcome"));
-		sparks.add(SerialSpark.find("how_are_you"));
-		sparks.add(SerialSpark.find("exclamation"));
-		sparks.add(SerialSpark.find("thank_you"));
-		sparks.add(SerialSpark.find("praise"));
-		sparks.add(SerialSpark.find("are_you_still_there"));
-		sparks.add(SerialSpark.find("nothing_to_do"));
-		sparks.add(SerialSpark.find("random_quotation"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("greet"));
+		sememes.add(SerialSememe.find("prompt"));
+		sememes.add(SerialSememe.find("youre_welcome"));
+		sememes.add(SerialSememe.find("how_are_you"));
+		sememes.add(SerialSememe.find("exclamation"));
+		sememes.add(SerialSememe.find("thank_you"));
+		sememes.add(SerialSememe.find("praise"));
+		sememes.add(SerialSememe.find("are_you_still_there"));
+		sememes.add(SerialSememe.find("nothing_to_do"));
+		sememes.add(SerialSememe.find("random_quotation"));
+		return sememes;
 	}
 
 	@Override

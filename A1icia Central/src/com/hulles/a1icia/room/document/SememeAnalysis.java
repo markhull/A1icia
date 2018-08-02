@@ -21,31 +21,31 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
- * The SparkAnalysis is an attempt to determine what actions, if any, are called for by a query
+ * The SememeAnalysis is an attempt to determine what actions, if any, are called for by a query
  * from an A1ician somewhere.
  * 
  * @author hulles
  *
  */
-public final class SparkAnalysis extends RoomActionObject {
-	private List<SparkPackage> sparkPackages;
+public final class SememeAnalysis extends RoomActionObject {
+	private List<SememePackage> sememePackages;
 	
-	public SparkAnalysis() {		
+	public SememeAnalysis() {		
 	}
 
-	public List<SparkPackage> getSparkPackages() {
+	public List<SememePackage> getSememePackages() {
 		
-		return sparkPackages;
+		return sememePackages;
 	}
 
-	public void setSparkPackages(List<SparkPackage> sparkPackages) {
+	public void setSememePackages(List<SememePackage> sememePackages) {
 		
-		A1iciaUtils.checkNotNull(sparkPackages);
-		this.sparkPackages = sparkPackages;
+		A1iciaUtils.checkNotNull(sememePackages);
+		this.sememePackages = sememePackages;
 	}
 
 	@Override

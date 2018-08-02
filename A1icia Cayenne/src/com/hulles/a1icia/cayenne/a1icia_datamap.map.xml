@@ -24,8 +24,8 @@
 		<db-attribute name="pos_tags" type="VARCHAR" isMandatory="true" length="127"/>
 		<db-attribute name="question" type="VARCHAR" isMandatory="true" length="255"/>
 		<db-attribute name="satisfaction" type="INTEGER" length="10"/>
-		<db-attribute name="spark_ID" type="BIGINT" length="10"/>
-		<db-attribute name="spark_object" type="VARCHAR" length="255"/>
+		<db-attribute name="sememe_ID" type="BIGINT" length="10"/>
+		<db-attribute name="sememe_object" type="VARCHAR" length="255"/>
 	</db-entity>
 	<db-entity name="country" catalog="a1icia">
 		<db-attribute name="code2" type="CHAR" isMandatory="true" length="2"/>
@@ -96,13 +96,13 @@
 		<db-attribute name="user_type_ID" type="SMALLINT" isMandatory="true" length="5"/>
 		<db-attribute name="username" type="VARCHAR" isMandatory="true" length="255"/>
 	</db-entity>
-	<db-entity name="spark" catalog="a1icia">
+	<db-entity name="sememe" catalog="a1icia">
 		<db-attribute name="admin_only" type="BIT" isMandatory="true"/>
 		<db-attribute name="canonical_form" type="VARCHAR" isMandatory="true" length="127"/>
 		<db-attribute name="external" type="BIT" isMandatory="true"/>
 		<db-attribute name="logged_in" type="BIT" isMandatory="true"/>
 		<db-attribute name="name" type="VARCHAR" isMandatory="true" length="127"/>
-		<db-attribute name="spark_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
+		<db-attribute name="sememe_ID" type="BIGINT" isPrimaryKey="true" isGenerated="true" isMandatory="true" length="10"/>
 	</db-entity>
 	<db-entity name="task" catalog="a1icia">
 		<db-attribute name="date_completed" type="TIMESTAMP" length="19"/>
@@ -148,7 +148,7 @@
 		<obj-attribute name="originalQuestion" type="java.lang.String" db-attribute-path="question"/>
 		<obj-attribute name="posTags" type="java.lang.String" db-attribute-path="pos_tags"/>
 		<obj-attribute name="satisfaction" type="java.lang.Integer" db-attribute-path="satisfaction"/>
-		<obj-attribute name="sparkObject" type="java.lang.String" db-attribute-path="spark_object"/>
+		<obj-attribute name="sememeObject" type="java.lang.String" db-attribute-path="sememe_object"/>
 	</obj-entity>
 	<obj-entity name="Country" className="com.hulles.a1icia.cayenne.Country" dbEntityName="country">
 		<obj-attribute name="code2" type="java.lang.String" db-attribute-path="code2"/>
@@ -207,7 +207,7 @@
 		<obj-attribute name="userTypeId" type="java.lang.Integer" db-attribute-path="user_type_ID"/>
 		<obj-attribute name="username" type="java.lang.String" db-attribute-path="username"/>
 	</obj-entity>
-	<obj-entity name="Spark" className="com.hulles.a1icia.cayenne.Spark" dbEntityName="spark">
+	<obj-entity name="Sememe" className="com.hulles.a1icia.cayenne.Sememe" dbEntityName="sememe">
 		<obj-attribute name="adminOnly" type="java.lang.Boolean" db-attribute-path="admin_only"/>
 		<obj-attribute name="canonicalForm" type="java.lang.String" db-attribute-path="canonical_form"/>
 		<obj-attribute name="external" type="java.lang.Boolean" db-attribute-path="external"/>
@@ -241,8 +241,8 @@
 	<db-relationship name="answerChunks" source="answer_history" target="answer_chunk" toMany="true">
 		<db-attribute-pair source="answer_history_ID" target="answer_history_ID"/>
 	</db-relationship>
-	<db-relationship name="spark" source="answer_history" target="spark">
-		<db-attribute-pair source="spark_ID" target="spark_ID"/>
+	<db-relationship name="sememe" source="answer_history" target="sememe">
+		<db-attribute-pair source="sememe_ID" target="sememe_ID"/>
 	</db-relationship>
 	<db-relationship name="owmCities" source="country" target="owm_city" toMany="true">
 		<db-attribute-pair source="country_ID" target="country_ID"/>
@@ -265,8 +265,8 @@
 	<db-relationship name="tasks" source="person" target="task" toMany="true">
 		<db-attribute-pair source="person_ID" target="person_ID"/>
 	</db-relationship>
-	<db-relationship name="answerHistories" source="spark" target="answer_history" toMany="true">
-		<db-attribute-pair source="spark_ID" target="spark_ID"/>
+	<db-relationship name="answerHistories" source="sememe" target="answer_history" toMany="true">
+		<db-attribute-pair source="sememe_ID" target="sememe_ID"/>
 	</db-relationship>
 	<db-relationship name="person" source="task" target="person">
 		<db-attribute-pair source="person_ID" target="person_ID"/>
@@ -291,7 +291,7 @@
 	</db-relationship>
 	<obj-relationship name="answerHistory" source="AnswerChunk" target="AnswerHistory" deleteRule="Nullify" db-relationship-path="answerHistory"/>
 	<obj-relationship name="answerChunks" source="AnswerHistory" target="AnswerChunk" deleteRule="Deny" db-relationship-path="answerChunks"/>
-	<obj-relationship name="spark" source="AnswerHistory" target="Spark" deleteRule="Nullify" db-relationship-path="spark"/>
+	<obj-relationship name="sememe" source="AnswerHistory" target="Sememe" deleteRule="Nullify" db-relationship-path="sememe"/>
 	<obj-relationship name="owmCities" source="Country" target="OwmCity" deleteRule="Deny" db-relationship-path="owmCities"/>
 	<obj-relationship name="nfl6Question" source="NbestAnswer" target="Nfl6Question" deleteRule="Nullify" db-relationship-path="nfl6Question"/>
 	<obj-relationship name="nfl6Questions" source="Nfl6Category" target="Nfl6Question" deleteRule="Deny" db-relationship-path="nfl6Questions"/>
@@ -299,7 +299,7 @@
 	<obj-relationship name="nfl6Category" source="Nfl6Question" target="Nfl6Category" deleteRule="Nullify" db-relationship-path="nfl6Category"/>
 	<obj-relationship name="country" source="OwmCity" target="Country" deleteRule="Nullify" db-relationship-path="country"/>
 	<obj-relationship name="tasks" source="Person" target="Task" deleteRule="Deny" db-relationship-path="tasks"/>
-	<obj-relationship name="answerHistories" source="Spark" target="AnswerHistory" deleteRule="Deny" db-relationship-path="answerHistories"/>
+	<obj-relationship name="answerHistories" source="Sememe" target="AnswerHistory" deleteRule="Deny" db-relationship-path="answerHistories"/>
 	<obj-relationship name="person" source="Task" target="Person" deleteRule="Nullify" db-relationship-path="person"/>
 	<obj-relationship name="taskPriority" source="Task" target="TaskPriority" deleteRule="Nullify" db-relationship-path="taskPriority"/>
 	<obj-relationship name="taskStatus" source="Task" target="TaskStatus" deleteRule="Nullify" db-relationship-path="taskStatus"/>

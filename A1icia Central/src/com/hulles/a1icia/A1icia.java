@@ -40,7 +40,11 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.PurdahKeys;
+import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.base.A1iciaException;
@@ -60,7 +64,7 @@ import com.hulles.a1icia.room.document.RoomObject;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -96,6 +100,8 @@ public class A1icia implements Closeable {
 	public A1icia() {
 		
 		System.out.println(getVersionString());
+		System.out.println(getDatabaseString());
+		System.out.println(getJebusString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA);
@@ -140,6 +146,34 @@ public class A1icia implements Closeable {
 		sb.append(" on ");
 		value = bundle.getString("Build-Date");
 		sb.append(value);
+		return sb.toString();
+	}
+	
+	private static String getDatabaseString() {
+		StringBuilder sb;
+		PurdahKeys purdah;
+		
+		sb = new StringBuilder();
+		purdah = PurdahKeys.getInstance();
+		sb.append("Database is ");
+		sb.append(purdah.getPurdahKey(PurdahKey.DATABASENAME));
+		sb.append(" at ");
+		sb.append(purdah.getPurdahKey(PurdahKey.DATABASESERVER));
+		sb.append(", port ");
+		sb.append(purdah.getPurdahKey(PurdahKey.DATABASEPORT));
+		return sb.toString();
+	}
+	
+	private static String getJebusString() {
+		StringBuilder sb;
+		ApplicationKeys appKeys;
+		
+		sb = new StringBuilder();
+		appKeys = ApplicationKeys.getInstance();
+		sb.append("Jebus server is at ");
+		sb.append(appKeys.getKey(ApplicationKey.JEBUSSERVER));
+		sb.append(", port ");
+		sb.append(appKeys.getKey(ApplicationKey.JEBUSPORT));
 		return sb.toString();
 	}
 	
@@ -419,7 +453,7 @@ public class A1icia implements Closeable {
 			
 			roomRequest = new RoomRequest(ticket, request.getDocumentID());
 			roomRequest.setFromRoom(getThisRoom());
-			roomRequest.setSparkPackages(SparkPackage.getSingletonDefault("respond_to_client"));
+			roomRequest.setSememePackages(SememePackage.getSingletonDefault("respond_to_client"));
 			roomRequest.setMessage("New client request");
 			roomRequest.setRoomObject(clientRequest);
 			sendRoomRequest(roomRequest);
@@ -483,39 +517,39 @@ public class A1icia implements Closeable {
 		}
 
 		/**
-		 * Create an action package for one of the sparks we have committed to process.
+		 * Create an action package for one of the sememes we have committed to process.
 		 * 
 		 */
 		@Override
-		protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+		protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-			A1iciaUtils.checkNotNull(sparkPkg);
+			A1iciaUtils.checkNotNull(sememePkg);
 			A1iciaUtils.checkNotNull(request);
-			switch (sparkPkg.getName()) {
+			switch (sememePkg.getName()) {
 				case "like_a_version":
-					return createVersionActionPackage(sparkPkg, request);
+					return createVersionActionPackage(sememePkg, request);
 				case "client_response":
 				case "indie_response":
-					return createResponseActionPackage(sparkPkg, request);
+					return createResponseActionPackage(sememePkg, request);
 				default:
-					throw new A1iciaException("Received unknown spark in " + getThisRoom());
+					throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 			}
 		}
 
 		/**
 		 * Here we create a MessageAction with A1icia's version information.
 		 * 
-		 * @param sparkPkg
+		 * @param sememePkg
 		 * @param request
 		 * @return The MessageAction action package
 		 */
-		private ActionPackage createVersionActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+		private ActionPackage createVersionActionPackage(SememePackage sememePkg, RoomRequest request) {
 			ActionPackage pkg;
 			MessageAction action;
 			
-			A1iciaUtils.checkNotNull(sparkPkg);
+			A1iciaUtils.checkNotNull(sememePkg);
 			A1iciaUtils.checkNotNull(request);
-			pkg = new ActionPackage(sparkPkg);
+			pkg = new ActionPackage(sememePkg);
 			action = new MessageAction();
 			action.setMessage(getVersionString());
 			pkg.setActionObject(action);
@@ -530,11 +564,11 @@ public class A1icia implements Closeable {
 		 * New news: now that responses to a client request have become requests like the indie
 		 * request, they come here as well. This is a result of decoupling requests and responses.
 		 * 
-		 * @param sparkPkg
+		 * @param sememePkg
 		 * @param request
 		 * @return The MessageAction action package with educational info for the room
 		 */
-		private ActionPackage createResponseActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+		private ActionPackage createResponseActionPackage(SememePackage sememePkg, RoomRequest request) {
 			ActionPackage pkg;
 			MessageAction action;
 			String result;
@@ -542,7 +576,7 @@ public class A1icia implements Closeable {
 			DialogResponse dialogResponse;
 			RoomObject obj;
 			
-			A1iciaUtils.checkNotNull(sparkPkg);
+			A1iciaUtils.checkNotNull(sememePkg);
 			A1iciaUtils.checkNotNull(request);
 			obj = request.getRoomObject();
 			if (!(obj instanceof ClientDialogResponse)) {
@@ -563,7 +597,7 @@ public class A1icia implements Closeable {
 			
 			// this is what we return to the requester -- we want to get them
 			//    educated up so they make better slaves for our robot colony
-			pkg = new ActionPackage(sparkPkg);
+			pkg = new ActionPackage(sememePkg);
 			action = new MessageAction();
 			result = "gargouillade";
 			action.setMessage(result);
@@ -576,24 +610,24 @@ public class A1icia implements Closeable {
 		}
 		
 		/**
-		 * Load the sparks we can process into a list that UrRoom can use.
+		 * Load the sememes we can process into a list that UrRoom can use.
 		 * 
 		 */
 		@Override
-		protected Set<SerialSpark> loadSparks() {
-			Set<SerialSpark> sparks;
+		protected Set<SerialSememe> loadSememes() {
+			Set<SerialSememe> sememes;
 			
-			sparks = new HashSet<>();
-			sparks.add(SerialSpark.find("client_response"));
-			sparks.add(SerialSpark.find("indie_response"));
-			sparks.add(SerialSpark.find("like_a_version"));
-			// these sparks are not really "handled" by A1icia, but we want to mark them
+			sememes = new HashSet<>();
+			sememes.add(SerialSememe.find("client_response"));
+			sememes.add(SerialSememe.find("indie_response"));
+			sememes.add(SerialSememe.find("like_a_version"));
+			// these sememes are not really "handled" by A1icia, but we want to mark them
 			//    that way for completeness
-			sparks.add(SerialSpark.find("central_startup"));
-			sparks.add(SerialSpark.find("central_shutdown"));
-			sparks.add(SerialSpark.find("client_startup"));
-			sparks.add(SerialSpark.find("client_shutdown"));
-			return sparks;
+			sememes.add(SerialSememe.find("central_startup"));
+			sememes.add(SerialSememe.find("central_shutdown"));
+			sememes.add(SerialSememe.find("client_startup"));
+			sememes.add(SerialSememe.find("client_shutdown"));
+			return sememes;
 		}
 
 		/**

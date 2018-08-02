@@ -42,7 +42,7 @@ import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.MediaFile;
 import com.hulles.a1icia.jebus.JebusBible;
@@ -60,7 +60,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.FuzzyMatch;
 import com.hulles.a1icia.tools.FuzzyMatch.Match;
@@ -352,41 +352,41 @@ public final class MikeRoom extends UrRoom {
 	}
 
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
+		switch (sememePkg.getName()) {
 			case "play_artist":
-				return createArtistActionPackage(sparkPkg, request);
+				return createArtistActionPackage(sememePkg, request);
 			case "play_title":
-				return createTitleActionPackage(sparkPkg, request);
+				return createTitleActionPackage(sememePkg, request);
 			case "random_music":
-				return createRandomMusicActionPackage(sparkPkg, request);
+				return createRandomMusicActionPackage(sememePkg, request);
 			case "play_video":
-				return createVideoActionPackage(sparkPkg, request);
+				return createVideoActionPackage(sememePkg, request);
 			case "speak":
-				return createSpeakActionPackage(sparkPkg, request);
+				return createSpeakActionPackage(sememePkg, request);
 			case "prompt":
 			case "exclamation":
 			case "nothing_to_do":
 			case "praise":
-				return createPromptActionPackage(sparkPkg, request);
+				return createPromptActionPackage(sememePkg, request);
 			case "pronounce_linux":
 			case "listen_to_her_heart":
 			case "pronounce_alicia":
 			case "sorry_for_it_all":
 			case "dead_sara":
 			case "pronounce_hulles":
-				return createSpecialActionPackage(sparkPkg, request);
+				return createSpecialActionPackage(sememePkg, request);
 			case "match_artists_and_titles":
-				return createAnalysisActionPackage(sparkPkg, request);
+				return createAnalysisActionPackage(sememePkg, request);
 			case "notification_medium":
-				return createNotificationActionPackage(sparkPkg, request);
+				return createNotificationActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
-	protected ActionPackage createArtistActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createArtistActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -399,12 +399,12 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		matchTarget = sparkPkg.getSparkObject();
+		pkg = new ActionPackage(sememePkg);
+		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			A1iciaUtils.error("MikeRoom:createArtistActionPackage: no spark object");
+			A1iciaUtils.error("MikeRoom:createArtistActionPackage: no sememe object");
 		}
 		mediaFiles = MediaFile.getMediaFiles(matchTarget);
 		if (mediaFiles != null) {
@@ -438,7 +438,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected static ActionPackage createTitleActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected static ActionPackage createTitleActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -450,12 +450,12 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		matchTarget = sparkPkg.getSparkObject();
+		pkg = new ActionPackage(sememePkg);
+		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			A1iciaUtils.error("MikeRoom:createTitleActionPackage: no spark object");
+			A1iciaUtils.error("MikeRoom:createTitleActionPackage: no sememe object");
 		}
 		mediaFile = MediaFile.getMediaFile(matchTarget);
 		if (mediaFile == null) {
@@ -490,7 +490,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected static ActionPackage createRandomMusicActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected static ActionPackage createRandomMusicActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -501,9 +501,9 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		mediaFile = MediaFile.getRandomMediaFile();
 		if (mediaFile == null) {
 			A1iciaUtils.error("Media file is null in Mike room");
@@ -537,7 +537,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected ActionPackage createVideoActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createVideoActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		MediaObject mediaObject;
@@ -547,12 +547,12 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		matchTarget = sparkPkg.getSparkObject();
+		pkg = new ActionPackage(sememePkg);
+		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			A1iciaUtils.error("MikeRoom:createVideoActionPackage: no spark object");
+			A1iciaUtils.error("MikeRoom:createVideoActionPackage: no sememe object");
 		}
 		mediaFile = MediaFile.getMediaFile(matchTarget);
 		if (mediaFile == null) {
@@ -601,7 +601,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected static ActionPackage createSpeakActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected static ActionPackage createSpeakActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -613,9 +613,9 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		speech = request.getMessage().trim();
 		tempFile = TTSPico.ttsToFile(speech);
 		fileName = tempFile.getAbsolutePath();
@@ -642,7 +642,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected ActionPackage createSpecialActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createSpecialActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -654,20 +654,20 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		if (sparkPkg.is("pronounce_linux")) {
+		pkg = new ActionPackage(sememePkg);
+		if (sememePkg.is("pronounce_linux")) {
 			target = "Linus-linux.wav"; 
-		} else if (sparkPkg.is("pronounce_hulles")) {
+		} else if (sememePkg.is("pronounce_hulles")) {
 			target = "hulles_hulles.wav";
-		} else if (sparkPkg.is("listen_to_her_heart")) {
+		} else if (sememePkg.is("listen_to_her_heart")) {
 			target = "listen_to_her_heart.wav";
-		} else if (sparkPkg.is("sorry_for_it_all")) {
+		} else if (sememePkg.is("sorry_for_it_all")) {
 			target = "sorry_for_it_all.mp4";
-		} else if (sparkPkg.is("dead_sara")) {
+		} else if (sememePkg.is("dead_sara")) {
 			target = "masse_color1.jpg";
-		} else if (sparkPkg.is("pronounce_alicia")) {
+		} else if (sememePkg.is("pronounce_alicia")) {
 			if (random.nextBoolean()) {
 				target = "Sv-Alicia_Vikander.wav";
 			} else {
@@ -714,7 +714,7 @@ public final class MikeRoom extends UrRoom {
 				return null;
 			}
 			action = new ClientObjectWrapper(mediaObject);
-			if (sparkPkg.is("dead_sara")) {
+			if (sememePkg.is("dead_sara")) {
 				action.setMessage("Dead Sara is super bueno.");
 			}
 		} else if (fileName.endsWith("mov")) {
@@ -761,7 +761,7 @@ public final class MikeRoom extends UrRoom {
 				return null;
 			}
 			action = new ClientObjectWrapper(mediaObject);
-			if (sparkPkg.is("sorry_for_it_all")) {
+			if (sememePkg.is("sorry_for_it_all")) {
 				action.setMessage("Dead Sara kicks my ass.");
 			}
 		} else {
@@ -772,7 +772,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	protected ActionPackage createNotificationActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createNotificationActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -783,13 +783,13 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		// SparkObjectType s/b AUDIOTITLE, btw
-		matchTarget = sparkPkg.getSparkObject();
+		pkg = new ActionPackage(sememePkg);
+		// SememeObjectType s/b AUDIOTITLE, btw
+		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			A1iciaUtils.error("MikeRoom:createArtistActionPackage: no spark object");
+			A1iciaUtils.error("MikeRoom:createArtistActionPackage: no sememe object");
 		}
 		fileName = findMediaFile(matchTarget, notifications);
 		if (fileName == null) {
@@ -820,7 +820,7 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 	
-	protected ActionPackage createPromptActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createPromptActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		ClientObjectWrapper action = null;
 		AudioObject audioObject;
@@ -830,12 +830,12 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
-		if (sparkPkg.is("prompt")) {
+		pkg = new ActionPackage(sememePkg);
+		if (sememePkg.is("prompt")) {
 			fileName = getRandomFileName(prompts);
-		} else if (sparkPkg.is("praise")) {
+		} else if (sememePkg.is("praise")) {
 			fileName = getRandomFileName(praise);
 		} else {
 			fileName = getRandomFileName(exclamations);
@@ -863,16 +863,16 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 
-	private ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		MediaAnalysis analysis;
 		List<Match> artistMatches;
 		List<Match> titleMatches;
 		String name;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		analysis = new MediaAnalysis();
 		name = request.getMessage();
 		artistMatches = matchArtists(name, 3);
@@ -896,28 +896,28 @@ public final class MikeRoom extends UrRoom {
 	}
 	
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("match_artists_and_titles"));
-		sparks.add(SerialSpark.find("play_artist"));
-		sparks.add(SerialSpark.find("play_title"));
-		sparks.add(SerialSpark.find("play_video"));
-		sparks.add(SerialSpark.find("prompt"));
-		sparks.add(SerialSpark.find("speak"));
-		sparks.add(SerialSpark.find("praise"));
-		sparks.add(SerialSpark.find("exclamation"));
-		sparks.add(SerialSpark.find("nothing_to_do"));
-		sparks.add(SerialSpark.find("pronounce_linux"));
-		sparks.add(SerialSpark.find("pronounce_alicia"));
-		sparks.add(SerialSpark.find("pronounce_hulles"));
-		sparks.add(SerialSpark.find("listen_to_her_heart"));
-		sparks.add(SerialSpark.find("sorry_for_it_all"));
-		sparks.add(SerialSpark.find("dead_sara"));
-		sparks.add(SerialSpark.find("notification_medium"));
-		sparks.add(SerialSpark.find("random_music"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("match_artists_and_titles"));
+		sememes.add(SerialSememe.find("play_artist"));
+		sememes.add(SerialSememe.find("play_title"));
+		sememes.add(SerialSememe.find("play_video"));
+		sememes.add(SerialSememe.find("prompt"));
+		sememes.add(SerialSememe.find("speak"));
+		sememes.add(SerialSememe.find("praise"));
+		sememes.add(SerialSememe.find("exclamation"));
+		sememes.add(SerialSememe.find("nothing_to_do"));
+		sememes.add(SerialSememe.find("pronounce_linux"));
+		sememes.add(SerialSememe.find("pronounce_alicia"));
+		sememes.add(SerialSememe.find("pronounce_hulles"));
+		sememes.add(SerialSememe.find("listen_to_her_heart"));
+		sememes.add(SerialSememe.find("sorry_for_it_all"));
+		sememes.add(SerialSememe.find("dead_sara"));
+		sememes.add(SerialSememe.find("notification_medium"));
+		sememes.add(SerialSememe.find("random_music"));
+		return sememes;
 	}
 
 	@Override

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -33,10 +33,10 @@ import com.hulles.a1icia.room.document.MessageAction;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SparkAnalysis;
+import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SparkPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -56,82 +56,82 @@ public final class AlphaRoom extends UrRoom {
 
 	/**
 	 * Here we create an ActionPackage from Alpha, either an analysis or an action, depending 
-	 * on the spark that we receive, and return it to UrRoom.
+	 * on the sememe that we receive, and return it to UrRoom.
 	 * 
 	 */
 	@Override
-	protected ActionPackage createActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		switch (sparkPkg.getName()) {
-			case "spark_analysis":
+		switch (sememePkg.getName()) {
+			case "sememe_analysis":
 				// Hey, this one's easy! I'm smart like a scientist!
-				return createAnalysisActionPackage(sparkPkg, request);
+				return createAnalysisActionPackage(sememePkg, request);
 			case "aardvark":
 				// I know this one!
-				return createAardvarkActionPackage(sparkPkg, request);
+				return createAardvarkActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown spark in " + getThisRoom());
+				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 	
 	/**
 	 * Here we carefully consider each sentence package in the ticket journal and determine
-	 * the best spark package for the essence and nuances of the... just kidding. 
-	 * Actually we stick "aardvark" in as the best spark package for each sentence.
+	 * the best sememe package for the essence and nuances of the... just kidding. 
+	 * Actually we stick "aardvark" in as the best sememe package for each sentence.
 	 * Because we can.
 	 * 
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
-	 * @return A SparkAnalysis package
+	 * @return A SememeAnalysis package
 	 */
-	private static ActionPackage createAnalysisActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
-		SparkAnalysis analysis;
+		SememeAnalysis analysis;
 		Ticket ticket;
 		TicketJournal journal;
-		List<SparkPackage> sparkPackages;
+		List<SememePackage> sememePackages;
 		List<SentencePackage> sentencePackages;
-		SparkPackage aardPkg;
+		SememePackage aardPkg;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
-		actionPkg = new ActionPackage(sparkPkg);
-		sparkPackages = new ArrayList<>();
+		actionPkg = new ActionPackage(sememePkg);
+		sememePackages = new ArrayList<>();
 		sentencePackages = journal.getSentencePackages();
-		analysis = new SparkAnalysis();
+		analysis = new SememeAnalysis();
 		for (SentencePackage sentencePackage : sentencePackages) {
-			aardPkg = SparkPackage.getDefaultPackage("aardvark");
+			aardPkg = SememePackage.getDefaultPackage("aardvark");
 			aardPkg.setSentencePackage(sentencePackage);
 			aardPkg.setConfidence(5); // hey, it *might* be the best one
 			if (!aardPkg.isValid()) {
-				throw new A1iciaException("AlphaRoom: created invalid spark package");
+				throw new A1iciaException("AlphaRoom: created invalid sememe package");
 			}
-			sparkPackages.add(aardPkg);
+			sememePackages.add(aardPkg);
 		}
-		analysis.setSparkPackages(sparkPackages);
+		analysis.setSememePackages(sememePackages);
 		actionPkg.setActionObject(analysis);
 		return actionPkg;
 	}
 
 	/**
-	 * Create an action package for the "aardvark" spark, which consists of saying some form
+	 * Create an action package for the "aardvark" sememe, which consists of saying some form
 	 * of the word "aardvark".
 	 * 
-	 * @param sparkPkg
+	 * @param sememePkg
 	 * @param request
 	 * @return
 	 */
-	private static ActionPackage createAardvarkActionPackage(SparkPackage sparkPkg, RoomRequest request) {
+	private static ActionPackage createAardvarkActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		MessageAction action;
 		String clientMsg;
 		String result;
 		
-		A1iciaUtils.checkNotNull(sparkPkg);
+		A1iciaUtils.checkNotNull(sememePkg);
 		A1iciaUtils.checkNotNull(request);
-		pkg = new ActionPackage(sparkPkg);
+		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		clientMsg = request.getMessage().trim();
 		if (clientMsg.isEmpty()) {
@@ -186,17 +186,17 @@ public final class AlphaRoom extends UrRoom {
 	}
 
 	/**
-	 * Advertise which sparks we handle.
+	 * Advertise which sememes we handle.
 	 * 
 	 */
 	@Override
-	protected Set<SerialSpark> loadSparks() {
-		Set<SerialSpark> sparks;
+	protected Set<SerialSememe> loadSememes() {
+		Set<SerialSememe> sememes;
 		
-		sparks = new HashSet<>();
-		sparks.add(SerialSpark.find("spark_analysis"));
-		sparks.add(SerialSpark.find("aardvark"));
-		return sparks;
+		sememes = new HashSet<>();
+		sememes.add(SerialSememe.find("sememe_analysis"));
+		sememes.add(SerialSememe.find("aardvark"));
+		return sememes;
 	}
 
 	/**

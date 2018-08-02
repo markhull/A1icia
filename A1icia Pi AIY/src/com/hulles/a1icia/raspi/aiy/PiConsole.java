@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.WakeUp;
-import com.hulles.a1icia.api.shared.SerialSpark;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.cli.A1iciaCLIConsole;
@@ -62,16 +62,16 @@ public class PiConsole extends A1iciaCLIConsole {
 	
 	@Override
 	protected void run() {
-		SerialSpark spark;
+		SerialSememe sememe;
 
-		spark = new SerialSpark();
-		spark.setName("what_is_pi");
-		getRemote().sendCommand(spark, null);
+		sememe = new SerialSememe();
+		sememe.setName("what_is_pi");
+		getRemote().sendCommand(sememe, null);
 		super.run();
 	}
 	
 	@Override
-	public boolean receiveCommand(SerialSpark command) {
+	public boolean receiveCommand(SerialSememe command) {
 
 		SharedUtils.checkNotNull(command);
 		LOGGER.log(LOGLEVEL, "Zero2Console: in receiveCommand");
