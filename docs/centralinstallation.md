@@ -29,4 +29,6 @@ The following software is required for the installation of A1icia Central:
 
 Note: If you need to install any of the above packages, you should probably use your distro's repositories to do so, but as always, YMMV.
 
+Note: Actually, since we use [Apache Cayenne](https://cayenne.apache.org/) for RDBMS management, you can use any of [Cayenne's supported database management systems](https://cayenne.apache.org/database-support.html) in place of MariaDb / MySQL, like e.g. [PostgreSQL](https://www.postgresql.org/).
+
 Note: Be sure to read [Notes on A1icia Central's File Descriptor Usage](https://github.com/markhull/A1icia/wiki/Notes-on-A1icia-Central's-File-Descriptor-Usage) in the Wiki.
