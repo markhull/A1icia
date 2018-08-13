@@ -23,7 +23,7 @@ CLI | Command Line Interface | [Source](https://github.com/markhull/A1icia/tree/
 Crypto | Cryptographic Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Crypto)
 Delta | Automated Speech Recognition & Hardware | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Delta)
 Echo | Word2Vec | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Echo)
-Foxtrot | System Monitor & Hardware Internals | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Foxtrot)
+Foxtrot | Central System Monitor & Hardware Internals | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Foxtrot)
 FX Console | JavaFX Command Line Interface | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20FX%20Console) | yes
 Golf | WikiData Service | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Golf)
 Hotel | Calendar & Tasks | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Hotel)
