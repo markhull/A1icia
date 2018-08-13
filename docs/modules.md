@@ -43,6 +43,7 @@ Prong | Communication Security | [Source](https://github.com/markhull/A1icia/tre
 Quebec | Semantic Analysis | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Quebec)
 Romeo | Games | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Romeo)
 Station Installer | Installer for A1icia Stations | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Station%20Installer) | yes
+Swing Console | Java Swing CLI Console | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Swing%20Console) | yes
 Tracker | A1icia Activity Tracking | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Tracker)
 Web | GWT Web Server | [Source](https://github.com/markhull/A1icia/tree/master/A1icia%20Web) | yes
 
