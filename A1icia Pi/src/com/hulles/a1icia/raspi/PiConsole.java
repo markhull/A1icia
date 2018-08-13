@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.raspi;
 
@@ -30,12 +32,12 @@ import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.cli.A1iciaCLIConsole;
 
 public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
-	private final static Logger LOGGER = Logger.getLogger("A1iciaMagicMirror.PiConsole");
+	private final static Logger LOGGER = Logger.getLogger("A1iciaPi.PiConsole");
 	private final static Level LOGLEVEL = Level.FINE;
 	private final HardwareLayer hardwareLayer;
 	
-	PiConsole(String host, Integer port, Boolean daemon, HardwareLayer layer) {
-		super(host, port, daemon);
+	PiConsole(String host, Integer port, ConsoleType console, HardwareLayer layer) {
+		super(host, port, console);
 		
 		SharedUtils.checkNotNull(layer);
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_PI_CONSOLE);
@@ -75,6 +77,8 @@ public class PiConsole extends A1iciaCLIConsole implements WakeUppable {
 		SharedUtils.checkNotNull(command);
 		LOGGER.log(LOGLEVEL, "PiConsole: in receiveCommand");
 		super.receiveCommand(command);
+		// the valid commands in super.receiveCommand are handled below as well, so
+		//    don't just return if super.receiveCommand is true
 		switch (command.getName()) {
 			case "central_startup":
 				if (!hardwareLayer.ledIsOn("LeftGreen")) {

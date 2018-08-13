@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.raspi.aiy;
 
@@ -34,8 +36,8 @@ public class PiConsole extends A1iciaCLIConsole {
 	private final static Level LOGLEVEL = Level.FINE;
 	private final HardwareLayer hardwareLayer;
 	
-	PiConsole(String host, Integer port, Boolean daemon, HardwareLayer layer) {
-		super(host, port, daemon);
+	PiConsole(String host, Integer port, ConsoleType whichConsole, HardwareLayer layer) {
+		super(host, port, whichConsole);
 		
 		SharedUtils.checkNotNull(layer);
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_PI_CONSOLE);

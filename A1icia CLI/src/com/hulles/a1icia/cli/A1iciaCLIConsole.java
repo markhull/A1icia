@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.cli;
 
@@ -30,6 +32,7 @@ import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
@@ -43,25 +46,40 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	private final Integer port;
 	private final Station station;
 	
-	public A1iciaCLIConsole(String host, Integer port, Boolean daemon) {
+	public A1iciaCLIConsole(String host, Integer port, ConsoleType whichConsole) {
 
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
-		SharedUtils.checkNotNull(daemon);
+		SharedUtils.checkNotNull(whichConsole);
 		this.host = host;
 		this.port = port;
+		this.whichConsole = whichConsole;
 		station = Station.getInstance();
 		station.ensureStationExists();
-		if (daemon) {
-			whichConsole = ConsoleType.DAEMON;
-			javaConsole = null;
-		} else {
-			javaConsole = System.console();
-	        if (javaConsole != null) {
-	        	whichConsole = ConsoleType.JAVACONSOLE; 
-	        } else {
-	        	whichConsole = ConsoleType.STANDARDIO;
-	        }
+		switch (whichConsole) {
+			case DAEMON:
+				javaConsole = null;
+				break;
+			case DEFAULT:
+				javaConsole = System.console();
+		        if (javaConsole != null) {
+		        	whichConsole = ConsoleType.JAVACONSOLE; 
+		        } else {
+		        	whichConsole = ConsoleType.STANDARDIO;
+		        }
+		        break;
+			case JAVACONSOLE:
+				javaConsole = System.console();
+				if (javaConsole == null) {
+					System.err.println("Unable to allocate java console, aborting");
+					System.exit(1);
+				}
+				break;
+			case STANDARDIO:
+				javaConsole = null;
+				break;
+			default:
+				throw new A1iciaAPIException("Invalid console type");
 		}
 		System.out.println("Welcome to " + getConsoleName() + ".");
 		System.out.println("This station connects to A1icia Central at " + host + 
@@ -347,7 +365,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		// we don't do anything with the explanation in the command line client, currently
 	}
 
-	enum ConsoleType {
+	public enum ConsoleType {
+		DEFAULT, 		// converts to JAVACONSOLE if one is available, otherwise STANDARDIO
 		JAVACONSOLE,
 		STANDARDIO,
 		DAEMON

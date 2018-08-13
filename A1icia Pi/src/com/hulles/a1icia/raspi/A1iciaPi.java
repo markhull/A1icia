@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,6 +30,7 @@ import java.util.ResourceBundle;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.cli.A1iciaCLIConsole.ConsoleType;
 
 /**
  *
@@ -35,7 +38,7 @@ import com.hulles.a1icia.api.remote.Station;
  */
 public final class A1iciaPi  {
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.raspi.Version";
-	private final static String USAGE = "usage: java -jar A1iciaPi.jar PITYPE [--host=HOST] [--port=PORT] [--daemon]\n\twhere PITYPE = '--console' or '--mirror', HOST = IP address, and PORT = port number";
+	private final static String USAGE = "usage: java -jar A1iciaPi.jar PITYPE [--help] [--host=HOST] [--port=PORT] [--daemon]\n\twhere PITYPE = '--console' or '--mirror', HOST = IP address, and PORT = port number";
 	private static PiConsole cli;
 	private static MagicMirrorConsole mirror;
 	
@@ -70,13 +73,13 @@ public final class A1iciaPi  {
 		String portStr;
 		Integer port;
 		Station station;
-		Boolean daemon;
+		ConsoleType whichConsole;
 		
 		station = Station.getInstance();
 		station.ensureStationExists();
 		host = station.getCentralHost();
 		port = station.getCentralPort();
-		daemon = false;
+		whichConsole = ConsoleType.DEFAULT;
 		for (String arg : args) {
 			if (arg.startsWith("--host=")) {
 				host = arg.substring(7);
@@ -88,7 +91,10 @@ public final class A1iciaPi  {
 		    } else if (arg.equals("--mirror")) {
 		        piType = PiType.MIRROR;
 			} else if (arg.equals("--daemon")) {
-				daemon = true;
+				whichConsole = ConsoleType.DAEMON;
+			} else if (arg.equals("--help")) {
+				System.out.println(USAGE);
+				System.exit(0);
 			} else {
 				System.out.println(USAGE);
 				System.exit(1);
@@ -100,7 +106,7 @@ public final class A1iciaPi  {
 		switch (piType) {
 			case CONSOLE:
 				try (HardwareLayer hardwareLayer = new HardwareLayer()) {
-					cli = new PiConsole(host, port, daemon, hardwareLayer);
+					cli = new PiConsole(host, port, whichConsole, hardwareLayer);
 					caller = new WakeUpCall(cli);
 					hardwareLayer.setWakeUpCall(caller);
 					cli.startAsync();
@@ -109,7 +115,7 @@ public final class A1iciaPi  {
 				break;
 			case MIRROR:
 				try (HardwareLayerMirror hardwareLayer = new HardwareLayerMirror()) {
-					mirror = new MagicMirrorConsole(host, port, daemon, hardwareLayer);
+					mirror = new MagicMirrorConsole(host, port, hardwareLayer);
 					caller = new WakeUpCall(mirror);
 					hardwareLayer.setWakeUpCall(caller);
 					mirror.startAsync();

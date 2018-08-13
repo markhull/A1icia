@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.cli;
 
@@ -26,9 +28,11 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
+import com.hulles.a1icia.cli.A1iciaCLIConsole.ConsoleType;
 
 public class A1iciaCLI implements Closeable {
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.cli.Version";
+	private final static String USAGE = "usage: java -jar A1iciaCLI.jar [--help] [--host=HOST] [--port=PORT] [--daemon|--defaultconsole|--javaconsole|--sysconsole]\n\twhere HOST = IP address, and PORT = port number";
 	private static A1iciaCLIConsole cli;
 	
 	A1iciaCLI() {
@@ -72,13 +76,13 @@ public class A1iciaCLI implements Closeable {
 		String portStr;
 		Integer port;
 		Station station;
-		Boolean daemon;
+		ConsoleType whichConsole;
 		
 		station = Station.getInstance();
 		station.ensureStationExists();
 		host = station.getCentralHost();
 		port = station.getCentralPort();
-		daemon = false;
+		whichConsole = ConsoleType.DEFAULT;
 		for (String arg : args) {
 			if (arg.startsWith("--host=")) {
 				host = arg.substring(7);
@@ -86,16 +90,26 @@ public class A1iciaCLI implements Closeable {
 				portStr = arg.substring(7);
 				port = Integer.parseInt(portStr);
 			} else if (arg.equals("--daemon")) {
-				daemon = true;
+				whichConsole = ConsoleType.DAEMON;
+			} else if (arg.equals("--javaconsole")) {
+				whichConsole = ConsoleType.JAVACONSOLE;
+			} else if (arg.equals("--sysconsole")) {
+				whichConsole = ConsoleType.STANDARDIO;
+			} else if (arg.equals("--defaultconsole")) {
+				whichConsole = ConsoleType.DEFAULT;
+			} else if (arg.equals("--help")) {
+				System.out.println(USAGE);
+				System.exit(0);
 			} else {
-				System.err.println("Bad argument in A1iciaCLI: " + arg);
+				System.err.println("Bad argument: " + arg);
+				System.err.println(USAGE);
 				System.exit(1);
 			}
 		}
 		System.out.println(getVersionString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
-		cli = new A1iciaCLIConsole(host, port, daemon);
+		cli = new A1iciaCLIConsole(host, port, whichConsole);
 		cli.startAsync();
 		cli.awaitTerminated();
 	}

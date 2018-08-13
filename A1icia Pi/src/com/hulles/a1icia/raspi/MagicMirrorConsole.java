@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.raspi;
 
@@ -36,20 +38,15 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	private final HardwareLayerMirror hardwareLayer;
 	private final String host;
 	private final Integer port;
-	@SuppressWarnings("unused")
-	// the daemon flag is currently unused, since the mirror console is an A1iciaRemoteDisplay, not a console per se
-	private final Boolean daemon;
 	
-	public MagicMirrorConsole(String host, Integer port, Boolean daemon, HardwareLayerMirror hardwareLayer) {
+	public MagicMirrorConsole(String host, Integer port, HardwareLayerMirror hardwareLayer) {
 
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
-		SharedUtils.checkNotNull(daemon);
 		SharedUtils.checkNotNull(hardwareLayer);
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA_MAGIC_MIRROR);
 		this.host = host;
 		this.port = port;
-		this.daemon = daemon;
 		this.hardwareLayer = hardwareLayer;
 	}
 

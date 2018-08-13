@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.config.central;
 
@@ -41,6 +43,7 @@ import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
 
 import redis.clients.jedis.Jedis;
@@ -82,6 +85,34 @@ public class ImportExport {
 			}
 		}
 		PurdahKeys.setInstance(purdahKeys);
+	}
+	
+	private static void createAESKey() throws IOException {
+		SecretKey aesKey;
+		String fileName;
+		ApplicationKeys appKeys;
+		Boolean create;
+		InputStreamReader stdIn;
+		
+		appKeys = ApplicationKeys.getInstance();
+    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
+		stdIn = new InputStreamReader(System.in);
+		try (BufferedReader reader = new BufferedReader(stdIn)) {
+			System.out.println("This will create a new A1icia AES key at " + fileName + ".");
+			while ((create = getYN(reader,"Are you sure you want to continue? [yN]: ")
+					== null)) {}
+			if (!create) {			
+				System.out.println("AES key not created");
+				return;
+			}
+		}
+		try {
+			aesKey = A1iciaCrypto.generateAESKey();
+			A1iciaCrypto.setA1iciaFileAESKey(aesKey);
+		} catch (Exception e) {
+			throw new A1iciaAPIException("ImportExport: can't create AES key", e);
+		}
+		System.out.println("Created a new AES key");
 	}
 	
 	private static void exportPurdah(Path path) throws IOException {
@@ -244,10 +275,16 @@ public class ImportExport {
 		Boolean importPurdah;
 		Boolean exportAppKeys;
 		Boolean importAppKeys;
+		Boolean createAESKey;
 		Path path;
 		
 		stdIn = new InputStreamReader(System.in);
 		try (BufferedReader reader = new BufferedReader(stdIn)) {
+			while ((createAESKey = getYN(reader,"Do you want to create a new AES key? [yN]: ")) == null) {}
+			if (createAESKey) {
+				createAESKey();
+				return;
+			}
 			while ((exportPurdah = getYN(reader,"Do you want to export Purdah? [yN]: ")) == null) {}
 			if (exportPurdah) {
 				path = getPath(reader, true);

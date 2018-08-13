@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017 Hulles Industries LLC
+ * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of A1icia.
@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 package com.hulles.a1icia.api.shared;
 
@@ -72,8 +74,8 @@ public class SharedUtils implements Serializable {
 	    A1ICIA_CLI(12346, "A1icia CLI"),
 	    A1ICIA_MAGIC_MIRROR(12347, "A1icia Magic Mirror"),
 	    A1ICIA_PI_CONSOLE(12348, "A1icia Pi Console"),
-	    
-	    A1ICIA_NODE(12349, "A1icia Node Server");
+	    A1ICIA_NODE(12349, "A1icia Node Server"),
+	    A1ICIA_SWING_CONSOLE(12350, "A1icia Swing Console");
 	    private int portNumber;
 	    private final String displayName;
 

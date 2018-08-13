@@ -16,6 +16,8 @@
  *  
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,6 +30,7 @@ import java.util.ResourceBundle;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.cli.A1iciaCLIConsole.ConsoleType;
 
 /**
  *
@@ -67,13 +70,13 @@ public final class A1iciaPiAIY  {
 		String portStr;
 		Integer port;
 		Station station;
-		Boolean daemon;
+		ConsoleType whichConsole;
 		
 		station = Station.getInstance();
 		station.ensureStationExists();
 		host = station.getCentralHost();
 		port = station.getCentralPort();
-		daemon = false;
+		whichConsole = ConsoleType.DEFAULT;
 		for (String arg : args) {
 			if (arg.startsWith("--host=")) {
 				host = arg.substring(7);
@@ -81,7 +84,7 @@ public final class A1iciaPiAIY  {
 				portStr = arg.substring(7);
 				port = Integer.parseInt(portStr);
 			} else if (arg.equals("--daemon")) {
-				daemon = true;
+				whichConsole = ConsoleType.DAEMON;
 			} else {
 				System.out.println(USAGE);
 				System.exit(1);
@@ -91,7 +94,7 @@ public final class A1iciaPiAIY  {
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
 		try (HardwareLayer hardwareLayer = new HardwareLayer()) {
-			zero2 = new PiConsole(host, port, daemon, hardwareLayer);
+			zero2 = new PiConsole(host, port, whichConsole, hardwareLayer);
 			hardwareLayer.setConsole(zero2);
 			hardwareLayer.setLED("blink_blue_LED"); // for now
 			zero2.startAsync();
