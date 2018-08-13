@@ -3,11 +3,11 @@
 
 A1icia is a professional incarnation of a personal assistant written in Java. She is modular, extensible, and damn fast.
 
-## So Why Another Personal Assistant?
+### So Why Another Personal Assistant?
 
 The essential nature of a "personal assistant" is that it uses **personal information** about you to help improve your life in some fashion ‒ it will remind you of appointments, keep tracking of your jogging, notify you of new emails. But who do you want to possess that personal information? Google? Amazon? Some ominous government agency? Vladimir Putin? Not that Google is evil, you understand, not sure about the others, but still, it's personal information.
 
-### Use An Existing Project?
+### Why Not Use An Existing Project?
 
 I really wanted a personal assistant, but one over which I could have complete control and one that would let me do all the things I wanted to do, see below. So I looked at various efforts written in scripting languages of one sort or another, and while these scripting languages are great for some things, they're not great for massive projects like I knew this would become. Some of the other PAs were certainly large enough, but they were almost all web server creations and based themselves on exotic and questionable (IMO) technology.
 
@@ -24,7 +24,7 @@ So far, A1icia has managed to do a pretty good job of everything except drive my
 
 And as far as keeping me company, A1icia's currently about at the tropical fish stage¹, though I expect her to enter the Shih Tzu stage soon. Don't tell her I said that, by the way.
 
-## N Interesting Things About A1icia, N Being A Small Integer Less Than 100 (Probably)
+### N Interesting Things About A1icia, N Being A Small Integer Less Than 100 (Probably)
 
 * A1icia can speak, and quite well. She uses a small and robust Text To Speech (TTS) service to do this.
 * A1icia can currently speak 5.5 different languages; the .5 is because she speaks American and British English.
@@ -39,7 +39,7 @@ And as far as keeping me company, A1icia's currently about at the tropical fish 
 * A1icia has two built-in web servers and three command line interfaces with which to communicate with the outside world, i.e. you.
 * A1icia is free software, licensed under GPL3.
 
-## Directory
+### Directory
 
 * **[A1icia GitHub Project](https://github.com/markhull/A1icia)**
 
