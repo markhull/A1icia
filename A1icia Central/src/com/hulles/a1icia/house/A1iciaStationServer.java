@@ -22,7 +22,6 @@
 package com.hulles.a1icia.house;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,13 +44,10 @@ import com.hulles.a1icia.api.dialog.DialogSerialization;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.delta.TranscriberDemo;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
-import com.hulles.a1icia.media.MediaFormat;
-import com.hulles.a1icia.media.MediaUtils;
 import com.hulles.a1icia.tools.A1iciaGoogleTranslator;
 import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
@@ -61,7 +57,7 @@ import redis.clients.jedis.Jedis;
 
 /**
  * A1iciaStationServer is responsible for communication with the outside world, notably with
- * A1iciaStation.
+ * A1iciaStations.
  * <p>
  * ALICIA PUBLISHES ON "a1icia:channel:from" and SUBSCRIBES TO "a1icia:channel:to".
  * 
@@ -81,8 +77,6 @@ public final class A1iciaStationServer extends UrHouse {
 	private final A1icianID a1iciaA1icianID;
 	private final A1icianID broadcastID;
 	private final Boolean noPrompts;
-//	private A1iciaGoogleSpeech googleSpeech = null;
-	private final static boolean USEDEEPSPEECH = false;
 	
 	public A1iciaStationServer(EventBus bus, Boolean noPrompts) {
 		super(bus);
@@ -145,8 +139,7 @@ public final class A1iciaStationServer extends UrHouse {
 			prompters = new ArrayList<>();
 		}
 		openSememe = SerialSememe.find("central_startup");
-		stationBroadcast("A1icia Central starting up....", openSememe);
-//		googleSpeech = new A1iciaGoogleSpeech();
+		stationBroadcast("Alicia Central starting up....", openSememe);
 	}
 
 	/**
@@ -158,8 +151,7 @@ public final class A1iciaStationServer extends UrHouse {
 		SerialSememe closeSememe;
 		
 		closeSememe = SerialSememe.find("central_shutdown");
-		stationBroadcast("A1icia Central shutting down....", closeSememe);
-//		googleSpeech.close();
+		stationBroadcast("Alicia Central shutting down....", closeSememe);
 		if (executor != null) {
 			try {
 			    System.out.println("StationServer: attempting to shutdown executor");
@@ -383,23 +375,16 @@ public final class A1iciaStationServer extends UrHouse {
 	private static void speechToText(DialogRequest request, Language lang) {
 		byte[] audioBytes;
 		String audioText = null;
-		Path tempFile;
 		
 		A1iciaUtils.checkNotNull(request);
 		A1iciaUtils.checkNotNull(lang);
 		audioBytes = request.getRequestAudio();
 		if (audioBytes != null) {
-			if (USEDEEPSPEECH) {
-				try {
-					audioText = ExternalAperture.queryDeepSpeech(audioBytes);
-				} catch (Exception ex) {
-					A1iciaUtils.error("A1iciaStationServer: unable to transcribe audio", ex);
-					return;
-				}
-			} else {
-				// Use Sphinx4
-				tempFile = MediaUtils.byteArrayToFile(audioBytes, MediaFormat.WAV);
-				audioText = TranscriberDemo.transcribe(tempFile.toFile());
+			try {
+				audioText = ExternalAperture.queryDeepSpeech(audioBytes);
+			} catch (Exception ex) {
+				A1iciaUtils.error("A1iciaStationServer: unable to transcribe audio", ex);
+				return;
 			}
 	        LOGGER.log(Level.INFO, "StationServer: audioText is \"" + audioText + "\"");
 			if (audioText.length() > 0) {

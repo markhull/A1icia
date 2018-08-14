@@ -40,7 +40,9 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Romeo Room is the game room. Sound clips to the contrary, "Global Thermonuclear War" is not
- * one of them. 
+ * one of them.
+ * 
+ * It is currently just a stub copied from Alpha. We can proceed on it once we nail down conversations.
  * 
  * @author hulles
  *
@@ -96,7 +98,7 @@ public final class RomeoRoom extends UrRoom {
 	@Override
 	public Room getThisRoom() {
 
-		return Room.ALPHA;
+		return Room.ROMEO;
 	}
 
 	/**

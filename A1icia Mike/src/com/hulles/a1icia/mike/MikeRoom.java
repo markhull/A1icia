@@ -88,8 +88,9 @@ import redis.clients.jedis.Jedis;
  */
 public final class MikeRoom extends UrRoom {
 	private final static int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
-	private final static Logger logger = Logger.getLogger("A1iciaMike.MikeRoom");
+	private final static Logger LOGGER = Logger.getLogger("A1iciaMike.MikeRoom");
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = Level.INFO;
 	@SuppressWarnings("unused")
 	private List<String> acknowledgments;
 	private List<String> exclamations;
@@ -151,7 +152,7 @@ public final class MikeRoom extends UrRoom {
 	public static void logAudioFormat(String fileName) {
 		
 		try {
-			logger.log(LOGLEVEL, MediaUtils.getAudioFormatString(fileName));
+			LOGGER.log(LOGLEVEL, MediaUtils.getAudioFormatString(fileName));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -249,7 +250,7 @@ public final class MikeRoom extends UrRoom {
 			existingArtist = mediaFile.getArtist();
 			if (artist != null) {
 				if (existingArtist == null || !existingArtist.equals(artist)) {
-					logger.log(LOGLEVEL, "Updating existing artist = {0} to {1}", new Object[]{existingArtist, artist});
+					LOGGER.log(LOGLEVEL, "Updating existing artist = {0} to {1}", new Object[]{existingArtist, artist});
 					mediaFile.setArtist(artist);
 					updating = true;
 				}
@@ -257,19 +258,19 @@ public final class MikeRoom extends UrRoom {
 			existingTitle = mediaFile.getTitle();
 			if (title != null) {
 				if (existingTitle == null || !existingTitle.equals(title)) {
-					logger.log(LOGLEVEL, "Updating existing title = {0} to {1}", new Object[]{existingTitle, title});
+					LOGGER.log(LOGLEVEL, "Updating existing title = {0} to {1}", new Object[]{existingTitle, title});
 					mediaFile.setTitle(title);
 					updating = true;
 				}
 			}
 			if (mediaFile.getFormat() != MediaFormat.MP3) {
-				logger.log(LOGLEVEL, "Updating media format from " + mediaFile.getFormat() + " to MP3");
+				LOGGER.log(LOGLEVEL, "Updating media format from " + mediaFile.getFormat() + " to MP3");
 				mediaFile.setFormat(MediaFormat.MP3);
 				updating = true;
 			}
 		}
 		if (updating) {
-			logger.log(LOGLEVEL, "Committing change(s)");
+			LOGGER.log(LOGLEVEL, "Committing change(s)");
 			mediaFile.commit();
 		}
 	}
@@ -292,7 +293,7 @@ public final class MikeRoom extends UrRoom {
 				return;
 			}
 			mediaFile.setFileName(fileName);
-			logger.log(LOGLEVEL, "Committing change(s)");
+			LOGGER.log(LOGLEVEL, "Committing change(s)");
 			mediaFile.commit();
 		}
 	}
@@ -889,7 +890,7 @@ public final class MikeRoom extends UrRoom {
 	private static String findMediaFile(String name, List<String> mediaFiles) {
 		
 		for (String fnm : mediaFiles) {
-			logger.log(LOGLEVEL, "findMediaFile : " + fnm);
+			LOGGER.log(LOGLEVEL, "findMediaFile : " + fnm);
 			if (fnm.contains(name)) {
 				return fnm;
 			}
