@@ -86,8 +86,8 @@ import com.hulles.a1icia.tracker.Tracker;
  *
  */
 public final class Controller extends AbstractIdleService {
-	final static Logger logger = Logger.getLogger("A1icia.Controller");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Logger LOGGER = Logger.getLogger("A1icia.Controller");
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 //	private final static int THREADCOUNT = 12;
 	private final AsyncEventBus hallBus;
 	private final ExecutorService busPool;
@@ -318,14 +318,14 @@ public final class Controller extends AbstractIdleService {
 		for (Entry<Service,Long> entry : startupTimes) {
 			startupTime = entry.getValue();
 			totalStartupTime += startupTime;
-			logger.log(Level.INFO, entry.getKey() + " started in " + 
+			LOGGER.log(Level.INFO, entry.getKey() + " started in " + 
 					A1iciaUtils.formatElapsedMillis(startupTime));
 		}
 		// Note that the total of startup times is not the same as the total 
 		//    elapsed startup time thanks to the miracle of parallel processing....
 		// The total of startup times IS useful to compare startup speeds for different 
 		//    servers, however....
-		logger.log(Level.INFO, "Total of startup times is " + 
+		LOGGER.log(Level.INFO, "Total of startup times is " + 
 				A1iciaUtils.formatElapsedMillis(totalStartupTime));
 		
 		// send WHAT_SPARKS request to load sememeRooms
@@ -420,7 +420,7 @@ public final class Controller extends AbstractIdleService {
 				if (pkg != null) {
 					action = (WhatSememesAction) pkg.getActionObject();
 					sememes = action.getSememes();
-					logger.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from " +
+					LOGGER.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from " +
 							fromRoom + ", sememes from action = " + sememes);
 					for (SerialSememe s : sememes) {
 						sememeRooms.put(s, fromRoom);

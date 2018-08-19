@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class EchoAnalysis extends RoomActionObject {
 	private String matchingResult;
@@ -31,7 +31,7 @@ public class EchoAnalysis extends RoomActionObject {
 	
 	public EchoAnalysis(VectorLoad vector) {
 		
-		A1iciaUtils.checkNotNull(vector);
+		SharedUtils.checkNotNull(vector);
 		this.whichVector = vector;
 	}
 	
@@ -48,7 +48,7 @@ public class EchoAnalysis extends RoomActionObject {
 
 	public void setMatchingResult(String result) {
 		
-		A1iciaUtils.checkNotNull(result);
+		SharedUtils.checkNotNull(result);
 		this.matchingResult = result;
 	}
 
@@ -59,7 +59,7 @@ public class EchoAnalysis extends RoomActionObject {
 	
 	public void setAnalogyResult(String result) {
 	
-		A1iciaUtils.checkNotNull(result);
+		SharedUtils.checkNotNull(result);
 		this.analogyResult = result;
 	}
 	

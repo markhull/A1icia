@@ -27,8 +27,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._Nfl6Question;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Nfl6Question extends _Nfl6Question {
     private static final long serialVersionUID = 1L; 
@@ -37,7 +37,7 @@ public class Nfl6Question extends _Nfl6Question {
 		ObjectContext context;
 		Nfl6Question question;
 		
-		A1iciaUtils.checkNotNull(typeID);
+		SharedUtils.checkNotNull(typeID);
 		context = A1iciaApplication.getEntityContext();
 		question = Cayenne.objectForPK(context, Nfl6Question.class, typeID);
 		return question;
@@ -47,7 +47,7 @@ public class Nfl6Question extends _Nfl6Question {
 		ObjectContext context;
 		List<Nfl6Question> dbQuestions;
     	
-    	A1iciaUtils.checkNotNull(question);
+    	SharedUtils.checkNotNull(question);
 		context = A1iciaApplication.getEntityContext();
 		dbQuestions = ObjectSelect
 				.query(Nfl6Question.class)

@@ -27,8 +27,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._AnswerChunk;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class AnswerChunk extends _AnswerChunk {
     private static final long serialVersionUID = 1L; 
@@ -37,7 +37,7 @@ public class AnswerChunk extends _AnswerChunk {
 		ObjectContext context;
 		AnswerChunk item;
 		
-		A1iciaUtils.checkNotNull(chunkID);
+		SharedUtils.checkNotNull(chunkID);
 		context = A1iciaApplication.getEntityContext();
 		item = Cayenne.objectForPK(context, AnswerChunk.class, chunkID);
 		return item;

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.charlie.doccat.CharlieDocCat;
 import com.hulles.a1icia.charlie.ner.CharlieNER;
@@ -36,7 +37,6 @@ import com.hulles.a1icia.room.document.NLPAnalysis;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.SentenceAnalysis;
 import com.hulles.a1icia.tools.A1iciaTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 final public class CharlieDocumentProcessor {
 	private final CharlieParser parser;
@@ -82,7 +82,7 @@ final public class CharlieDocumentProcessor {
 		SentenceAnalysis sentenceAnalysis = null;
 		List<String> defs;
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		input = request.getMessage().trim();
 		if (!input.isEmpty()) {
 			analysis = new NLPAnalysis();
@@ -170,7 +170,7 @@ final public class CharlieDocumentProcessor {
 	 */
 	public static void postProcessAnalysis(NLPAnalysis analysis) {
 		
-		A1iciaUtils.checkNotNull(analysis);
+		SharedUtils.checkNotNull(analysis);
 		for (SentenceAnalysis a : analysis.getSentenceAnalyses()) {
 			CharlieLemmatizer.updateDictionaryLemmata(a.getDictionaryLemmata(), 
 					a.getTokens(), a.getPOSTags());

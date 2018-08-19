@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 final public class FoxtrotPhysicalState {
@@ -88,7 +89,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setSensorValues(Map<String, SensorValue> sensorValues) {
 		
-		A1iciaUtils.checkNotNull(sensorValues);
+		SharedUtils.checkNotNull(sensorValues);
 		this.sensorValues = sensorValues;
 	}
 
@@ -99,7 +100,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setHostName(String hostName) {
 		
-		A1iciaUtils.checkNotNull(hostName);
+		SharedUtils.checkNotNull(hostName);
 		this.hostName = hostName;
 	}
 
@@ -110,7 +111,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setArchitecture(String architecture) {
 		
-		A1iciaUtils.checkNotNull(architecture);
+		SharedUtils.checkNotNull(architecture);
 		this.architecture = architecture;
 	}
 
@@ -120,7 +121,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setOSName(String osName) {
 		
-		A1iciaUtils.checkNotNull(osName);
+		SharedUtils.checkNotNull(osName);
 		this.osName = osName;
 	}
 
@@ -131,7 +132,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setOSVersion(String osVersion) {
 		
-		A1iciaUtils.checkNotNull(osVersion);
+		SharedUtils.checkNotNull(osVersion);
 		this.osVersion = osVersion;
 	}
 
@@ -142,7 +143,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setOSFlavor(String osFlavor) {
 		
-		A1iciaUtils.checkNotNull(osFlavor);
+		SharedUtils.checkNotNull(osFlavor);
 		this.osFlavor = osFlavor;
 	}
 
@@ -153,7 +154,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setUpTimeInSeconds(Long upTime) {
 		
-		A1iciaUtils.checkNotNull(upTime);
+		SharedUtils.checkNotNull(upTime);
 		this.upTimeInSeconds = upTime;
 	}
 
@@ -164,7 +165,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setProcessors(List<Processor> processors) {
 		
-		A1iciaUtils.checkNotNull(processors);
+		SharedUtils.checkNotNull(processors);
 		this.processors = processors;
 	}
 
@@ -175,7 +176,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setTotalMemoryKb(Long totalMemoryKb) {
 		
-		A1iciaUtils.checkNotNull(totalMemoryKb);
+		SharedUtils.checkNotNull(totalMemoryKb);
 		this.totalMemoryKb = totalMemoryKb;
 	}
 
@@ -186,7 +187,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setFreeMemoryKb(Long freeMemoryKb) {
 		
-		A1iciaUtils.checkNotNull(freeMemoryKb);
+		SharedUtils.checkNotNull(freeMemoryKb);
 		this.freeMemoryKb = freeMemoryKb;
 	}
 
@@ -197,7 +198,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setTotalSwapKb(Long totalSwapKb) {
 		
-		A1iciaUtils.checkNotNull(totalSwapKb);
+		SharedUtils.checkNotNull(totalSwapKb);
 		this.totalSwapKb = totalSwapKb;
 	}
 
@@ -208,7 +209,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setFreeSwapKb(Long freeSwapKb) {
 		
-		A1iciaUtils.checkNotNull(freeSwapKb);
+		SharedUtils.checkNotNull(freeSwapKb);
 		this.freeSwapKb = freeSwapKb;
 	}
 
@@ -219,7 +220,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setWebServer(String name) {
 		
-		A1iciaUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(name);
 		this.webServer = name;
 	}
 
@@ -230,7 +231,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerName(String serverName) {
 		
-		A1iciaUtils.nullsOkay(serverName);
+		SharedUtils.nullsOkay(serverName);
 		this.serverName = serverName;
 	}
 
@@ -241,7 +242,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerVersion(String serverVersion) {
 		
-		A1iciaUtils.nullsOkay(serverVersion);
+		SharedUtils.nullsOkay(serverVersion);
 		this.serverVersion = serverVersion;
 	}
 
@@ -252,7 +253,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerUptime(Long serverUptime) {
 		
-		A1iciaUtils.nullsOkay(serverUptime);
+		SharedUtils.nullsOkay(serverUptime);
 		this.serverUptime = serverUptime;
 	}
 
@@ -263,7 +264,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerAccesses(Long serverAccesses) {
 		
-		A1iciaUtils.checkNotNull(serverAccesses);
+		SharedUtils.checkNotNull(serverAccesses);
 		this.serverAccesses = serverAccesses;
 	}
 
@@ -274,7 +275,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setServerKBytes(Long serverKBytes) {
 		
-		A1iciaUtils.nullsOkay(serverKBytes);
+		SharedUtils.nullsOkay(serverKBytes);
 		this.serverKBytes = serverKBytes;
 	}
 
@@ -285,7 +286,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJavaVendor(String javaVendor) {
 		
-		A1iciaUtils.checkNotNull(javaVendor);
+		SharedUtils.checkNotNull(javaVendor);
 		this.javaVendor = javaVendor;
 	}
 
@@ -296,7 +297,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJavaVersion(String javaVersion) {
 		
-		A1iciaUtils.checkNotNull(javaVersion);
+		SharedUtils.checkNotNull(javaVersion);
 		this.javaVersion = javaVersion;
 	}
 
@@ -307,7 +308,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJavaHome(String javaHome) {
 		
-		A1iciaUtils.checkNotNull(javaHome);
+		SharedUtils.checkNotNull(javaHome);
 		this.javaHome = javaHome;
 	}
 
@@ -318,7 +319,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJavaUserHome(String userHome) {
 		
-		A1iciaUtils.checkNotNull(userHome);
+		SharedUtils.checkNotNull(userHome);
 		this.javaUserHome = userHome;
 	}
 
@@ -329,7 +330,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJavaUserName(String userName) {
 		
-		A1iciaUtils.checkNotNull(userName);
+		SharedUtils.checkNotNull(userName);
 		this.javaUserName = userName;
 	}
 
@@ -340,7 +341,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJVMProcessors(Integer jvmProcessors) {
 		
-		A1iciaUtils.checkNotNull(jvmProcessors);
+		SharedUtils.checkNotNull(jvmProcessors);
 		this.jvmProcessors = jvmProcessors;
 	}
 
@@ -351,7 +352,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJVMFreeMemoryKb(Long jvmFreeMemoryKb) {
 		
-		A1iciaUtils.checkNotNull(jvmFreeMemoryKb);
+		SharedUtils.checkNotNull(jvmFreeMemoryKb);
 		this.jvmFreeMemoryKb = jvmFreeMemoryKb;
 	}
 
@@ -362,7 +363,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJVMTotalMemoryKb(Long jvmTotalMemoryKb) {
 		
-		A1iciaUtils.checkNotNull(jvmTotalMemoryKb);
+		SharedUtils.checkNotNull(jvmTotalMemoryKb);
 		this.jvmTotalMemoryKb = jvmTotalMemoryKb;
 	}
 
@@ -373,7 +374,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setJVMMaxMemoryKb(Long jvmMaxMemoryKb) {
 		
-		A1iciaUtils.checkNotNull(jvmMaxMemoryKb);
+		SharedUtils.checkNotNull(jvmMaxMemoryKb);
 		this.jvmMaxMemoryKb = jvmMaxMemoryKb;
 	}
 
@@ -384,7 +385,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbProductName(String dbProductName) {
 		
-		A1iciaUtils.checkNotNull(dbProductName);
+		SharedUtils.checkNotNull(dbProductName);
 		this.dbProductName = dbProductName;
 	}
 
@@ -395,7 +396,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbProductVersion(String dbProductVersion) {
 		
-		A1iciaUtils.checkNotNull(dbProductVersion);
+		SharedUtils.checkNotNull(dbProductVersion);
 		this.dbProductVersion = dbProductVersion;
 	}
 
@@ -406,7 +407,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbDriverName(String dbDriverName) {
 		
-		A1iciaUtils.checkNotNull(dbDriverName);
+		SharedUtils.checkNotNull(dbDriverName);
 		this.dbDriverName = dbDriverName;
 	}
 
@@ -417,7 +418,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbDriverVersion(String dbDriverVersion) {
 		
-		A1iciaUtils.checkNotNull(dbDriverVersion);
+		SharedUtils.checkNotNull(dbDriverVersion);
 		this.dbDriverVersion = dbDriverVersion;
 	}
 
@@ -428,7 +429,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbURL(String dbURL) {
 		
-		A1iciaUtils.checkNotNull(dbURL);
+		SharedUtils.checkNotNull(dbURL);
 		this.dbURL = dbURL;
 	}
 
@@ -439,7 +440,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setDbUserName(String dbUserName) {
 		
-		A1iciaUtils.checkNotNull(dbUserName);
+		SharedUtils.checkNotNull(dbUserName);
 		this.dbUserName = dbUserName;
 	}
 
@@ -450,7 +451,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setLanHosts(Set<String> lanHosts) {
 		
-		A1iciaUtils.checkNotNull(lanHosts);
+		SharedUtils.checkNotNull(lanHosts);
 		this.lanHosts = lanHosts;
 	}
 
@@ -461,7 +462,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setNetworkDevices(List<NetworkDevice> networkDevices) {
 		
-		A1iciaUtils.checkNotNull(networkDevices);
+		SharedUtils.checkNotNull(networkDevices);
 		this.networkDevices = networkDevices;
 	}
 
@@ -472,7 +473,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setFileSystems(List<FoxtrotFS> fileSystems) {
 		
-		A1iciaUtils.checkNotNull(fileSystems);
+		SharedUtils.checkNotNull(fileSystems);
 		this.fileSystems = fileSystems;
 	}
 	
@@ -483,7 +484,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setHaveInternet(Boolean haveInternet) {
 		
-		A1iciaUtils.checkNotNull(haveInternet);
+		SharedUtils.checkNotNull(haveInternet);
 		this.haveInternet = haveInternet;
 	}
 
@@ -494,7 +495,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setHaveWebServer(Boolean haveServer) {
 		
-		A1iciaUtils.checkNotNull(haveServer);
+		SharedUtils.checkNotNull(haveServer);
 		this.haveWebServer = haveServer;
 	}
 
@@ -505,7 +506,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setHaveTomcat(Boolean haveTomcat) {
 		
-		A1iciaUtils.checkNotNull(haveTomcat);
+		SharedUtils.checkNotNull(haveTomcat);
 		this.haveTomcat = haveTomcat;
 	}
 
@@ -516,7 +517,7 @@ final public class FoxtrotPhysicalState {
 
 	public void setHaveDatabase(Boolean haveDatabase) {
 		
-		A1iciaUtils.checkNotNull(haveDatabase);
+		SharedUtils.checkNotNull(haveDatabase);
 		this.haveDatabase = haveDatabase;
 	}
 
@@ -679,7 +680,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setDeviceName(String deviceName) {
 			
-			A1iciaUtils.checkNotNull(deviceName);
+			SharedUtils.checkNotNull(deviceName);
 			this.deviceName = deviceName;
 		}
 		
@@ -690,7 +691,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setTransmitKb(Long transmitKb) {
 			
-			A1iciaUtils.checkNotNull(transmitKb);
+			SharedUtils.checkNotNull(transmitKb);
 			this.transmitKb = transmitKb;
 		}
 		
@@ -701,7 +702,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setReceiveKb(Long receiveKb) {
 			
-			A1iciaUtils.checkNotNull(receiveKb);
+			SharedUtils.checkNotNull(receiveKb);
 			this.receiveKb = receiveKb;
 		}
 		
@@ -722,7 +723,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setFsName(String fsName) {
 			
-			A1iciaUtils.checkNotNull(fsName);
+			SharedUtils.checkNotNull(fsName);
 			this.fsName = fsName;
 		}
 		
@@ -733,7 +734,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setTotalSpaceKb(Long totalSpaceKb) {
 			
-			A1iciaUtils.checkNotNull(totalSpaceKb);
+			SharedUtils.checkNotNull(totalSpaceKb);
 			this.totalSpaceKb = totalSpaceKb;
 		}
 		
@@ -744,7 +745,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setUsedSpaceKb(Long usedSpaceKb) {
 			
-			A1iciaUtils.checkNotNull(usedSpaceKb);
+			SharedUtils.checkNotNull(usedSpaceKb);
 			this.usedSpaceKb = usedSpaceKb;
 		}
 		
@@ -755,7 +756,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setFreeSpaceKb(Long freeSpaceKb) {
 			
-			A1iciaUtils.checkNotNull(freeSpaceKb);
+			SharedUtils.checkNotNull(freeSpaceKb);
 			this.freeSpaceKb = freeSpaceKb;
 		}
 		
@@ -766,7 +767,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setUsedPercent(Integer usedPercent) {
 			
-			A1iciaUtils.checkNotNull(usedPercent);
+			SharedUtils.checkNotNull(usedPercent);
 			this.usedPercent = usedPercent;
 		}
 		
@@ -777,7 +778,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setMountPoint(String mountPoint) {
 			
-			A1iciaUtils.checkNotNull(mountPoint);
+			SharedUtils.checkNotNull(mountPoint);
 			this.mountPoint = mountPoint;
 		}
 
@@ -796,7 +797,7 @@ final public class FoxtrotPhysicalState {
 
 		public void setChip(String chip) {
 			
-			A1iciaUtils.checkNotNull(chip);
+			SharedUtils.checkNotNull(chip);
 			this.chip = chip;
 		}
 		
@@ -807,7 +808,7 @@ final public class FoxtrotPhysicalState {
 
 		public void setLabel(String label) {
 			
-			A1iciaUtils.checkNotNull(label);
+			SharedUtils.checkNotNull(label);
 			this.label = label;
 		}
 		
@@ -818,7 +819,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setValue(Float value) {
 			
-			A1iciaUtils.checkNotNull(value);
+			SharedUtils.checkNotNull(value);
 			this.value = value;
 		}
 		
@@ -829,7 +830,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setAlarm(Boolean alarm) {
 			
-			A1iciaUtils.checkNotNull(alarm);
+			SharedUtils.checkNotNull(alarm);
 			this.alarm = alarm;
 		}
 		
@@ -847,7 +848,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setModelName(String modelName) {
 			
-			A1iciaUtils.checkNotNull(modelName);
+			SharedUtils.checkNotNull(modelName);
 			this.modelName = modelName;
 		}
 		
@@ -858,7 +859,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setProcessorNumber(Integer processorNumber) {
 			
-			A1iciaUtils.checkNotNull(processorNumber);
+			SharedUtils.checkNotNull(processorNumber);
 			this.processorNumber = processorNumber;
 		}
 		
@@ -869,7 +870,7 @@ final public class FoxtrotPhysicalState {
 		
 		public void setCpuMhz(Float cpuMhz) {
 			
-			A1iciaUtils.checkNotNull(cpuMhz);
+			SharedUtils.checkNotNull(cpuMhz);
 			this.cpuMhz = cpuMhz;
 		}
 		

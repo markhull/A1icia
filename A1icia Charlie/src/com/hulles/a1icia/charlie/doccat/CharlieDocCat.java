@@ -21,22 +21,20 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.doccat;
 
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import java.net.MalformedURLException;
 
 import opennlp.tools.doccat.DoccatFactory;
 import opennlp.tools.doccat.DoccatModel;
@@ -48,7 +46,7 @@ import opennlp.tools.util.TrainingParameters;
 
 final public class CharlieDocCat {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaCharlie.CharlieDocCat");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final DocumentCategorizerME categorizer;
 	
 	public CharlieDocCat() {
@@ -77,7 +75,7 @@ final public class CharlieDocCat {
 		double[] outcomes;
 		String bestCategory;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outcomes = categorizer.categorize(tokenizedInput);
 		bestCategory = categorizer.getBestCategory(outcomes);
 		LOGGER.log(LOGLEVEL, "DocCat Results:");
@@ -92,7 +90,7 @@ final public class CharlieDocCat {
 		DoccatFactory factory;
 		TrainingParameters parms;
 		
-		A1iciaUtils.checkNotNull(samples);
+		SharedUtils.checkNotNull(samples);
 		factory = new DoccatFactory();
 		parms = TrainingParameters.defaultParams();
 		parms.put(TrainingParameters.CUTOFF_PARAM, Integer.toString(1));
@@ -107,8 +105,8 @@ final public class CharlieDocCat {
 	
 	public static void saveModel(DoccatModel model, String modelFileName) {
 		
-		A1iciaUtils.checkNotNull(model);
-		A1iciaUtils.checkNotNull(modelFileName);
+		SharedUtils.checkNotNull(model);
+		SharedUtils.checkNotNull(modelFileName);
 		try (OutputStream modelOut = new BufferedOutputStream(new FileOutputStream(modelFileName))){
 			model.serialize(modelOut);
 		} catch (IOException e) {

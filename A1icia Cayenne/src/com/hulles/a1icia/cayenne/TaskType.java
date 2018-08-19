@@ -28,8 +28,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._TaskType;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class TaskType extends _TaskType {
     private static final long serialVersionUID = 1L; 
@@ -38,7 +38,7 @@ public class TaskType extends _TaskType {
 		ObjectContext context;
 		TaskType type;
 		
-		A1iciaUtils.checkNotNull(typeID);
+		SharedUtils.checkNotNull(typeID);
 		context = A1iciaApplication.getEntityContext();
 		type = Cayenne.objectForPK(context, TaskType.class, typeID);
 		return type;

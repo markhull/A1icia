@@ -34,10 +34,9 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Class that scans ip local network. Any address in the range 192.168.xxx.xxx is
@@ -61,7 +60,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 public final class LanScanner {
 	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LanScanner");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 //	private final static int THREADCOUNT = 8000;
 	private final String submask;
 	private final ExecutorService scanExecutor;
@@ -78,7 +77,7 @@ public final class LanScanner {
 	LanScanner(String ip) {
 		String[] ipBytes;
 		
-		A1iciaUtils.checkNotNull(ip);
+		SharedUtils.checkNotNull(ip);
 		liveHosts = new HashSet<>();		
 //		scanExecutor = Executors.newFixedThreadPool(THREADCOUNT);
 		scanExecutor = Executors.newCachedThreadPool();

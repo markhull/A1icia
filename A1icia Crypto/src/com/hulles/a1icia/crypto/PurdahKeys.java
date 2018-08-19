@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.api.shared;
+package com.hulles.a1icia.crypto;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,7 +32,9 @@ import javax.crypto.SecretKey;
 import com.hulles.a1icia.api.jebus.JebusApiBible;
 import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
-import com.hulles.a1icia.crypto.A1iciaCrypto;
+import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.Serialization;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.Jedis;
 

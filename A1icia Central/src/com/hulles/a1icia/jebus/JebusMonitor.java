@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -41,8 +40,8 @@ import redis.clients.jedis.Jedis;
  *
  */
 final class JebusMonitor implements Closeable {
-	private final static Logger logger = Logger.getLogger("A1icia.JebusMonitor");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Logger LOGGER = Logger.getLogger("A1icia.JebusMonitor");
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	final JebusPool jebusPool;
 	JebusListener listener = null;
 	private ExecutorService executor;
@@ -73,7 +72,7 @@ final class JebusMonitor implements Closeable {
 			doohickey = " <= ";
 		}
 		// TODO actually log the DialogHeader and Dialog after deserializing them
-		logger.log(LOGLEVEL, getChannelString(channel, doohickey, "byte[]"));
+		LOGGER.log(LOGLEVEL, getChannelString(channel, doohickey, "byte[]"));
 	}
 	/**
 	 * Log traffic on a Jebus channel.
@@ -91,7 +90,7 @@ final class JebusMonitor implements Closeable {
 		} else {
 			doohickey = " <= ";
 		}
-		logger.log(LOGLEVEL, getChannelString(channel, doohickey, text));
+		LOGGER.log(LOGLEVEL, getChannelString(channel, doohickey, text));
 	}
 
 	/**

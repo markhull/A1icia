@@ -27,8 +27,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._Lemma;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Lemma extends _Lemma {
 	private final static String DUMMY_LEMMA = "EDIT_ME";
@@ -38,7 +38,7 @@ public class Lemma extends _Lemma {
 		ObjectContext context;
 		Lemma lemma;
 		
-		A1iciaUtils.checkNotNull(lemmaID);
+		SharedUtils.checkNotNull(lemmaID);
 		context = A1iciaApplication.getEntityContext();
 		lemma = Cayenne.objectForPK(context, Lemma.class, lemmaID);
 		return lemma;
@@ -48,9 +48,9 @@ public class Lemma extends _Lemma {
 		ObjectContext context;
 		Lemma dbLemma = null;
 		
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(pos);
-		A1iciaUtils.checkNotNull(lemma);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(pos);
+		SharedUtils.checkNotNull(lemma);
 		context = A1iciaApplication.getEntityContext();
 		dbLemma = ObjectSelect
 				.query(Lemma.class)
@@ -84,8 +84,8 @@ public class Lemma extends _Lemma {
 		ObjectContext context;
 		List<Lemma> dbLemmas = null;
 		
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(pos);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(pos);
 		context = A1iciaApplication.getEntityContext();
 		dbLemmas = ObjectSelect
 				.query(Lemma.class)

@@ -39,7 +39,6 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
@@ -59,7 +58,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public abstract class UrRoom extends AbstractIdleService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.UrRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	private final EventBus hall;
 	private final ImmutableSet<SerialSememe> roomSememes;

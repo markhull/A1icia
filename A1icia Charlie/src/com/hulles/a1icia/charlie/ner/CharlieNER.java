@@ -21,19 +21,17 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.ner;
 
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.charlie.ner.CharlieDictionary.DictionaryType;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import java.net.MalformedURLException;
 
 import opennlp.tools.dictionary.Dictionary;
 import opennlp.tools.namefind.DictionaryNameFinder;
@@ -45,7 +43,7 @@ import opennlp.tools.util.Span;
 
 final public class CharlieNER {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaCharlie.CharlieNER");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final DictionaryNameFinder myriaOrganizationFinder;
 	private final DictionaryNameFinder myriaLocationFinder;
 	private final DictionaryNameFinder myriaCitizenFinder;
@@ -134,7 +132,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = personFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -147,7 +145,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = locationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -160,7 +158,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = organizationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -173,7 +171,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = dateFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -186,7 +184,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = timeFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -199,7 +197,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = moneyFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -212,7 +210,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = percentageFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -225,7 +223,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = myriaCitizenFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -238,7 +236,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = myriaLocationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
@@ -251,7 +249,7 @@ final public class CharlieNER {
 		Span[] outputSpans;
 		String[] outputStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(tokenizedInput);
 		outputSpans = myriaOrganizationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {

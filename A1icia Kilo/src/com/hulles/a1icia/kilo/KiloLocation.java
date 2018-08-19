@@ -29,8 +29,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import com.hulles.a1icia.api.shared.PurdahKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
+import com.hulles.a1icia.crypto.PurdahKeys;
+import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 public class KiloLocation {

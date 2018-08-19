@@ -32,9 +32,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.echo.EchoWordToVecException;
 import com.hulles.a1icia.tools.A1iciaTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * WordToVecSearch is the class that uses the loaded word2vec BIN file for word matches 
@@ -66,7 +66,7 @@ final public class WordToVecSearch {
 	public void loadFile(String fileName) {
 		WordToVecLoader loader;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		loader = new WordToVecLoader();
 		logger.log(LOGLEVEL, "WordToVecSearch: about to load w2v file");
 		loader.load(fileName);
@@ -101,9 +101,9 @@ final public class WordToVecSearch {
 		float[] result;
 		List<WordDistance> matches;
 
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(vectorMap);
-		A1iciaUtils.checkNotNull(maxNumberOfMatches);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(vectorMap);
+		SharedUtils.checkNotNull(maxNumberOfMatches);
 		A1iciaTimer.startTimer("MATCHES");
 		result = vectorMap.get(word);
 		if (result == null) {
@@ -139,11 +139,11 @@ final public class WordToVecSearch {
 		List<String> ignores;
 		List<WordDistance> matches;
 
-		A1iciaUtils.checkNotNull(word1);
-		A1iciaUtils.checkNotNull(word2);
-		A1iciaUtils.checkNotNull(word3);
-		A1iciaUtils.checkNotNull(vectorMap);
-		A1iciaUtils.checkNotNull(maxNumberOfMatches);
+		SharedUtils.checkNotNull(word1);
+		SharedUtils.checkNotNull(word2);
+		SharedUtils.checkNotNull(word3);
+		SharedUtils.checkNotNull(vectorMap);
+		SharedUtils.checkNotNull(maxNumberOfMatches);
 		A1iciaTimer.startTimer("ANALOGY");
 		result1 = vectorMap.get(word1);
 		if (result1 == null) {
@@ -186,8 +186,8 @@ final public class WordToVecSearch {
 		float[] result;
 		int vectorSize;
 		
-		A1iciaUtils.checkNotNull(words);
-		A1iciaUtils.checkNotNull(vectorMap);
+		SharedUtils.checkNotNull(words);
+		SharedUtils.checkNotNull(vectorMap);
 		result = grabAMapValue(vectorMap);
 		vectorSize = result.length;
 		vectorSum = new double[vectorSize];
@@ -216,8 +216,8 @@ final public class WordToVecSearch {
 	public static float[] getVector(String word, Map<String, float[]> vectorMap) {
 		float[] result;
 		
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(vectorMap);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(vectorMap);
 		result = vectorMap.get(word);
 		return result;
 	}
@@ -245,10 +245,10 @@ final public class WordToVecSearch {
 		WordDistance wDistance;
 		Double leastBestDistance = 0.0;
 		
-		A1iciaUtils.checkNotNull(ignores);
-		A1iciaUtils.checkNotNull(thisVector);
-		A1iciaUtils.checkNotNull(vectorMap);
-		A1iciaUtils.checkNotNull(maxNumberOfMatches);
+		SharedUtils.checkNotNull(ignores);
+		SharedUtils.checkNotNull(thisVector);
+		SharedUtils.checkNotNull(vectorMap);
+		SharedUtils.checkNotNull(maxNumberOfMatches);
 		entrySet = vectorMap.entrySet();
 		bestMatches = new ArrayList<>(maxNumberOfMatches);
 		wDistance = new WordDistance("init", 0.0);
@@ -286,9 +286,9 @@ final public class WordToVecSearch {
 		WordDistance wordDistance;
 		WordDistance newWordDistance;
 		
-//		A1iciaUtils.checkNotNull(distance);
-//		A1iciaUtils.checkNotNull(distances);
-//		A1iciaUtils.checkNotNull(word);
+//		SharedUtils.checkNotNull(distance);
+//		SharedUtils.checkNotNull(distances);
+//		SharedUtils.checkNotNull(word);
 		for (int listIx = 0; listIx < bestMatches.size(); listIx++) {
 			wordDistance = bestMatches.get(listIx);
 			if (distance > wordDistance.getDistance()) {
@@ -311,8 +311,8 @@ final public class WordToVecSearch {
 	private static Double calculateDistance(float[] from, float[] to) {
 		double sum = 0.0;
 		
-//		A1iciaUtils.checkNotNull(from);
-//		A1iciaUtils.checkNotNull(to);
+//		SharedUtils.checkNotNull(from);
+//		SharedUtils.checkNotNull(to);
 //		if (from.length != to.length) {
 //			throw new IllegalArgumentException();
 //		}
@@ -331,7 +331,7 @@ final public class WordToVecSearch {
 	public static String formatResult(List<WordDistance> matches) {
 		StringBuilder sb;
 		
-		A1iciaUtils.checkNotNull(matches);
+		SharedUtils.checkNotNull(matches);
 		sb = new StringBuilder();
 		for (WordDistance match : matches) {
 			if (match.getToWord().equals("init")) {
@@ -352,7 +352,7 @@ final public class WordToVecSearch {
 		Collection<E> values;
 		Iterator<E> iter;
 		
-		A1iciaUtils.checkNotNull(map);
+		SharedUtils.checkNotNull(map);
 		if (map.isEmpty()) {
 			return null;
 		}

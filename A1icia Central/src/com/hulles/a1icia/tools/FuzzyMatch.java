@@ -174,7 +174,7 @@ public class FuzzyMatch {
 		
 		distance = levDistance.apply(s1, s2);
 		ratio = ((double) distance) / (Math.max(s1.length(), s2.length()));
-		return 100 - new Double(ratio*100).intValue();		
+		return 100 - ((Double)(ratio*100)).intValue();		
 	}
 	
 	public static String escapeString(String token) {

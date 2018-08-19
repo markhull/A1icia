@@ -28,8 +28,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._OwmCity;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class OwmCity extends _OwmCity {
     private static final long serialVersionUID = 1L; 
@@ -38,7 +38,7 @@ public class OwmCity extends _OwmCity {
 		ObjectContext context;
 		OwmCity owmCity;
 		
-		A1iciaUtils.checkNotNull(typeID);
+		SharedUtils.checkNotNull(typeID);
 		context = A1iciaApplication.getEntityContext();
 		owmCity = Cayenne.objectForPK(context, OwmCity.class, typeID);
 		return owmCity;
@@ -48,7 +48,7 @@ public class OwmCity extends _OwmCity {
 		ObjectContext context;
 		OwmCity dbOwnCity;
     	
-    	A1iciaUtils.checkNotNull(owmId);
+    	SharedUtils.checkNotNull(owmId);
 		context = A1iciaApplication.getEntityContext();
 		dbOwnCity = ObjectSelect
 				.query(OwmCity.class)
@@ -61,7 +61,7 @@ public class OwmCity extends _OwmCity {
 		ObjectContext context;
     	List<OwmCity> matches;
     	
-    	A1iciaUtils.checkNotNull(cityName);
+    	SharedUtils.checkNotNull(cityName);
 		context = A1iciaApplication.getEntityContext();
 		matches = ObjectSelect
 				.query(OwmCity.class)
@@ -74,7 +74,7 @@ public class OwmCity extends _OwmCity {
 		ObjectContext context;
     	long matches;
     	
-    	A1iciaUtils.checkNotNull(cityName);
+    	SharedUtils.checkNotNull(cityName);
 		context = A1iciaApplication.getEntityContext();
 		matches = ObjectSelect
 				.query(OwmCity.class)

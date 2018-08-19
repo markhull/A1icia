@@ -30,9 +30,9 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._MediaFile;
 import com.hulles.a1icia.media.MediaFormat;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class MediaFile extends _MediaFile {
     private static final long serialVersionUID = 1L; 
@@ -43,7 +43,7 @@ public class MediaFile extends _MediaFile {
 		ObjectContext context;
 		MediaFile mediaFile;
 
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		context = A1iciaApplication.getEntityContext();
 		mediaFile = ObjectSelect
 				.query(MediaFile.class)
@@ -55,7 +55,7 @@ public class MediaFile extends _MediaFile {
 		ObjectContext context;
 		MediaFile mediaFile;
 		
-		A1iciaUtils.checkNotNull(mediaFileID);
+		SharedUtils.checkNotNull(mediaFileID);
 		context = A1iciaApplication.getEntityContext();
 		mediaFile = Cayenne.objectForPK(context, MediaFile.class, mediaFileID);
 		return mediaFile;
@@ -77,7 +77,7 @@ public class MediaFile extends _MediaFile {
 		ObjectContext context;
 		List<MediaFile> dbMediaFiles = null;
 		
-		A1iciaUtils.checkNotNull(artist);
+		SharedUtils.checkNotNull(artist);
 		context = A1iciaApplication.getEntityContext();
 		dbMediaFiles = ObjectSelect
 				.query(MediaFile.class)
@@ -89,7 +89,7 @@ public class MediaFile extends _MediaFile {
 		ObjectContext context;
 		List<MediaFile> dbMediaFiles = null;
 		
-		A1iciaUtils.checkNotNull(format);
+		SharedUtils.checkNotNull(format);
 		context = A1iciaApplication.getEntityContext();
 		dbMediaFiles = ObjectSelect
 				.query(MediaFile.class)
@@ -162,7 +162,7 @@ public class MediaFile extends _MediaFile {
 		ObjectContext context;
 		MediaFile dbMediaFile = null;
 		
-		A1iciaUtils.checkNotNull(title);
+		SharedUtils.checkNotNull(title);
 		context = A1iciaApplication.getEntityContext();
 		dbMediaFile = ObjectSelect
 				.query(MediaFile.class)

@@ -28,8 +28,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._NamedTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class NamedTimer extends _NamedTimer {
     private static final long serialVersionUID = 1L; 
@@ -38,7 +38,7 @@ public class NamedTimer extends _NamedTimer {
 		ObjectContext context;
 		NamedTimer timer;
 
-		A1iciaUtils.checkNotNull(timerName);
+		SharedUtils.checkNotNull(timerName);
 		context = A1iciaApplication.getEntityContext();
 		timer = ObjectSelect
 				.query(NamedTimer.class)
@@ -50,7 +50,7 @@ public class NamedTimer extends _NamedTimer {
 		ObjectContext context;
 		NamedTimer timer;
 		
-		A1iciaUtils.checkNotNull(timerID);
+		SharedUtils.checkNotNull(timerID);
 		context = A1iciaApplication.getEntityContext();
 		timer = Cayenne.objectForPK(context, NamedTimer.class, timerID);
 		return timer;

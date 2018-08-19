@@ -21,20 +21,19 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.doccat;
 
-import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.charlie.parse.CharlieParser;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import java.net.MalformedURLException;
 
 import opennlp.tools.doccat.DocumentSample;
 
@@ -43,7 +42,7 @@ final public class DocumentSampleGenerator {
 	
 	public DocumentSampleGenerator(CharlieParser parser) {
 		
-		A1iciaUtils.checkNotNull(parser);
+		SharedUtils.checkNotNull(parser);
 		this.parser = parser;
 	}
 	

@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.io.MoreFiles;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -45,7 +46,7 @@ public final class FoxtrotUtils {
 		Path filePath;
 		String out = null;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		filePath = Paths.get(fileName);
 		if (!Files.exists(filePath)) {
 			return null;
@@ -63,7 +64,7 @@ public final class FoxtrotUtils {
 		List<String> results = null;
 		Path filePath;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		filePath = Paths.get(fileName);
 		if (!Files.exists(filePath)) {
 			return null;
@@ -83,8 +84,8 @@ public final class FoxtrotUtils {
 		Matcher matcher;
 		String firstMatch;
 		
-		A1iciaUtils.checkNotNull(pattern);
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(pattern);
+		SharedUtils.checkNotNull(fileName);
 		result = getStringFromFile(fileName);
 		if (result == null) {
 			return null;
@@ -101,7 +102,7 @@ public final class FoxtrotUtils {
 		Process proc;
 		int retVal;
 		
-		A1iciaUtils.checkNotNull(cmd);
+		SharedUtils.checkNotNull(cmd);
 		builder = new ProcessBuilder(cmd);
 		try {
 			proc = builder.start();
@@ -125,7 +126,7 @@ public final class FoxtrotUtils {
 	}
 	static int statCommand(String cmd) {
 		
-		A1iciaUtils.checkNotNull(cmd);
+		SharedUtils.checkNotNull(cmd);
 		return statCommand(cmd.split(" "));
 	}
 	
@@ -137,7 +138,7 @@ public final class FoxtrotUtils {
 		char[] charBuffer;
 		int bufLen;
 		
-		A1iciaUtils.checkNotNull(cmd);
+		SharedUtils.checkNotNull(cmd);
 		builder = new ProcessBuilder(cmd);
 		builder.redirectErrorStream(false); // don't merge stderr w/ stdout
 		try {

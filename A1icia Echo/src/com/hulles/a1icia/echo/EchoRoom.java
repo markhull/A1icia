@@ -28,10 +28,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.echo.EchoAnalysis.VectorLoad;
 import com.hulles.a1icia.echo.w2v.WordDistance;
@@ -43,7 +43,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Echo Room analyzes input with the venerable Word2Vec processes. 
@@ -53,7 +52,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public final class EchoRoom extends UrRoom {
 	final static Logger LOGGER = Logger.getLogger("A1iciaEcho.EchoRoom");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static String DISTANCE_FORMAT = "(%.4f)";
 	final static VectorLoad WHICHLOAD = VectorLoad.LITTLEGINA;
 	final WordToVecSearch searcher;
@@ -68,7 +67,7 @@ public final class EchoRoom extends UrRoom {
 	public String matchWordOrPhrase(String clientMsg) {
 		List<WordDistance> matches;
 		
-		A1iciaUtils.checkNotNull(clientMsg);
+		SharedUtils.checkNotNull(clientMsg);
 		if (searcher == null) {
 			return null;
 		}
@@ -83,9 +82,9 @@ public final class EchoRoom extends UrRoom {
 	public String finishAnalogy(String word1, String word2, String word3) {
 		List<WordDistance> matches;
 		
-		A1iciaUtils.checkNotNull(word1);
-		A1iciaUtils.checkNotNull(word2);
-		A1iciaUtils.checkNotNull(word3);
+		SharedUtils.checkNotNull(word1);
+		SharedUtils.checkNotNull(word2);
+		SharedUtils.checkNotNull(word3);
 		if (searcher == null) {
 			return null;
 		}
@@ -194,8 +193,8 @@ public final class EchoRoom extends UrRoom {
 		String wordB;
 		String wordC;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		analysis = new EchoAnalysis(WHICHLOAD);
 		analysisRequest = (WordMatchingRequest) request.getRoomObject();

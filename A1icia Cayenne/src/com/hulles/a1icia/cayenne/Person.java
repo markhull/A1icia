@@ -37,15 +37,15 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
 
+import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.Gender;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.UserType;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.auto._Person;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
 import com.hulles.a1icia.media.MediaUtils;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Person extends _Person {
     private static final long serialVersionUID = 1L;
@@ -65,14 +65,14 @@ public class Person extends _Person {
     
     public static Person findPerson(Integer personID) {
 
-		A1iciaUtils.checkNotNull(personID);
+		SharedUtils.checkNotNull(personID);
 		return Cayenne.objectForPK(A1iciaApplication.getEntityContext(), Person.class, personID);
     }
     public static Person findPerson(SerialUUID<SerialPerson> uuid) {
 		Query query;
 		ObjectContext context;
 
-		A1iciaUtils.checkNotNull(uuid);
+		SharedUtils.checkNotNull(uuid);
 		context = A1iciaApplication.getEntityContext();
 		query = ObjectSelect
 				.query(Person.class)
@@ -83,7 +83,7 @@ public class Person extends _Person {
 		Query query;
 		ObjectContext context;
 
-		A1iciaUtils.checkNotNull(userName);
+		SharedUtils.checkNotNull(userName);
 		context = A1iciaApplication.getEntityContext();
 		query = ObjectSelect
 				.query(Person.class)
@@ -95,7 +95,7 @@ public class Person extends _Person {
 		Query query;
 		ObjectContext context;
 
-		A1iciaUtils.checkNotNull(email);
+		SharedUtils.checkNotNull(email);
 		context = A1iciaApplication.getEntityContext();
 		query = ObjectSelect
 				.query(Person.class)
@@ -120,7 +120,7 @@ public class Person extends _Person {
 		ObjectContext context;
 		List<Person> persons;
 
-		A1iciaUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(name);
 		context = A1iciaApplication.getEntityContext();
 		persons = ObjectSelect
 				.query(Person.class)
@@ -145,7 +145,7 @@ public class Person extends _Person {
 			try {
 				image = MediaUtils.byteArrayToImage(imageBytes);
 			} catch (IOException e) {
-				throw new A1iciaException("Person: can't restore image from bytes", e);
+				throw new A1iciaAPIException("Person: can't restore image from bytes", e);
 			}
 		}
 		return image;
@@ -154,14 +154,14 @@ public class Person extends _Person {
 	public void setAvatar(Image image) {
         byte[] imageBytes;
 
-        A1iciaUtils.nullsOkay(image);
+        SharedUtils.nullsOkay(image);
         if (image == null) {
         	this.setAvatarBytes(null);
         } else {
             try {
 				imageBytes = MediaUtils.imageToByteArray(image);
 			} catch (IOException e) {
-				throw new A1iciaException("Person: can't convert image to bytes", e);
+				throw new A1iciaAPIException("Person: can't convert image to bytes", e);
 			}
             this.setAvatarBytes(imageBytes);
         }
@@ -179,7 +179,7 @@ public class Person extends _Person {
 	
 	public void setGender(Gender gender) {
 		
-		A1iciaUtils.nullsOkay(gender);
+		SharedUtils.nullsOkay(gender);
 		if (gender == null) {
 			this.setGender(null);
 			return;
@@ -200,7 +200,7 @@ public class Person extends _Person {
     public void setUserType(UserType type) {
     	Integer userTypeID;
     	
-    	A1iciaUtils.checkNotNull(type);
+    	SharedUtils.checkNotNull(type);
     	userTypeID = type.getStoreID();
     	this.setUserTypeId(userTypeID);
     }
@@ -272,7 +272,7 @@ public class Person extends _Person {
     	String hashedPassword;
     	boolean okay;
 
-    	A1iciaUtils.checkNotNull(pword);
+    	SharedUtils.checkNotNull(pword);
     	hashedPassword = this.getPassword();
     	okay = A1iciaCrypto.checkPassword(pword, hashedPassword);
     	return okay;
@@ -283,7 +283,7 @@ public class Person extends _Person {
     	String hashedPassword;
     	LocalDateTime ldt;
     	
-    	A1iciaUtils.checkNotNull(password);
+    	SharedUtils.checkNotNull(password);
     	hashedPassword = A1iciaCrypto.hashPassword(password);
     	super.setPassword(hashedPassword);
     	ldt = LocalDateTime.now();
@@ -366,7 +366,7 @@ public class Person extends _Person {
     public static String getDateString(LocalDate date) {
         String result;
 
-        A1iciaUtils.checkNotNull(date);
+        SharedUtils.checkNotNull(date);
         result = dateToString.format(date);
         return result;
     }
@@ -374,7 +374,7 @@ public class Person extends _Person {
     public static String getDateString(LocalDateTime date) {
         String result;
 
-        A1iciaUtils.checkNotNull(date);
+        SharedUtils.checkNotNull(date);
         result = dateToString.format(date);
         return result;
     }

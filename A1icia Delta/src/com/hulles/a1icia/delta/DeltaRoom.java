@@ -28,9 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -40,7 +40,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * The new Delta Room handles Station hardware requests (turn LED on, etc.) and 
@@ -52,7 +51,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public final class DeltaRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaDelta.DeltaRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 
 	public DeltaRoom(EventBus bus) {
 		super(bus);
@@ -118,12 +117,12 @@ public final class DeltaRoom extends UrRoom {
 		A1icianID a1icianID;
 		SerialSememe sememe;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "DeltaRoom: in createA1icianActionPackage");
 		a1icianStr = sememePkg.getSememeObject();
 		if (a1icianStr == null) {
-			A1iciaUtils.error("Delta Room: a1ician ID sememeObject is null");
+			System.err.println("Delta Room: a1ician ID sememeObject is null");
 			return null;
 		}
 		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianStr = " + a1icianStr);

@@ -32,8 +32,8 @@ import org.apache.cayenne.query.SortOrder;
 
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._Task;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Task extends _Task {
     private static final long serialVersionUID = 1L; 
@@ -42,7 +42,7 @@ public class Task extends _Task {
 		ObjectContext context;
 		Task task;
 		
-		A1iciaUtils.checkNotNull(taskID);
+		SharedUtils.checkNotNull(taskID);
 		context = A1iciaApplication.getEntityContext();
 		task = Cayenne.objectForPK(context, Task.class, taskID);
 		return task;
@@ -65,7 +65,7 @@ public class Task extends _Task {
 		List<Task> dbTasks;
 		Person person;
 		
-		A1iciaUtils.checkNotNull(personUUID);
+		SharedUtils.checkNotNull(personUUID);
 		person = Person.findPerson(personUUID);
 		if (person == null) {
 			return null;
@@ -82,7 +82,7 @@ public class Task extends _Task {
 		Person person;
 		TaskStatus completedStatus;
 		
-		A1iciaUtils.checkNotNull(personUUID);
+		SharedUtils.checkNotNull(personUUID);
 		person = Person.findPerson(personUUID);
 		if (person == null) {
 			return null;
@@ -102,8 +102,8 @@ public class Task extends _Task {
 		ObjectContext context;
 		List<Task> dbTasks = null;
 		
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(pos);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(pos);
 		context = A1iciaApplication.getEntityContext();
 		dbTasks = ObjectSelect
 				.query(Task.class)

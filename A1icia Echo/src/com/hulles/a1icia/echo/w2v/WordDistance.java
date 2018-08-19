@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo.w2v;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * WordDistance is a simple "struct" container for a word and a cosine distance, the result 
@@ -36,8 +36,8 @@ final public class WordDistance {
 	
 	public WordDistance(String toWord, Double distance) {
 		
-		A1iciaUtils.checkNotNull(toWord);
-		A1iciaUtils.checkNotNull(distance);
+		SharedUtils.checkNotNull(toWord);
+		SharedUtils.checkNotNull(distance);
 		this.toWord = toWord;
 		this.distance = distance;
 	}

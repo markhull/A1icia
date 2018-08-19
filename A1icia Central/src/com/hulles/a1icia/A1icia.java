@@ -44,13 +44,13 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.a1icia.api.shared.PurdahKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.base.Controller;
+import com.hulles.a1icia.crypto.PurdahKeys;
+import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.house.A1iciaStationServer;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -83,7 +83,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public class A1icia implements Closeable {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1icia");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
 //	private final static int THREADCOUNT = 12;
 	private final AsyncEventBus streetBus;

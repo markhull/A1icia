@@ -23,10 +23,10 @@ package com.hulles.a1icia.charlie.ner;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
 import com.hulles.a1icia.cayenne.Person;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import opennlp.tools.dictionary.Dictionary;
 import opennlp.tools.tokenize.TokenizerME;
@@ -41,7 +41,7 @@ public class CharlieDictionary extends Dictionary {
 		String[] tokens;
 		StringList orgList;
 		
-		A1iciaUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(type);
 		this.dictionaryType = type;
 		switch (type) {
 			case PERSON:
@@ -89,7 +89,7 @@ public class CharlieDictionary extends Dictionary {
 		List<Person> persons;
 		Long cityCount;
 		
-		A1iciaUtils.checkNotNull(tokens);
+		SharedUtils.checkNotNull(tokens);
 		sb = new StringBuilder();
 		for (String token : tokens) {
 			if (sb.length() > 0) {

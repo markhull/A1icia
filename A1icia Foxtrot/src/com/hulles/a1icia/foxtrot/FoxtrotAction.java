@@ -21,11 +21,11 @@
  *******************************************************************************/
 package com.hulles.a1icia.foxtrot;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.SensorValue;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * This is just a wrapper for FoxtrotPhysicalState that implements MindConversationObject.
@@ -44,7 +44,7 @@ public class FoxtrotAction extends RoomActionObject {
 
 	public void setState(FoxtrotPhysicalState state) {
 		
-		A1iciaUtils.checkNotNull(state);
+		SharedUtils.checkNotNull(state);
 		this.state = state;
 	}
 

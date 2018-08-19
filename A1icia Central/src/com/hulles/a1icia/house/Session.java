@@ -29,16 +29,15 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.jebus.JebusBible;
+import com.hulles.a1icia.jebus.JebusHub;
+import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -51,7 +50,7 @@ import redis.clients.jedis.Jedis;
  */
 public class Session {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaSession");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static int SESSIONTTL = 60 * 15; // 15 minutes in seconds
 	private final A1icianID a1icianID;
 	private final JebusPool jebusPool;

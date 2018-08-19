@@ -47,7 +47,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final class Prompter extends TimerTask {
 	final static Logger LOGGER = Logger.getLogger("A1icia.Prompter");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static int MAXNAGS = 2;
 	private final A1icianID a1icianID;
 	private int nagCounter;

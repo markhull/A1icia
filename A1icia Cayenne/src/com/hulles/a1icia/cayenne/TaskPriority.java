@@ -28,8 +28,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._TaskPriority;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class TaskPriority extends _TaskPriority {
     private static final long serialVersionUID = 1L; 
@@ -38,7 +38,7 @@ public class TaskPriority extends _TaskPriority {
 		ObjectContext context;
 		TaskPriority priority;
 		
-		A1iciaUtils.checkNotNull(priorityID);
+		SharedUtils.checkNotNull(priorityID);
 		context = A1iciaApplication.getEntityContext();
 		priority = Cayenne.objectForPK(context, TaskPriority.class, priorityID);
 		return priority;

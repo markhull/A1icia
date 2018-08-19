@@ -23,10 +23,10 @@ package com.hulles.a1icia.charlie;
 
 import java.util.Set;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -44,7 +44,7 @@ public final class PennTreebank {
 		String result = null;
 		String hashKey;
 		
-		A1iciaUtils.checkNotNull(tag);
+		SharedUtils.checkNotNull(tag);
 		if (jebusPool == null) {
 			jebusPool = JebusHub.getJebusLocal();
 		}
@@ -59,7 +59,7 @@ public final class PennTreebank {
 		String result = null;
 		String hashKey;
 		
-		A1iciaUtils.checkNotNull(tag);
+		SharedUtils.checkNotNull(tag);
 		if (jebusPool == null) {
 			jebusPool = JebusHub.getJebusLocal();
 		}
@@ -74,7 +74,7 @@ public final class PennTreebank {
 		boolean result = false;
 		String hashKey;
 		
-		A1iciaUtils.checkNotNull(tag);
+		SharedUtils.checkNotNull(tag);
 		if (jebusPool == null) {
 			jebusPool = JebusHub.getJebusLocal();
 		}

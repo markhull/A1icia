@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.document.RoomActionObject;
@@ -48,8 +47,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  *
  */
 public final class BusMonitor extends UrRoom {
-	private final static Logger logger = Logger.getLogger("A1icia.BusMonitor");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Logger LOGGER = Logger.getLogger("A1icia.BusMonitor");
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static boolean VERBOSE = false;
 	private final static boolean SHOWWHATSPARKS = false;
 	
@@ -76,7 +75,7 @@ public final class BusMonitor extends UrRoom {
 		if (document instanceof RoomAnnouncement) {
 			announcement = (RoomAnnouncement) document;
 			msg = announcement.getDocumentType().name();
-			logger.log(LOGLEVEL, "Mind Bus ANNOUNCEMENT: " + (msg == null ? "(no msg)" : msg));
+			LOGGER.log(LOGLEVEL, "Mind Bus ANNOUNCEMENT: " + (msg == null ? "(no msg)" : msg));
 		} else	if (document instanceof RoomRequest) {
 			request = (RoomRequest) document;
 			sb = new StringBuffer();
@@ -86,7 +85,7 @@ public final class BusMonitor extends UrRoom {
 				sb.append(" ");
 			}
 			msg = sb.toString();
-			logger.log(LOGLEVEL, "Mind Bus REQUEST " + request.getDocumentID() + ": " + request.getFromRoom().getDisplayName() + 
+			LOGGER.log(LOGLEVEL, "Mind Bus REQUEST " + request.getDocumentID() + ": " + request.getFromRoom().getDisplayName() + 
 					" " + msg);
 		} else if (document instanceof RoomResponse) {
 			response = (RoomResponse) document;
@@ -112,11 +111,11 @@ public final class BusMonitor extends UrRoom {
 					sb.append(actionObj.getExplanation());
 				}
 				msg = sb.toString();
-				logger.log(LOGLEVEL, "Mind Bus RESPONSE: " + response.getFromRoom().getDisplayName() +
+				LOGGER.log(LOGLEVEL, "Mind Bus RESPONSE: " + response.getFromRoom().getDisplayName() +
 						" " + msg);
 			}
 		} else {
-			logger.log(LOGLEVEL, "Mind Bus UNKNOWN DOCUMENT: " + document.getClass().getName());
+			LOGGER.log(LOGLEVEL, "Mind Bus UNKNOWN DOCUMENT: " + document.getClass().getName());
 		}
 	}
 

@@ -40,11 +40,11 @@ import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.shared.A1iciaAPIException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
+import com.hulles.a1icia.crypto.PurdahKeys;
 
 import redis.clients.jedis.Jedis;
 

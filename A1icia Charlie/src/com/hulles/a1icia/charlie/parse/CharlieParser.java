@@ -21,18 +21,16 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.parse;
 
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import java.net.MalformedURLException;
 
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
@@ -41,7 +39,7 @@ import opennlp.tools.tokenize.TokenizerModel;
 
 final public class CharlieParser {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaCharlie.CharlieParser");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final SentenceDetectorME sentenceParser;
 	private final TokenizerME tokenizer;
 
@@ -76,7 +74,7 @@ final public class CharlieParser {
 	public String[] detectSentences(String input) {
 		String[] sentences;
 		
-		A1iciaUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(input);
 		sentences = sentenceParser.sentDetect(input);
 		LOGGER.log(LOGLEVEL, "AFTER SENTENCE DETECT:");
 		for (String s : sentences) {
@@ -88,7 +86,7 @@ final public class CharlieParser {
 	public String[] parseSentenceTokens(String input) {
 		String[] tokens;
 		
-		A1iciaUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(input);
 		tokens = tokenizer.tokenize(input);
 		for (String s : tokens) {
 			LOGGER.log(LOGLEVEL, "TOKEN: {0}", s);

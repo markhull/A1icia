@@ -48,7 +48,6 @@ import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
-import com.hulles.a1icia.tools.A1iciaGoogleTranslator;
 import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
 
@@ -66,7 +65,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class A1iciaStationServer extends UrHouse {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaStationServer");
-	final static Level LOGLEVEL1 = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL1 = LOGGER.getParent().getLevel();
 	JebusListener listener = null;
 	ExecutorService executor;
 	Timer promptTimer;
@@ -398,20 +397,22 @@ public final class A1iciaStationServer extends UrHouse {
 	 * Translate a DialogRequest from another language into American English. We currently provide
 	 * a console warning because this is an expensive operation, relatively speaking.
 	 * 
+	 * NOTE: getting rid of A1iciaGoogleTranslate for the time being, jar issues
+	 * 
 	 * @param request The request to translate
 	 * @param lang The language from which to translate
 	 */
 	private static void translateRequest(DialogRequest request, Language lang) {
-		String translation;
+//		String translation;
 		
 		A1iciaUtils.checkNotNull(request);
 		A1iciaUtils.checkNotNull(lang);
 		if ((lang != Language.AMERICAN_ENGLISH) && (lang != Language.BRITISH_ENGLISH)) {
 			LOGGER.log(Level.WARNING, "StationServer: translating request from " + lang.getDisplayName() + 
 					" to American English");
-			translation = A1iciaGoogleTranslator.translate(lang, Language.AMERICAN_ENGLISH, 
-					request.getRequestMessage());
-			request.setRequestMessage(translation);
+//			translation = A1iciaGoogleTranslator.translate(lang, Language.AMERICAN_ENGLISH, 
+//					request.getRequestMessage());
+//			request.setRequestMessage(translation);
 		}
 	}
 
@@ -419,14 +420,16 @@ public final class A1iciaStationServer extends UrHouse {
 	 * Translate a DialogResponse into another language from its original language as denoted in the
 	 * DialogResponse.
 	 * 
+	 * NOTE: getting rid of A1iciaGoogleTranslate for the time being, jar issues
+	 * 
 	 * @param response The response to translate
 	 * @param lang The language into which to translate
 	 */
 	private static void translateResponse(DialogResponse response, Language lang) {
-		String messageTranslation;
-		String explanationTranslation;
+//		String messageTranslation;
+//		String explanationTranslation;
+//		String expl;
 		Language langIn;
-		String expl;
 		
 		A1iciaUtils.checkNotNull(lang);
 		langIn = response.getLanguage();
@@ -438,15 +441,15 @@ public final class A1iciaStationServer extends UrHouse {
 			LOGGER.log(Level.WARNING, "StationServer: translating response from " + langIn.getDisplayName() + 
 					" to " + lang.getDisplayName());
 			// also translates American to British and vice versa... TODO change it maybe
-			messageTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
-					response.getMessage());
-			response.setMessage(messageTranslation);
-			expl = response.getExplanation();
-			if (expl != null && !expl.isEmpty()) {
-				explanationTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
-						expl);
-				response.setExplanation(explanationTranslation);
-			}
+//			messageTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
+//					response.getMessage());
+//			response.setMessage(messageTranslation);
+//			expl = response.getExplanation();
+//			if (expl != null && !expl.isEmpty()) {
+//				explanationTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
+//						expl);
+//				response.setExplanation(explanationTranslation);
+//			}
 		}
 	}
 	

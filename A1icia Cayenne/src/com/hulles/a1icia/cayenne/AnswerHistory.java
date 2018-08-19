@@ -29,8 +29,8 @@ import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
 import org.apache.cayenne.query.SortOrder;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._AnswerHistory;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class AnswerHistory extends _AnswerHistory {
     private static final long serialVersionUID = 1L; 
@@ -39,7 +39,7 @@ public class AnswerHistory extends _AnswerHistory {
 		ObjectContext context;
 		AnswerHistory item;
 		
-		A1iciaUtils.checkNotNull(typeID);
+		SharedUtils.checkNotNull(typeID);
 		context = A1iciaApplication.getEntityContext();
 		item = Cayenne.objectForPK(context, AnswerHistory.class, typeID);
 		return item;
@@ -48,7 +48,7 @@ public class AnswerHistory extends _AnswerHistory {
 		Query query;
 		ObjectContext context;
 
-		A1iciaUtils.checkNotNull(exactMatch);
+		SharedUtils.checkNotNull(exactMatch);
 		context = A1iciaApplication.getEntityContext();
 		query = ObjectSelect
 				.query(AnswerHistory.class)
@@ -60,7 +60,7 @@ public class AnswerHistory extends _AnswerHistory {
 		ObjectContext context;
 		List<AnswerHistory> history;
     	
-    	A1iciaUtils.checkNotNull(question);
+    	SharedUtils.checkNotNull(question);
 		context = A1iciaApplication.getEntityContext();
 		history = ObjectSelect
 				.query(AnswerHistory.class)

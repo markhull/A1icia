@@ -29,8 +29,8 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._Sememe;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Sememe extends _Sememe implements Comparable<Sememe> {
     private static final long serialVersionUID = 1L; 
@@ -39,7 +39,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 //		ObjectContext context;
 //		Sememe sememe;
 //		
-//		A1iciaUtils.checkNotNull(sememeID);
+//		SharedUtils.checkNotNull(sememeID);
 //		context = A1iciaApplication.getEntityContext();
 //		sememe = Cayenne.objectForPK(context, Sememe.class, sememeID);
 //		if (sememe == null) {
@@ -63,7 +63,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 		ObjectContext context;
 		Sememe sememe;
 		
-		A1iciaUtils.checkNotNull(nm);
+		SharedUtils.checkNotNull(nm);
 		context = A1iciaApplication.getEntityContext();
 		sememe = ObjectSelect
 				.query(Sememe.class)
@@ -111,7 +111,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
     
 //    public boolean is(String nm) {
 //    
-//    	A1iciaUtils.checkNotNull(nm);
+//    	SharedUtils.checkNotNull(nm);
 //    	return getName().equals(nm);
 //    }
 	
@@ -123,7 +123,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	public static Sememe fromSerial(SerialSememe serialSememe) {
 		Sememe sememe;
 		
-		A1iciaUtils.checkNotNull(serialSememe);
+		SharedUtils.checkNotNull(serialSememe);
 		sememe = findRaw(serialSememe.getName());
 		return sememe;
 	}
@@ -152,7 +152,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	public static SerialSememe getProxySememe() {
 		Sememe sememe;
 		
-		A1iciaUtils.warning("Getting proxy sememe");
+		System.err.println("Getting proxy sememe");
 		sememe = Sememe.findRaw("exclamation");
 		if (sememe == null) {
 			return null;
@@ -208,7 +208,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	@Override
 	public int compareTo(Sememe otherSememe) {
 		
-		A1iciaUtils.checkNotNull(otherSememe);
+		SharedUtils.checkNotNull(otherSememe);
         return this.getName().compareToIgnoreCase(otherSememe.getName());
 	}
 	
@@ -238,7 +238,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
     	ObjectContext context;
     	Sememe dbSememe;
     	
-    	A1iciaUtils.checkNotNull(sememeName);
+    	SharedUtils.checkNotNull(sememeName);
     	context = A1iciaApplication.getEntityContext();
         dbSememe = context.newObject(Sememe.class);
         dbSememe.setName(sememeName);

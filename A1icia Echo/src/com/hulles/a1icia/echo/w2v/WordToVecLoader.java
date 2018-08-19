@@ -34,9 +34,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.echo.EchoWordToVecException;
 import com.hulles.a1icia.tools.A1iciaTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 final class WordToVecLoader {
 	final static Logger logger = Logger.getLogger("A1iciaEcho.WordToVecLoader");
@@ -90,7 +90,7 @@ final class WordToVecLoader {
 		int bufferSize;
 		ByteOrder byteOrder = ByteOrder.LITTLE_ENDIAN;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		A1iciaTimer.startTimer("LOADER");
 		try {
 			fileStream = new FileInputStream(fileName);
@@ -149,7 +149,7 @@ final class WordToVecLoader {
 		double len = 0.0;
 		float[] newVector;
 		
-		A1iciaUtils.checkNotNull(vector);
+		SharedUtils.checkNotNull(vector);
 		for (float val : vector) {
 			len += val * val;
 		}
@@ -164,7 +164,7 @@ final class WordToVecLoader {
 		double len = 0.0;
 		float[] newVector;
 		
-		A1iciaUtils.checkNotNull(vector);
+		SharedUtils.checkNotNull(vector);
 		for (double val : vector) {
 			len += val * val;
 		}
@@ -191,9 +191,9 @@ final class WordToVecLoader {
 		int dupeCount;
 		float[] oldVector;
 		
-		A1iciaUtils.checkNotNull(fileStream);
-		A1iciaUtils.checkNotNull(channel);
-		A1iciaUtils.checkNotNull(buffer);
+		SharedUtils.checkNotNull(fileStream);
+		SharedUtils.checkNotNull(channel);
+		SharedUtils.checkNotNull(buffer);
 		
 		// we use a LinkedHashMap to get decent performance from sequential access
 		wordVectors = new LinkedHashMap<>(vocabSize);
@@ -247,7 +247,7 @@ final class WordToVecLoader {
 	 */
 	private static boolean goodWord(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		return (word.length() > 1);
 	}
 	
@@ -261,9 +261,9 @@ final class WordToVecLoader {
 	private void refillBuffer(FileInputStream fileStream, FileChannel channel, ByteBuffer buffer) {
 		long bytes;
 		
-		A1iciaUtils.checkNotNull(fileStream);
-		A1iciaUtils.checkNotNull(channel);
-		A1iciaUtils.checkNotNull(buffer);
+		SharedUtils.checkNotNull(fileStream);
+		SharedUtils.checkNotNull(channel);
+		SharedUtils.checkNotNull(buffer);
 		buffer.reset();
 		logger.log(LOGLEVEL1, "WordToVecLoader: refilling");
 		logger.log(LOGLEVEL1, "WordToVecLoader: channelStart = " + channelStart);
@@ -295,7 +295,7 @@ final class WordToVecLoader {
 		char c;
 		String[] tokens;
 		
-		A1iciaUtils.checkNotNull(buffer);
+		SharedUtils.checkNotNull(buffer);
 		sb = new StringBuilder();
 		c = (char) buffer.get();
 		while (c != '\n') {
@@ -319,7 +319,7 @@ final class WordToVecLoader {
 		StringBuilder sb;
 		char c;
 		
-		A1iciaUtils.checkNotNull(buffer);
+		SharedUtils.checkNotNull(buffer);
 		sb = new StringBuilder();
 		c = (char) buffer.get();
 		while (c != ' ') {
@@ -345,7 +345,7 @@ final class WordToVecLoader {
 		FloatBuffer floatBuffer;
 		float[] vector;
 		
-		A1iciaUtils.checkNotNull(buffer);
+		SharedUtils.checkNotNull(buffer);
 		vector = new float[vectorSize];
 		
 		// this next line is why I like the nio ByteBuffer...
@@ -364,8 +364,8 @@ final class WordToVecLoader {
 	 */
 	private static void closeResources(FileInputStream stream, FileChannel channel) {
 		
-		A1iciaUtils.nullsOkay(stream);
-		A1iciaUtils.nullsOkay(channel);
+		SharedUtils.nullsOkay(stream);
+		SharedUtils.nullsOkay(channel);
 		if (channel != null && channel.isOpen()) {
 			try {
 				channel.close();
@@ -395,7 +395,7 @@ final class WordToVecLoader {
 		int colIx;
 		String valStr;
 		
-		A1iciaUtils.checkNotNull(array);
+		SharedUtils.checkNotNull(array);
 		for (int rowIx = 0; rowIx < array.length; rowIx = rowIx + 10) {
 			for (colIx = 0; colIx < 9; colIx++) {
 				ix = rowIx + colIx;

@@ -43,8 +43,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.PurdahKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
+import com.hulles.a1icia.crypto.PurdahKeys;
+import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.kilo.KiloForecastAction.ThreeHrForecast;
 import com.hulles.a1icia.kilo.KiloWeatherAction.WeatherCondition;
 import com.hulles.a1icia.tools.ExternalAperture;

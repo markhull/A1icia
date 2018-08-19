@@ -23,7 +23,7 @@ package com.hulles.a1icia.echo.w2v;
 
 import java.util.Map;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * WordToVecAnalyze loads the word2vec file and performs a simple analysis of the words contained in it. 
@@ -47,7 +47,7 @@ final public class WordToVecAnalyze {
 	public WordToVecAnalyze(String fileName) {
 		WordToVecLoader loader;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		loader = new WordToVecLoader();
 		loader.load(fileName);
 		words = loader.getMap();

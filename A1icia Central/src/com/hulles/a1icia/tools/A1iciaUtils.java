@@ -31,6 +31,7 @@ import java.util.Date;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.CharStreams;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaError;
 import com.hulles.a1icia.base.A1iciaException;
 
@@ -59,28 +60,6 @@ public final class A1iciaUtils {
 	private static final String GIGABYTEFORMAT = "%.2fGB";
 	private static final String MEGABYTEFORMAT = "%.2fMB";
 	private static final String KILOBYTEFORMAT = "%dKB";
-
-    /**
-     * Ensure that the argument is not null. See Guava SharedUtils, this is just adapted from
-     * there.
-     *  
-     * @param reference
-     */
-	public static <T> void checkNotNull(T reference) {
-		
-		if (reference == null) {			
-			throw new NullPointerException("Null reference in checkNotNull");
-		}
-	}
-
-	/**
-	 * Doesn't do anything, just affirms that the value might be null and
-	 * indicates we intentionally don't use checkNotNull (as opposed to forgetting to
-	 * use it).
-	 * @param reference
-	 */
-	public static <T> void nullsOkay(T reference) {
-	}
 
 	/**
 	 * Format a long amount of elapsed milliseconds into human-friendly form.
@@ -141,7 +120,7 @@ public final class A1iciaUtils {
 		long minutes = 0;
 		long time;
 		
-		A1iciaUtils.checkNotNull(timeInMinutes);
+		SharedUtils.checkNotNull(timeInMinutes);
 		time = timeInMinutes;
 		if (time > MINUTES_IN_DAY) {
 			days = Math.round(time / MINUTES_IN_DAY);
@@ -183,7 +162,7 @@ public final class A1iciaUtils {
 		float amount;
 		float kbf;
 		
-		A1iciaUtils.checkNotNull(kb);
+		SharedUtils.checkNotNull(kb);
 		kbf = kb;
 		if (kb > MB) {
 			amount = kbf / MB;
@@ -206,7 +185,7 @@ public final class A1iciaUtils {
 	public static boolean isVowel(Character c) {
 		CharMatcher matcher;
 		
-		A1iciaUtils.checkNotNull(c);
+		SharedUtils.checkNotNull(c);
 		matcher = CharMatcher.anyOf("AEIOUaeiou");
 		return matcher.matches(c);
 	}
@@ -220,7 +199,7 @@ public final class A1iciaUtils {
 	public static String capitalize(String s) {
 		char[] chars;
 		
-		A1iciaUtils.checkNotNull(s);
+		SharedUtils.checkNotNull(s);
 		chars = s.toCharArray();
 		chars[0] = Character.toUpperCase(chars[0]);
 		return new String(chars);
@@ -279,7 +258,7 @@ public final class A1iciaUtils {
     public static void error(String errmsg, Throwable ex) {
         A1iciaError jebusError;
 
-        checkNotNull(errmsg);
+        SharedUtils.checkNotNull(errmsg);
         System.err.println();
         System.err.println(errmsg);
         jebusError = new A1iciaError();
@@ -295,7 +274,7 @@ public final class A1iciaUtils {
 	public static LocalDateTime ldtFromUtilDate(Date utilDate) {
 		LocalDateTime ldt;
 		
-		A1iciaUtils.checkNotNull(utilDate);
+		SharedUtils.checkNotNull(utilDate);
 		ldt = LocalDateTime.ofInstant(utilDate.toInstant(), DEFAULTZONE);
 		return ldt;
 	}
@@ -309,7 +288,7 @@ public final class A1iciaUtils {
 	public static LocalDate ldFromUtilDate(Date utilDate) {
 		LocalDateTime ldt;
 		
-		A1iciaUtils.checkNotNull(utilDate);
+		SharedUtils.checkNotNull(utilDate);
 		ldt = ldtFromUtilDate(utilDate);
 		return ldt.toLocalDate();
 	}
@@ -323,7 +302,7 @@ public final class A1iciaUtils {
 	public static Date utilDateFromLDT(LocalDateTime ldt) {
 		Date utilDate;
 		
-		A1iciaUtils.checkNotNull(ldt);
+		SharedUtils.checkNotNull(ldt);
 		utilDate = Date.from(ldt.atZone(DEFAULTZONE).toInstant());
 		return utilDate;
 	}	
@@ -338,7 +317,7 @@ public final class A1iciaUtils {
 		Date utilDate;
 		LocalDateTime ldt;
 		
-		A1iciaUtils.checkNotNull(ld);
+		SharedUtils.checkNotNull(ld);
 		ldt = ld.atStartOfDay();
 		utilDate = utilDateFromLDT(ldt);
 		return utilDate;
@@ -354,8 +333,8 @@ public final class A1iciaUtils {
 	public static String getResourceAsString(ClassLoader cl, String resourcePath) {
 		String text = null;
 
-		A1iciaUtils.checkNotNull(cl);
-		A1iciaUtils.checkNotNull(resourcePath);
+		SharedUtils.checkNotNull(cl);
+		SharedUtils.checkNotNull(resourcePath);
 		try (InputStream in = cl.getResourceAsStream(resourcePath)) {
 			if (in == null) {
 		    	throw new A1iciaException("A1iciaUtils: resource input stream is null");

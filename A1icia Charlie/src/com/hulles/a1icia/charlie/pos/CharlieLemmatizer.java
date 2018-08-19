@@ -28,11 +28,11 @@ import java.util.List;
 
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Lemma;
 import com.hulles.a1icia.charlie.CharlieThimk;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import opennlp.tools.lemmatizer.LemmatizerME;
 import opennlp.tools.lemmatizer.LemmatizerModel;
@@ -115,8 +115,8 @@ public class CharlieLemmatizer {
 	public String[] generateLemmata(String[] tokens, String[] posTags) {
 		String[] lemmata;
 		
-		A1iciaUtils.checkNotNull(tokens);
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(tokens);
+		SharedUtils.checkNotNull(posTags);
 		lemmata = lemmatizer.lemmatize(tokens, posTags);
 		return lemmata;
 	}
@@ -126,8 +126,8 @@ public class CharlieLemmatizer {
 		List<Lemma> result;
 		Lemma lemma;
 		
-		A1iciaUtils.checkNotNull(tokens);
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(tokens);
+		SharedUtils.checkNotNull(posTags);
 		lemmata = new String[tokens.length];
 		for (int ix=0; ix<tokens.length; ix++) {
 			result = Lemma.getLemmas(tokens[ix], posTags[ix]);

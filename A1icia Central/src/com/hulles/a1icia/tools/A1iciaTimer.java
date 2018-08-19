@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.api.A1iciaConstants;
-
 /**
  * A1iciaTimer is a simple little timer class, written so no external library is needed to perform
  * this function. It keeps track of simultaneous timers in a map.
@@ -36,8 +34,8 @@ import com.hulles.a1icia.api.A1iciaConstants;
  *
  */
 public final class A1iciaTimer {
-	final static Logger logger = Logger.getLogger("A1icia.A1iciaTimer");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaTimer");
+	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static Map<String, Long> timerMap;
 	
 	private A1iciaTimer() {
@@ -78,7 +76,7 @@ public final class A1iciaTimer {
 			return null;
 		}
 		elapsedMillis = endTime - startTime;
-		logger.log(LOGLEVEL, "Timer " + timerName + ": " + A1iciaUtils.formatElapsedMillis(elapsedMillis));
+		LOGGER.log(LOGLEVEL, "Timer " + timerName + ": " + A1iciaUtils.formatElapsedMillis(elapsedMillis));
 		return elapsedMillis;
 	}
 

@@ -27,8 +27,8 @@ import org.apache.cayenne.configuration.DataNodeDescriptor;
 import org.apache.cayenne.configuration.server.DataSourceFactory;
 import org.mariadb.jdbc.MariaDbDataSource;
 
-import com.hulles.a1icia.api.shared.PurdahKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
+import com.hulles.a1icia.crypto.PurdahKeys;
+import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 
 public final class A1iciaDataSourceFactory implements DataSourceFactory {
 

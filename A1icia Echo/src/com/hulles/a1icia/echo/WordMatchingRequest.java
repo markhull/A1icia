@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class WordMatchingRequest {
 	private String wordToMatch;
@@ -37,7 +37,7 @@ public class WordMatchingRequest {
 	
 	public void setWordToMatch(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		this.wordToMatch = word;
 	}
 	
@@ -48,7 +48,7 @@ public class WordMatchingRequest {
 	
 	public void setAnalogyWord(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		this.analogyWord = word;
 	}
 	
@@ -59,7 +59,7 @@ public class WordMatchingRequest {
 	
 	public void setAnalogyIsTo(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		this.analogyIsTo = word;
 	}
 	
@@ -70,7 +70,7 @@ public class WordMatchingRequest {
 	
 	public void setAnalogyAs(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		this.analogyAs = word;
 	}
 	

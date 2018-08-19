@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.PurdahKeys;
-import com.hulles.a1icia.api.shared.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.crypto.PurdahKeys;
+import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;
 import com.hulles.a1icia.foxtrot.monitor.LinuxMonitor;
 import com.hulles.a1icia.room.Room;

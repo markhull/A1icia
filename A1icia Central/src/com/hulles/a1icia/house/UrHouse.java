@@ -29,13 +29,12 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.Dialog;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * UrHouse is the superclass for all of the A1icia houses that listen on the street bus.
@@ -45,7 +44,7 @@ import com.hulles.a1icia.api.remote.Station;
  */
 public abstract class UrHouse extends AbstractExecutionThreadService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.UrHouse");
-	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final EventBus street;
 	private final ConcurrentMap<A1icianID, Session> sessions;
 	private final Station station;

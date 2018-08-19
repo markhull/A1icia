@@ -27,11 +27,10 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
@@ -40,7 +39,7 @@ import opennlp.tools.util.Span;
 
 final public class CharlieChunker {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaCharlie.CharlieChunker");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final ChunkerME chunker;
 
 	public CharlieChunker() {
@@ -69,8 +68,8 @@ final public class CharlieChunker {
 	public String[] chunkDocument(String[] tokenizedInput, String[] posTags) {
 		String[] chunkTags;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(posTags);
 		chunkTags = chunker.chunk(tokenizedInput, posTags);
 		for (String s : chunkTags) {
 			LOGGER.log(LOGLEVEL, "CHUNK: {0}", s);
@@ -82,8 +81,8 @@ final public class CharlieChunker {
 		Span[] chunkSpans;
 		String[] spanStrings;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(posTags);
 		chunkSpans = chunker.chunkAsSpans(tokenizedInput, posTags);
 		spanStrings = Span.spansToStrings(chunkSpans, tokenizedInput);
 		for (String s : spanStrings) {
@@ -95,8 +94,8 @@ final public class CharlieChunker {
 	public Sequence[] getChunkSequences(String[] tokenizedInput, String[] posTags) {
 		Sequence[] chunkSeqs;
 		
-		A1iciaUtils.checkNotNull(tokenizedInput);
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(tokenizedInput);
+		SharedUtils.checkNotNull(posTags);
 		chunkSeqs = chunker.topKSequences(tokenizedInput, posTags);
 		return chunkSeqs;
 	}

@@ -27,8 +27,8 @@ import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.auto._NbestAnswer;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class NbestAnswer extends _NbestAnswer {
     private static final long serialVersionUID = 1L; 
@@ -37,7 +37,7 @@ public class NbestAnswer extends _NbestAnswer {
 		ObjectContext context;
 		NbestAnswer cellarItemType;
 		
-		A1iciaUtils.checkNotNull(typeID);
+		SharedUtils.checkNotNull(typeID);
 		context = A1iciaApplication.getEntityContext();
 		cellarItemType = Cayenne.objectForPK(context, NbestAnswer.class, typeID);
 		return cellarItemType;

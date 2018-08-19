@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.pos;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /* POS in WordPOS stands for Part Of Speech, not Piece Of Shit
  * 
@@ -32,8 +32,8 @@ public class WordPOS {
 	
 	public WordPOS(String word, String posTag) {
 		
-		A1iciaUtils.checkNotNull(word);
-		A1iciaUtils.checkNotNull(posTag);
+		SharedUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(posTag);
 		this.word = word;
 		this.posTag = posTag;
 	}
@@ -45,7 +45,7 @@ public class WordPOS {
 
 	public void setWord(String word) {
 		
-		A1iciaUtils.checkNotNull(word);
+		SharedUtils.checkNotNull(word);
 		this.word = word;
 	}
 
@@ -56,7 +56,7 @@ public class WordPOS {
 
 	public void setPosTag(String posTag) {
 		
-		A1iciaUtils.checkNotNull(posTag);
+		SharedUtils.checkNotNull(posTag);
 		this.posTag = posTag;
 	}
 
