@@ -43,8 +43,9 @@ import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
- * The new Delta Room handles remote hardware requests (turn LED on, etc.) and 
- * ASR (Automated Speech Recognition). 
+ * The new Delta Room handles Station hardware requests (turn LED on, etc.) and 
+ * ASR (Automated Speech Recognition). Upon further review we're eliminating Sphinx4,
+ * so it's just station hardware for now.
  * 
  * @author hulles
  *

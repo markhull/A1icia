@@ -62,6 +62,7 @@ import com.hulles.a1icia.oscar.OscarRoom;
 import com.hulles.a1icia.overmind.OvermindRoom;
 import com.hulles.a1icia.papa.PapaRoom;
 import com.hulles.a1icia.quebec.QuebecRoom;
+import com.hulles.a1icia.romeo.RomeoRoom;
 import com.hulles.a1icia.room.BusMonitor;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -69,6 +70,7 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.WhatSememesAction;
+import com.hulles.a1icia.sierra.SierraRoom;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
@@ -209,6 +211,12 @@ public final class Controller extends AbstractIdleService {
 					break;
 				case QUEBEC:
 					services.add(new QuebecRoom(hall));
+					break;
+				case ROMEO:
+					services.add(new RomeoRoom(hall));
+					break;
+				case SIERRA:
+					services.add(new SierraRoom(hall));
 					break;
 				default:
 					throw new A1iciaException("Bad room = " + room.getDisplayName());

@@ -56,23 +56,6 @@ final public class ExternalAperture {
 	@SuppressWarnings("unused")
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	
-/*	private final static String WIKIDATA_ID = "https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&languages=en&format=json&props=aliases|labels|descriptions|claims|datatype&ids=%s";
-	private final static String WIKIDATA_TITLE = "https://www.wikidata.org/w/api.php?action=wbgetentities&sites=enwiki&languages=en&format=json&props=aliases|labels|descriptions|claims|datatype&titles=%s&normalize=";
-	private final static String WIKIDATA_SEARCH = "https://www.wikidata.org/w/api.php?action=wbsearchentities&language=en&search=%s&format=json&limit=12";
-	
-	private final static String OWMCURRENT = "http://api.openweathermap.org/data/2.5/weather?id=%d&units=imperial&APPID=%s";
-	private final static String OWMFORECAST = "http://api.openweathermap.org/data/2.5/forecast?id=%d&units=imperial&APPID=%s";
-	@SuppressWarnings("unused")
-	private final static String OWMICON="http://openweathermap.org/img/w/%s.png"; // 01d e.g.
-	
-	private final static String LOCATIONURL = "https://ipinfo.io/json?token=%s";
-	
-	private final static String WOLFRAM_VALIDATE = "https://api.wolframalpha.com/v2/validatequery?input=%s&appid=%s";
-	private final static String WOLFRAM_QUERY = "https://api.wolframalpha.com/v2/query?input=%s&appid=%s";
-	private final static String WOLFRAM_SPOKEN = "https://api.wolframalpha.com/v2/spoken?i=%s&appid=%s";
-	private final static String WOLFRAM_SIMPLE = "https://api.wolframalpha.com/v2/simple?i=%s&appid=%s";
-	private final static String WOLFRAM_SHORT = "https://api.wolframalpha.com/v2/result?i=%s&appid=%s";
-*/
 	private ExternalAperture() {
 	}
 	
@@ -104,6 +87,24 @@ final public class ExternalAperture {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Get the current temperature and humidity from an ESP8266 mini-server as a string.
+	 * 
+	 * @param which Either "temp" or "humidity" depending on the value you want
+	 * @return The temperature or humidity string, e.g. "77.00"
+	 */
+	public static String getCurrentTempAndHumidity(String which) {
+		String urlString;
+		String urlTemplate;
+		ApplicationKeys appKeys;
+		
+		A1iciaUtils.checkNotNull(which);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.TEMPHUMIDITY);
+		urlString = String.format(urlTemplate, which);
+		return getURLStringResult(urlString);
 	}
 
 	/**

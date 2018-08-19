@@ -76,9 +76,14 @@ public class ApplicationKeys implements Serializable {
     }
     
     public String getKey(ApplicationKey key) {
+        String result;
         
 		SharedUtils.checkNotNull(key);
-        return keyMap.get(key);
+        result = keyMap.get(key);
+        if (result == null) {
+        	throw new A1iciaAPIException("ApplicationKeys: there is no value for key = " + key);
+        }
+        return result;
     }
 
     public void setKey(ApplicationKey key, String value) {
@@ -202,6 +207,7 @@ public class ApplicationKeys implements Serializable {
 		WOLFRAMSPOKEN,
 		WOLFRAMSIMPLE,
 		WOLFRAMSHORT,
-		DEEPSPEECH
+		DEEPSPEECH,
+		TEMPHUMIDITY
 	}
 }

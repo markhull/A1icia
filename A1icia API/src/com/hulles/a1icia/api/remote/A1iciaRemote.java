@@ -83,6 +83,7 @@ import redis.clients.jedis.Jedis;
 public final class A1iciaRemote extends AbstractExecutionThreadService {
 	final static Logger LOGGER = Logger.getLogger("A1iciaApi.A1iciaRemote");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	final static Level LOGLEVEL = Level.INFO;
 	private final static String A1ICIA_PREFIX = "A1ICIA: ";
 	JebusListener listener = null;
 	ExecutorService executor;

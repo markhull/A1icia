@@ -39,21 +39,21 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 public class A1iciaCLIConsole extends AbstractExecutionThreadService implements A1iciaRemoteDisplay {
 	private A1iciaRemote remote;
 	private final Console javaConsole;
-	private final ConsoleType whichConsole;
+	private ConsoleType whichConsole;
 	@SuppressWarnings("unused")
 	private volatile boolean serverUp;
 	private final String host;
 	private final Integer port;
 	private final Station station;
 	
-	public A1iciaCLIConsole(String host, Integer port, ConsoleType whichConsole) {
+	public A1iciaCLIConsole(String host, Integer port, ConsoleType console) {
 
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
-		SharedUtils.checkNotNull(whichConsole);
+		SharedUtils.checkNotNull(console);
 		this.host = host;
 		this.port = port;
-		this.whichConsole = whichConsole;
+		this.whichConsole = console;
 		station = Station.getInstance();
 		station.ensureStationExists();
 		switch (whichConsole) {
@@ -87,8 +87,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		System.out.println("The default language is " + station.getDefaultLanguage().getDisplayName());
 		System.out.println("We currently " + (station.isQuiet() ? "are" : "are not") + 
 				" in quiet mode.");
-		showHelp();
 		System.out.println("Running console " + whichConsole);
+		showHelp();
 		System.out.println();
 	}
 	
@@ -110,6 +110,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		remote.setShowImage(false);
 		remote.setShowText(false);
 		remote.setPlayVideo(false);
+
+		showRemoteStatus();
 	}
 	
 	@Override
@@ -223,9 +225,20 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		System.out.println("· Type 'TTS off' to disable text-to-speech.");
 		System.out.println("· Type 'audio on' to play audio content.");
 		System.out.println("· Type 'audio off' to disable audio content.");
+		System.out.println("· Type 'video on' to play video content.");
+		System.out.println("· Type 'video off' to disable video content.");
 		System.out.println("· Type 'help console' to repeat these commands.");		
 	}
 
+	private  void showRemoteStatus() {
+		
+		System.out.println("Video is " + (remote.playVideo() ?  "on" : "off"));
+		System.out.println("Audio is " + (remote.playAudio() ?  "on" : "off"));
+		System.out.println("TTS is " + (remote.useTTS() ?  "on" : "off"));
+		System.out.println("Text display is " + (remote.showText() ?  "on" : "off"));
+		System.out.println("Image display is " + (remote.showImage() ?  "on" : "off"));
+	}
+	
 	private boolean command(String text) {
 		boolean connected;
 		
@@ -237,6 +250,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 			System.out.println("The language is currently " + remote.getCurrentLanguage().getDisplayName());
 			System.out.println("We currently " + (station.isQuiet() ? "are" : "are not") + 
 					" in quiet mode.");
+			showRemoteStatus();
 			return true;
 		}
 		if (text.equalsIgnoreCase("tts on")) {
@@ -257,6 +271,16 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		if (text.equalsIgnoreCase("audio off")) {
 			remote.setPlayAudio(false);
 			System.out.println("Audio is off");
+			return true;
+		}
+		if (text.equalsIgnoreCase("video on")) {
+			remote.setPlayVideo(true);
+			System.out.println("Video is on");
+			return true;
+		}
+		if (text.equalsIgnoreCase("video off")) {
+			remote.setPlayVideo(false);
+			System.out.println("Video is off");
 			return true;
 		}
 		if (text.equalsIgnoreCase("images on")) {
@@ -318,7 +342,8 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				password = String.copyValueOf(passwordChars);
 				break;
 			case STANDARDIO:
-				System.err.println("System error: login is not supported for STANDARDIO");
+			case DAEMON:
+				System.err.println("System error: login is not supported for " + whichConsole);
 				break;
 			default:
 				System.err.println("System error: bad console type, exiting");

@@ -137,7 +137,7 @@ public class KiloWeather {
 		owmWeather.setLocalDateTime(LocalDateTime.now());
 		sb = new StringBuilder();
 		weatherJSON = ExternalAperture.getCurrentWeatherOWM(cityID, openWeatherId);
-		System.out.println(weatherJSON);
+		logger.log(LOGLEVEL, weatherJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(weatherJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
 				weatherObj = jsonReader.readObject();
@@ -268,7 +268,7 @@ public class KiloWeather {
 		purdahKeys = PurdahKeys.getInstance();
 		openWeatherId = purdahKeys.getPurdahKey(PurdahKey.OPENWEATHERID);
 		forecastJSON = ExternalAperture.getForecastOWM(cityID, openWeatherId);
-		System.out.println(forecastJSON);
+		logger.log(LOGLEVEL, forecastJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(forecastJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
 				forecastObj = jsonReader.readObject();

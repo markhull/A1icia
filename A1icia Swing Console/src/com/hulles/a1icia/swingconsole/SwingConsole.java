@@ -131,6 +131,8 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 		window.displayTextln("· Type 'TTS off' to disable text-to-speech.");
 		window.displayTextln("· Type 'audio on' to play audio content.");
 		window.displayTextln("· Type 'audio off' to disable audio content.");
+		window.displayTextln("· Type 'video on' to play video content.");
+		window.displayTextln("· Type 'video off' to disable video content.");
 		window.displayTextln("· Type 'help console' to repeat these commands.");		
 	}
 
@@ -145,6 +147,11 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 			window.displayTextln("The language is currently " + remote.getCurrentLanguage().getDisplayName());
 			window.displayTextln("We currently " + (station.isQuiet() ? "are" : "are not") + 
 					" in quiet mode.");
+			window.displayTextln("Video is " + (remote.playVideo() ?  "on" : "off"));
+			window.displayTextln("Audio is " + (remote.playAudio() ?  "on" : "off"));
+			window.displayTextln("TTS is " + (remote.useTTS() ?  "on" : "off"));
+			window.displayTextln("Text display is " + (remote.showText() ?  "on" : "off"));
+			window.displayTextln("Image display is " + (remote.showImage() ?  "on" : "off"));
 			return true;
 		}
 		if (text.equalsIgnoreCase("tts on")) {
@@ -165,6 +172,16 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 		if (text.equalsIgnoreCase("audio off")) {
 			remote.setPlayAudio(false);
 			window.displayTextln("Audio is off");
+			return true;
+		}
+		if (text.equalsIgnoreCase("video on")) {
+			remote.setPlayVideo(true);
+			window.displayTextln("Video is on");
+			return true;
+		}
+		if (text.equalsIgnoreCase("video off")) {
+			remote.setPlayVideo(false);
+			window.displayTextln("Video is off");
 			return true;
 		}
 		if (text.equalsIgnoreCase("images on")) {
@@ -262,7 +279,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 	public void receiveText(String text) {
 
 		if (!remote.useTTS()) {
-			System.out.println("A1icia: " + text);
+			window.displayTextln("A1icia: " + text);
 		}
 	}
 	
@@ -325,6 +342,11 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 		window.displayTextln("The default language is " + station.getDefaultLanguage().getDisplayName());
 		window.displayTextln("We currently " + (station.isQuiet() ? "are" : "are not") + 
 				" in quiet mode.");
+		window.displayTextln("Video is " + (remote.playVideo() ?  "on" : "off"));
+		window.displayTextln("Audio is " + (remote.playAudio() ?  "on" : "off"));
+		window.displayTextln("TTS is " + (remote.useTTS() ?  "on" : "off"));
+		window.displayTextln("Text display is " + (remote.showText() ?  "on" : "off"));
+		window.displayTextln("Image display is " + (remote.showImage() ?  "on" : "off"));
 		showHelp();
 		window.displayTextln("Running console SWINGCONSOLE");
 		window.displayTextln();
@@ -406,10 +428,9 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 					// down arrow
 					LOGGER.log(LOGLEVEL, "Received DOWN ARROW");
 					try (Jedis jebus = jebusPool.getResource()) {
-						if (historyIx > 0) {
+						if (historyIx-- > 0) {
 							text = jebus.lindex(historyKey, historyIx);
 							typingArea.setText(text);
-							historyIx--;
 						} else {
 							historyIx = 0;
 							typingArea.setText("");

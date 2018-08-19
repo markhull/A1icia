@@ -53,9 +53,9 @@ public enum Room {
     NOVEMBER(15, "November Room"),
     OSCAR(16, "Oscar Room"),
     PAPA(17, "Papa Room"),
-    QUEBEC(18, "Quebec Room");
-//    ROMEO(19, "Romeo Room"),
-//    SIERRA(20, "Sierra Room"),
+    QUEBEC(18, "Quebec Room"),
+    ROMEO(19, "Romeo Room"),
+    SIERRA(20, "Sierra Room");
 //    TANGO(21, "Tango Room"),
 //    UNIFORM(22, "Uniform Room"),
 //    VICTOR(23, "Victor Room"),
