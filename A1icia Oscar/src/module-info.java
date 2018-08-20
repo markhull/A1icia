@@ -13,6 +13,8 @@ module com.hulles.a1icia.oscar {
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.cayenne;
 	requires com.hulles.a1icia.media;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.oscar.OscarRoom;
 }

@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -58,8 +57,8 @@ public final class EchoRoom extends UrRoom {
 	final WordToVecSearch searcher;
 	volatile boolean ready = false;
 
-	public EchoRoom(EventBus bus) {
-		super(bus);
+	public EchoRoom() {
+		super();
 		
 		searcher = new WordToVecSearch();
 	}

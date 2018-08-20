@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -59,8 +58,8 @@ public final class IndiaRoom extends UrRoom {
 	private ResponseGenerator generator;
 	private final Random random;
 
-	public IndiaRoom(EventBus bus) {
-		super(bus);
+	public IndiaRoom() {
+		super();
 		
 		random = new Random();
 	}

@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -53,8 +52,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public final class KiloRoom extends UrRoom {
 	private final ApplicationKeys appKeys;
 
-	public KiloRoom(EventBus bus) {
-		super(bus);
+	public KiloRoom() {
+		super();
 		
 		appKeys = ApplicationKeys.getInstance();
 	}

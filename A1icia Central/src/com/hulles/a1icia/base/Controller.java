@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,30 +41,11 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
 import com.hulles.a1icia.A1icia;
-import com.hulles.a1icia.alpha.AlphaRoom;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Sememe;
-import com.hulles.a1icia.charlie.CharlieRoom;
-import com.hulles.a1icia.delta.DeltaRoom;
-import com.hulles.a1icia.echo.EchoRoom;
-import com.hulles.a1icia.foxtrot.FoxtrotRoom;
-import com.hulles.a1icia.golf.GolfRoom;
-import com.hulles.a1icia.hotel.HotelRoom;
-import com.hulles.a1icia.india.IndiaRoom;
-import com.hulles.a1icia.juliet.JulietRoom;
-import com.hulles.a1icia.kilo.KiloRoom;
-import com.hulles.a1icia.lima.LimaRoom;
-import com.hulles.a1icia.mike.MikeRoom;
-import com.hulles.a1icia.november.NovemberRoom;
-import com.hulles.a1icia.oscar.OscarRoom;
-import com.hulles.a1icia.overmind.OvermindRoom;
-import com.hulles.a1icia.papa.PapaRoom;
-import com.hulles.a1icia.quebec.QuebecRoom;
-import com.hulles.a1icia.romeo.RomeoRoom;
 import com.hulles.a1icia.room.BusMonitor;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -71,12 +53,10 @@ import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.WhatSememesAction;
-import com.hulles.a1icia.sierra.SierraRoom;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.tracker.Tracker;
 
 /**
  * The Controller is a little simpler than its name would suggest -- it basically just 
@@ -157,85 +137,16 @@ public final class Controller extends AbstractIdleService {
 	 */
 	protected List<Service> loadServices(EventBus hall) {
 		List<Service> services;
+		Iterable<UrRoom> rooms;
 		
 		SharedUtils.checkNotNull(hall);
+        rooms = ServiceLoader.load(UrRoom.class);
 		services = new ArrayList<>(40);
-		services.add(new Tracker(hall));
-		for (Room room : UrRoom.getAllRooms()) {
-			switch (room) {
-				case CONTROLLER:
-					controllerRoom = new ControllerRoom(hall);
-					services.add(controllerRoom);
-					break;
-				case BUSMONITOR:
-					services.add(new BusMonitor(hall));
-					break;
-				case ALICIA:
-					services.add(a1iciaInstance.new A1iciaRoom(hall));
-					break;
-				case OVERMIND:
-					services.add(new OvermindRoom(hall));
-					break;
-				case ALPHA:
-					services.add(new AlphaRoom(hall));
-					break;
-				case BRAVO:
-					services.add(new BravoRoom(hall));
-					break;
-				case CHARLIE:
-					services.add(new CharlieRoom(hall));
-					break;
-				case DELTA:
-					services.add(new DeltaRoom(hall));
-					break;
-				case ECHO:
-					services.add(new EchoRoom(hall));
-					break;
-				case FOXTROT:
-					services.add(new FoxtrotRoom(hall));
-					break;
-				case GOLF:
-					services.add(new GolfRoom(hall));
-					break;
-				case HOTEL:
-					services.add(new HotelRoom(hall));
-					break;
-				case INDIA:
-					services.add(new IndiaRoom(hall));
-					break;
-				case JULIET:
-					services.add(new JulietRoom(hall));
-					break;
-				case KILO:
-					services.add(new KiloRoom(hall));
-					break;
-				case LIMA:
-					services.add(new LimaRoom(hall));
-					break;
-				case MIKE:
-					services.add(new MikeRoom(hall));
-					break;
-				case NOVEMBER:
-					services.add(new NovemberRoom(hall));
-					break;
-				case OSCAR:
-					services.add(new OscarRoom(hall));
-					break;
-				case PAPA:
-					services.add(new PapaRoom(hall));
-					break;
-				case QUEBEC:
-					services.add(new QuebecRoom(hall));
-					break;
-				case ROMEO:
-					services.add(new RomeoRoom(hall));
-					break;
-				case SIERRA:
-					services.add(new SierraRoom(hall));
-					break;
-				default:
-					throw new A1iciaException("Bad room = " + room.getDisplayName());
-			}
+		controllerRoom = new ControllerRoom();
+		services.add(new BusMonitor());
+		services.add(a1iciaInstance.new A1iciaRoom());
+		for (UrRoom room : rooms) {
+			services.add(room);
 		}
 		return services;
 	}
@@ -376,8 +287,8 @@ public final class Controller extends AbstractIdleService {
 	public class ControllerRoom extends UrRoom {
 		private final SerialSememe whatSememesSememe;
 		
-		ControllerRoom(EventBus bus) {
-			super(bus);
+		ControllerRoom() {
+			super();
 			
 			whatSememesSememe = SerialSememe.find("what_sememes");
 		}

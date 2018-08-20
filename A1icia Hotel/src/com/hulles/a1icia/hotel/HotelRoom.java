@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -62,8 +61,8 @@ public final class HotelRoom extends UrRoom {
 	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private TimerHandler timerHandler;
 	
-	public HotelRoom(EventBus bus) {
-		super(bus);
+	public HotelRoom() {
+		super();
 		
 	}
 

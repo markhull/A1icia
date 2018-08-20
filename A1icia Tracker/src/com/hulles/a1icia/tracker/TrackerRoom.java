@@ -21,7 +21,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.tracker;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,15 +33,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
-import com.google.common.util.concurrent.AbstractIdleService;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.graphviz.Graph;
@@ -48,42 +48,41 @@ import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.Room;
+import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
+import com.hulles.a1icia.ticket.ActionPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
 /**
- * Tracker listens to everything on the bus and keeps track of what's happening. Note that
- * it is not a subclass of UrRoom.
+ * Tracker listens to everything on the bus and keeps track of what's happening.
  * <p>
  * NOTE: Tracker is now turned off until we figure out a better use for it.
  * 
  * @author hulles
  *
  */
-public final class Tracker extends AbstractIdleService {
+public final class TrackerRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.Tracker");
 	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static int GRAPHTTL = 60 * 60 * 24; // graphs are stored in Jebus for 24 hours
 	private final static boolean SAVEIMAGE = false;
 	private final static boolean SAVEDOTGRAPH = false;
 	private final JebusPool jebusPool;
-	private static Tracker instance = null;
-	private final EventBus bus;
 	private final ConcurrentMap<Ticket,TicketTrack> ticketMap;
 	private final String imagePath;
 	private ExecutorService executor;
 	
-	public Tracker(EventBus bus) {
+	public TrackerRoom() {
+		super();
 		ApplicationKeys appKeys;
 		
-		SharedUtils.checkNotNull(bus);
-		this.bus = bus;
 		ticketMap = new ConcurrentHashMap<>();
 		jebusPool = JebusHub.getJebusLocal();
 		appKeys = ApplicationKeys.getInstance();
@@ -122,14 +121,6 @@ public final class Tracker extends AbstractIdleService {
 		} else {
 			A1iciaUtils.error("Unknown document type in Tracker = " + document.getDocumentType());
 		}
-	}
-
-	public static Tracker getInstance() {
-	
-		if (instance == null) {
-			throw new A1iciaException();
-		}
-		return instance;
 	}
 	
 	public void initiateTicket(Ticket ticket) {
@@ -285,12 +276,34 @@ public final class Tracker extends AbstractIdleService {
             }
         }
 	}
-	
+
+	/**
+	 * Return this room.
+	 * 
+	 */
 	@Override
-	protected void shutDown() {
+	public Room getThisRoom() {
+
+		return Room.TRACKER;
+	}
+
+	/**
+	 * Tracker does not handle responses, and shouldn't receive any here.
+	 * 
+	 */
+	@Override
+	public void processRoomResponses(RoomRequest request, List<RoomResponse> response) {
+		throw new A1iciaException("Response not implemented in " + 
+				getThisRoom().getDisplayName());
+	}
+
+	@Override
+	protected void roomStartup() {
+	}
+
+	@Override
+	protected void roomShutdown() {
 		
-		bus.unregister(this);
-		instance = null;
 		if (executor != null) {
 			try {
 				LOGGER.log(LOGLEVEL, "attempting to shutdown executor");
@@ -311,9 +324,30 @@ public final class Tracker extends AbstractIdleService {
 		executor = null;
 	}
 
+	/**
+	 * BusMonitor does not react to sememes, although it could someday.
+	 * 
+	 */
 	@Override
-	protected void startUp() {
+	public ActionPackage createActionPackage(SememePackage pkg, RoomRequest request) {
+		throw new A1iciaException("Request not implemented in " + 
+				getThisRoom().getDisplayName());
+	}
 
-		bus.register(this);
+	/**
+	 * Return the set of sememes which we handle here, i.e. none (empty set).
+	 */
+	@Override
+	protected Set<SerialSememe> loadSememes() {
+		
+		return Collections.emptySet();
+	}
+
+	/**
+	 * BusMonitor does not handle room announcements, at least as called by UrRoom.
+	 * 
+	 */
+	@Override
+	protected void processRoomAnnouncement(RoomAnnouncement announcement) {
 	}
 }

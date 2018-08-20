@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -57,8 +56,8 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class QuebecRoom extends UrRoom {
 	
-	public QuebecRoom(EventBus bus) {
-		super(bus);
+	public QuebecRoom() {
+		super();
 	}
 
 	@Override

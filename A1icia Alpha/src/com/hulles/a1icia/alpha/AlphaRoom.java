@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -52,8 +51,8 @@ import com.hulles.a1icia.ticket.TicketJournal;
  */
 public final class AlphaRoom extends UrRoom {
 	
-	public AlphaRoom(EventBus bus) {
-		super(bus);
+	public AlphaRoom() {
+		super();
 	}
 
 	/**

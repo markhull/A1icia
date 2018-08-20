@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -58,8 +57,8 @@ public final class GolfRoom extends UrRoom {
 	private static final String ISAN_FORMAT = "'%s' is an %s";
 //	private final Escaper escaper;
 
-	public GolfRoom(EventBus bus) {
-		super(bus);
+	public GolfRoom() {
+		super();
 		
 //		escaper = HtmlEscapers.htmlEscaper();
 	}

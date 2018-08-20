@@ -26,4 +26,6 @@ module com.hulles.a1icia {
 	requires java.desktop;
 	requires java.logging;
 	requires jedis;
+	
+	uses com.hulles.a1icia.room.UrRoom;
 }

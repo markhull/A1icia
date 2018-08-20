@@ -15,7 +15,9 @@ module com.hulles.a1icia.hotel {
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.cayenne;
 	requires com.hulles.a1icia.media;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
 	requires jedis;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.hotel.HotelRoom;
 }

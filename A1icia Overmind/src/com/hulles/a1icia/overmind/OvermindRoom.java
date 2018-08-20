@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
@@ -65,8 +64,8 @@ public class OvermindRoom extends UrRoom {
 	private final Thimk thimk;
 //	private final ConcurrentMap<Ticket, Thread> threadMap;
 	
-	public OvermindRoom(EventBus bus) {
-		super(bus);
+	public OvermindRoom() {
+		super();
 	
 //		threadMap = new ConcurrentHashMap<>();
 		thimk = new Thimk(this);

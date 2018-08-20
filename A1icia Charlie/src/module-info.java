@@ -17,8 +17,10 @@ module com.hulles.a1icia.charlie {
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
 	requires transitive com.hulles.a1icia.cayenne;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
 	requires jedis;
 	requires transitive org.apache.opennlp.tools;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.charlie.CharlieRoom;
 }

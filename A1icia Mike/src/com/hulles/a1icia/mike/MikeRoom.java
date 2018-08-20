@@ -36,7 +36,6 @@ import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
@@ -107,8 +106,8 @@ public final class MikeRoom extends UrRoom {
 	private byte[] introBytes = null;
 	private final JebusPool jebusLocal;
 	
-	public MikeRoom(EventBus bus) {
-		super(bus);
+	public MikeRoom() {
+		super();
 		
 		random = new Random();
 		artists = new ArrayList<>(3000);

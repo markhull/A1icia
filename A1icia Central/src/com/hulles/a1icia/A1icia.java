@@ -429,8 +429,8 @@ public class A1icia implements Closeable {
 	 */
 	public final class A1iciaRoom extends UrRoom {
 
-		public A1iciaRoom(EventBus hall) {
-			super(hall);
+		public A1iciaRoom() {
+			super();
 		}
 
 		/**

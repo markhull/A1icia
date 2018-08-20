@@ -14,8 +14,10 @@ module com.hulles.a1icia.foxtrot {
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.crypto;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
 	requires transitive java.sql;
 	requires org.mariadb.jdbc;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.foxtrot.FoxtrotRoom;
 }

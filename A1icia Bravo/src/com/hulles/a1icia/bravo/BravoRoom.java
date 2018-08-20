@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
@@ -75,8 +74,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public final class BravoRoom extends UrRoom {
 	private static final int LIKELIHOOD_CUTOFF = 75;
 	
-	public BravoRoom(EventBus bus) {
-		super(bus);
+	public BravoRoom() {
+		super();
 	}
 
 	@Override

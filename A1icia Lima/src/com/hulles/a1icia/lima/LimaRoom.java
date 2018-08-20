@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -66,8 +65,8 @@ public final class LimaRoom extends UrRoom {
 	private final static int KEEPERSCORE = 95;
 	private final LimaHistory limaHistory;
 
-	public LimaRoom(EventBus bus) {
-		super(bus);
+	public LimaRoom() {
+		super();
 		
 		limaHistory = new LimaHistory();
 	}

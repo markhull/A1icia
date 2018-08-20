@@ -13,7 +13,9 @@ module com.hulles.a1icia.kilo {
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.cayenne;
 	requires com.hulles.a1icia.crypto;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
 	requires javax.json;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.kilo.KiloRoom;
 }

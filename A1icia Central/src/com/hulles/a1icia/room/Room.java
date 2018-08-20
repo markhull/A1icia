@@ -26,13 +26,19 @@ import com.hulles.a1icia.base.A1iciaException;
 
 /**
  * This is an enumeration of the various possible A1icia Rooms. Not all of them are functional yet.
- * Note that order matters : EnumSet lists enums in the order in which they're declared, 
+ * <p>
+ * Note that order matters : EnumSet lists enums in the order in which they're declared,
+ * <p>
+ * Note also that this list is not tightly coupled with what rooms may or may not be available
+ * at runtime; a new module can help itself to a name on the list.
+ *  
  * <i>ceteris paribus</i>.
  * 
  * @author hulles
  *
  */
 public enum Room {
+	TRACKER(32, "Tracker"),
     BUSMONITOR(0, "Bus Monitor"),    
 	CONTROLLER(31, "Controller"),
     ALICIA(30, "ALICIA"),
@@ -55,14 +61,14 @@ public enum Room {
     PAPA(17, "Papa Room"),
     QUEBEC(18, "Quebec Room"),
     ROMEO(19, "Romeo Room"),
-    SIERRA(20, "Sierra Room");
-//    TANGO(21, "Tango Room"),
-//    UNIFORM(22, "Uniform Room"),
-//    VICTOR(23, "Victor Room"),
-//    WHISKEY(24, "Whiskey Room"),
-//    XRAY(25, "X-Ray Room"),
-//    YANKEE(26, "Yankee Room"),
-//    ZULU(27, "Zulu Room");
+    SIERRA(20, "Sierra Room"),
+    TANGO(21, "Tango Room"),
+    UNIFORM(22, "Uniform Room"),
+    VICTOR(23, "Victor Room"),
+    WHISKEY(24, "Whiskey Room"),
+    XRAY(25, "X-Ray Room"),
+    YANKEE(26, "Yankee Room"),
+    ZULU(27, "Zulu Room");
 	// last-used storeID = 31
     private final Integer storeID;
     private final String displayName;
@@ -80,14 +86,14 @@ public enum Room {
         return displayName;
     }
     
-    public static Room findRoomType(Integer type) {
+    public static Room findRoom(Integer roomID) {
     	
-		SharedUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(roomID);
     	for (Room a : Room.values()) {
-    		if (a.storeID == type) {
+    		if (a.storeID == roomID) {
     			return a;
     		}
         }
-    	throw new A1iciaException("Invalid room type = " + type.toString());
+    	throw new A1iciaException("Invalid room type = " + roomID.toString());
     }
 }

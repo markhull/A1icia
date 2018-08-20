@@ -53,8 +53,8 @@ public final class DeltaRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaDelta.DeltaRoom");
 	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 
-	public DeltaRoom(EventBus bus) {
-		super(bus);
+	public DeltaRoom() {
+		super();
 	}
 
 	@Override

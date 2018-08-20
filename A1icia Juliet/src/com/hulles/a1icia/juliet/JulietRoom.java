@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -50,8 +49,8 @@ public final class JulietRoom extends UrRoom {
 //	private final static Level LOGLEVEL = Level.INFO;
 	JulietResponder responder;
 
-	public JulietRoom(EventBus bus) {
-		super(bus);
+	public JulietRoom() {
+		super();
 	}
 
 	@Override

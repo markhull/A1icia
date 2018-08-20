@@ -13,7 +13,9 @@ module com.hulles.a1icia.papa {
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.crypto;
 	requires com.hulles.a1icia.media;
-	requires transitive guava;
+	requires guava;
 	requires java.desktop;
 	requires java.xml;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.papa.PapaRoom;
 }

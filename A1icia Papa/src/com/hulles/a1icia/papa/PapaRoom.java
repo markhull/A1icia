@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -70,8 +69,8 @@ public final class PapaRoom extends UrRoom {
 	@SuppressWarnings("unused")
 	private String wolframRemoteKey;
 	
-	public PapaRoom(EventBus bus) {
-		super(bus);
+	public PapaRoom() {
+		super();
 
 	}
 

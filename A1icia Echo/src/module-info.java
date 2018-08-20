@@ -12,6 +12,8 @@ module com.hulles.a1icia.echo {
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
-	requires transitive guava;
 	requires java.logging;
+	requires guava;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.echo.EchoRoom;
 }

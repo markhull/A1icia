@@ -11,8 +11,10 @@ module com.hulles.a1icia.golf {
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
-	requires transitive guava;
+	requires guava;
 	requires java.logging;
 	requires javax.json;
 	requires jedis;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.golf.GolfRoom;
 }

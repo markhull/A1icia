@@ -15,4 +15,6 @@ module com.hulles.a1icia.tracker {
 	requires guava;
 	requires java.logging;
 	requires jedis;
+	
+	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.tracker.TrackerRoom;
 }

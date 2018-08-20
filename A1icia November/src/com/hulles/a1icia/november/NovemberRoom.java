@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.object.LoginResponseObject;
@@ -57,8 +56,8 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class NovemberRoom extends UrRoom {
 	
-	public NovemberRoom(EventBus bus) {
-		super(bus);
+	public NovemberRoom() {
+		super();
 		
 	}
 	
