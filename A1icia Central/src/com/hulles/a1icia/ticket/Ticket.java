@@ -22,14 +22,14 @@
 package com.hulles.a1icia.ticket;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SerialPerson;
+import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.Room;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.SerialPerson;
-import com.hulles.a1icia.api.shared.SerialUUID;
 
 import redis.clients.jedis.Jedis;
 
@@ -59,7 +59,7 @@ public final class Ticket {
 	private Ticket(EventBus bus) {
 		long idValue;
 		
-        A1iciaUtils.checkNotNull(bus);
+        SharedUtils.checkNotNull(bus);
 //        this.bus = bus;
 		idValue = getNewTicketID();
 		this.idString = "TKT" + idValue;
@@ -76,7 +76,7 @@ public final class Ticket {
 		Ticket ticket;
 //		RoomAnnouncement openedTicket;
         
-        A1iciaUtils.checkNotNull(bus);
+        SharedUtils.checkNotNull(bus);
  		ticket = new Ticket(bus);
 //		openedTicket = new RoomAnnouncement(RoomDocumentType.TICKETOPENED, ticket);
 //		openedTicket.setFromRoom(room);
@@ -106,7 +106,7 @@ public final class Ticket {
 
 	public void setClientPackage(ActionPackage clientPackage) {
 		
-		A1iciaUtils.checkNotNull(clientPackage);
+		SharedUtils.checkNotNull(clientPackage);
 		this.clientPackage = clientPackage;
 	}
 
@@ -117,7 +117,7 @@ public final class Ticket {
 
 	public void setFromA1icianID(A1icianID a1icianID) {
 		
-		A1iciaUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(a1icianID);
 		this.fromA1icianID = a1icianID;
 	}
 
@@ -128,7 +128,7 @@ public final class Ticket {
 
 	public void setPersonUUID(SerialUUID<SerialPerson> uuid) {
 		
-		A1iciaUtils.nullsOkay(uuid);
+		SharedUtils.nullsOkay(uuid);
 		this.personUUID = uuid;
 	}
 

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
@@ -41,8 +41,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 import redis.clients.jedis.Jedis;
 
 public final class NLPAnalyzer {
-	private final static Logger logger = Logger.getLogger("A1iciaOvermind.NLPAnalyzer");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.NLPAnalyzer");
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static long MAXNLPITEMS = 20L;
 	
 	@SuppressWarnings("resource")
@@ -55,8 +55,8 @@ public final class NLPAnalyzer {
 		TicketJournal journal;
 		JebusPool jebusPool;
 		
-		A1iciaUtils.checkNotNull(analysis);
-		logger.log(LOGLEVEL, "In NLPAnalyzer processAnalysis");
+		SharedUtils.checkNotNull(analysis);
+		LOGGER.log(LOGLEVEL, "In NLPAnalyzer processAnalysis");
 		jebusPool = JebusHub.getJebusLocal();
 		
 		// First, we save the analysis explanation to Jebus so we can pore over it 
@@ -164,13 +164,13 @@ public final class NLPAnalyzer {
 			} while (tag.startsWith("I-"));
 			tagString = chunkSb.toString();
 			sentenceChunk.setPosTagString(tagString);
-			logger.log(LOGLEVEL, "NLPAnalyzer: chunk = " + chunk + ", tags = " + tagString);
+			LOGGER.log(LOGLEVEL, "NLPAnalyzer: chunk = " + chunk + ", tags = " + tagString);
 			sentenceChunks.add(chunkIx, sentenceChunk);
 			chunkIx++;
 		}
 		sentencePackage.setChunks(sentenceChunks);
 		
-		logger.log(LOGLEVEL, "NLPAnalyzer: lemmatizedSentence = " + lemmatizedSentence);
+		LOGGER.log(LOGLEVEL, "NLPAnalyzer: lemmatizedSentence = " + lemmatizedSentence);
 		return sentencePackage;
 	}
 

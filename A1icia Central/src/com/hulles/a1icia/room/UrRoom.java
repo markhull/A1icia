@@ -40,6 +40,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.base.Controller;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomRequest;
@@ -67,11 +69,10 @@ public abstract class UrRoom extends AbstractIdleService {
 	private final ExecutorService threadPool;
 	boolean shuttingDownOnClose = false;
 	
-	public UrRoom(EventBus hall) {
+	public UrRoom() {
 		Set<SerialSememe> sememes;
 		
-		A1iciaUtils.checkNotNull(hall);
-		this.hall = hall;
+		this.hall = Controller.getInstance().getHall();
 		hall.register(this);
 		sememes = loadSememes();
 		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
@@ -112,7 +113,7 @@ public abstract class UrRoom extends AbstractIdleService {
 	 */
 	public void sendRoomRequest(RoomRequest request) {
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "UrRoom: in sendRoomRequest, request type = " + request.getDocumentType());
 		if (!request.documentIsReady()) {
 			A1iciaUtils.error("Document is not ready in UrRoom.sendRoomRequest",
@@ -137,7 +138,7 @@ public abstract class UrRoom extends AbstractIdleService {
 	 */
 	public void sendRoomResponse(RoomResponse response) {
 		
-		A1iciaUtils.checkNotNull(response);
+		SharedUtils.checkNotNull(response);
 		LOGGER.log(Level.FINE, "UrRoom: in sendRoomReponse");
 		if (!response.documentIsReady()) {
 			A1iciaUtils.error("Document is not ready in UrRoom.sendRoomResponse",
@@ -179,7 +180,7 @@ public abstract class UrRoom extends AbstractIdleService {
 		Long responseTo;
 		Room toRoom;
 		
-		A1iciaUtils.checkNotNull(document);
+		SharedUtils.checkNotNull(document);
 		LOGGER.log(Level.FINER, "UrRoom for " + this.getThisRoom().getDisplayName() + 
 				": in documentArrival");
 		if (document instanceof RoomResponse) {
@@ -264,7 +265,7 @@ public abstract class UrRoom extends AbstractIdleService {
 		RoomResponse response;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		// the contract states that we send a response no matter what
 		response = new RoomResponse(request);
 		response.setFromRoom(getThisRoom());

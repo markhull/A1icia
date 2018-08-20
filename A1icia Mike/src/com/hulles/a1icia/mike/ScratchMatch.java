@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.mike;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class ScratchMatch {
 	private final String name;
@@ -29,8 +29,8 @@ public class ScratchMatch {
 	
 	public ScratchMatch(String name, Integer ratio) {
 		
-		A1iciaUtils.checkNotNull(name);
-		A1iciaUtils.checkNotNull(ratio);
+		SharedUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(ratio);
 		this.name = name;
 		this.ratio = ratio;
 	}

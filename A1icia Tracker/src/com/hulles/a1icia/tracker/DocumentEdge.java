@@ -21,11 +21,11 @@
  *******************************************************************************/
 package com.hulles.a1icia.tracker;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.graphviz.Edge;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomDocumentType;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * An edge for the ticket ValueGraph that represents a document moving from one room (node) to 
@@ -42,10 +42,10 @@ public class DocumentEdge {
 	
 	public DocumentEdge(Ticket ticket, RoomNode fromNode, RoomDocument document, RoomNode toNode) {
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(fromNode);
-		A1iciaUtils.checkNotNull(document);
-		A1iciaUtils.checkNotNull(toNode);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(fromNode);
+		SharedUtils.checkNotNull(document);
+		SharedUtils.checkNotNull(toNode);
 		this.ticket = ticket;
 		this.documentKey = document.getDocumentID();
 		this.documentType = document.getDocumentType();

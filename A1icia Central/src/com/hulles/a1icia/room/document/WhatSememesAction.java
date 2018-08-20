@@ -24,7 +24,7 @@ package com.hulles.a1icia.room.document;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * This action is a room's response to a "what_sememes" query asking which sememes the room can handle.
@@ -46,7 +46,7 @@ public class WhatSememesAction extends RoomActionObject {
 
 	public void setSememes(Set<SerialSememe> sememes) {
 		
-		A1iciaUtils.checkNotNull(sememes);
+		SharedUtils.checkNotNull(sememes);
 		this.sememes = sememes;
 	}
 

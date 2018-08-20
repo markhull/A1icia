@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * Wrap the A1iciaClientObject up as a RoomActionObject.
@@ -37,7 +37,7 @@ public final class ClientObjectWrapper extends RoomActionObject {
 	
 	public ClientObjectWrapper(A1iciaClientObject object) {
 		
-		A1iciaUtils.checkNotNull(object);
+		SharedUtils.checkNotNull(object);
 		this.clientObject = object;
 	}
 	
@@ -54,7 +54,7 @@ public final class ClientObjectWrapper extends RoomActionObject {
 
 	public void setMessage(String msg) {
 		
-		A1iciaUtils.checkNotNull(msg);
+		SharedUtils.checkNotNull(msg);
 		this.message = msg;
 	}
 	
@@ -66,7 +66,7 @@ public final class ClientObjectWrapper extends RoomActionObject {
 
 	public void setExplanation(String expl) {
 		
-		A1iciaUtils.checkNotNull(expl);
+		SharedUtils.checkNotNull(expl);
 		this.explanation = expl;
 	}
 }

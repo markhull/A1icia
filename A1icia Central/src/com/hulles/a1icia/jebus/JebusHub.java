@@ -22,8 +22,8 @@
 package com.hulles.a1icia.jebus;
 
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusPool.JebusPoolType;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -74,16 +74,16 @@ public final class JebusHub {
 	public static JebusPool getJebusCentral(Boolean alsoStartMonitor) {
 		Station station;
 		
-		A1iciaUtils.checkNotNull(alsoStartMonitor);
+		SharedUtils.checkNotNull(alsoStartMonitor);
 		station = Station.getInstance();
 		station.ensureStationExists();
 		return getJebusCentral(station.getCentralHost(), station.getCentralPort(), alsoStartMonitor);
 	}
 	public synchronized static JebusPool getJebusCentral(String host, Integer port, Boolean alsoStartMonitor) {
 		
-		A1iciaUtils.checkNotNull(alsoStartMonitor);
-		A1iciaUtils.checkNotNull(host);
-		A1iciaUtils.checkNotNull(port);
+		SharedUtils.checkNotNull(alsoStartMonitor);
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
 		if (jebusCentral == null) {
 			jebusCentral = new JebusPool(JebusPoolType.CENTRAL, new JedisPoolConfig(), host, port);
 			if (alsoStartMonitor) {
@@ -107,14 +107,14 @@ public final class JebusHub {
 	}
 	public static JebusPool getJebusLocal(Boolean alsoStartMonitor) {
 		
-		A1iciaUtils.checkNotNull(alsoStartMonitor);
+		SharedUtils.checkNotNull(alsoStartMonitor);
 		return getJebusLocal(LOCAL_SERVER, LOCAL_SERVER_PORT, alsoStartMonitor);
 	}
 	public synchronized static JebusPool getJebusLocal(String host, Integer port, Boolean alsoStartMonitor) {
 		
-		A1iciaUtils.checkNotNull(alsoStartMonitor);
-		A1iciaUtils.checkNotNull(host);
-		A1iciaUtils.checkNotNull(port);
+		SharedUtils.checkNotNull(alsoStartMonitor);
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
 		if (jebusLocal == null) {
 			jebusLocal = new JebusPool(JebusPoolType.LOCAL, new JedisPoolConfig(), host, port);
 			if (alsoStartMonitor) {

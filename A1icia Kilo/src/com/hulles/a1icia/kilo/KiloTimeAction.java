@@ -24,8 +24,8 @@ package com.hulles.a1icia.kilo;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class KiloTimeAction extends RoomActionObject {
 	private LocalDateTime ldt;
@@ -57,7 +57,7 @@ public class KiloTimeAction extends RoomActionObject {
 
 	void setLocalDateTime(LocalDateTime ldt) {
 		
-		A1iciaUtils.checkNotNull(ldt);
+		SharedUtils.checkNotNull(ldt);
 		this.ldt = ldt;
 	}
 
@@ -74,7 +74,7 @@ public class KiloTimeAction extends RoomActionObject {
 
 	public void setLocation(String location) {
 		
-		A1iciaUtils.checkNotNull(location);
+		SharedUtils.checkNotNull(location);
 		this.location = location;
 	}
 	

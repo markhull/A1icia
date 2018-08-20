@@ -33,6 +33,7 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.media.MediaUtils;
@@ -46,8 +47,8 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SememePackage;
+import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -114,8 +115,8 @@ public final class BravoRoom extends UrRoom {
 		int confidence;
 //		List<String> context;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		clientObject = journal.getClientRequest();
@@ -162,8 +163,8 @@ public final class BravoRoom extends UrRoom {
 		String classification = null;
 		ActionPackage pkg;
 
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		object = request.getRoomObject();
 		if (object.getRoomObjectType() != RoomObjectType.IMAGEINPUT) {

@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.AnswerHistory;
 import com.hulles.a1icia.room.Room;
@@ -41,11 +42,10 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SememePackage;
+import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Lima Room plucks the low-hanging fruit and tries to match the current query to previous query
@@ -86,8 +86,8 @@ public final class LimaRoom extends UrRoom {
 		SememePackage sememePackage;
 		String sememeObject;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "LimaRoom: in createAnalysisActionPackage");
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
@@ -133,8 +133,8 @@ public final class LimaRoom extends UrRoom {
 		MessageAction updateResponse;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "Lima Room: in createUpdatePackage");
 		historyUpdate = (HistoryUpdate) request.getRoomObject();
 		limaHistory.addHistory(historyUpdate);

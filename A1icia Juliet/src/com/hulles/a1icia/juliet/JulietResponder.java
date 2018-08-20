@@ -24,13 +24,13 @@ package com.hulles.a1icia.juliet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.NbestAnswer;
 import com.hulles.a1icia.cayenne.Nfl6Question;
 import com.hulles.a1icia.juliet.fuzzywuzzy.FuzzySearch;
 import com.hulles.a1icia.juliet.fuzzywuzzy.model.ExtractedResult;
-import com.hulles.a1icia.tools.FuzzyMatch;
 import com.hulles.a1icia.tools.A1iciaTimer;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.tools.FuzzyMatch;
 
 public final class JulietResponder {
 	private final List<String> nfl6Questions;
@@ -51,8 +51,8 @@ public final class JulietResponder {
 		List<Nfl6Question> dbQuestions;
 		Long et;
 		
-		A1iciaUtils.checkNotNull(input);
-		A1iciaUtils.checkNotNull(bestNAnswers);
+		SharedUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(bestNAnswers);
 		A1iciaTimer.startTimer("JulietFW");
 		results = FuzzySearch.extractTop(input, nfl6Questions, bestNAnswers);
 		serialQuestions = new ArrayList<>(results.size());
@@ -96,8 +96,8 @@ public final class JulietResponder {
 		int ratio;
 		int lastRatioIx;
 		
-		A1iciaUtils.checkNotNull(input);
-		A1iciaUtils.checkNotNull(bestNAnswers);
+		SharedUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(bestNAnswers);
 		A1iciaTimer.startTimer("JulietFM");		
 		lastRatioIx = bestNAnswers - 1;
 		topQuestions = new ArrayList<>(bestNAnswers);

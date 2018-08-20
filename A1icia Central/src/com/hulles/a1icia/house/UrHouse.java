@@ -34,7 +34,7 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.remote.Station;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * UrHouse is the superclass for all of the A1icia houses that listen on the street bus.
@@ -51,7 +51,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	
 	public UrHouse(EventBus street) {
 		
-		A1iciaUtils.checkNotNull(street);
+		SharedUtils.checkNotNull(street);
 		station = Station.getInstance();
 		station.ensureStationExists();
 		this.street = street;
@@ -88,7 +88,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		DialogResponse response;
 		A1icianID toA1icianID;
 		
-		A1iciaUtils.checkNotNull(dialog);
+		SharedUtils.checkNotNull(dialog);
 		LOGGER.log(LOGLEVEL, "UrHouse: dialogArrival for " + getThisHouse());
 		toA1icianID = dialog.getToA1icianID();
 		if (!isOurSession(toA1icianID)) {
@@ -115,7 +115,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 */
 	protected boolean isOurSession(A1icianID a1icianID) {
 	
-		A1iciaUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(a1icianID);
 		return sessions.containsKey(a1icianID);
 	}
 	
@@ -128,7 +128,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	protected Session getSession(A1icianID a1icianID) {
 		Session session;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(a1icianID);
 		session = sessions.get(a1icianID);
 		return session;
 	}
@@ -140,7 +140,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 */
 	protected void setSession(Session session) {
 		
-		A1iciaUtils.checkNotNull(session);
+		SharedUtils.checkNotNull(session);
 		sessions.put(session.getA1icianID(), session);
 	}
 	
@@ -151,7 +151,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 */
 	protected void removeSession(Session session) {
 		
-		A1iciaUtils.checkNotNull(session);
+		SharedUtils.checkNotNull(session);
 		sessions.remove(session.getA1icianID());
 	}
 	

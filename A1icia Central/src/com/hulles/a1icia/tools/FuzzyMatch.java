@@ -35,6 +35,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * FuzzyMatch returns a quantified match between one string and another using the 
@@ -279,7 +280,7 @@ public class FuzzyMatch {
 		
 		public void setString(String string) {
 			
-			A1iciaUtils.checkNotNull(string);
+			SharedUtils.checkNotNull(string);
 			this.string = string;
 		}
 

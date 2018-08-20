@@ -28,6 +28,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -37,11 +38,10 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SememePackage;
+import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Alpha Room is an exemplary implementation for rooms. It simply returns a form of "Aardvark" 
@@ -95,8 +95,8 @@ public final class AlphaRoom extends UrRoom {
 		List<SentencePackage> sentencePackages;
 		SememePackage aardPkg;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		actionPkg = new ActionPackage(sememePkg);
@@ -131,8 +131,8 @@ public final class AlphaRoom extends UrRoom {
 		String clientMsg;
 		String result;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		clientMsg = request.getMessage().trim();

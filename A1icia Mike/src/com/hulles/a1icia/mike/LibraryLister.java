@@ -33,8 +33,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class LibraryLister extends SimpleFileVisitor<Path> {
 //	private final static String WAVPATTERN = "*.wav";
@@ -57,7 +57,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
         LibraryLister lister;
         Path logDirPath;
         
-        A1iciaUtils.checkNotNull(logDir);
+        SharedUtils.checkNotNull(logDir);
         lister = new LibraryLister(pattern);
         logDirPath = Paths.get(logDir);
         try {
@@ -74,7 +74,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 	private void find(Path file) {
 		Path filePath;
 		
-        A1iciaUtils.checkNotNull(file);
+        SharedUtils.checkNotNull(file);
 		filePath = file.getFileName();
 		if (filePath != null && matcher.matches(filePath)) {
 //			numMatches++;
@@ -95,8 +95,8 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 
-		A1iciaUtils.checkNotNull(file);
-        A1iciaUtils.checkNotNull(attrs);
+		SharedUtils.checkNotNull(file);
+        SharedUtils.checkNotNull(attrs);
 		find(file);
 		return FileVisitResult.CONTINUE;
 	}

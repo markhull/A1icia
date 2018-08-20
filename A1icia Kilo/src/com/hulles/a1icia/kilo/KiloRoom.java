@@ -30,6 +30,7 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
 import com.hulles.a1icia.room.Room;
@@ -81,8 +82,8 @@ public final class KiloRoom extends UrRoom {
 	@Override
 	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		switch (sememePkg.getName()) {
 			case "weather_forecast":
 				return createForecastActionPackage(sememePkg, request);
@@ -103,8 +104,8 @@ public final class KiloRoom extends UrRoom {
 		LocalDateTime now;
 		KiloLocationAction locationAction;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		locationAction = KiloLocation.getLocation();
 		action = new KiloTimeAction();
 		action.setLocation(locationAction.getCity());
@@ -120,8 +121,8 @@ public final class KiloRoom extends UrRoom {
 		RoomActionObject action;
 		String idStr;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getForecastWeather(Integer.parseInt(idStr));
 		pkg = new ActionPackage(sememePkg);
@@ -134,8 +135,8 @@ public final class KiloRoom extends UrRoom {
 		RoomActionObject action;
 		String idStr;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		idStr = appKeys.getKey(ApplicationKey.OWMCITY);
 		action = KiloWeather.getCurrentWeather(Integer.parseInt(idStr));
 		pkg = new ActionPackage(sememePkg);
@@ -147,8 +148,8 @@ public final class KiloRoom extends UrRoom {
 		ActionPackage pkg;
 		RoomActionObject action;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		action = KiloLocation.getLocation();
 		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(action);
@@ -161,7 +162,7 @@ public final class KiloRoom extends UrRoom {
 		KiloLocationAction action;
 		OwmCity match;
 		
-		A1iciaUtils.checkNotNull(sememeObject);
+		SharedUtils.checkNotNull(sememeObject);
 		cities = OwmCity.getOwmCities(sememeObject);
 		if (cities.isEmpty()) {
 			// whoever created the initial sememe package should have vetted

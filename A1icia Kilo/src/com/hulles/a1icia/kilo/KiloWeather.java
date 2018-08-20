@@ -43,16 +43,16 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.crypto.PurdahKeys;
 import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.kilo.KiloForecastAction.ThreeHrForecast;
 import com.hulles.a1icia.kilo.KiloWeatherAction.WeatherCondition;
 import com.hulles.a1icia.tools.ExternalAperture;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class KiloWeather {
-	private final static Logger logger = Logger.getLogger("A1iciaKilo.KiloWeather");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Logger LOGGER = Logger.getLogger("A1iciaKilo.KiloWeather");
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private static List<KiloWeatherAction> currentWeatherQueue = null;
 	private final static int QUEUETTL = 15; // minutes
 	@SuppressWarnings("unused")
@@ -108,7 +108,7 @@ public class KiloWeather {
 		PurdahKeys purdahKeys;
 		String openWeatherId;
 		
-		A1iciaUtils.checkNotNull(cityID);
+		SharedUtils.checkNotNull(cityID);
 		purdahKeys = PurdahKeys.getInstance();
 		openWeatherId = purdahKeys.getPurdahKey(PurdahKey.OPENWEATHERID);
 		if (currentWeatherQueue == null) {
@@ -128,16 +128,16 @@ public class KiloWeather {
 			}
 		}
 		if (owmWeather != null) {
-			logger.log(LOGLEVEL, "KiloWeather is using cached weather");
+			LOGGER.log(LOGLEVEL, "KiloWeather is using cached weather");
 			return owmWeather;
 		}
-		logger.log(LOGLEVEL, "KiloWeather is using fetched weather");
+		LOGGER.log(LOGLEVEL, "KiloWeather is using fetched weather");
 		owmWeather = new KiloWeatherAction();
 		owmWeather.setCityID(cityID);
 		owmWeather.setLocalDateTime(LocalDateTime.now());
 		sb = new StringBuilder();
 		weatherJSON = ExternalAperture.getCurrentWeatherOWM(cityID, openWeatherId);
-		logger.log(LOGLEVEL, weatherJSON);
+		LOGGER.log(LOGLEVEL, weatherJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(weatherJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
 				weatherObj = jsonReader.readObject();
@@ -268,7 +268,7 @@ public class KiloWeather {
 		purdahKeys = PurdahKeys.getInstance();
 		openWeatherId = purdahKeys.getPurdahKey(PurdahKey.OPENWEATHERID);
 		forecastJSON = ExternalAperture.getForecastOWM(cityID, openWeatherId);
-		logger.log(LOGLEVEL, forecastJSON);
+		LOGGER.log(LOGLEVEL, forecastJSON);
 		try (BufferedReader reader = new BufferedReader(new StringReader(forecastJSON))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
 				forecastObj = jsonReader.readObject();
@@ -355,7 +355,7 @@ public class KiloWeather {
     public static LocalDateTime ldtFromMillis(Long millis) {
 		LocalDateTime ldt;
 	
-		A1iciaUtils.checkNotNull(millis);
+		SharedUtils.checkNotNull(millis);
 		ldt = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), DEFAULTZONE);
 		return ldt;
     }

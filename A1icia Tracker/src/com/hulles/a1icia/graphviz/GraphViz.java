@@ -31,7 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class GraphViz {
     private final static String DOT = "dot";
@@ -46,8 +46,8 @@ public class GraphViz {
     }
     public GraphViz(String dotPath, String tmpPath) {
     	
-    	A1iciaUtils.checkNotNull(dotPath);
-    	A1iciaUtils.checkNotNull(tmpPath);
+    	SharedUtils.checkNotNull(dotPath);
+    	SharedUtils.checkNotNull(tmpPath);
         this.dotExec = dotPath;
         this.tmpPath= tmpPath;
     }
@@ -64,9 +64,9 @@ public class GraphViz {
         File dot = null;
         byte[] dotBytes = null;
 
-        A1iciaUtils.checkNotNull(graph);
-        A1iciaUtils.checkNotNull(type);
-        A1iciaUtils.checkNotNull(dpi);
+        SharedUtils.checkNotNull(graph);
+        SharedUtils.checkNotNull(type);
+        SharedUtils.checkNotNull(dpi);
         dotSource = graph.genGraphDotString();
         dot = writeDotSourceToFile(dotSource);
         dotBytes = getImageArray(dot, type, "dot", dpi);
@@ -77,8 +77,8 @@ public class GraphViz {
     public static void writeGraphBytesToFile(byte[] bytes, String outFile) {
     	Path path;
 
-    	A1iciaUtils.checkNotNull(bytes);
-    	A1iciaUtils.checkNotNull(outFile);
+    	SharedUtils.checkNotNull(bytes);
+    	SharedUtils.checkNotNull(outFile);
     	path = Paths.get(outFile);
     	try {
 			Files.write(path, bytes);
@@ -90,7 +90,7 @@ public class GraphViz {
     private static File writeDotSourceToFile(String str) {
         File temp;
         
-        A1iciaUtils.checkNotNull(str);
+        SharedUtils.checkNotNull(str);
         try {
             temp = File.createTempFile("graph_", ".dot.tmp", new File(GraphViz.TMP_PATH));
             try (FileWriter writer = new FileWriter(temp)) {
@@ -111,10 +111,10 @@ public class GraphViz {
         BufferedReader reader;
         String line;
         
-        A1iciaUtils.checkNotNull(dot);
-        A1iciaUtils.checkNotNull(type);
-        A1iciaUtils.checkNotNull(representationType);
-        A1iciaUtils.checkNotNull(dpi);
+        SharedUtils.checkNotNull(dot);
+        SharedUtils.checkNotNull(type);
+        SharedUtils.checkNotNull(representationType);
+        SharedUtils.checkNotNull(dpi);
         try {
             imageFile = File.createTempFile("graphviz", type, new File(tmpPath));
             runtime = Runtime.getRuntime();

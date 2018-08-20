@@ -39,6 +39,7 @@ import javax.imageio.ImageIO;
 
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * ExternalAperture is where ALL external access in A1icia occurs, except for A1iciaGoogleTranslate,
@@ -99,7 +100,7 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 		
-		A1iciaUtils.checkNotNull(which);
+		SharedUtils.checkNotNull(which);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.TEMPHUMIDITY);
 		urlString = String.format(urlTemplate, which);
@@ -118,8 +119,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 		
-		A1iciaUtils.checkNotNull(cityID);
-		A1iciaUtils.checkNotNull(appID);
+		SharedUtils.checkNotNull(cityID);
+		SharedUtils.checkNotNull(appID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.OWMCURRENT);
 		urlString = String.format(urlTemplate, cityID, appID);
@@ -138,8 +139,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 		
-		A1iciaUtils.checkNotNull(cityID);
-		A1iciaUtils.checkNotNull(appID);
+		SharedUtils.checkNotNull(cityID);
+		SharedUtils.checkNotNull(appID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.OWMFORECAST);
 		urlString = String.format(urlTemplate, cityID, appID);
@@ -157,7 +158,7 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-		A1iciaUtils.checkNotNull(target);
+		SharedUtils.checkNotNull(target);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATASEARCH);
 		urlString = String.format(urlTemplate, target);
@@ -175,7 +176,7 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-		A1iciaUtils.checkNotNull(title);
+		SharedUtils.checkNotNull(title);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATATITLE);
 		urlString = String.format(urlTemplate, title);
@@ -194,7 +195,7 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-		A1iciaUtils.checkNotNull(qID);
+		SharedUtils.checkNotNull(qID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WIKIDATAID);
 		urlString = String.format(urlTemplate, qID);
@@ -212,7 +213,7 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(ipinfoToken);
+	    SharedUtils.checkNotNull(ipinfoToken);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.LOCATIONURL);
 		urlString = String.format(urlTemplate, ipinfoToken);
@@ -234,8 +235,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(wolframID);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(wolframID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMVALIDATE);
 		urlString = String.format(urlTemplate, query, wolframID);
@@ -256,8 +257,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(wolframID);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(wolframID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSPOKEN);
 		urlString = String.format(urlTemplate, query, wolframID);
@@ -278,8 +279,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(wolframID);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(wolframID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSIMPLE);
 		urlString = String.format(urlTemplate, query, wolframID);
@@ -300,8 +301,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(wolframID);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(wolframID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSHORT);
 		urlString = String.format(urlTemplate, query, wolframID);
@@ -321,8 +322,8 @@ final public class ExternalAperture {
 		String urlTemplate;
 		ApplicationKeys appKeys;
 	    
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(wolframID);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(wolframID);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMQUERY);
 		urlString = String.format(urlTemplate, query, wolframID);  // pi, 3.141592653589793
@@ -340,7 +341,7 @@ final public class ExternalAperture {
 		String urlString;
 		ApplicationKeys appKeys;
 		
-		A1iciaUtils.checkNotNull(audio);
+		SharedUtils.checkNotNull(audio);
 		appKeys = ApplicationKeys.getInstance();
 		urlString = appKeys.getKey(ApplicationKey.DEEPSPEECH);
 		return postURLStringResult(urlString, audio, "application/octet-stream");
@@ -354,7 +355,7 @@ final public class ExternalAperture {
 	 */
 	public static String postTestQueryToA1iciaNode(String query) {
 	
-		A1iciaUtils.checkNotNull(query);
+		SharedUtils.checkNotNull(query);
 		return postURLStringResult("http://localhost:1337/a1icia/text", query, "text/plain");
 	}
 	
@@ -373,9 +374,9 @@ final public class ExternalAperture {
 		StringBuilder sb;
 		String line = null;
 	    
-		A1iciaUtils.checkNotNull(urlString);
-	    A1iciaUtils.checkNotNull(query);
-	    A1iciaUtils.checkNotNull(contentType);
+		SharedUtils.checkNotNull(urlString);
+	    SharedUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(contentType);
 		sb = new StringBuilder();
 		try {
 			url = new URL(urlString);
@@ -461,9 +462,9 @@ final public class ExternalAperture {
 		StringBuilder sb;
 		String line = null;
 	    
-		A1iciaUtils.checkNotNull(urlString);
-	    A1iciaUtils.checkNotNull(bytes);
-	    A1iciaUtils.checkNotNull(contentType);
+		SharedUtils.checkNotNull(urlString);
+	    SharedUtils.checkNotNull(bytes);
+	    SharedUtils.checkNotNull(contentType);
 		sb = new StringBuilder();
 		try {
 			url = new URL(urlString);
@@ -542,7 +543,7 @@ final public class ExternalAperture {
 		StringBuilder sb;
 		String line = null;
 	    
-	    A1iciaUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(query);
 		sb = new StringBuilder();
 		try {
 			url = new URL(query);
@@ -586,7 +587,7 @@ final public class ExternalAperture {
 		URL url;
 	    BufferedImage image;
 	    
-	    A1iciaUtils.checkNotNull(query);
+	    SharedUtils.checkNotNull(query);
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {

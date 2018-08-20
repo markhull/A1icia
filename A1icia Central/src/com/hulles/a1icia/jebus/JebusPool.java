@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.jebus;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -43,13 +43,13 @@ public final class JebusPool extends JedisPool {
 	JebusPool(JebusPoolType type) {
 		super();
 		
-		A1iciaUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(type);
 		this.poolType = type;
 	}
 	JebusPool(JebusPoolType type, JedisPoolConfig jedisPoolConfig, String host, Integer port) {
 		super(jedisPoolConfig, host, port);
 		
-		A1iciaUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(type);
 		this.poolType = type;
 	}
 

@@ -31,18 +31,18 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.SememeAnalysis;
 import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SememePackage;
+import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
 
@@ -57,13 +57,13 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final class Thimk {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.Thimk");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static Random RANDOM = new Random();
 	private final OvermindRoom overmind;
 	
 	Thimk(OvermindRoom overmind) {
 	
-		A1iciaUtils.checkNotNull(overmind);
+		SharedUtils.checkNotNull(overmind);
 		this.overmind = overmind;
 	}
 	
@@ -80,8 +80,8 @@ final class Thimk {
 		ActionPackage pkg;
 		int pkgIx;
 
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		LOGGER.log(LOGLEVEL, "Thimk: chooseAction");
 		if (pkgs.size() == 1) {
 			// easy decision
@@ -117,7 +117,7 @@ final class Thimk {
 		SememePackage newSememePkg;
 		SentencePackage sentencePackage;
 		
-		A1iciaUtils.checkNotNull(actionPackages);
+		SharedUtils.checkNotNull(actionPackages);
 		unifiedSememePackages = new ArrayList<>();
 		sentenceSememePackages = MultimapBuilder.hashKeys().arrayListValues().build();
 		for (ActionPackage pkg : actionPackages) {
@@ -183,8 +183,8 @@ final class Thimk {
 		List<SememePackage> sememePackages;
 		DialogRequest dialogRequest;
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction entry");
 		dialogRequest = request.getDialogRequest();
 		msg = dialogRequest.getRequestMessage();
@@ -218,7 +218,7 @@ final class Thimk {
 		RoomRequest newRequest;
 		List<SememePackage> sememePackages;
 
-		A1iciaUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(ticket);
 		LOGGER.log(LOGLEVEL, "Thimk: decideNlpAnalysisNextAction");
 		
 		// Next, we ask for a sememe analysis, to match up sememes with our input sentences
@@ -241,7 +241,7 @@ final class Thimk {
 	 */
 	void decideSememeAnalysisNextAction(Ticket ticket, List<SememePackage> sememePackages) {
 		
-		A1iciaUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(ticket);
 		LOGGER.log(LOGLEVEL, "Thimk: decideSememeAnalysisNextAction");
 		overmind.terminatePipeline(ticket, sememePackages);
 	}

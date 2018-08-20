@@ -27,7 +27,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class PapaErrorHandler implements ErrorHandler {
     private final PrintWriter out;
@@ -41,7 +41,7 @@ public class PapaErrorHandler implements ErrorHandler {
     	String systemId;
     	StringBuilder sb;
     	
-    	A1iciaUtils.checkNotNull(spe);
+    	SharedUtils.checkNotNull(spe);
     	sb = new StringBuilder();
         systemId = spe.getSystemId();
         if (systemId == null) {
@@ -61,7 +61,7 @@ public class PapaErrorHandler implements ErrorHandler {
     @Override
 	public void warning(SAXParseException spe) throws SAXException {
     	
-    	A1iciaUtils.checkNotNull(spe);
+    	SharedUtils.checkNotNull(spe);
         out.println("Warning: " + getParseExceptionInfo(spe));
     }
         
@@ -69,7 +69,7 @@ public class PapaErrorHandler implements ErrorHandler {
 	public void error(SAXParseException spe) throws SAXException {
     	String message;
     	
-    	A1iciaUtils.checkNotNull(spe);
+    	SharedUtils.checkNotNull(spe);
         message = "Error: " + getParseExceptionInfo(spe);
         throw new SAXException(message);
     }
@@ -78,7 +78,7 @@ public class PapaErrorHandler implements ErrorHandler {
 	public void fatalError(SAXParseException spe) throws SAXException {
     	String message;
     	
-    	A1iciaUtils.checkNotNull(spe);
+    	SharedUtils.checkNotNull(spe);
         message = "Fatal Error: " + getParseExceptionInfo(spe);
         throw new SAXException(message);
     }

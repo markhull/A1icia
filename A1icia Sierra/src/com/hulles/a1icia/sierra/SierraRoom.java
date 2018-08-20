@@ -28,8 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -39,7 +39,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
@@ -51,7 +50,7 @@ import com.hulles.a1icia.tools.ExternalAperture;
  */
 public final class SierraRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaSierra.SierraRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	private static Float saveTemp = null;
 	private static Float saveHumidity = null;
@@ -91,8 +90,8 @@ public final class SierraRoom extends UrRoom {
 		String messageStr;
 		Float temperature;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "In createRoomTemperature");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
@@ -138,8 +137,8 @@ public final class SierraRoom extends UrRoom {
 		String messageStr;
 		Float humidity;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "In createRoomHumidityActionPackage");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();

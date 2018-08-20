@@ -23,8 +23,8 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * The result of the NLP analysis for this sentence, among all the sentences discerned in the
@@ -57,7 +57,7 @@ final public class SentenceAnalysis {
 	
 	public SentenceAnalysis(String sentence) {
 		
-		A1iciaUtils.checkNotNull(sentence);
+		SharedUtils.checkNotNull(sentence);
 		this.sentence = sentence;
 	}
 	
@@ -73,7 +73,7 @@ final public class SentenceAnalysis {
 
 	public void setPOSTagDefinitions(List<String> posTagDefs) {
 		
-		A1iciaUtils.checkNotNull(posTagDefs);
+		SharedUtils.checkNotNull(posTagDefs);
 		this.posTagDefs = posTagDefs;
 	}
 	
@@ -84,7 +84,7 @@ final public class SentenceAnalysis {
 
 	public void setLemmata(List<String> lemmata) {
 		
-		A1iciaUtils.checkNotNull(lemmata);
+		SharedUtils.checkNotNull(lemmata);
 		this.lemmata = lemmata;
 	}
 
@@ -95,7 +95,7 @@ final public class SentenceAnalysis {
 
 	public void setDictionaryLemmata(List<String> dictionaryLemmata) {
 		
-		A1iciaUtils.checkNotNull(dictionaryLemmata);
+		SharedUtils.checkNotNull(dictionaryLemmata);
 		this.dictionaryLemmata = dictionaryLemmata;
 	}
 
@@ -106,7 +106,7 @@ final public class SentenceAnalysis {
 
 	public void setTokens(List<String> tokens) {
 		
-		A1iciaUtils.checkNotNull(tokens);
+		SharedUtils.checkNotNull(tokens);
 		this.tokens = tokens;
 	}
 	
@@ -117,7 +117,7 @@ final public class SentenceAnalysis {
 	
 	public void setNERPersons(List<String> persons) {
 		
-		A1iciaUtils.checkNotNull(persons);
+		SharedUtils.checkNotNull(persons);
 		this.nerPersons = persons;
 	}
 	
@@ -128,7 +128,7 @@ final public class SentenceAnalysis {
 	
 	public void setNERLocations(List<String> locations) {
 		
-		A1iciaUtils.checkNotNull(locations);
+		SharedUtils.checkNotNull(locations);
 		this.nerLocations = locations;
 	}
 	
@@ -139,7 +139,7 @@ final public class SentenceAnalysis {
 	
 	public void setNEROrganizations(List<String> organizations) {
 		
-		A1iciaUtils.checkNotNull(organizations);
+		SharedUtils.checkNotNull(organizations);
 		this.nerOrganizations = organizations;
 	}
 	
@@ -150,7 +150,7 @@ final public class SentenceAnalysis {
 
 	public void setNERDates(List<String> dates) {
 		
-		A1iciaUtils.checkNotNull(dates);
+		SharedUtils.checkNotNull(dates);
 		this.nerDates = dates;
 	}
 
@@ -161,7 +161,7 @@ final public class SentenceAnalysis {
 
 	public void setNERTimes(List<String> times) {
 		
-		A1iciaUtils.checkNotNull(times);
+		SharedUtils.checkNotNull(times);
 		this.nerTimes = times;
 	}
 
@@ -172,7 +172,7 @@ final public class SentenceAnalysis {
 
 	public void setNERMoney(List<String> money) {
 		
-		A1iciaUtils.checkNotNull(money);
+		SharedUtils.checkNotNull(money);
 		this.nerMoney = money;
 	}
 
@@ -183,7 +183,7 @@ final public class SentenceAnalysis {
 
 	public void setNERPercentages(List<String> percentages) {
 		
-		A1iciaUtils.checkNotNull(percentages);
+		SharedUtils.checkNotNull(percentages);
 		this.nerPercentages = percentages;
 	}
 
@@ -194,7 +194,7 @@ final public class SentenceAnalysis {
 
 	public void setMyriaCitizens(List<String> myriaCitizens) {
 		
-		A1iciaUtils.checkNotNull(myriaCitizens);
+		SharedUtils.checkNotNull(myriaCitizens);
 		this.myriaCitizens = myriaCitizens;
 	}
 
@@ -205,7 +205,7 @@ final public class SentenceAnalysis {
 
 	public void setMyriaLocations(List<String> myriaLocations) {
 		
-		A1iciaUtils.checkNotNull(myriaLocations);
+		SharedUtils.checkNotNull(myriaLocations);
 		this.myriaLocations = myriaLocations;
 	}
 
@@ -216,7 +216,7 @@ final public class SentenceAnalysis {
 
 	public void setMyriaOrganizations(List<String> myriaOrganizations) {
 		
-		A1iciaUtils.checkNotNull(myriaOrganizations);
+		SharedUtils.checkNotNull(myriaOrganizations);
 		this.myriaOrganizations = myriaOrganizations;
 	}
 
@@ -227,7 +227,7 @@ final public class SentenceAnalysis {
 	
 	public void setPOSTags(List<String> posTags) {
 		
-		A1iciaUtils.checkNotNull(posTags);
+		SharedUtils.checkNotNull(posTags);
 		this.posTags = posTags;
 	}
 	
@@ -238,7 +238,7 @@ final public class SentenceAnalysis {
 	
 	public void setChunkTags(List<String> tags) {
 		
-		A1iciaUtils.checkNotNull(tags);
+		SharedUtils.checkNotNull(tags);
 		this.chunkTags = tags;
 	}
 	
@@ -249,7 +249,7 @@ final public class SentenceAnalysis {
 	
 	public void setChunkSegments(List<String> segments) {
 		
-		A1iciaUtils.checkNotNull(segments);
+		SharedUtils.checkNotNull(segments);
 		this.chunkSegments = segments;
 	}
 	
@@ -260,7 +260,7 @@ final public class SentenceAnalysis {
 	
 	public void setDocumentCategory(String category) {
 		
-		A1iciaUtils.checkNotNull(category);
+		SharedUtils.checkNotNull(category);
 		this.docCategory = category;
 	}
 

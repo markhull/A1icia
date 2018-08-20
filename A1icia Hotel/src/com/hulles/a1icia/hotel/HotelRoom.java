@@ -32,6 +32,7 @@ import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.NamedTimer;
 import com.hulles.a1icia.cayenne.Task;
@@ -58,7 +59,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public final class HotelRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaHotel.A1iciaHotel");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private TimerHandler timerHandler;
 	
 	public HotelRoom(EventBus bus) {
@@ -86,8 +87,8 @@ public final class HotelRoom extends UrRoom {
 		Ticket ticket;
 		ClientObjectWrapper cow;
 		
-		A1iciaUtils.checkNotNull(request);
-		A1iciaUtils.checkNotNull(responses);
+		SharedUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(responses);
 		// note that here we're ignoring the fact that we might get more than one response, 
 		// particularly for the media request -- FIXME
 		for (RoomResponse rr : responses) {
@@ -150,8 +151,8 @@ public final class HotelRoom extends UrRoom {
 		A1icianID a1icianID;
 		Ticket ticket;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		if (sememePkg.is("duration_timer")) {
 			A1iciaUtils.error("HotelRoom: got duration timer sememe, but we can't handle that yet");
 			return null;
@@ -179,7 +180,7 @@ public final class HotelRoom extends UrRoom {
 		Ticket ticket;
 		RoomRequest roomRequest;
 
-		A1iciaUtils.checkNotNull(response);
+		SharedUtils.checkNotNull(response);
 		ticket = Ticket.createNewTicket(getHall(), getThisRoom());
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
 		roomRequest = new RoomRequest(ticket);
@@ -195,8 +196,8 @@ public final class HotelRoom extends UrRoom {
 		Ticket ticket;
 		SememePackage sememePkg;
 		
-		A1iciaUtils.checkNotNull(timerID);
-		A1iciaUtils.checkNotNull(notificationTitle);
+		SharedUtils.checkNotNull(timerID);
+		SharedUtils.checkNotNull(notificationTitle);
 		// now we pop off a request to Mike or whoever to get us some media bytes
 		ticket = Ticket.createNewTicket(getHall(), getThisRoom());
 		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());

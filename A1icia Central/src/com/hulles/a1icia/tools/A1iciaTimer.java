@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
+
 /**
  * A1iciaTimer is a simple little timer class, written so no external library is needed to perform
  * this function. It keeps track of simultaneous timers in a map.
@@ -53,7 +55,7 @@ public final class A1iciaTimer {
 	 */
 	public static void startTimer(String timerName) {
 		
-		A1iciaUtils.checkNotNull(timerName);
+		SharedUtils.checkNotNull(timerName);
 		timerMap.put(timerName, System.currentTimeMillis());
 	}
 	
@@ -68,7 +70,7 @@ public final class A1iciaTimer {
 		Long startTime;
 		Long elapsedMillis;
 		
-		A1iciaUtils.checkNotNull(timerName);
+		SharedUtils.checkNotNull(timerName);
 		endTime = System.currentTimeMillis();
 		startTime = timerMap.remove(timerName);
 		if (startTime == null) {

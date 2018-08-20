@@ -22,9 +22,6 @@
 
 package com.hulles.a1icia.bravo;
 
-import com.hulles.a1icia.api.shared.ApplicationKeys;
-import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,8 +38,10 @@ import org.tensorflow.Output;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
+import com.hulles.a1icia.api.shared.ApplicationKeys;
+import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /** 
  * Sample use of the TensorFlow Java API to label images using a pre-trained model.
@@ -65,7 +64,7 @@ public class InceptionLabeller {
         String modelUrl;
         String labelUrl;
         
-        A1iciaUtils.checkNotNull(imageBytes);
+        SharedUtils.checkNotNull(imageBytes);
         appKeys = ApplicationKeys.getInstance();
         inceptionPath = appKeys.getKey(ApplicationKey.INCEPTIONPATH);
         modelUrl = appKeys.getKey(ApplicationKey.INCEPTIONGRAPHURL);

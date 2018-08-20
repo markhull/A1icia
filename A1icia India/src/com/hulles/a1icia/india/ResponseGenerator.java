@@ -27,9 +27,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 final public class ResponseGenerator {
 	private final static Logger logger = Logger.getLogger("A1iciaIndia.ResponseGenerator");
@@ -57,8 +57,8 @@ final public class ResponseGenerator {
 	public String generateResponse(SememePackage sememePkg, String toName) {
 		String response = null;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.nullsOkay(toName);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.nullsOkay(toName);
 		logger.log(LOGLEVEL, "ResponseGenerator generateResponse sememe is "+ sememePkg.getName());
 		switch (sememePkg.getName()) {
 			case "are_you_still_there":

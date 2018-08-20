@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.room;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * This is an enumeration of the various possible A1icia Rooms. Not all of them are functional yet.
@@ -82,7 +82,7 @@ public enum Room {
     
     public static Room findRoomType(Integer type) {
     	
-		A1iciaUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(type);
     	for (Room a : Room.values()) {
     		if (a.storeID == type) {
     			return a;

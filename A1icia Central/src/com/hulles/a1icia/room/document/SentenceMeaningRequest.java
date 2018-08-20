@@ -23,8 +23,8 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.SentenceMeaningAnalysis.SentenceMeaningQuery;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * A request for semantic analysis of a sentence, made by another room.
@@ -46,7 +46,7 @@ public class SentenceMeaningRequest implements RoomObject {
 
 	public void setSentenceMeaningQuery(SentenceMeaningQuery query) {
 		
-		A1iciaUtils.checkNotNull(query);
+		SharedUtils.checkNotNull(query);
 		this.query = query;
 	}
 
@@ -57,7 +57,7 @@ public class SentenceMeaningRequest implements RoomObject {
 
 	public void setContext(List<String> context) {
 		
-		A1iciaUtils.checkNotNull(context);
+		SharedUtils.checkNotNull(context);
 		this.context = context;
 	}
 
@@ -68,7 +68,7 @@ public class SentenceMeaningRequest implements RoomObject {
 
 	public void setSentenceAnalysis(SentenceAnalysis analysis) {
 		
-		A1iciaUtils.checkNotNull(analysis);
+		SharedUtils.checkNotNull(analysis);
 		this.sentenceAnalysis = analysis;
 	}
 

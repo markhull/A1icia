@@ -24,6 +24,7 @@ package com.hulles.a1icia.room.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
@@ -43,8 +44,8 @@ public class RoomRequest extends RoomDocument {
 	public RoomRequest(RoomDocumentType type, Ticket ticket) {
 		super(type, ticket);
 		
-		A1iciaUtils.checkNotNull(type);
-		A1iciaUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
+		SharedUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
 		sememePackages = new ArrayList<>();
 	}
 	public RoomRequest(Ticket ticket) {
@@ -53,8 +54,8 @@ public class RoomRequest extends RoomDocument {
 	public RoomRequest(RoomDocumentType type, Ticket ticket, Long documentID) {
 		super(type, ticket, documentID);
 		
-		A1iciaUtils.checkNotNull(type);
-		A1iciaUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
+		SharedUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(ticket); // ticket can't be null for RoomRequest
 		sememePackages = new ArrayList<>();
 	}
 	public RoomRequest(Ticket ticket, Long documentID) {
@@ -68,7 +69,7 @@ public class RoomRequest extends RoomDocument {
 	
 	public void setMessage(String msg) {
 		
-		A1iciaUtils.nullsOkay(msg);
+		SharedUtils.nullsOkay(msg);
 		this.message = msg;
 	}
 
@@ -79,7 +80,7 @@ public class RoomRequest extends RoomDocument {
 
 	public void setRoomObject(RoomObject obj) {
 		
-		A1iciaUtils.nullsOkay(obj);
+		SharedUtils.nullsOkay(obj);
 		this.roomObject = obj;
 	}
 	
@@ -95,7 +96,7 @@ public class RoomRequest extends RoomDocument {
 	
 	public void setSememePackages(List<SememePackage> pkgs) {
 		
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(pkgs);
 		this.sememePackages.clear();
 		this.sememePackages.addAll(pkgs);
 	}

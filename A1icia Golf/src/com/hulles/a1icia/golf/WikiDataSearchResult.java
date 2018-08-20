@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.golf;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class WikiDataSearchResult {
 	private final String qID;
@@ -30,9 +30,9 @@ public class WikiDataSearchResult {
 
 	public WikiDataSearchResult(String qID, String label, String description) {
 
-		A1iciaUtils.checkNotNull(qID);
-		A1iciaUtils.checkNotNull(label);
-		A1iciaUtils.checkNotNull(description);
+		SharedUtils.checkNotNull(qID);
+		SharedUtils.checkNotNull(label);
+		SharedUtils.checkNotNull(description);
 		this.qID = qID;
 		this.label = label;
 		this.description = description;

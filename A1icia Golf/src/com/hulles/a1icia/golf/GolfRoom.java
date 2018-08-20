@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -99,8 +100,8 @@ public final class GolfRoom extends UrRoom {
 		ActionPackage pkg;
 		String lookupTarget;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		response = new GolfAnalysis();
 		lookupTarget = sememePkg.getSememeObject();

@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * A RoomAnnouncement is broadcast to all rooms, but no response is expected. Its 
@@ -41,8 +41,8 @@ public final class RoomAnnouncement extends RoomDocument {
     public RoomAnnouncement(RoomDocumentType type, Ticket ticket) {
         super(type, ticket);
         
-		A1iciaUtils.checkNotNull(type);
-		A1iciaUtils.nullsOkay(ticket);
+		SharedUtils.checkNotNull(type);
+		SharedUtils.nullsOkay(ticket);
     }
 
 	public RoomObject getRoomObject() {
@@ -52,7 +52,7 @@ public final class RoomAnnouncement extends RoomDocument {
 	
 	public void setRoomObject(RoomObject roomObject) {
 		
-		A1iciaUtils.nullsOkay(roomObject);
+		SharedUtils.nullsOkay(roomObject);
 		this.roomObject = roomObject;
 	}
 	

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -48,7 +48,7 @@ final class JebusMonitor implements Closeable {
 
 	JebusMonitor(JebusPool pool) {
 		
-		A1iciaUtils.checkNotNull(pool);
+		SharedUtils.checkNotNull(pool);
 		executor = Executors.newFixedThreadPool(1);
 		jebusPool = pool;
 		listener = new JebusListener();
@@ -64,8 +64,8 @@ final class JebusMonitor implements Closeable {
 	void logJebusChannel(byte[] channel, byte[] msgBytes) {
 		String doohickey;
 		
-		A1iciaUtils.checkNotNull(channel);
-		A1iciaUtils.checkNotNull(msgBytes);
+		SharedUtils.checkNotNull(channel);
+		SharedUtils.checkNotNull(msgBytes);
 		if (channel.equals(JebusBible.getA1iciaFromChannelBytes(jebusPool))) {
 			doohickey = " => ";
 		} else {
@@ -83,8 +83,8 @@ final class JebusMonitor implements Closeable {
 	void logJebusChannel(byte[] channel, String text) {
 		String doohickey;
 		
-		A1iciaUtils.checkNotNull(channel);
-		A1iciaUtils.checkNotNull(text);
+		SharedUtils.checkNotNull(channel);
+		SharedUtils.checkNotNull(text);
 		if (channel.equals(JebusBible.getA1iciaFromChannelBytes(jebusPool))) {
 			doohickey = " => ";
 		} else {

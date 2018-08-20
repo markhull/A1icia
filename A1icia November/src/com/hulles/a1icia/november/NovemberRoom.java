@@ -32,6 +32,7 @@ import com.hulles.a1icia.api.object.LoginResponseObject;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Person;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
@@ -47,7 +48,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * November Room is concerned with user data and security. 
@@ -105,8 +105,8 @@ public final class NovemberRoom extends UrRoom {
 		ClientObjectWrapper clientObject;
 		String message;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		cdr = (ClientDialogRequest) request.getRoomObject();
 		dialogRequest = cdr.getDialogRequest();
 		loginObject = (LoginObject) dialogRequest.getClientObject();
@@ -150,8 +150,8 @@ public final class NovemberRoom extends UrRoom {
 		LogInOut logInOut;
 		RoomDocumentType documentType;
 		
-		A1iciaUtils.checkNotNull(uuid);
-		A1iciaUtils.checkNotNull(which);
+		SharedUtils.checkNotNull(uuid);
+		SharedUtils.checkNotNull(which);
 		switch (which) {
 			case LOGIN:
 				documentType= RoomDocumentType.LOGGEDIN;

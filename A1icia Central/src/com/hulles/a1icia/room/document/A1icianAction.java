@@ -23,7 +23,7 @@ package com.hulles.a1icia.room.document;
 
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * This represents an action for a receiving A1ician, for example turning on a red LED. This isn't at
@@ -46,7 +46,7 @@ public class A1icianAction extends RoomActionObject {
 
 	public void setToA1icianID(A1icianID toA1icianID) {
 		
-		A1iciaUtils.nullsOkay(toA1icianID);
+		SharedUtils.nullsOkay(toA1icianID);
 		this.toA1icianID = toA1icianID;
 	}
 
@@ -57,7 +57,7 @@ public class A1icianAction extends RoomActionObject {
 
 	public void setClientAction(SerialSememe action) {
 		
-		A1iciaUtils.nullsOkay(action);
+		SharedUtils.nullsOkay(action);
 		this.clientAction = action;
 	}
 
@@ -69,7 +69,7 @@ public class A1icianAction extends RoomActionObject {
 
 	public void setMessage(String message) {
 		
-		A1iciaUtils.checkNotNull(message);
+		SharedUtils.checkNotNull(message);
 		this.message = message;
 	}
 	
@@ -81,7 +81,7 @@ public class A1icianAction extends RoomActionObject {
 
 	public void setExplanation(String expl) {
 		
-		A1iciaUtils.nullsOkay(expl);
+		SharedUtils.nullsOkay(expl);
 		this.explanation = expl;
 	}
 }

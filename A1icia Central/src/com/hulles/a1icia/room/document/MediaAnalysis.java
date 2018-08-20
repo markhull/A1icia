@@ -23,7 +23,7 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.tools.FuzzyMatch.Match;
 
 /**
@@ -45,7 +45,7 @@ public class MediaAnalysis extends RoomActionObject {
 	
 	public void setArtists(List<Match> artists) {
 		
-		A1iciaUtils.checkNotNull(artists);
+		SharedUtils.checkNotNull(artists);
 		this.artists = artists;
 	}
 	
@@ -56,7 +56,7 @@ public class MediaAnalysis extends RoomActionObject {
 	
 	public void setTitles(List<Match> titles) {
 	
-		A1iciaUtils.checkNotNull(titles);
+		SharedUtils.checkNotNull(titles);
 		this.titles = titles;
 	}
 	
@@ -67,7 +67,7 @@ public class MediaAnalysis extends RoomActionObject {
 	
 	public void setInputToMatch(String inputToMatch) {
 	
-		A1iciaUtils.checkNotNull(inputToMatch);
+		SharedUtils.checkNotNull(inputToMatch);
 		this.inputToMatch = inputToMatch;
 	}
 

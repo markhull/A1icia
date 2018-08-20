@@ -24,7 +24,7 @@ package com.hulles.a1icia.juliet;
 import java.io.Serializable;
 import java.util.List;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class ScratchNfl6Question implements Serializable {
 	private static final long serialVersionUID = -776982529628460706L;
@@ -45,7 +45,7 @@ public class ScratchNfl6Question implements Serializable {
 
 	public void setQuestion(String question) {
 		
-		A1iciaUtils.checkNotNull(question);
+		SharedUtils.checkNotNull(question);
 		this.question = question;
 	}
 
@@ -56,7 +56,7 @@ public class ScratchNfl6Question implements Serializable {
 
 	public void setBestAnswer(String bestAnswer) {
 		
-		A1iciaUtils.checkNotNull(bestAnswer);
+		SharedUtils.checkNotNull(bestAnswer);
 		this.bestAnswer = bestAnswer;
 	}
 
@@ -67,7 +67,7 @@ public class ScratchNfl6Question implements Serializable {
 
 	public void setMainCategory(String mainCategory) {
 		
-		A1iciaUtils.checkNotNull(mainCategory);
+		SharedUtils.checkNotNull(mainCategory);
 		this.mainCategory = mainCategory;
 	}
 
@@ -78,7 +78,7 @@ public class ScratchNfl6Question implements Serializable {
 
 	public void setnBestAnswers(List<String> nBestAnswers) {
 		
-		A1iciaUtils.checkNotNull(nBestAnswers);
+		SharedUtils.checkNotNull(nBestAnswers);
 		this.nBestAnswers = nBestAnswers;
 	}
 
@@ -89,7 +89,7 @@ public class ScratchNfl6Question implements Serializable {
 
 	public void setScore(int score) {
 		
-		A1iciaUtils.checkNotNull(score);
+		SharedUtils.checkNotNull(score);
 		this.score = score;
 	}
 	

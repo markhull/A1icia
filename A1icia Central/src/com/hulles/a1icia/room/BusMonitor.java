@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -38,7 +39,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * BusMonitor just lurks around logging whatever is on the hall bus.
@@ -71,7 +71,7 @@ public final class BusMonitor extends UrRoom {
 		RoomActionObject actionObj;
 		SerialSememe sememe;
 		
-		A1iciaUtils.checkNotNull(document);
+		SharedUtils.checkNotNull(document);
 		if (document instanceof RoomAnnouncement) {
 			announcement = (RoomAnnouncement) document;
 			msg = announcement.getDocumentType().name();

@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * MessageAction is an all-purpose RoomActionObject that just contains a message and optionally
@@ -42,7 +42,7 @@ public class MessageAction extends RoomActionObject {
 
 	public void setMessage(String message) {
 		
-		A1iciaUtils.checkNotNull(message);
+		SharedUtils.checkNotNull(message);
 		this.message = message;
 	}
 	
@@ -54,7 +54,7 @@ public class MessageAction extends RoomActionObject {
 
 	public void setExplanation(String expl) {
 		
-		A1iciaUtils.nullsOkay(expl);
+		SharedUtils.nullsOkay(expl);
 		this.explanation = expl;
 	}
 }

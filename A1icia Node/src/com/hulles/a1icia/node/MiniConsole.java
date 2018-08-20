@@ -32,13 +32,13 @@ import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.shared.SerialSememe;
 
-final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
+public final class MiniConsole implements A1iciaRemoteDisplay, Closeable {
 	private final A1iciaRemote console;
 	private final StringBuffer textSb;
 	private final StringBuffer explSb;
 	private final Queue<A1iciaClientObject> clientObjects;
 	
-	MiniConsole() {
+	public MiniConsole() {
 		
 		console = new A1iciaRemote(this);
 		console.startAsync();

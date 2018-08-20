@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -49,7 +50,7 @@ public final class ActionPackage {
 	public ActionPackage(SememePackage pkg) {
 		long idValue;
 		
-		A1iciaUtils.checkNotNull(pkg);
+		SharedUtils.checkNotNull(pkg);
 		this.sememePackage = pkg;
 		idValue = getNewActionPackageID();
 		this.idString = "AP" + idValue;
@@ -67,7 +68,7 @@ public final class ActionPackage {
 
 	public void setActionObject(RoomActionObject actionObject) {
 		
-		A1iciaUtils.checkNotNull(actionObject);
+		SharedUtils.checkNotNull(actionObject);
 		this.actionObject = actionObject;
 	}
 
@@ -126,8 +127,8 @@ public final class ActionPackage {
 	public static ActionPackage has(SerialSememe sememe, List<ActionPackage> pkgs) {
 		SerialSememe pkgSememe;
         
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		for (ActionPackage pkg : pkgs) {
             pkgSememe = pkg.getSememe();
 			if (pkgSememe.equals(sememe)) {
@@ -148,8 +149,8 @@ public final class ActionPackage {
 	public static List<ActionPackage> hasActions(SerialSememe sememe, List<ActionPackage> pkgs) {
 		List<ActionPackage> subList;
 		
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		subList = new ArrayList<>();
 		for (ActionPackage pkg : pkgs) {
 			if (pkg.getSememe().equals(sememe)) {
@@ -170,8 +171,8 @@ public final class ActionPackage {
 	public static ActionPackage consume(SerialSememe sememe, List<ActionPackage> pkgs) {
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
 			if (pkg.getSememe().equals(sememe)) {
@@ -194,8 +195,8 @@ public final class ActionPackage {
 		List<ActionPackage> subList;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		subList = new ArrayList<>();
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
@@ -221,8 +222,8 @@ public final class ActionPackage {
 		ActionPackage foundPkg = null;
 		String errMsg;
 		
-		A1iciaUtils.checkNotNull(sememe);
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(pkgs);
 		for (Iterator<ActionPackage> iter = pkgs.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
 			if (pkg.getSememe().equals(sememe)) {

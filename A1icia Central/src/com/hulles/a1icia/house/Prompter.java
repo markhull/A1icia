@@ -35,8 +35,8 @@ import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Prompter pushes a prompt of one sort or another to an idle console. 
@@ -59,9 +59,9 @@ final class Prompter extends TimerTask {
 	Prompter(A1icianID a1icianID, Language language, EventBus houseBus) {
 		Station station;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
-		A1iciaUtils.checkNotNull(language);
-		A1iciaUtils.checkNotNull(houseBus);
+		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(language);
+		SharedUtils.checkNotNull(houseBus);
 		station = Station.getInstance();
 		this.stationID = station.getStationUUID();
 		this.a1icianID = a1icianID;

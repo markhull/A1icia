@@ -43,6 +43,7 @@ import com.hulles.a1icia.A1icia;
 import com.hulles.a1icia.alpha.AlphaRoom;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Sememe;
@@ -96,7 +97,7 @@ public final class Controller extends AbstractIdleService {
 	private ControllerRoom controllerRoom;
 	private ServiceManager serviceManager;
 	private final A1icia a1iciaInstance;
-	private volatile static Controller controllerInstance = null;
+	private static Controller controllerInstance = null;
 	static Set<SerialSememe> allSememes;
 	
 	static {
@@ -107,7 +108,7 @@ public final class Controller extends AbstractIdleService {
 	
 	public Controller(A1icia a1icia) {
 		
-		A1iciaUtils.checkNotNull(a1icia);
+		SharedUtils.checkNotNull(a1icia);
 		if (controllerInstance != null) {
 			throw new A1iciaException("Controller: attempting multiple instances");
 		}
@@ -118,6 +119,20 @@ public final class Controller extends AbstractIdleService {
 		hallBus = new AsyncEventBus("MindBus", busPool);
 		sememeRooms = MultimapBuilder.hashKeys().enumSetValues(Room.class).build();
 		controllerInstance = this;
+	}
+	
+	public synchronized static Controller getInstance() {
+	
+		return controllerInstance;
+	}
+	
+	/**
+	 * Get the Guava asynchronous event bus (hall)
+	 * 
+	 * @return The bus
+	 */
+	public EventBus getHall() {
+		return hallBus;
 	}
 	
 	/**
@@ -143,7 +158,7 @@ public final class Controller extends AbstractIdleService {
 	protected List<Service> loadServices(EventBus hall) {
 		List<Service> services;
 		
-		A1iciaUtils.checkNotNull(hall);
+		SharedUtils.checkNotNull(hall);
 		services = new ArrayList<>(40);
 		services.add(new Tracker(hall));
 		for (Room room : UrRoom.getAllRooms()) {
@@ -408,7 +423,7 @@ public final class Controller extends AbstractIdleService {
 			Room fromRoom;
 			Ticket ticket = null;
 			
-			A1iciaUtils.checkNotNull(responses);
+			SharedUtils.checkNotNull(responses);
 			ticket = request.getTicket();
 			if (ticket == null) {
 				A1iciaUtils.error("Controller: null ticket");

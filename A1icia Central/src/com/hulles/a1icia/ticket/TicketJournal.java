@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.document.NLPAnalysis;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * TicketJournal is an historical record of what's happened to the ticket. It should be
@@ -48,7 +48,7 @@ public class TicketJournal {
 	
 	public TicketJournal(String ticketID) {
 		
-		A1iciaUtils.checkNotNull(ticketID);
+		SharedUtils.checkNotNull(ticketID);
 		this.ticketID = ticketID;
 		context = new ArrayList<>();
 		sentencePackages = new ArrayList<>();
@@ -67,7 +67,7 @@ public class TicketJournal {
 
 	public void setContext(List<String> context) {
 		
-		A1iciaUtils.nullsOkay(context);
+		SharedUtils.nullsOkay(context);
 		this.context.clear();
 		this.context.addAll(context);
 	}
@@ -79,7 +79,7 @@ public class TicketJournal {
 
 	public void setNlpAnalysis(NLPAnalysis analysis) {
 		
-		A1iciaUtils.checkNotNull(analysis);
+		SharedUtils.checkNotNull(analysis);
 		this.nlpAnalysis = analysis;
 	}
 
@@ -90,7 +90,7 @@ public class TicketJournal {
 
 	public void setSentencePackages(List<SentencePackage> pkgs) {
 		
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(pkgs);
 		sentencePackages.clear();
 		sentencePackages.addAll(pkgs);
 	}
@@ -102,14 +102,14 @@ public class TicketJournal {
 
 	public void setActionPackages(List<ActionPackage> pkgs) {
 		
-		A1iciaUtils.checkNotNull(pkgs);
+		SharedUtils.checkNotNull(pkgs);
 		actionPackages.clear();
 		actionPackages.addAll(pkgs);
 	}
 
 	public void addActionPackage(ActionPackage pkg) {
 		
-		A1iciaUtils.checkNotNull(pkg);
+		SharedUtils.checkNotNull(pkg);
 		actionPackages.add(pkg);
 	}
 	
@@ -120,7 +120,7 @@ public class TicketJournal {
 
 	public void setClientRequest(ClientDialogRequest clientRequest) {
 		
-		A1iciaUtils.checkNotNull(clientRequest);
+		SharedUtils.checkNotNull(clientRequest);
 		this.clientRequest = clientRequest;
 	}
 	

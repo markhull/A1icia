@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public abstract class GraphObject {
     private final String id;
@@ -33,21 +33,21 @@ public abstract class GraphObject {
 
     public GraphObject(String id) {
     	
-    	A1iciaUtils.checkNotNull(id);
+    	SharedUtils.checkNotNull(id);
         this.id = id;
         attrList = Collections.synchronizedList(new ArrayList<>());
     }
 
     public void addAttribute(Attribute attr){
     	
-    	A1iciaUtils.checkNotNull(attr);
+    	SharedUtils.checkNotNull(attr);
         this.attrList.add(attr);
     }
 
 /*    public void removeAttribute(String attrName){
     	Attribute attr;
     	
-    	A1iciaUtils.checkNotNull(attrName);
+    	SharedUtils.checkNotNull(attrName);
     	for (Iterator<Attribute> iter = attrList.iterator(); iter.hasNext(); ) {
     		attr = iter.next();
     		if (attr.getName().equals(attrName)) {

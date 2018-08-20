@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * The semantic analysis of a sentence as requested by a SentenceMeaningRequest. This is still
@@ -39,7 +39,7 @@ public class SentenceMeaningAnalysis extends RoomActionObject {
 	
 	public SentenceMeaningAnalysis(SentenceMeaningQuery query) {
 		
-		A1iciaUtils.checkNotNull(query);
+		SharedUtils.checkNotNull(query);
 		this.query = query;
 	}
 
@@ -55,7 +55,7 @@ public class SentenceMeaningAnalysis extends RoomActionObject {
 
 	public void setConfidence(Integer confidence) {
 		
-		A1iciaUtils.checkNotNull(confidence);
+		SharedUtils.checkNotNull(confidence);
 		this.confidence = confidence;
 	}
 
@@ -66,7 +66,7 @@ public class SentenceMeaningAnalysis extends RoomActionObject {
 
 	public void setResult(Boolean result) {
 		
-		A1iciaUtils.checkNotNull(result);
+		SharedUtils.checkNotNull(result);
 		this.result = result;
 	}
 

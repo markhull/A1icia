@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
@@ -58,9 +59,9 @@ public abstract class RoomDocument {
 	}
 	public RoomDocument(RoomDocumentType type, Ticket ticket, Long documentID) {
 		
-		A1iciaUtils.checkNotNull(type);
-		A1iciaUtils.nullsOkay(ticket);
-		A1iciaUtils.checkNotNull(documentID);
+		SharedUtils.checkNotNull(type);
+		SharedUtils.nullsOkay(ticket);
+		SharedUtils.checkNotNull(documentID);
 		this.type = type;
 		this.ticket = ticket;
 		this.documentID = documentID;
@@ -78,7 +79,7 @@ public abstract class RoomDocument {
 	
 	protected void setTicket(Ticket ticket) {
 		
-		A1iciaUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(ticket);
 		this.ticket = ticket;
 	}
 	
@@ -94,7 +95,7 @@ public abstract class RoomDocument {
 	
 	public void setFromRoom(Room room) {
 	
-		A1iciaUtils.checkNotNull(room);
+		SharedUtils.checkNotNull(room);
 		this.fromRoom = room;
 	}
 	

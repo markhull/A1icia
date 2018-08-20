@@ -23,11 +23,11 @@ package com.hulles.a1icia.ticket;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.document.SentenceAnalysis;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -65,7 +65,7 @@ public class SentencePackage {
 
 	public void setChunks(List<SentenceChunk> chunks) {
 		
-		A1iciaUtils.checkNotNull(chunks);
+		SharedUtils.checkNotNull(chunks);
 		this.chunks = chunks;
 	}
 
@@ -76,7 +76,7 @@ public class SentencePackage {
 
 	public void setPosTagString(String posTagString) {
 		
-		A1iciaUtils.checkNotNull(posTagString);
+		SharedUtils.checkNotNull(posTagString);
 		this.posTagString = posTagString;
 	}
 
@@ -87,7 +87,7 @@ public class SentencePackage {
 
 	public void setInputSentence(String inputSentence) {
 		
-		A1iciaUtils.checkNotNull(inputSentence);
+		SharedUtils.checkNotNull(inputSentence);
 		this.inputSentence = inputSentence;
 	}
 
@@ -98,7 +98,7 @@ public class SentencePackage {
 
 	public void setStrippedSentence(String sentence) {
 		
-		A1iciaUtils.checkNotNull(sentence);
+		SharedUtils.checkNotNull(sentence);
 		this.strippedSentence = sentence;
 	}
 
@@ -109,7 +109,7 @@ public class SentencePackage {
 
 	public void setLemmatizedSentence(String lemmatizedSentence) {
 		
-		A1iciaUtils.nullsOkay(lemmatizedSentence);
+		SharedUtils.nullsOkay(lemmatizedSentence);
 		this.lemmatizedSentence = lemmatizedSentence;
 	}
 
@@ -120,7 +120,7 @@ public class SentencePackage {
 
 	public void setAnalysis(SentenceAnalysis analysis) {
 		
-		A1iciaUtils.nullsOkay(analysis);
+		SharedUtils.nullsOkay(analysis);
 		this.analysis = analysis;
 	}
 
@@ -170,8 +170,8 @@ public class SentencePackage {
 		
 		public SentenceChunk(Short sequence, String chunk) {
 			
-			A1iciaUtils.checkNotNull(sequence);
-			A1iciaUtils.checkNotNull(chunk);
+			SharedUtils.checkNotNull(sequence);
+			SharedUtils.checkNotNull(chunk);
 			this.chunk = chunk;
 			this.sequence = sequence;
 		}
@@ -183,7 +183,7 @@ public class SentencePackage {
 
 		public void setPosTagString(String string) {
 			
-			A1iciaUtils.checkNotNull(string);
+			SharedUtils.checkNotNull(string);
 			this.posTagString = string;
 		}
 

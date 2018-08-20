@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -74,7 +74,7 @@ public class SememePackage {
 
 	public void setSememe(SerialSememe sememe) {
 		
-		A1iciaUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(sememe);
 		this.sememe = sememe;
 	}
 
@@ -85,7 +85,7 @@ public class SememePackage {
 
 	public void setSememeObject(String object) {
 		
-		A1iciaUtils.nullsOkay(object);
+		SharedUtils.nullsOkay(object);
 		this.sememeObject = object;
 	}
 
@@ -96,7 +96,7 @@ public class SememePackage {
 
 	public void setSentencePackage(SentencePackage pkg) {
 		
-		A1iciaUtils.nullsOkay(pkg);
+		SharedUtils.nullsOkay(pkg);
 		this.sentencePackage = pkg;
 	}
 
@@ -107,13 +107,13 @@ public class SememePackage {
 
 	public void setConfidence(Integer confidence) {
 		
-		A1iciaUtils.checkNotNull(confidence);
+		SharedUtils.checkNotNull(confidence);
 		this.confidence = confidence;
 	}
 	
 	public boolean is(String name) {
 	
-		A1iciaUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(name);
 		return name.equals(sememe.getName());
 	}
 	
@@ -131,8 +131,8 @@ public class SememePackage {
 	 */
 	public static SememePackage has(String name, List<SememePackage> sememePackages) {
 		
-		A1iciaUtils.checkNotNull(name);
-		A1iciaUtils.checkNotNull(sememePackages);
+		SharedUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(sememePackages);
 		for (SememePackage pkg : sememePackages) {
 			if (pkg.is(name)) {
 				return pkg;
@@ -152,8 +152,8 @@ public class SememePackage {
 	public static SememePackage consume(String name, List<SememePackage> sememePackages) {
 		SememePackage pkg;
 		
-		A1iciaUtils.checkNotNull(name);
-		A1iciaUtils.checkNotNull(sememePackages);
+		SharedUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(sememePackages);
 		for (Iterator<SememePackage> iter = sememePackages.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
 			if (pkg.is(name)) {
@@ -177,8 +177,8 @@ public class SememePackage {
 		SememePackage pkg;
 		SememePackage foundPkg = null;
 		
-		A1iciaUtils.checkNotNull(name);
-		A1iciaUtils.checkNotNull(sememePackages);
+		SharedUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(sememePackages);
 		for (Iterator<SememePackage> iter = sememePackages.iterator(); iter.hasNext(); ) {
 			pkg = iter.next();
 			if (pkg.is(name)) {
@@ -240,7 +240,7 @@ public class SememePackage {
 	public static SememePackage getDefaultPackage(SerialSememe sememe) {
 		SememePackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(sememe);
 		pkg = new SememePackage();
 		pkg.setSememe(sememe);
 		pkg.setConfidence(0);
@@ -250,7 +250,7 @@ public class SememePackage {
 		SememePackage pkg;
 		SerialSememe sememe;
 		
-		A1iciaUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(name);
 		sememe = SerialSememe.find(name);
 		pkg = new SememePackage();
 		pkg.setSememe(sememe);
@@ -261,7 +261,7 @@ public class SememePackage {
 	public static List<SememePackage> getSingletonDefault(SerialSememe sememe) {
 		SememePackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememe);
+		SharedUtils.checkNotNull(sememe);
 		pkg = getDefaultPackage(sememe);
 		return Collections.singletonList(pkg);
 	}
@@ -269,7 +269,7 @@ public class SememePackage {
 		SememePackage pkg;
 		SerialSememe sememe;
 		
-		A1iciaUtils.checkNotNull(name);
+		SharedUtils.checkNotNull(name);
 		sememe = SerialSememe.find(name);
 		pkg = getDefaultPackage(sememe);
 		return Collections.singletonList(pkg);

@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.graphviz;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * In (mathematical) graph terms, an edge connects two nodes. In a directed graph, which
@@ -37,9 +37,9 @@ public class Edge extends GraphObject {
     public Edge(String id, Node fromNode, Node toNode) {
         super(id);
         
-        A1iciaUtils.checkNotNull(id);
-        A1iciaUtils.checkNotNull(fromNode);
-        A1iciaUtils.checkNotNull(toNode);
+        SharedUtils.checkNotNull(id);
+        SharedUtils.checkNotNull(fromNode);
+        SharedUtils.checkNotNull(toNode);
         this.fromNode = fromNode;
         this.toNode = toNode;
     }

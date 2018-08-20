@@ -25,8 +25,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class KiloWeatherAction extends RoomActionObject {
 	private LocalDateTime ldt;
@@ -61,7 +61,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setMessage(String message) {
 		
-		A1iciaUtils.nullsOkay(message);
+		SharedUtils.nullsOkay(message);
 		this.message = message;
 	}
 
@@ -72,7 +72,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setCityID(Integer cityID) {
 		
-		A1iciaUtils.checkNotNull(cityID);
+		SharedUtils.checkNotNull(cityID);
 		this.cityID = cityID;
 	}
 
@@ -83,7 +83,7 @@ public class KiloWeatherAction extends RoomActionObject {
 	
 	public void setLocalDateTime(LocalDateTime ldt) {
 		
-		A1iciaUtils.checkNotNull(ldt);
+		SharedUtils.checkNotNull(ldt);
 		this.ldt = ldt;
 	}
 	
@@ -94,7 +94,7 @@ public class KiloWeatherAction extends RoomActionObject {
 	
 	public void setCoordLat(Float coordLat) {
 		
-		A1iciaUtils.checkNotNull(coordLat);
+		SharedUtils.checkNotNull(coordLat);
 		this.coordLat = coordLat;
 	}
 	
@@ -105,7 +105,7 @@ public class KiloWeatherAction extends RoomActionObject {
 	
 	public void setCoordLon(Float coordLon) {
 		
-		A1iciaUtils.checkNotNull(coordLon);
+		SharedUtils.checkNotNull(coordLon);
 		this.coordLon = coordLon;
 	}
 	
@@ -116,7 +116,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setWeatherConditions(List<WeatherCondition> weatherConditions) {
 		
-		A1iciaUtils.checkNotNull(weatherConditions);
+		SharedUtils.checkNotNull(weatherConditions);
 		this.weatherConditions = weatherConditions;
 	}
 
@@ -127,7 +127,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setTemperature(Float temperature) {
 		
-		A1iciaUtils.checkNotNull(temperature);
+		SharedUtils.checkNotNull(temperature);
 		this.temperature = temperature;
 	}
 
@@ -138,7 +138,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setPressure(Float pressure) {
 		
-		A1iciaUtils.checkNotNull(pressure);
+		SharedUtils.checkNotNull(pressure);
 		this.pressure = pressure;
 	}
 
@@ -149,7 +149,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setHumidity(Float humidity) {
 		
-		A1iciaUtils.checkNotNull(humidity);
+		SharedUtils.checkNotNull(humidity);
 		this.humidity = humidity;
 	}
 
@@ -160,7 +160,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setTempMin(Float tempMin) {
 		
-		A1iciaUtils.checkNotNull(tempMin);
+		SharedUtils.checkNotNull(tempMin);
 		this.tempMin = tempMin;
 	}
 
@@ -171,7 +171,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setTempMax(Float tempMax) {
 		
-		A1iciaUtils.checkNotNull(tempMax);
+		SharedUtils.checkNotNull(tempMax);
 		this.tempMax = tempMax;
 	}
 //
@@ -192,7 +192,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setWindSpeed(Float windspeed) {
 		
-		A1iciaUtils.checkNotNull(windspeed);
+		SharedUtils.checkNotNull(windspeed);
 		this.windspeed = windspeed;
 	}
 
@@ -203,7 +203,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setWindDegrees(Integer winddegrees) {
 		
-		A1iciaUtils.checkNotNull(winddegrees);
+		SharedUtils.checkNotNull(winddegrees);
 		this.winddegrees = winddegrees;
 	}
 
@@ -214,7 +214,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setWindBearing(String windBearing) {
 		
-		A1iciaUtils.checkNotNull(windBearing);
+		SharedUtils.checkNotNull(windBearing);
 		this.windBearing = windBearing;
 	}
 
@@ -225,7 +225,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setWindGust(Float windgust) {
 		
-		A1iciaUtils.nullsOkay(windgust);
+		SharedUtils.nullsOkay(windgust);
 		this.windgust = windgust;
 	}
 
@@ -236,7 +236,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setCloudiness(Integer cloudiness) {
 		
-		A1iciaUtils.checkNotNull(cloudiness);
+		SharedUtils.checkNotNull(cloudiness);
 		this.cloudiness = cloudiness;
 	}
 
@@ -247,7 +247,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setRain3Hrs(Float rain3Hrs) {
 		
-		A1iciaUtils.nullsOkay(rain3Hrs);
+		SharedUtils.nullsOkay(rain3Hrs);
 		this.rain3Hrs = rain3Hrs;
 	}
 
@@ -258,7 +258,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setSnow3Hrs(Float snow3Hrs) {
 		
-		A1iciaUtils.nullsOkay(snow3Hrs);
+		SharedUtils.nullsOkay(snow3Hrs);
 		this.snow3Hrs = snow3Hrs;
 	}
 
@@ -269,7 +269,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setCityName(String cityName) {
 		
-		A1iciaUtils.checkNotNull(cityName);
+		SharedUtils.checkNotNull(cityName);
 		this.cityName = cityName;
 	}
 
@@ -280,7 +280,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setSunrise(LocalTime sunrise) {
 		
-		A1iciaUtils.checkNotNull(sunrise);
+		SharedUtils.checkNotNull(sunrise);
 		this.sunrise = sunrise;
 	}
 
@@ -291,7 +291,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setSunset(LocalTime sunset) {
 		
-		A1iciaUtils.checkNotNull(sunset);
+		SharedUtils.checkNotNull(sunset);
 		this.sunset = sunset;
 	}
 
@@ -302,7 +302,7 @@ public class KiloWeatherAction extends RoomActionObject {
 
 	public void setSummary(String summary) {
 		
-		A1iciaUtils.checkNotNull(summary);
+		SharedUtils.checkNotNull(summary);
 		this.summary = summary;
 	}
 

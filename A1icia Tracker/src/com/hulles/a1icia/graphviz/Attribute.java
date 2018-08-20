@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.graphviz;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * The eponymous attribute is a GraphViz attribute.
@@ -35,8 +35,8 @@ public class Attribute {
 
     public Attribute(String name, String value) {
     	
-        A1iciaUtils.checkNotNull(name);
-        A1iciaUtils.checkNotNull(value);
+        SharedUtils.checkNotNull(name);
+        SharedUtils.checkNotNull(value);
         this.name = name;
         this.value = value;
     }

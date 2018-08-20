@@ -23,8 +23,8 @@ package com.hulles.a1icia.juliet;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class JulietAnalysis extends RoomActionObject {
 	private List<ScratchNfl6Question> fwQuestionList;
@@ -40,7 +40,7 @@ public class JulietAnalysis extends RoomActionObject {
 
 	public void setFWQuestionList(List<ScratchNfl6Question> questionList) {
 		
-		A1iciaUtils.checkNotNull(questionList);
+		SharedUtils.checkNotNull(questionList);
 		this.fwQuestionList = questionList;
 	}
 
@@ -51,7 +51,7 @@ public class JulietAnalysis extends RoomActionObject {
 
 	public void setFMQuestionList(List<ScratchNfl6Question> questionList) {
 		
-		A1iciaUtils.checkNotNull(questionList);
+		SharedUtils.checkNotNull(questionList);
 		this.fmQuestionList = questionList;
 	}
 
@@ -62,7 +62,7 @@ public class JulietAnalysis extends RoomActionObject {
 
 	public void setFWElapsed(Long elapsed) {
 		
-		A1iciaUtils.checkNotNull(elapsed);
+		SharedUtils.checkNotNull(elapsed);
 		this.fwElapsed = elapsed;
 	}
 
@@ -73,7 +73,7 @@ public class JulietAnalysis extends RoomActionObject {
 
 	public void setFMElapsed(Long elapsed) {
 		
-		A1iciaUtils.checkNotNull(elapsed);
+		SharedUtils.checkNotNull(elapsed);
 		this.fmElapsed = elapsed;
 	}
 	
@@ -85,7 +85,7 @@ public class JulietAnalysis extends RoomActionObject {
 
 	public void setMessage(String message) {
 		
-		A1iciaUtils.nullsOkay(message);
+		SharedUtils.nullsOkay(message);
 		this.message = message;
 	}
 

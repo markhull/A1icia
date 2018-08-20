@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.lima;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.AnswerHistory;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class ScratchAnswerHistory {
 	private Integer score;
@@ -35,7 +35,7 @@ public class ScratchAnswerHistory {
 
 	public void setScore(Integer score) {
 		
-		A1iciaUtils.checkNotNull(score);
+		SharedUtils.checkNotNull(score);
 		this.score = score;
 	}
 
@@ -46,7 +46,7 @@ public class ScratchAnswerHistory {
 
 	public void setHistory(AnswerHistory history) {
 		
-		A1iciaUtils.checkNotNull(history);
+		SharedUtils.checkNotNull(history);
 		this.history = history;
 	}
 	

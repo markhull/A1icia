@@ -22,8 +22,8 @@
 package com.hulles.a1icia.house;
 
 import com.hulles.a1icia.api.dialog.DialogRequest;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * This is just a mostly-wrapper for DialogRequest that implements RoomObject.
@@ -36,7 +36,7 @@ public class ClientDialogRequest implements RoomObject {
 	
 	public ClientDialogRequest(DialogRequest request) {
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		dialogRequest = request;
 	}
 

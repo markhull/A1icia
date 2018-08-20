@@ -33,11 +33,11 @@ import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -59,7 +59,7 @@ public class Session {
 	
 	private Session(A1icianID a1icianID) {
 		
-		A1iciaUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(a1icianID);
 		LOGGER.log(LOGLEVEL, "A1iciaSession: constructor");
 		this.a1icianID = a1icianID;
 		jebusPool = JebusHub.getJebusCentral();
@@ -76,7 +76,7 @@ public class Session {
 	public static Session getSession(A1icianID a1icianID) {
 		Session session;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(a1icianID);
 		LOGGER.log(LOGLEVEL, "A1iciaSession: getSession");
 		session = new Session(a1icianID);
 		session.update();
@@ -161,7 +161,7 @@ public class Session {
 	public void setPersonUUID(SerialUUID<SerialPerson> personUUID) {
 		String field;
 		
-		A1iciaUtils.nullsOkay(personUUID);
+		SharedUtils.nullsOkay(personUUID);
 		field = JebusBible.getSessionPersonIdField(jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			if (personUUID == null) {
@@ -196,7 +196,7 @@ public class Session {
 	public void setStationUUID(SerialUUID<SerialStation> uuid) {
 		String field;
 		
-		A1iciaUtils.checkNotNull(uuid);
+		SharedUtils.checkNotNull(uuid);
 		field = JebusBible.getSessionStationIdField(jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.hset(hashKey, field, uuid.getUUIDString());
@@ -226,7 +226,7 @@ public class Session {
 	public void setLanguage(Language language) {
 		String field;
 		
-		A1iciaUtils.checkNotNull(language);
+		SharedUtils.checkNotNull(language);
 		field = JebusBible.getSessionLanguageField(jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.hset(hashKey, field, language.name());
@@ -248,7 +248,7 @@ public class Session {
 		List<Session> userSessions;
 		SerialUUID<SerialPerson> sessionUUID;
 		
-		A1iciaUtils.checkNotNull(uuid);
+		SharedUtils.checkNotNull(uuid);
 		sessions = getCurrentSessions();
 		userSessions = new ArrayList<>(sessions.size());
 		for (Session session : sessions) {

@@ -24,6 +24,7 @@ package com.hulles.a1icia.room.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.Ticket;
@@ -43,9 +44,9 @@ public final class RoomResponse extends RoomDocument {
 	public RoomResponse(Ticket ticket, Long responseTo, Room respondTo) {
 		super(RoomDocumentType.ROOMRESPONSE, ticket);
 		
-		A1iciaUtils.checkNotNull(ticket); // a little late...
-		A1iciaUtils.checkNotNull(responseTo);
-		A1iciaUtils.checkNotNull(respondTo);
+		SharedUtils.checkNotNull(ticket); // a little late...
+		SharedUtils.checkNotNull(responseTo);
+		SharedUtils.checkNotNull(respondTo);
 		this.responseToRequestID = responseTo;
 		this.respondToRoom = respondTo;
 		actionPackages = new ArrayList<>();
@@ -81,7 +82,7 @@ public final class RoomResponse extends RoomDocument {
 	
 	public void addActionPackage(ActionPackage pkg) {
 		
-		A1iciaUtils.checkNotNull(pkg);
+		SharedUtils.checkNotNull(pkg);
 		// make sure the ActionPackage we're adding is kosher...
 		if (!pkg.isReady()) {
 			A1iciaUtils.error("RoomResponse: package not ready, so not added");

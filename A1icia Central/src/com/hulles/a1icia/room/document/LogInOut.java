@@ -21,9 +21,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * A RoomObject for person log-ins and log-outs.
@@ -42,7 +42,7 @@ public class LogInOut implements RoomObject {
 
 	public void setPersonUUID(SerialUUID<SerialPerson> uuid) {
 		
-		A1iciaUtils.checkNotNull(uuid);
+		SharedUtils.checkNotNull(uuid);
 		this.uuid = uuid;
 	}
 
@@ -53,7 +53,7 @@ public class LogInOut implements RoomObject {
 
 	public void setLogInLogOut(LogInLogOut logInLogOut) {
 		
-		A1iciaUtils.checkNotNull(logInLogOut);
+		SharedUtils.checkNotNull(logInLogOut);
 		this.logInLogOut = logInLogOut;
 	}
 

@@ -43,6 +43,7 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.dialog.DialogSerialization;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -80,7 +81,7 @@ public final class A1iciaStationServer extends UrHouse {
 	public A1iciaStationServer(EventBus bus, Boolean noPrompts) {
 		super(bus);
 	
-		A1iciaUtils.checkNotNull(noPrompts);
+		SharedUtils.checkNotNull(noPrompts);
 		this.noPrompts = noPrompts;
 		jebusPool = JebusHub.getJebusCentral(true);
 		System.out.println("Station Server Jebus is " + JebusHub.getCentralServerName());
@@ -118,7 +119,7 @@ public final class A1iciaStationServer extends UrHouse {
 	protected void newDialogResponse(DialogResponse response) {
 		A1icianID a1icianID;
 		
-		A1iciaUtils.checkNotNull(response);
+		SharedUtils.checkNotNull(response);
         LOGGER.log(LOGLEVEL1, "StationServer: got response from A1icia");
         a1icianID = response.getToA1icianID();
         stationSend(a1icianID, response);
@@ -193,7 +194,7 @@ public final class A1iciaStationServer extends UrHouse {
 		SerialSememe serverLight;
 		Set<SerialSememe> sememesCopy;
 		
-		A1iciaUtils.checkNotNull(requestBytes);
+		SharedUtils.checkNotNull(requestBytes);
 		LOGGER.log(LOGLEVEL1, "StationServer: got station input...");
 		try { // TODO make me better :)
 			dialog = DialogSerialization.deSerialize(a1iciaA1icianID, requestBytes);
@@ -293,8 +294,8 @@ public final class A1iciaStationServer extends UrHouse {
 	private void stationBroadcast(String message, SerialSememe command) {
 		DialogResponse response;
 		
-		A1iciaUtils.checkNotNull(message);
-		A1iciaUtils.nullsOkay(command);
+		SharedUtils.checkNotNull(message);
+		SharedUtils.nullsOkay(command);
 		response = new DialogResponse();
 		response.setMessage(message);
 		response.setLanguage(Language.AMERICAN_ENGLISH);
@@ -317,9 +318,9 @@ public final class A1iciaStationServer extends UrHouse {
 	private void stationSend(A1icianID a1icianID, String message, SerialSememe command) {
 		DialogResponse response;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
-		A1iciaUtils.nullsOkay(message);
-		A1iciaUtils.nullsOkay(command);
+		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.nullsOkay(message);
+		SharedUtils.nullsOkay(command);
 		response = new DialogResponse();
 		response.setMessage(message);
 		response.setLanguage(Language.AMERICAN_ENGLISH);
@@ -342,8 +343,8 @@ public final class A1iciaStationServer extends UrHouse {
 		byte[] responseBytes = null;
 		Session session;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
-		A1iciaUtils.checkNotNull(response);
+		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(response);
 		// we don't translate broadcasts, for obvious reasons
 		if (!a1icianID.equals(broadcastID)) {
 			session = getSession(a1icianID);
@@ -375,8 +376,8 @@ public final class A1iciaStationServer extends UrHouse {
 		byte[] audioBytes;
 		String audioText = null;
 		
-		A1iciaUtils.checkNotNull(request);
-		A1iciaUtils.checkNotNull(lang);
+		SharedUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(lang);
 		audioBytes = request.getRequestAudio();
 		if (audioBytes != null) {
 			try {
@@ -405,8 +406,8 @@ public final class A1iciaStationServer extends UrHouse {
 	private static void translateRequest(DialogRequest request, Language lang) {
 //		String translation;
 		
-		A1iciaUtils.checkNotNull(request);
-		A1iciaUtils.checkNotNull(lang);
+		SharedUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(lang);
 		if ((lang != Language.AMERICAN_ENGLISH) && (lang != Language.BRITISH_ENGLISH)) {
 			LOGGER.log(Level.WARNING, "StationServer: translating request from " + lang.getDisplayName() + 
 					" to American English");
@@ -431,7 +432,7 @@ public final class A1iciaStationServer extends UrHouse {
 //		String expl;
 		Language langIn;
 		
-		A1iciaUtils.checkNotNull(lang);
+		SharedUtils.checkNotNull(lang);
 		langIn = response.getLanguage();
 		if (langIn == null) {
 			throw new A1iciaException("StationServer: translateResponse: null language in response");

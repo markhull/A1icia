@@ -40,6 +40,7 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.graphviz.Graph;
 import com.hulles.a1icia.graphviz.GraphViz;
@@ -67,7 +68,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class Tracker extends AbstractIdleService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.Tracker");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final static int GRAPHTTL = 60 * 60 * 24; // graphs are stored in Jebus for 24 hours
 	private final static boolean SAVEIMAGE = false;
 	private final static boolean SAVEDOTGRAPH = false;
@@ -81,7 +82,7 @@ public final class Tracker extends AbstractIdleService {
 	public Tracker(EventBus bus) {
 		ApplicationKeys appKeys;
 		
-		A1iciaUtils.checkNotNull(bus);
+		SharedUtils.checkNotNull(bus);
 		this.bus = bus;
 		ticketMap = new ConcurrentHashMap<>();
 		jebusPool = JebusHub.getJebusLocal();
@@ -96,7 +97,7 @@ public final class Tracker extends AbstractIdleService {
 		RoomRequest roomRequest;
 		RoomResponse roomResponse;
 		
-		A1iciaUtils.checkNotNull(document);
+		SharedUtils.checkNotNull(document);
 		if (document instanceof RoomAnnouncement) {
 			// we don't track announcements
 			roomAnnouncement = (RoomAnnouncement) document;
@@ -135,7 +136,7 @@ public final class Tracker extends AbstractIdleService {
 		MutableValueGraph<RoomNode,DocumentEdge> graph;
 		TicketTrack ticketGraph;
 		
-		A1iciaUtils.nullsOkay(ticket);
+		SharedUtils.nullsOkay(ticket);
 		if (ticket == null) {
 			return;
 		}
@@ -149,7 +150,7 @@ public final class Tracker extends AbstractIdleService {
 		Graph dotGraph;
 		TicketTrack ticketTrack;
         
-		A1iciaUtils.nullsOkay(ticket);
+		SharedUtils.nullsOkay(ticket);
 		if (ticket == null) {
 			return;
 		}
@@ -199,8 +200,8 @@ public final class Tracker extends AbstractIdleService {
 		Set<RoomNode> predecessors;
 		Set<RoomNode> nodes;
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(me);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(me);
 		LOGGER.log(LOGLEVEL, "TRACKER: {0} is inquiring about what's coming for ticket {1}", 
                 new Object[]{me.getDisplayName(), ticket});
 		ticketTrack = ticketMap.get(ticket);
@@ -237,7 +238,7 @@ public final class Tracker extends AbstractIdleService {
 		DocumentEdge edge;
         RoomResponse response;
 		
-		A1iciaUtils.checkNotNull(document);
+		SharedUtils.checkNotNull(document);
 		ticket = document.getTicket();
 		if (ticket == null) {
 			A1iciaUtils.error("Tracker: trying to track null ticket for document #" + 

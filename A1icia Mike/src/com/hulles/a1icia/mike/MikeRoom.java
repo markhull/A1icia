@@ -38,13 +38,13 @@ import javax.sound.sampled.AudioFormat;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.Files;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.MediaFile;
 import com.hulles.a1icia.jebus.JebusBible;
@@ -89,7 +89,7 @@ import redis.clients.jedis.Jedis;
 public final class MikeRoom extends UrRoom {
 	private final static int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 	private final static Logger LOGGER = Logger.getLogger("A1iciaMike.MikeRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	@SuppressWarnings("unused")
 	private List<String> acknowledgments;
@@ -134,8 +134,8 @@ public final class MikeRoom extends UrRoom {
 	public List<Match> matchArtists(String input, int bestNAnswers) {
 		List<Match> matches;
 		
-		A1iciaUtils.checkNotNull(input);
-		A1iciaUtils.checkNotNull(bestNAnswers);
+		SharedUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(bestNAnswers);
 		matches = FuzzyMatch.getNBestMatches(input, artists, bestNAnswers);
 		return matches;
 	}
@@ -143,8 +143,8 @@ public final class MikeRoom extends UrRoom {
 	public List<Match> matchTitles(String input, int bestNAnswers) {
 		List<Match> matches;
 		
-		A1iciaUtils.checkNotNull(input);
-		A1iciaUtils.checkNotNull(bestNAnswers);
+		SharedUtils.checkNotNull(input);
+		SharedUtils.checkNotNull(bestNAnswers);
 		matches = FuzzyMatch.getNBestMatches(input, titles, bestNAnswers);
 		return matches;
 	}
@@ -220,7 +220,7 @@ public final class MikeRoom extends UrRoom {
 		String existingArtist;
 		String existingTitle;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		try {
 			mp3File = new Mp3File(fileName);
 		} catch (UnsupportedTagException | InvalidDataException | IOException e) {
@@ -278,7 +278,7 @@ public final class MikeRoom extends UrRoom {
 	private static void updateVideoItem(String fileName) {
 		MediaFile mediaFile;
 		
-		A1iciaUtils.checkNotNull(fileName);
+		SharedUtils.checkNotNull(fileName);
 		mediaFile = MediaFile.findMediaFile(fileName);
 		if (mediaFile == null) {
 			mediaFile = MediaFile.createNew();
@@ -402,8 +402,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
@@ -453,8 +453,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
@@ -504,8 +504,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		mediaFile = MediaFile.getRandomMediaFile();
 		if (mediaFile == null) {
@@ -550,8 +550,8 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
@@ -616,8 +616,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		speech = request.getMessage().trim();
 		tempFile = TTSPico.ttsToFile(speech);
@@ -657,8 +657,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		if (sememePkg.is("pronounce_linux")) {
 			target = "Linus-linux.wav"; 
@@ -786,8 +786,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		// SememeObjectType s/b AUDIOTITLE, btw
 		matchTarget = sememePkg.getSememeObject();
@@ -833,8 +833,8 @@ public final class MikeRoom extends UrRoom {
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		if (sememePkg.is("prompt")) {
 			fileName = getRandomFileName(prompts);
@@ -873,8 +873,8 @@ public final class MikeRoom extends UrRoom {
 		String name;
 		ActionPackage pkg;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		analysis = new MediaAnalysis();
 		name = request.getMessage();

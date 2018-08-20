@@ -23,10 +23,10 @@ package com.hulles.a1icia.jebus;
 
 import java.io.UnsupportedEncodingException;
 
+import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.jebus.JebusPool.JebusPoolType;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.api.remote.A1icianID;
 
 /**
  * The JebusBible simply provides a strongly-typed way of retrieving the various Jebus strings
@@ -183,7 +183,7 @@ public final class JebusBible {
 	 */
 	public static String getErrorHashKey(JebusPool pool, Long idNo) {
 		
-		A1iciaUtils.checkNotNull(idNo);
+		SharedUtils.checkNotNull(idNo);
 		matchPool(pool, JebusPoolType.LOCAL);
 		return ALICIAERRORKEY + ":" + idNo;
 	}
@@ -195,7 +195,7 @@ public final class JebusBible {
 	 */
 	public static String getErrorHashKey(JebusPool pool, String idStr) {
 		
-		A1iciaUtils.checkNotNull(idStr);
+		SharedUtils.checkNotNull(idStr);
 		matchPool(pool, JebusPoolType.LOCAL);
 		return ALICIAERRORKEY + ":" + idStr;
 	}
@@ -213,7 +213,7 @@ public final class JebusBible {
 	 */
 	public static String getWikiDataHashKey(JebusPool pool, String propID) {
 		
-		A1iciaUtils.checkNotNull(propID);
+		SharedUtils.checkNotNull(propID);
 		matchPool(pool, JebusPoolType.LOCAL);
 		return WIKIDATAKEY + ":" + propID;
 	}
@@ -267,7 +267,7 @@ public final class JebusBible {
 	 */
 	public static String getPennTreebankHashKey(JebusPool pool, String tag) {
 		
-		A1iciaUtils.checkNotNull(tag);
+		SharedUtils.checkNotNull(tag);
 		matchPool(pool, JebusPoolType.LOCAL);
 		return PENNTREEBANKKEY + ":" + tag;
 	}
@@ -393,7 +393,7 @@ public final class JebusBible {
 	 */
 	public static String getA1iciaDocumentHashKey(JebusPool pool, String documentID) {
 		
-		A1iciaUtils.checkNotNull(documentID);
+		SharedUtils.checkNotNull(documentID);
 		matchPool(pool, JebusPoolType.CENTRAL);
 		return ALICIADOCUMENTKEY + ":" + documentID;
 	}
@@ -411,7 +411,7 @@ public final class JebusBible {
 	 */
 	public static String getA1iciaSessionHashKey(JebusPool pool, A1icianID id) {
 		
-		A1iciaUtils.checkNotNull(id);
+		SharedUtils.checkNotNull(id);
 		matchPool(pool, JebusPoolType.CENTRAL);
 		return ALICIASESSIONKEY + ":" + id.toString();
 	}
@@ -489,7 +489,7 @@ public final class JebusBible {
 	 */
 	public static String getA1iciaWeatherKey(JebusPool pool, String cityID) {
 		
-		A1iciaUtils.checkNotNull(cityID);
+		SharedUtils.checkNotNull(cityID);
 		matchPool(pool, JebusPoolType.LOCAL);
 		return ALICIAWEATHERKEY + ":" + cityID;
 	}
@@ -569,8 +569,8 @@ public final class JebusBible {
 	 */
 	private static void matchPool(JebusPool pool, JebusPoolType type) {
 		
-		A1iciaUtils.checkNotNull(pool);
-		A1iciaUtils.checkNotNull(type);
+		SharedUtils.checkNotNull(pool);
+		SharedUtils.checkNotNull(type);
 		if (pool.getPoolType() != type) {
 			throw new A1iciaException("JebusBible: JebusPool doesn't match expected type of " + type.toString());
 		}

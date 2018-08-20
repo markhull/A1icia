@@ -24,10 +24,10 @@ package com.hulles.a1icia.base;
 import java.time.Instant;
 import java.util.Set;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -94,7 +94,7 @@ public final class A1iciaError {
 	 */
 	public A1iciaError(Long idNo) {
 		
-		A1iciaUtils.checkNotNull(idNo);
+		SharedUtils.checkNotNull(idNo);
 		jebusPool = JebusHub.getJebusLocal();
 		this.idNo = idNo;
 		this.hashKey = JebusBible.getErrorHashKey(jebusPool, idNo);
@@ -132,7 +132,7 @@ public final class A1iciaError {
 	 */
 	public void setMessage(String value) {
 		
-		A1iciaUtils.nullsOkay(value);
+		SharedUtils.nullsOkay(value);
 		if (value == null) {
 			return;
 		}

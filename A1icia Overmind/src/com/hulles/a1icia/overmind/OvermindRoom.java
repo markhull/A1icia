@@ -36,6 +36,7 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
@@ -60,7 +61,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class OvermindRoom extends UrRoom {
 	final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.OvermindRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private final Thimk thimk;
 //	private final ConcurrentMap<Ticket, Thread> threadMap;
 	
@@ -100,7 +101,7 @@ public class OvermindRoom extends UrRoom {
 		String result;
 		DialogRequest dialogRequest;
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "Overmind: in receiveRequest");
 		if (request.getFromRoom() != Room.ALICIA) {
 			A1iciaUtils.warning("Overmind: got room request from a stranger, room is " +
@@ -166,7 +167,7 @@ public class OvermindRoom extends UrRoom {
 		List<ActionPackage> actionPackages;
 		List<SememePackage> sememePackages;
 		
-		A1iciaUtils.checkNotNull(responses);
+		SharedUtils.checkNotNull(responses);
 		uberTicket = request.getTicket();
 		if (uberTicket == null) {
 			throw new A1iciaException();
@@ -254,8 +255,8 @@ public class OvermindRoom extends UrRoom {
 //		SememePackage sememePackage;
 		Ticket historyTicket;
 		
-		A1iciaUtils.checkNotNull(uberTicket);
-		A1iciaUtils.checkNotNull(packageBag);
+		SharedUtils.checkNotNull(uberTicket);
+		SharedUtils.checkNotNull(packageBag);
 		LOGGER.log(LOGLEVEL, "Overmind: in processRoomActions prior to Thimk");
 		clientAction = determineClientAction(uberTicket, packageBag);
 		postRequest(uberTicket, clientAction);		
@@ -276,8 +277,8 @@ public class OvermindRoom extends UrRoom {
 	private void postRequest(Ticket ticket, ClientDialogResponse response) {
 		RoomRequest roomRequest;
 
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(response);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(response);
 		roomRequest = new RoomRequest(ticket);
 		roomRequest.setFromRoom(getThisRoom());
 		roomRequest.setSememePackages(SememePackage.getSingletonDefault("client_response"));
@@ -312,8 +313,8 @@ public class OvermindRoom extends UrRoom {
 		ClientObjectWrapper objectWrapper;
 		A1icianAction remoteObject;
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(packageBag);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(packageBag);
 		journal = ticket.getJournal();
 		sememes = new HashSet<>();
 		packageBag.stream().forEach(p -> sememes.add(p.getSememe()));
@@ -401,8 +402,8 @@ public class OvermindRoom extends UrRoom {
 		SememePackage aardPkg;
 		DialogRequest dialogRequest;
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(sememePackages);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(sememePackages);
 		// Now we're ready to assemble whatever we need to respond to the client.
 		//    At this point, the ticket journal should have all of the sentence packages
 		//    completed with a sememe for each one, and a set of sememes upon which to act (the

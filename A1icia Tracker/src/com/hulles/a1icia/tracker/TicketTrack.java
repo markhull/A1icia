@@ -24,9 +24,9 @@ package com.hulles.a1icia.tracker;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.graphviz.Graph;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 class TicketTrack {
 	private final Ticket ticket;
@@ -35,8 +35,8 @@ class TicketTrack {
 	
 	TicketTrack(Ticket ticket, MutableValueGraph<RoomNode,DocumentEdge> graph) {
 		
-		A1iciaUtils.checkNotNull(ticket);
-		A1iciaUtils.checkNotNull(graph);
+		SharedUtils.checkNotNull(ticket);
+		SharedUtils.checkNotNull(graph);
 		this.ticket = ticket;
 		this.valueGraph = graph;
 		this.dotGraph = new Graph(ticket);

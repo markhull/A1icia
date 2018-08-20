@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -39,7 +40,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.fortuna.Fortuna;
 import com.hulles.fortuna.SerialFortune;
 
@@ -91,8 +91,8 @@ public final class IndiaRoom extends UrRoom {
 	@Override
 	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		logger.log(LOGLEVEL, "IndiaRoom: receiving " + sememePkg.getName());
 		switch (sememePkg.getName()) {
 			case "greet":
@@ -134,8 +134,8 @@ public final class IndiaRoom extends UrRoom {
 		MessageAction action;
 		String msgIn;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		logger.log(LOGLEVEL, "IndiaRoom: evaluating " + sememePkg.getName());
 		pkg = new ActionPackage(sememePkg);
 		msgIn = request.getMessage();
@@ -159,8 +159,8 @@ public final class IndiaRoom extends UrRoom {
 		String expl;
 		SerialFortune fortune;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		logger.log(LOGLEVEL, "IndiaRoom: getting random quotation");
 		pkg = new ActionPackage(sememePkg);
 		fortune = Fortuna.getFortune();

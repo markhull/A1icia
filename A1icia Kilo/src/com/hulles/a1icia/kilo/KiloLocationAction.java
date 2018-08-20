@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.kilo;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class KiloLocationAction extends RoomActionObject {
 	private String locationIP;
@@ -42,7 +42,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setOwmCityID(Integer owmCityID) {
 		
-		A1iciaUtils.nullsOkay(owmCityID);
+		SharedUtils.nullsOkay(owmCityID);
 		this.owmCityID = owmCityID;
 	}
 
@@ -53,7 +53,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setLocationIP(String locationIP) {
 		
-		A1iciaUtils.checkNotNull(locationIP);
+		SharedUtils.checkNotNull(locationIP);
 		this.locationIP = locationIP;
 	}
 
@@ -64,7 +64,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setCity(String city) {
 		
-		A1iciaUtils.checkNotNull(city);
+		SharedUtils.checkNotNull(city);
 		this.city = city;
 	}
 
@@ -75,7 +75,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setRegion(String region) {
 		
-		A1iciaUtils.checkNotNull(region);
+		SharedUtils.checkNotNull(region);
 		this.region = region;
 	}
 
@@ -86,7 +86,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setCountry(String country) {
 		
-		A1iciaUtils.checkNotNull(country);
+		SharedUtils.checkNotNull(country);
 		this.country = country;
 	}
 
@@ -97,7 +97,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setLatitude(Float latitude) {
 		
-		A1iciaUtils.checkNotNull(latitude);
+		SharedUtils.checkNotNull(latitude);
 		this.latitude = latitude;
 	}
 
@@ -108,7 +108,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setLongitude(Float longitude) {
 		
-		A1iciaUtils.checkNotNull(longitude);
+		SharedUtils.checkNotNull(longitude);
 		this.longitude = longitude;
 	}
 
@@ -119,7 +119,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setOrganization(String organization) {
 		
-		A1iciaUtils.checkNotNull(organization);
+		SharedUtils.checkNotNull(organization);
 		this.organization = organization;
 	}
 
@@ -130,7 +130,7 @@ public class KiloLocationAction extends RoomActionObject {
 
 	public void setPostalCode(String postalCode) {
 		
-		A1iciaUtils.checkNotNull(postalCode);
+		SharedUtils.checkNotNull(postalCode);
 		this.postalCode = postalCode;
 	}
 

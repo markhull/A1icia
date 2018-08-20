@@ -24,7 +24,7 @@ package com.hulles.a1icia.golf;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 final public class WikiDataEntity {
 	private String qID;
@@ -46,7 +46,7 @@ final public class WikiDataEntity {
 
 	public void setqID(String qID) {
 		
-		A1iciaUtils.checkNotNull(qID);
+		SharedUtils.checkNotNull(qID);
 		this.qID = qID;
 	}
 
@@ -57,7 +57,7 @@ final public class WikiDataEntity {
 
 	public void setLabel(String label) {
 		
-		A1iciaUtils.checkNotNull(label);
+		SharedUtils.checkNotNull(label);
 		this.label = label;
 	}
 
@@ -68,7 +68,7 @@ final public class WikiDataEntity {
 
 	public void setDescription(String description) {
 		
-		A1iciaUtils.checkNotNull(description);
+		SharedUtils.checkNotNull(description);
 		this.description = description;
 	}
 
@@ -79,14 +79,14 @@ final public class WikiDataEntity {
 
 	public void setAliases(List<String> newAliases) {
 	
-		A1iciaUtils.checkNotNull(newAliases);
+		SharedUtils.checkNotNull(newAliases);
 		aliases.clear();
 		aliases.addAll(newAliases);
 	}
 	
 	public void addAlias(String alias) {
 		
-		A1iciaUtils.checkNotNull(alias);
+		SharedUtils.checkNotNull(alias);
 		aliases.add(alias);
 	}
 	
@@ -97,14 +97,14 @@ final public class WikiDataEntity {
 	
 	public void setClaims(List<WikiDataClaim> newClaims) {
 		
-		A1iciaUtils.checkNotNull(newClaims);
+		SharedUtils.checkNotNull(newClaims);
 		claims.clear();
 		claims.addAll(newClaims);
 	}
 	
 	public void addClaim(WikiDataClaim claim) {
 		
-		A1iciaUtils.checkNotNull(claim);
+		SharedUtils.checkNotNull(claim);
 		claims.add(claim);
 	}
 	

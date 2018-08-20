@@ -21,9 +21,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.tracker;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.graphviz.Node;
 import com.hulles.a1icia.room.Room;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class RoomNode {
 	private final Room roomKey;
@@ -31,7 +31,7 @@ public class RoomNode {
 	
 	public RoomNode(Room room) {
 		
-		A1iciaUtils.checkNotNull(room);
+		SharedUtils.checkNotNull(room);
 		this.roomKey = room;
 		this.node = new Node(room);
 	}

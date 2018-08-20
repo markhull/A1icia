@@ -35,13 +35,13 @@ import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.document.ClientObjectWrapper;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -53,7 +53,7 @@ final class TimerHandler implements Closeable {
 	
 	TimerHandler(HotelRoom room) {
 		
-		A1iciaUtils.checkNotNull(room);
+		SharedUtils.checkNotNull(room);
 		hotelRoom = room;
 		timerQueue = new ConcurrentLinkedQueue<>();
 		executor = Executors.newScheduledThreadPool(1);
@@ -65,9 +65,9 @@ final class TimerHandler implements Closeable {
 		HotelTimer timer;
 		Long millis;
 		
-		A1iciaUtils.checkNotNull(personUUID);
-		A1iciaUtils.checkNotNull(timerName);
-		A1iciaUtils.checkNotNull(minutes);
+		SharedUtils.checkNotNull(personUUID);
+		SharedUtils.checkNotNull(timerName);
+		SharedUtils.checkNotNull(minutes);
 		timer = new HotelTimer();
 		timer.setPersonUUID(personUUID);
 		timer.setName(timerName);
@@ -82,9 +82,9 @@ final class TimerHandler implements Closeable {
 	public void setNewTimer(A1icianID a1icianID, String timerName, Long millis) {
 		HotelTimer timer;
 		
-		A1iciaUtils.checkNotNull(a1icianID);
-		A1iciaUtils.checkNotNull(timerName);
-		A1iciaUtils.checkNotNull(millis);
+		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(timerName);
+		SharedUtils.checkNotNull(millis);
 		timer = new HotelTimer();
 //		timer.setPersonUUID(personUUID);
 		timer.setA1icianID(a1icianID);
@@ -98,7 +98,7 @@ final class TimerHandler implements Closeable {
 	public void setMediaFile(ClientObjectWrapper mediaObject) {
 		Long timerID;
 		
-		A1iciaUtils.checkNotNull(mediaObject);
+		SharedUtils.checkNotNull(mediaObject);
 		timerID = Long.parseLong(mediaObject.getMessage());
 		for (HotelTimer timer : timerQueue) {
 			if (timer.getTimerID() == timerID) {
@@ -135,7 +135,7 @@ final class TimerHandler implements Closeable {
 		MediaObject mediaObject;
 		DialogResponse response;
 		
-		A1iciaUtils.checkNotNull(timer);
+		SharedUtils.checkNotNull(timer);
 		// first we send a wakeup call to the console
 		clientResponse = new ClientDialogResponse();
 		response = clientResponse.getDialogResponse();
@@ -169,7 +169,7 @@ final class TimerHandler implements Closeable {
 	
 	private void turnOffLED(final HotelTimer timer) {
 		
-		A1iciaUtils.checkNotNull(timer);
+		SharedUtils.checkNotNull(timer);
 		final Runnable resetter = new Runnable() {
 			@Override
 			public void run() {
@@ -266,7 +266,7 @@ final class TimerHandler implements Closeable {
 
 		public void setName(String name) {
 			
-			A1iciaUtils.checkNotNull(name);
+			SharedUtils.checkNotNull(name);
 			this.name = name;
 		}
 
@@ -277,7 +277,7 @@ final class TimerHandler implements Closeable {
 
 		public void setA1icianID(A1icianID a1icianID) {
 			
-			A1iciaUtils.checkNotNull(a1icianID);
+			SharedUtils.checkNotNull(a1icianID);
 			this.a1icianID = a1icianID;
 		}
 
@@ -288,7 +288,7 @@ final class TimerHandler implements Closeable {
 
 		public void setPersonUUID(SerialUUID<SerialPerson> personUUID) {
 			
-			A1iciaUtils.checkNotNull(personUUID);
+			SharedUtils.checkNotNull(personUUID);
 			this.personUUID = personUUID;
 		}
 */
@@ -299,7 +299,7 @@ final class TimerHandler implements Closeable {
 
 		public void setExpires(Long expires) {
 			
-			A1iciaUtils.checkNotNull(expires);
+			SharedUtils.checkNotNull(expires);
 			this.expires = expires;
 		}
 
@@ -310,7 +310,7 @@ final class TimerHandler implements Closeable {
 
 		public void setMediaObject(ClientObjectWrapper mediaObject) {
 			
-			A1iciaUtils.checkNotNull(mediaObject);
+			SharedUtils.checkNotNull(mediaObject);
 			this.mediaObject = mediaObject;
 		}
 	}

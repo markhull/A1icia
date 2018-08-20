@@ -23,7 +23,7 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
  * A RoomActionObject that contains the result of our Natural Language Processing (NLP) analysis.
@@ -44,7 +44,7 @@ final public class NLPAnalysis extends RoomActionObject {
 
 	public void setMessage(String inputMessage) {
 		
-		A1iciaUtils.checkNotNull(inputMessage);
+		SharedUtils.checkNotNull(inputMessage);
 		this.inputMessage = inputMessage;
 	}
 
@@ -55,7 +55,7 @@ final public class NLPAnalysis extends RoomActionObject {
 
 	public void setSentences(List<String> sentences) {
 		
-		A1iciaUtils.checkNotNull(sentences);
+		SharedUtils.checkNotNull(sentences);
 		this.sentences = sentences;
 	}
 
@@ -66,7 +66,7 @@ final public class NLPAnalysis extends RoomActionObject {
 
 	public void setSentenceAnalyses(List<SentenceAnalysis> sentenceAnalyses) {
 		
-		A1iciaUtils.checkNotNull(sentenceAnalyses);
+		SharedUtils.checkNotNull(sentenceAnalyses);
 		this.sentenceAnalyses = sentenceAnalyses;
 	}
 	

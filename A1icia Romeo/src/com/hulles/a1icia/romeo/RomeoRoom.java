@@ -27,6 +27,7 @@ import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -36,7 +37,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Romeo Room is the game room. Sound clips to the contrary, "Global Thermonuclear War" is not
@@ -81,8 +81,8 @@ public final class RomeoRoom extends UrRoom {
 		ActionPackage pkg;
 		MessageAction action;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		action.setMessage("Okay, get ready.");

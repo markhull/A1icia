@@ -23,8 +23,8 @@ package com.hulles.a1icia.golf;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class GolfAnalysis extends RoomActionObject {
 	private String message;
@@ -39,7 +39,7 @@ public class GolfAnalysis extends RoomActionObject {
 
 	public void setMessage(String msg) {
 		
-		A1iciaUtils.checkNotNull(msg);
+		SharedUtils.checkNotNull(msg);
 		this.message = msg;
 	}
 
@@ -50,7 +50,7 @@ public class GolfAnalysis extends RoomActionObject {
 
 	public void setSearchResults(List<WikiDataSearchResult> searchResults) {
 		
-		A1iciaUtils.checkNotNull(searchResults);
+		SharedUtils.checkNotNull(searchResults);
 		this.searchResults = searchResults;
 	}
 
@@ -62,7 +62,7 @@ public class GolfAnalysis extends RoomActionObject {
 
 	public void setExplanation(String explanation) {
 		
-		A1iciaUtils.checkNotNull(explanation);
+		SharedUtils.checkNotNull(explanation);
 		this.explanation = explanation;
 	}
 

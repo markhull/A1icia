@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class Graph extends GraphObject {
     private final GraphType graphType;
@@ -42,8 +42,8 @@ public class Graph extends GraphObject {
     public Graph(String id, GraphType graphType) {
         super(id);
  
-        A1iciaUtils.checkNotNull(id);
-        A1iciaUtils.checkNotNull(graphType);
+        SharedUtils.checkNotNull(id);
+        SharedUtils.checkNotNull(graphType);
         this.graphType = graphType;
         this.nodeSet = Collections.synchronizedSet(new HashSet<>());
         this.edgeList = Collections.synchronizedList(new ArrayList<>());
@@ -57,19 +57,19 @@ public class Graph extends GraphObject {
 
     public void addNode(Node node) {
 
-    	A1iciaUtils.checkNotNull(node);
+    	SharedUtils.checkNotNull(node);
         this.nodeSet.add(node);
     }
 
     public void addEdge(Edge edge) {
  
-    	A1iciaUtils.checkNotNull(edge);
+    	SharedUtils.checkNotNull(edge);
         this.edgeList.add(edge);
     }
 
     public void addSubgraph(Graph graph) {
     	
-    	A1iciaUtils.checkNotNull(graph);
+    	SharedUtils.checkNotNull(graph);
     	this.subgraphList.add(graph);
     }
     

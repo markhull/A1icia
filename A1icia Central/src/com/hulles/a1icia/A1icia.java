@@ -117,7 +117,7 @@ public class A1icia implements Closeable {
 	public A1icia(Boolean noPrompts) {
 		this();
 		
-		A1iciaUtils.checkNotNull(noPrompts);
+		SharedUtils.checkNotNull(noPrompts);
 		this.noPrompts = noPrompts;
 	}
 	
@@ -338,7 +338,7 @@ public class A1icia implements Closeable {
 		 */
 		void receiveResponse(DialogResponse response) {
 			
-			A1iciaUtils.checkNotNull(response);
+			SharedUtils.checkNotNull(response);
 			getStreet().post(response);
 		}
 		
@@ -377,7 +377,7 @@ public class A1icia implements Closeable {
 		@Override
 		protected void newDialogRequest(DialogRequest request) {
 			
-			A1iciaUtils.checkNotNull(request);
+			SharedUtils.checkNotNull(request);
 			LOGGER.log(LOGLEVEL, "Forwarding dialog request from house to room");
 			forwardRequestToRoom(request);
 		}
@@ -444,7 +444,7 @@ public class A1icia implements Closeable {
 			DialogRequest request;
 			RoomRequest roomRequest;
 			
-			A1iciaUtils.checkNotNull(clientRequest);
+			SharedUtils.checkNotNull(clientRequest);
 			request = clientRequest.getDialogRequest();
 			if (!clientRequest.isValid()) {
 				A1iciaUtils.error("A1icia: ClientDialogRequest is not valid, refusing it",
@@ -472,7 +472,7 @@ public class A1icia implements Closeable {
 			TicketJournal journal;
 			DialogRequest request;
 			
-			A1iciaUtils.checkNotNull(clientRequest);
+			SharedUtils.checkNotNull(clientRequest);
 			request = clientRequest.getDialogRequest();
 			ticket = Ticket.createNewTicket(getHall(), getThisRoom());
 			ticket.setFromA1icianID(request.getFromA1icianID());
@@ -512,8 +512,8 @@ public class A1icia implements Closeable {
 		protected void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
 			Ticket ticket;
 			
-			A1iciaUtils.checkNotNull(request);
-			A1iciaUtils.checkNotNull(responses);
+			SharedUtils.checkNotNull(request);
+			SharedUtils.checkNotNull(responses);
 			ticket = request.getTicket();
 			ticket.close();
 		}
@@ -525,8 +525,8 @@ public class A1icia implements Closeable {
 		@Override
 		protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
 
-			A1iciaUtils.checkNotNull(sememePkg);
-			A1iciaUtils.checkNotNull(request);
+			SharedUtils.checkNotNull(sememePkg);
+			SharedUtils.checkNotNull(request);
 			switch (sememePkg.getName()) {
 				case "like_a_version":
 					return createVersionActionPackage(sememePkg, request);
@@ -549,8 +549,8 @@ public class A1icia implements Closeable {
 			ActionPackage pkg;
 			MessageAction action;
 			
-			A1iciaUtils.checkNotNull(sememePkg);
-			A1iciaUtils.checkNotNull(request);
+			SharedUtils.checkNotNull(sememePkg);
+			SharedUtils.checkNotNull(request);
 			pkg = new ActionPackage(sememePkg);
 			action = new MessageAction();
 			action.setMessage(getVersionString());
@@ -578,8 +578,8 @@ public class A1icia implements Closeable {
 			DialogResponse dialogResponse;
 			RoomObject obj;
 			
-			A1iciaUtils.checkNotNull(sememePkg);
-			A1iciaUtils.checkNotNull(request);
+			SharedUtils.checkNotNull(sememePkg);
+			SharedUtils.checkNotNull(request);
 			obj = request.getRoomObject();
 			if (!(obj instanceof ClientDialogResponse)) {
 				A1iciaUtils.error("A1icia: client/indie response object is not ClientDialogResponse");

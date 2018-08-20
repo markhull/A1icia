@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.golf;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class WikiDataClaim {
 	private final String propID;
@@ -33,7 +33,7 @@ public class WikiDataClaim {
 	
 	WikiDataClaim(String propID) {
 		
-		A1iciaUtils.checkNotNull(propID);
+		SharedUtils.checkNotNull(propID);
 		this.propID = propID;
 	}
 
@@ -49,7 +49,7 @@ public class WikiDataClaim {
 
 	public void setDataType(String dataType) {
 		
-		A1iciaUtils.checkNotNull(dataType);
+		SharedUtils.checkNotNull(dataType);
 		this.dataType = dataType;
 	}
 
@@ -70,7 +70,7 @@ public class WikiDataClaim {
 
 	public void setValue(Object value) {
 		
-		A1iciaUtils.checkNotNull(value);
+		SharedUtils.checkNotNull(value);
 		this.value = value;
 	}
 
@@ -91,7 +91,7 @@ public class WikiDataClaim {
 
 	public void setSecondaryLabel(String secondaryLabel) {
 		
-		A1iciaUtils.checkNotNull(secondaryLabel);
+		SharedUtils.checkNotNull(secondaryLabel);
 		this.secondaryLabel = secondaryLabel;
 	}
 

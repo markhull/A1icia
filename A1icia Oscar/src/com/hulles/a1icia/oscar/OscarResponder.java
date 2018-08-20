@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Sememe;
@@ -42,7 +41,7 @@ import com.hulles.a1icia.ticket.SememePackage;
 
 public class OscarResponder {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOscar.OscarResponder");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private static final LocalDateTime BIRTHDAY = LocalDateTime.of(2017, 10, 10, 19, 12, 37);
 	private final static int HELPS = 5;
 	private final List<String> nameChoices;

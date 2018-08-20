@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class RecipeMLParser {
 
@@ -323,7 +323,7 @@ public class RecipeMLParser {
 	private static String getTextValue(Element node) {
 	    String value = null;
 	    
-	    A1iciaUtils.checkNotNull(node);
+	    SharedUtils.checkNotNull(node);
 	    if (node.hasChildNodes()) {
 	        value = node.getFirstChild().getNodeValue();
 	    }
@@ -334,7 +334,7 @@ public class RecipeMLParser {
 	private static void dumpNodeList(NodeList nl) {
 		Node node;
 		
-		A1iciaUtils.checkNotNull(nl);
+		SharedUtils.checkNotNull(nl);
 		for (int i=0; i<nl.getLength(); i++) {
 			node = nl.item(i);
 			System.out.print(node.getNodeName() + " : " + node.getNodeType() + " : " + node.getNodeValue());

@@ -28,19 +28,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.AnswerChunk;
 import com.hulles.a1icia.cayenne.AnswerHistory;
 import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.room.document.HistoryUpdate;
 import com.hulles.a1icia.ticket.ActionPackage;
+import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SentencePackage.SentenceChunk;
-import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
 import com.hulles.a1icia.tools.FuzzyMatch;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class LimaHistory {
 	private final static Logger logger = Logger.getLogger("A1iciaLima.LimaHistory");
@@ -129,7 +129,7 @@ public class LimaHistory {
 		List<ActionPackage> actionPackages;
 		SentencePackage spPkg;
 		
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		sentencePackages = journal.getSentencePackages();
@@ -167,8 +167,8 @@ public class LimaHistory {
 		AnswerChunk answerChunk;
 		String fixedSentence;
 		
-		A1iciaUtils.checkNotNull(sp);
-		A1iciaUtils.checkNotNull(ap);
+		SharedUtils.checkNotNull(sp);
+		SharedUtils.checkNotNull(ap);
 		sememePkg = ap.getSememePackage();
 		fixedSentence = sp.getStrippedSentence();
 		logger.log(LOGLEVEL_B, "LimaHistory: updating");

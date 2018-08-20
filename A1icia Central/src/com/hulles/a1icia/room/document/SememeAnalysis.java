@@ -23,8 +23,8 @@ package com.hulles.a1icia.room.document;
 
 import java.util.List;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * The SememeAnalysis is an attempt to determine what actions, if any, are called for by a query
@@ -46,7 +46,7 @@ public final class SememeAnalysis extends RoomActionObject {
 
 	public void setSememePackages(List<SememePackage> sememePackages) {
 		
-		A1iciaUtils.checkNotNull(sememePackages);
+		SharedUtils.checkNotNull(sememePackages);
 		this.sememePackages = sememePackages;
 	}
 

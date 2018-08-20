@@ -22,7 +22,7 @@ package com.hulles.fortuna;
 import java.io.Serializable;
 import java.net.ServerSocket;
 
-public class SharedUtils implements Serializable {
+final public class SharedUtils implements Serializable {
 	private static final long serialVersionUID = 3869704244983332875L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;

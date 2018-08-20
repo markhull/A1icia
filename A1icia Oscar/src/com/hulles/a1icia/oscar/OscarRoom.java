@@ -28,6 +28,7 @@ import java.util.Set;
 import com.google.common.eventbus.EventBus;
 import com.hulles.a1icia.api.object.ChangeLanguageObject;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
@@ -39,7 +40,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Oscar Room handles what are essentially constant values, like A1icia's name. Which is A1icia.
@@ -107,8 +107,8 @@ public final class OscarRoom extends UrRoom {
 		ActionPackage pkg;
 		MessageAction action;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		message = chooser.respondTo(sememePkg);
@@ -124,8 +124,8 @@ public final class OscarRoom extends UrRoom {
 		ChangeLanguageObject changeLang;
 		ClientObjectWrapper clientChange;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(sememePkg);
+		SharedUtils.checkNotNull(request);
 		langStr = sememePkg.getSememeObject();
 		language = Language.valueOf(langStr);
 		changeLang = new ChangeLanguageObject();

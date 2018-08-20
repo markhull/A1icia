@@ -37,6 +37,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.jebus.JebusPool;
@@ -66,7 +67,7 @@ public class WikiDataParser {
         String labelStr;
         String descStr;
 		
-		A1iciaUtils.checkNotNull(searchResult);
+		SharedUtils.checkNotNull(searchResult);
         sReader = new StringReader(searchResult);
         try (JsonReader reader = Json.createReader(sReader)) {
         	search = reader.readObject();
@@ -106,7 +107,7 @@ public class WikiDataParser {
         WikiDataEntity result;
 		DateFormat df;
 		
-		A1iciaUtils.checkNotNull(entityStr);
+		SharedUtils.checkNotNull(entityStr);
 		if (sdf == null) {
 			df = DateFormat.getDateTimeInstance();
 			sdf = (SimpleDateFormat)df;
@@ -159,7 +160,7 @@ public class WikiDataParser {
 		JebusPool jebusPool;
 		String hashKey;
 		
-		A1iciaUtils.checkNotNull(entity);
+		SharedUtils.checkNotNull(entity);
 		jebusPool = JebusHub.getJebusLocal();
 		wdEntity = new WikiDataEntity();
 		logger.log(LOGLEVEL,"Type: " + entity.getString("type", "(no type)"));
@@ -268,7 +269,7 @@ public class WikiDataParser {
 		String label;
 		WikiDataEntity wdEntity;
 		
-		A1iciaUtils.checkNotNull(entity);
+		SharedUtils.checkNotNull(entity);
 		wdEntity = new WikiDataEntity();
 		logger.log(LOGLEVEL,"Type: " + entity.getString("type", "(no type)"));
 		labels = entity.getJsonObject("labels");
@@ -296,8 +297,8 @@ public class WikiDataParser {
 		java.util.Date date;
 		String idString;
 		
-		A1iciaUtils.checkNotNull(datavalue);
-		A1iciaUtils.checkNotNull(datatype);
+		SharedUtils.checkNotNull(datavalue);
+		SharedUtils.checkNotNull(datatype);
 		type = datavalue.getString("type");
 		switch (datatype) {
 			case "commonsMedia":

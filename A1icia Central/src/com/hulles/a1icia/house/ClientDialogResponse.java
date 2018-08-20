@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.house;
 
-import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.api.dialog.DialogResponse;
+import com.hulles.a1icia.room.document.RoomActionObject;
 
 /**
  * This class wraps DialogResponse so it can be a RoomActionObject.

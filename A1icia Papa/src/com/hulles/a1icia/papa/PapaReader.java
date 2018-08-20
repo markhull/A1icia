@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class PapaReader {
 	private static final String fileURL = "/media/hulles/DATA/Repository/Cambio EW/Grrr XML/src/com/hulles/grrr/sample1.xml";
@@ -54,7 +54,7 @@ public class PapaReader {
 //		OutputStreamWriter errorWriter;
 //		RecipeMLParser recipeParser;
 		
-//		A1iciaUtils.checkNotNull(url);
+//		SharedUtils.checkNotNull(url);
 //		dbf = DocumentBuilderFactory.newInstance();
 //		try {
 //			db = dbf.newDocumentBuilder();
@@ -115,9 +115,9 @@ public class PapaReader {
 	    String value;
 	    NodeList nl;
 	    
-	    A1iciaUtils.nullsOkay(def);
-	    A1iciaUtils.checkNotNull(doc);
-	    A1iciaUtils.checkNotNull(tag);
+	    SharedUtils.nullsOkay(def);
+	    SharedUtils.checkNotNull(doc);
+	    SharedUtils.checkNotNull(tag);
 	    value = def;
 	    nl = doc.getElementsByTagName(tag);
 	    if (nl.getLength() > 0 && nl.item(0).hasChildNodes()) {
