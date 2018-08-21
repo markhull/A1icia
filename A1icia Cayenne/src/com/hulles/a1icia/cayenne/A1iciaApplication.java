@@ -21,12 +21,18 @@
  *******************************************************************************/
 package com.hulles.a1icia.cayenne;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Enumeration;
 
+import org.apache.cayenne.ConfigurationException;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.ClassLoaderManager;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
+import org.apache.cayenne.resource.ResourceLocator;
 
 public final class A1iciaApplication {
     private static ObjectContext entityContext = null;
@@ -45,17 +51,41 @@ public final class A1iciaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
+    	URL resourceURL;
     	
     	if (cayenneRuntime == null) {
+    		@SuppressWarnings("rawtypes")
+			Class clazz = A1iciaApplication.class;
+    		System.out.println("Class " + clazz.getName());
+    		System.out.println("Canonical name " + clazz.getCanonicalName());
+    		System.out.println("Package name " + clazz.getPackageName());
+    		System.out.println("Simple name " + clazz.getSimpleName());
+    		System.out.println("Type name " + clazz.getTypeName());
+    		System.out.println("Generic string " + clazz.toGenericString());
+    		System.out.println("Class resource URL " + clazz.getResource("cayenne-a1icia.xml"));
+    		resourceURL = clazz.getResource("cayenne-a1icia.xml");
+    		ClassLoader cl = clazz.getClassLoader();
+    		System.out.println("Module name " + clazz.getModule().getName());
+    		System.out.println("Module descriptor " + clazz.getModule().getDescriptor());
+    		System.out.println("Module layer " + clazz.getModule().getLayer());
+    		System.out.println("ClassLoader resource URL " + cl.getResource("cayenne-a1icia.xml"));
+    		System.out.println("ClassLoader name " + cl.getName());
+    		
     		if (!logging) {
+    			showURLs("com/hulles/a1icia/cayenne/cayenne-a1icia.xml");
 	    		cayenneRuntime = ServerRuntime.builder()
-	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+//	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
+	    	            		.toInstance(new A1iciaResourceLocator(A1iciaApplication.class, "cayenne-a1icia.xml")))
+	    				.addConfig("cayenne-a1icia.xml")
 	    				.addModule(binder -> binder.bind(JdbcEventLogger.class)
 	    						.to(NoopJdbcEventLogger.class))
 	    				.build();
     		} else {
 	    		cayenneRuntime = ServerRuntime.builder()
-	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+//	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
+	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
+	    	            		.toInstance(new A1iciaResourceLocator(A1iciaApplication.class, "cayenne-a1icia.xml")))
 	    				.build();
     		}
     		
@@ -63,6 +93,48 @@ public final class A1iciaApplication {
     	return cayenneRuntime;
     }
 
+    private static void showURLs(String name) {
+    	ClassLoaderManager classLoaderManager;
+        Enumeration<URL> urls;
+        
+        classLoaderManager = new DefaultClassLoaderManager();
+        try {
+            urls = classLoaderManager.getClassLoader(name).getResources(name);
+        } catch (IOException e) {
+            throw new ConfigurationException("Error getting resources for ");
+        }
+        while (urls.hasMoreElements()) {
+        	System.out.println("URL: " + urls.nextElement());
+        }
+    }
+    
+    static class DefaultClassLoaderManager implements ClassLoaderManager {
+
+        @Override
+        public ClassLoader getClassLoader(String resourceName) {
+            // here we are ignoring 'className' when looking for ClassLoader...
+            // other implementations (such as OSGi) may actually use it
+
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+            if (classLoader == null) {
+            	System.out.println("Using THIS classLoader");
+                classLoader = DefaultClassLoaderManager.class.getClassLoader();
+            } else {
+            	System.out.println("Using THREAD classLoader");
+            }
+
+            // this is too paranoid I guess... "this" class will always have a
+            // ClassLoader
+            if (classLoader == null) {
+                throw new IllegalStateException("Can't find a ClassLoader");
+            }
+
+            return classLoader;
+        }
+
+    } 
+    
     public static void setErrorOnUncommittedObjects(boolean value) {
     	
     	uncommittedObjectsError = value;

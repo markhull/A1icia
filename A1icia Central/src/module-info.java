@@ -20,12 +20,18 @@ module com.hulles.a1icia {
 	requires com.hulles.a1icia.cayenne;
 	requires com.hulles.a1icia.crypto;
 	requires com.hulles.a1icia.media;
-	requires commons.pool2;
 	requires commons.text;
 	requires transitive guava;
 	requires java.desktop;
 	requires java.logging;
 	requires jedis;
+    requires commons.pool;
+//    requires cayenne.server;
+//    requires cayenne.di;
+//    requires org.mariadb.jdbc;
+//    requires org.slf4j.simple;
+//    requires org.slf4j;
+//    requires cayenne.client;
 	
 	uses com.hulles.a1icia.room.UrRoom;
 }

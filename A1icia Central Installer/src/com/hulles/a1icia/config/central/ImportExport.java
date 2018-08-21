@@ -95,7 +95,7 @@ public class ImportExport {
 		InputStreamReader stdIn;
 		
 		appKeys = ApplicationKeys.getInstance();
-    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
+    	fileName = appKeys.getKey(ApplicationKey.SECRETKEYPATH);
 		stdIn = new InputStreamReader(System.in);
 		try (BufferedReader reader = new BufferedReader(stdIn)) {
 			System.out.println("This will create a new A1icia AES key at " + fileName + ".");
@@ -148,7 +148,6 @@ public class ImportExport {
 		purdahKeys = new PurdahKeys();
 		stringMap = new HashMap<>();
 		try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
-		    line = null;
 		    while ((line = reader.readLine()) != null) {
 		    	keyValue = line.split("=", 2);
 		        stringMap.put(keyValue[0], keyValue[1]);
@@ -227,7 +226,6 @@ public class ImportExport {
 		appKeys = new ApplicationKeys();
 		stringMap = new HashMap<>();
 		try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
-		    line = null;
 		    while ((line = reader.readLine()) != null) {
 		    	if (line.isEmpty()) {
 		    		continue;
@@ -307,7 +305,6 @@ public class ImportExport {
 			if (importAppKeys) {
 				path = getPath(reader, false);
 				importAppKeys(path);
-				return;
 			}
 		} catch (IOException e) {
 			System.err.println("System error: I/O error, exiting");
@@ -341,7 +338,6 @@ public class ImportExport {
 			if (!writing && !Files.exists(path)) {
 				System.out.println("That file doesn't exist");
 				fn = null;
-				continue;
 			}
 		}
 		return path;

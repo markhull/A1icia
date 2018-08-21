@@ -67,7 +67,7 @@ public class DialogSerialization {
 		Object object;
 		DialogHeader header;
 		Dialog dialog = null;
-		Dialog notOurDialog = null;
+		Dialog notOurDialog;
 		A1icianID dialogA1icianID;
 		A1icianID bcastID = A1iciaConstants.getBroadcastA1icianID();
 		String debugString;

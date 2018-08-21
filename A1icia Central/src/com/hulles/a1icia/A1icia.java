@@ -81,7 +81,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  * @author hulles
  *
  */
-public class A1icia implements Closeable {
+final public class A1icia implements Closeable {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1icia");
 	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
@@ -188,7 +188,7 @@ public class A1icia implements Closeable {
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
 		
-		services = new ArrayList<>(6);
+		services = new ArrayList<>(3);
 		services.add(new A1iciaHouse(street));
 		services.add(new Controller(this));
 		services.add(new A1iciaStationServer(street, noPrompts));

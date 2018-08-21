@@ -89,7 +89,7 @@ public class A1iciaCrypto {
 	 * @return boolean True if the password matches the password of the stored hash, false otherwise
 	 */
 	public static boolean checkPassword(String passwordPlaintext, String stored_hash) {
-		boolean password_verified = false;
+		boolean password_verified;
 
 		if (null == stored_hash || !stored_hash.startsWith("$2a$")) {
 			throw new A1iciaAPIException("Invalid hash provided for comparison in A1iciaCrypto.checkPassword()");
@@ -151,7 +151,7 @@ public class A1iciaCrypto {
 	    if (appKeys == null) {
 	    	appKeys = ApplicationKeys.getInstance();
 	    }
-    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
+    	fileName = appKeys.getKey(ApplicationKey.SECRETKEYPATH);
     	
     	aesBytes = fileToByteArray(fileName);
 		if (aesBytes != null) {
@@ -164,6 +164,8 @@ public class A1iciaCrypto {
      * Save an A1icia AES key using Jebus.
      * 
      * @throws Exception
+     * @param key
+     * 
      */
 	@SuppressWarnings("resource")
 	public static void setA1iciaJebusAESKey(SecretKey key) throws Exception {
@@ -182,6 +184,7 @@ public class A1iciaCrypto {
     /**
      * Save an A1icia AES key to a file.
      * 
+     * @param key
      * @throws Exception
      */
 	public static void setA1iciaFileAESKey(SecretKey key) throws Exception {
@@ -191,7 +194,7 @@ public class A1iciaCrypto {
 	    if (appKeys == null) {
 	    	appKeys = ApplicationKeys.getInstance();
 	    }
-    	fileName = appKeys.getKey(ApplicationKey.AESKEYPATH);
+    	fileName = appKeys.getKey(ApplicationKey.SECRETKEYPATH);
         // fileName = "/media/hulles/persistence/a1icia_aeskey";
 	    aesBytes = Serialization.serialize(key);
 	    byteArrayToFile(aesBytes, fileName);
@@ -279,7 +282,7 @@ public class A1iciaCrypto {
 		try {
 			bytes = Files.readAllBytes(infile);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new A1iciaAPIException("Can't create byte array from file", e);
 		}
 		return bytes;
 	}
@@ -297,7 +300,7 @@ public class A1iciaCrypto {
 		try {
 			Files.write(infile, bytes);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new A1iciaAPIException("Can't create file from byte array", e);
 		}
 	}
 }

@@ -15,9 +15,9 @@ module com.hulles.a1icia.api {
 	exports com.hulles.a1icia.api.shared;
 
 	requires transitive com.hulles.a1icia.media;
-	requires commons.pool2;
 	requires guava;
 	requires java.desktop;
 	requires java.logging;
 	requires jedis;
+    requires commons.pool;
 }

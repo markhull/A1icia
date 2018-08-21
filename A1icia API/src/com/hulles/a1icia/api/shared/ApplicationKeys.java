@@ -177,7 +177,7 @@ public class ApplicationKeys implements Serializable {
 	}
 	
 	public enum ApplicationKey {
-		AESKEYPATH,
+		SECRETKEYPATH,
 		BIGJOAN,
 		OWMCITY,
 		FREEBASE,

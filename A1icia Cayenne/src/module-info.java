@@ -10,7 +10,7 @@ module com.hulles.a1icia.cayenne {
 	exports com.hulles.a1icia.cayenne;
 	exports com.hulles.a1icia.cayenne.auto;
 
-	requires cayenne.di;
+	requires transitive cayenne.di;
 	requires transitive cayenne.server;
 	requires transitive com.hulles.a1icia.api;
 	requires com.hulles.a1icia.crypto;
@@ -18,4 +18,6 @@ module com.hulles.a1icia.cayenne {
 	requires java.desktop;
 	requires transitive java.sql;
 	requires org.mariadb.jdbc;
+    requires org.slf4j;
+    requires cayenne.client;
 }

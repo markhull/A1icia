@@ -155,9 +155,8 @@ public class DialogResponse extends Dialog {
 				return false;
 			}
 		}
-		if (getMessage() == null && 
-				clientObject == null &&
-				getResponseAction() == null) {
+		if (getResponseAction() == null && 
+                getMessage() == null) {
 			// nothing to do
 			return false;
 		}
