@@ -51,7 +51,6 @@ public final class A1iciaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
-    	URL resourceURL;
     	
     	if (cayenneRuntime == null) {
     		@SuppressWarnings("rawtypes")
@@ -63,7 +62,6 @@ public final class A1iciaApplication {
     		System.out.println("Type name " + clazz.getTypeName());
     		System.out.println("Generic string " + clazz.toGenericString());
     		System.out.println("Class resource URL " + clazz.getResource("cayenne-a1icia.xml"));
-    		resourceURL = clazz.getResource("cayenne-a1icia.xml");
     		ClassLoader cl = clazz.getClassLoader();
     		System.out.println("Module name " + clazz.getModule().getName());
     		System.out.println("Module descriptor " + clazz.getModule().getDescriptor());
@@ -86,6 +84,7 @@ public final class A1iciaApplication {
 //	    				.addConfig("com/hulles/a1icia/cayenne/cayenne-a1icia.xml")
 	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
 	    	            		.toInstance(new A1iciaResourceLocator(A1iciaApplication.class, "cayenne-a1icia.xml")))
+	    				.addConfig("cayenne-a1icia.xml")
 	    				.build();
     		}
     		
