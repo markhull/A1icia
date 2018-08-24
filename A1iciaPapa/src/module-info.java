@@ -7,7 +7,6 @@
  *
  */
 module com.hulles.a1icia.papa {
-	exports com.hulles.a1icia.papa;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;

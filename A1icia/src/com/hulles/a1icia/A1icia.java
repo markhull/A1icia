@@ -83,10 +83,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final public class A1icia implements Closeable {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1icia");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = Level.INFO;
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
-//	private final static int THREADCOUNT = 12;
-	private final AsyncEventBus streetBus;
 	final A1icianID a1icianID;
 	private final ExecutorService busPool;
 	boolean shuttingDownOnClose = false;
@@ -100,6 +98,8 @@ final public class A1icia implements Closeable {
 	 * the "hall" bus) and start the service manager apparatus.
 	 */
 	public A1icia() {
+        AsyncEventBus streetBus;
+        AsyncEventBus hallBus;
 		
 		System.out.println(getVersionString());
 		System.out.println(getDatabaseString());
@@ -108,11 +108,11 @@ final public class A1icia implements Closeable {
 		System.out.println();
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA);
 		a1icianID = A1iciaConstants.getA1iciaA1icianID();
-//		busPool = Executors.newFixedThreadPool(THREADCOUNT);
 		busPool = Executors.newCachedThreadPool();
 		streetBus = new AsyncEventBus("Street", busPool);
+		hallBus = new AsyncEventBus("Hall", busPool);
 		addDelayedShutdownHook(busPool);
-		startServices(streetBus);
+		startServices(streetBus, hallBus);
 	}
 	public A1icia(Boolean noPrompts) {
 		this();
@@ -184,14 +184,23 @@ final public class A1icia implements Closeable {
 	 * 
 	 * @param street The street bus
 	 */
-	private void startServices(EventBus street) {
+	private void startServices(EventBus street, EventBus hall) {
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
-		
+		UrRoom room;
+        UrHouse house;
+        UrHouse stationServer;
+        
 		services = new ArrayList<>(3);
-		services.add(new A1iciaHouse(street));
-		services.add(new Controller(this));
-		services.add(new A1iciaStationServer(street, noPrompts));
+        house = new A1iciaHouse();
+        house.setStreet(street);
+		services.add(house);
+        room = new A1iciaRoom();
+        room.setHall(hall);
+		services.add(new Controller(hall, room));
+        stationServer = new A1iciaStationServer(noPrompts);
+        stationServer.setStreet(street);
+		services.add(stationServer);
 		
 		serviceManager = new ServiceManager(services);
 		serviceManager.startAsync();
@@ -265,8 +274,9 @@ final public class A1icia implements Closeable {
 		try {
 			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
 				pool.shutdownNow();
-				if (!pool.awaitTermination(5, TimeUnit.SECONDS))
-					System.err.println("ALICIA -- Pool did not terminate");
+				if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
+                    System.err.println("ALICIA -- Pool did not terminate");
+                }
 			}
 		} catch (InterruptedException ie) {
 			pool.shutdownNow();
@@ -326,8 +336,8 @@ final public class A1icia implements Closeable {
 	 */
 	public final class A1iciaHouse extends UrHouse {
 
-		public A1iciaHouse(EventBus street) {
-			super(street);
+		public A1iciaHouse() {
+			super();
 
 		}
 
@@ -373,6 +383,8 @@ final public class A1icia implements Closeable {
 		 * Handle a new DialogRequest on the street for one of the A1icians in
 		 * our House.
 		 * 
+         * @param request
+         * 
 		 */
 		@Override
 		protected void newDialogRequest(DialogRequest request) {
@@ -386,6 +398,8 @@ final public class A1icia implements Closeable {
 		 * Handle a new DialogResponse on the street for one of the A1icians in
 		 * our house.
 		 * 
+         * @param The response
+         * 
 		 */
 		@Override
 		protected void newDialogResponse(DialogResponse response) {
@@ -395,9 +409,11 @@ final public class A1icia implements Closeable {
 		/**
 		 * Return which House this is.
 		 * 
+         * @return The house enum
+         * 
 		 */
 		@Override
-		protected House getThisHouse() {
+		public House getThisHouse() {
 
 			return House.ALICIA;
 		}
@@ -487,7 +503,7 @@ final public class A1icia implements Closeable {
 		 * 
 		 */
 		@Override
-		protected Room getThisRoom() {
+		public Room getThisRoom() {
 
 			return Room.ALICIA;
 		}

@@ -27,20 +27,15 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
-import com.hulles.a1icia.A1icia;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -68,65 +63,67 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public final class Controller extends AbstractIdleService {
 	final static Logger LOGGER = Logger.getLogger("A1icia.Controller");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static int THREADCOUNT = 12;
-	private final AsyncEventBus hallBus;
-	private final ExecutorService busPool;
-	boolean shuttingDownOnClose = false;
+//	private final ExecutorService busPool;
+//	boolean shuttingDownOnClose = false;
 	final SetMultimap<SerialSememe, Room> sememeRooms;
 	private ControllerRoom controllerRoom;
 	private ServiceManager serviceManager;
-	private final A1icia a1iciaInstance;
-	private static Controller controllerInstance = null;
-	static Set<SerialSememe> allSememes;
+    private final EventBus hallBus;
+    private final UrRoom a1iciaRoom;
+//	private final A1icia a1iciaInstance;
+//	private static Controller controllerInstance = null;
+	final static Set<SerialSememe> ALLSEMEMES;
 	
 	static {
 		
-		allSememes = Sememe.getAllSememes();
-		SerialSememe.setSememes(allSememes);
+		ALLSEMEMES = Sememe.getAllSememes();
+		SerialSememe.setSememes(ALLSEMEMES);
 	}
 	
-	public Controller(A1icia a1icia) {
+	public Controller(EventBus hallBus, UrRoom a1iciaRoom) {
 		
-		SharedUtils.checkNotNull(a1icia);
-		if (controllerInstance != null) {
-			throw new A1iciaException("Controller: attempting multiple instances");
-		}
-		this.a1iciaInstance = a1icia;
-		busPool = Executors.newCachedThreadPool();
-		addDelayedShutdownHook(busPool);
+		SharedUtils.checkNotNull(hallBus);
+        SharedUtils.checkNotNull(a1iciaRoom);
+//		if (controllerInstance != null) {
+//			throw new A1iciaException("Controller: attempting multiple instances");
+//		}
+		this.hallBus = hallBus;
+        this.a1iciaRoom = a1iciaRoom;
+//		busPool = Executors.newCachedThreadPool();
+//		addDelayedShutdownHook(busPool);
 		A1iciaApplication.setJdbcLogging(false); 
-		hallBus = new AsyncEventBus("MindBus", busPool);
 		sememeRooms = MultimapBuilder.hashKeys().enumSetValues(Room.class).build();
-		controllerInstance = this;
+//		controllerInstance = this;
 	}
 	
-	public synchronized static Controller getInstance() {
-	
-		return controllerInstance;
-	}
+//	public synchronized static Controller getInstance() {
+//	
+//		return controllerInstance;
+//	}
 	
 	/**
 	 * Get the Guava asynchronous event bus (hall)
 	 * 
 	 * @return The bus
 	 */
-	public EventBus getHall() {
-		return hallBus;
-	}
+//	public EventBus getHall() {
+//		return hallBus;
+//	}
 	
 	/**
 	 * Return true if the ServiceManager says everything is up and running.
 	 * 
 	 * @return True if ready
 	 */
-	public static boolean isReady() {
-		
-		if (controllerInstance.serviceManager == null) {
-			return false;
-		}
-		return controllerInstance.serviceManager.isHealthy();
-	}
+//	public static boolean isReady() {
+//		
+//		if (controllerInstance.serviceManager == null) {
+//			return false;
+//		}
+//		return controllerInstance.serviceManager.isHealthy();
+//	}
 	
 	/**
 	 * Instantiate all the rooms and add them to the list of services the ServiceManager
@@ -135,22 +132,54 @@ public final class Controller extends AbstractIdleService {
 	 * @param hall The room bus
 	 * @return A list of services to start
 	 */
-	protected List<Service> loadServices(EventBus hall) {
+	private List<Service> loadServices(EventBus hall) {
 		List<Service> services;
 		Iterable<UrRoom> rooms;
-		
+        UrRoom busMonitor;
+        
 		SharedUtils.checkNotNull(hall);
         rooms = ServiceLoader.load(UrRoom.class);
-		services = new ArrayList<>(40);
+ 		services = new ArrayList<>(40);
 		controllerRoom = new ControllerRoom();
-		services.add(new BusMonitor());
-		services.add(a1iciaInstance.new A1iciaRoom());
+        controllerRoom.setHall(hall);
+        services.add(controllerRoom);
+        busMonitor = new BusMonitor();
+        busMonitor.setHall(hall);
+		services.add(busMonitor);
+		services.add(a1iciaRoom);
 		for (UrRoom room : rooms) {
+			LOGGER.log(Level.INFO, "ServiceLoader found " + room.getThisRoom());
+            room.setHall(hall);
 			services.add(room);
 		}
 		return services;
 	}
 
+	public static void showModuleInfo(UrRoom room) {
+		Module module;
+		String moduleName;
+		Set<String> packages;
+		@SuppressWarnings("unused")
+		ClassLoader classLoader;
+		ModuleLayer layer;
+		Class<? extends UrRoom> a1iciaClass;
+		
+		a1iciaClass = room.getClass();
+		module = a1iciaClass.getModule();
+		moduleName = module.getName();
+		packages = module.getPackages();
+		classLoader = module.getClassLoader();
+		layer = module.getLayer();
+		System.out.print("==================== ");
+		System.out.println("ROOM: " + room.getThisRoom().getDisplayName());
+		System.out.println("\tClass: " + a1iciaClass.getName());
+		System.out.println("\tModule: " + moduleName);
+		System.out.println("\tLayer: " + layer.toString());
+		for (String pkg : packages) {
+			System.out.println("\t\tPackage: " + pkg);
+		}
+	}
+	
 	/**
 	 * Return a set of rooms that can process the sememe.
 	 * 
@@ -167,60 +196,61 @@ public final class Controller extends AbstractIdleService {
 	 * 
 	 * @param pool
 	 */
-	static void shutdownAndAwaitTermination(ExecutorService pool) {
-		
-		System.out.println("CONTROLLER -- Shutting down Controller");
-		pool.shutdown();
-		try {
-			if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-				pool.shutdownNow();
-				if (!pool.awaitTermination(10, TimeUnit.SECONDS))
-					System.err.println("CONTROLLER -- Pool did not terminate");
-			}
-		} catch (InterruptedException ie) {
-			pool.shutdownNow();
-			Thread.currentThread().interrupt();
-		}
-	}
-	
-	/**
-	 * Add a shutdown hook to close down the executor pool.
-	 * 
-	 * @param pool
-	 */
-	private void addDelayedShutdownHook(final ExecutorService pool) {
-		Runnable shutdownHook;
-		Thread hook;
-		
-		shutdownHook = new ShutdownHook(pool);
-		hook = new Thread(shutdownHook);
-		Runtime.getRuntime().addShutdownHook(hook);
-	}
-	
-	/**
-	 * The little class to do the shutdown.
-	 * 
-	 * @author hulles
-	 *
-	 */
-	private class ShutdownHook implements Runnable {
-		ExecutorService pool;
-		
-		ShutdownHook(ExecutorService pool) {
-			this.pool = pool;
-		}
-		
-	    @Override
-		public void run() {
-	    	
-	    	if (shuttingDownOnClose) {
-	    		System.out.println("CONTROLLER -- Orderly shutdown, hook not engaged");
-	    	} else {
-		    	System.out.println("CONTROLLER -- Exceptional shutdown, hook engaged");
-				shutdownAndAwaitTermination(pool);
-	    	}
-	    }
-	}
+//	static void shutdownAndAwaitTermination(ExecutorService pool) {
+//		
+//		System.out.println("CONTROLLER -- Shutting down Controller");
+//		pool.shutdown();
+//		try {
+//			if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+//				pool.shutdownNow();
+//				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+//					System.err.println("CONTROLLER -- Pool did not terminate");
+//                }
+//			}
+//		} catch (InterruptedException ie) {
+//			pool.shutdownNow();
+//			Thread.currentThread().interrupt();
+//		}
+//	}
+//	
+//	/**
+//	 * Add a shutdown hook to close down the executor pool.
+//	 * 
+//	 * @param pool
+//	 */
+//	private void addDelayedShutdownHook(final ExecutorService pool) {
+//		Runnable shutdownHook;
+//		Thread hook;
+//		
+//		shutdownHook = new ShutdownHook(pool);
+//		hook = new Thread(shutdownHook);
+//		Runtime.getRuntime().addShutdownHook(hook);
+//	}
+//	
+//	/**
+//	 * The little class to do the shutdown.
+//	 * 
+//	 * @author hulles
+//	 *
+//	 */
+//	private class ShutdownHook implements Runnable {
+//		ExecutorService pool;
+//		
+//		ShutdownHook(ExecutorService pool) {
+//			this.pool = pool;
+//		}
+//		
+//	    @Override
+//		public void run() {
+//	    	
+//	    	if (shuttingDownOnClose) {
+//	    		System.out.println("CONTROLLER -- Orderly shutdown, hook not engaged");
+//	    	} else {
+//		    	System.out.println("CONTROLLER -- Exceptional shutdown, hook engaged");
+//				shutdownAndAwaitTermination(pool);
+//	    	}
+//	    }
+//	}
 
 	/**
 	 * Create a ServiceManager and start all the room services. We also send a "what_sememes"
@@ -274,8 +304,8 @@ public final class Controller extends AbstractIdleService {
 		serviceManager.stopAsync();
 		serviceManager.awaitStopped();
 		A1iciaApplication.shutdown();
-		shuttingDownOnClose = true;
-		shutdownAndAwaitTermination(busPool);
+//		shuttingDownOnClose = true;
+//		shutdownAndAwaitTermination(busPool);
 	}
 
 	/**
@@ -357,12 +387,12 @@ public final class Controller extends AbstractIdleService {
 			}
 			// we do a couple quick reality checks before we go
 			for (SerialSememe s : sememeRooms.keySet()) {
-				if (!allSememes.contains(s)) {
+				if (!ALLSEMEMES.contains(s)) {
 					// Type I error
 					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " is not a valid sememe");
 				}
 			}
-			for (SerialSememe s : allSememes) {
+			for (SerialSememe s : ALLSEMEMES) {
 				if (!sememeRooms.containsKey(s)) {
 					// Type II error
 					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " not implemented");

@@ -13,4 +13,5 @@ module com.hulles.a1icia.swingconsole {
 	requires java.desktop;
 	requires java.logging;
 	requires jedis;
+    requires commons.pool;
 }

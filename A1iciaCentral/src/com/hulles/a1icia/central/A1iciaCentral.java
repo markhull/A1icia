@@ -20,18 +20,27 @@
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
 
-package com.hulles.a1icia;
+package com.hulles.a1icia.central;
 
 import java.io.IOException;
 
+import com.hulles.a1icia.A1icia;
 import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.alpha.AlphaRoom;
+import com.hulles.a1icia.bravo.BravoRoom;
+import com.hulles.a1icia.charlie.CharlieRoom;
 
 /**
- * A1iciaRunner is a simple class with a main method to run A1icia Central.
+ * A1iciaCentral is a simple class with a main method to start up all the 
+ * various rooms and run A1icia.
+ * <p>
+ * N.B. We do it this way because I'm just not smart enough (yet) to know how
+ * to make the modules available for A1icia's ServiceLoader to find without
+ * instantiating them here.
  * 
  * @author hulles
  */
-public class A1iciaRunner {   
+public class A1iciaCentral {   
 	
 	private static void waitForKey() {
 		
@@ -45,15 +54,15 @@ public class A1iciaRunner {
 
 	public static void main(String[] args) {
 		boolean noprompt = false;
-//		DialogRequest input;
 		
 		if (args.length > 0) {
 			if (args[0].equals("--noprompt")) {
 				noprompt = true;
 			}
 		}
-//		input = new DialogRequest();
-//		input.setRequestMessage("Hi!");
+		new AlphaRoom();
+		new BravoRoom();
+		new CharlieRoom();
 		try (A1icia a1icia = new A1icia(noprompt)) {
 			waitForKey();
 		}

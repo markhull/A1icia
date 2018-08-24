@@ -58,7 +58,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public final class HotelRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaHotel.A1iciaHotel");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private TimerHandler timerHandler;
 	
 	public HotelRoom() {

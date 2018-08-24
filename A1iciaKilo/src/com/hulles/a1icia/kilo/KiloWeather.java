@@ -52,7 +52,7 @@ import com.hulles.a1icia.tools.ExternalAperture;
 
 public class KiloWeather {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaKilo.KiloWeather");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static List<KiloWeatherAction> currentWeatherQueue = null;
 	private final static int QUEUETTL = 15; // minutes
 	@SuppressWarnings("unused")

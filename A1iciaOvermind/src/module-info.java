@@ -7,7 +7,7 @@
  *
  */
 module com.hulles.a1icia.overmind {
-	exports com.hulles.a1icia.overmind;
+//	exports com.hulles.a1icia.overmind;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
@@ -15,6 +15,7 @@ module com.hulles.a1icia.overmind {
 	requires guava;
 	requires java.logging;
 	requires jedis;
+	// to here
 	
 	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.overmind.OvermindRoom;
 }

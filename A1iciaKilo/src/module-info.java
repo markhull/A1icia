@@ -7,7 +7,6 @@
  *
  */
 module com.hulles.a1icia.kilo {
-	exports com.hulles.a1icia.kilo;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
@@ -16,6 +15,7 @@ module com.hulles.a1icia.kilo {
 	requires guava;
 	requires java.logging;
 	requires javax.json;
+	// to here
 	
 	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.kilo.KiloRoom;
 }

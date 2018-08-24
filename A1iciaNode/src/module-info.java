@@ -7,11 +7,13 @@
  *
  */
 module com.hulles.a1icia.node {
-	exports com.hulles.a1icia.node.ng;
-	exports com.hulles.a1icia.node;
+//	exports com.hulles.a1icia.node;
 
-	requires transitive com.hulles.a1icia.prong;
 	requires transitive com.hulles.a1icia.api;
 	requires guava;
-	requires transitive j2v8.linux.x86;
+    requires transitive A1iciaProng;
+    requires j2v8.linux;
+    requires com.hulles.a1icia.media;
+    // to here
+    
 }

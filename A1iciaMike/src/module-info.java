@@ -7,7 +7,6 @@
  *
  */
 module com.hulles.a1icia.mike {
-	exports com.hulles.a1icia.mike;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
@@ -18,6 +17,7 @@ module com.hulles.a1icia.mike {
 	requires java.logging;
 	requires jedis;
 	requires mp3agic;
+	// to here
 	
 	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.mike.MikeRoom;
 }

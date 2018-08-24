@@ -22,10 +22,12 @@
 package com.hulles.a1icia.api;
 
 import com.hulles.a1icia.api.remote.A1icianID;
+import java.util.logging.Level;
 
 /**
  * Constants for A1icia. I expect this class to grow as more constants are migrated to here,
  * as part of A1icia's evolution.
+ * 
  * 
  * @author hulles
  *
@@ -34,6 +36,7 @@ public class A1iciaConstants {
 	private final static A1icianID ALICIA_ALICIAN_ID = new A1icianID("ALICIA");
 	private final static A1icianID BROADCAST_ALICIAN_ID = new A1icianID("ALL");
 	private final static String ALICIAS_WELCOME = "Daily greater with all horizon users!";
+    private final static Level ALICIA_LEVEL = Level.FINE;
 		
 	/**
 	 * Get the A1ician ID representing A1icia herself.
@@ -65,4 +68,8 @@ public class A1iciaConstants {
 		return ALICIAS_WELCOME;
 	}
 	
+    public static Level getA1iciaLogLevel() {
+        
+        return ALICIA_LEVEL;
+    }
 }

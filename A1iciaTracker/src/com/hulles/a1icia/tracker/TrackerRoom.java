@@ -37,6 +37,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -70,7 +71,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class TrackerRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.Tracker");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static int GRAPHTTL = 60 * 60 * 24; // graphs are stored in Jebus for 24 hours
 	private final static boolean SAVEIMAGE = false;
 	private final static boolean SAVEDOTGRAPH = false;

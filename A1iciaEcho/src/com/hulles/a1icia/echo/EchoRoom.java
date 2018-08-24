@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -51,7 +52,7 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class EchoRoom extends UrRoom {
 	final static Logger LOGGER = Logger.getLogger("A1iciaEcho.EchoRoom");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static String DISTANCE_FORMAT = "(%.4f)";
 	final static VectorLoad WHICHLOAD = VectorLoad.LITTLEGINA;
 	final WordToVecSearch searcher;

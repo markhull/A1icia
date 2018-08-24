@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialStation;
@@ -50,7 +51,7 @@ import redis.clients.jedis.Jedis;
  */
 public class Session {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaSession");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static int SESSIONTTL = 60 * 15; // 15 minutes in seconds
 	private final A1icianID a1icianID;
 	private final JebusPool jebusPool;

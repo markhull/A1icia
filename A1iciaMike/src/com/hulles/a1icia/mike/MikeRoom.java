@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 
 import com.google.common.io.Files;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.AudioObject;
 import com.hulles.a1icia.api.object.MediaObject;
@@ -88,7 +89,7 @@ import redis.clients.jedis.Jedis;
 public final class MikeRoom extends UrRoom {
 	private final static int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 	private final static Logger LOGGER = Logger.getLogger("A1iciaMike.MikeRoom");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	@SuppressWarnings("unused")
 	private List<String> acknowledgments;

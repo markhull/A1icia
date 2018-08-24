@@ -66,7 +66,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class A1iciaStationServer extends UrHouse {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaStationServer");
-	final static Level LOGLEVEL1 = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL1 = A1iciaConstants.getA1iciaLogLevel();
 	JebusListener listener = null;
 	ExecutorService executor;
 	Timer promptTimer;
@@ -78,8 +78,8 @@ public final class A1iciaStationServer extends UrHouse {
 	private final A1icianID broadcastID;
 	private final Boolean noPrompts;
 	
-	public A1iciaStationServer(EventBus bus, Boolean noPrompts) {
-		super(bus);
+	public A1iciaStationServer(Boolean noPrompts) {
+		super();
 	
 		SharedUtils.checkNotNull(noPrompts);
 		this.noPrompts = noPrompts;
@@ -95,7 +95,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 *
 	 */
 	@Override
-	protected House getThisHouse() {
+	public House getThisHouse() {
 		return House.STATIONSERVER;
 	}
 

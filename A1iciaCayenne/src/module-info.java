@@ -8,7 +8,6 @@
  */
 module com.hulles.a1icia.cayenne {
 	exports com.hulles.a1icia.cayenne;
-	exports com.hulles.a1icia.cayenne.auto;
 
 	requires transitive cayenne.di;
 	requires transitive cayenne.server;
@@ -18,6 +17,7 @@ module com.hulles.a1icia.cayenne {
 	requires java.desktop;
 	requires transitive java.sql;
 	requires org.mariadb.jdbc;
-    requires org.slf4j;
+//    requires org.slf4j;
     requires cayenne.client;
+    // to here
 }

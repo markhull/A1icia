@@ -41,6 +41,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.jebus.JebusApiBible;
 import com.hulles.a1icia.api.jebus.JebusApiHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
@@ -55,7 +56,7 @@ import redis.clients.jedis.Jedis;
 
 public class SwingConsole  extends AbstractExecutionThreadService implements A1iciaRemoteDisplay {
 	final static Logger LOGGER = Logger.getLogger("A1iciaSwingConsole.SwingConsole");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	final static Level LOGLEVEL = Level.INFO;
 	String historyKey;
 	int historyIx;

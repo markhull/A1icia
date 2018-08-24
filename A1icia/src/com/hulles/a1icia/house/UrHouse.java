@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.Dialog;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
@@ -44,17 +45,15 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  */
 public abstract class UrHouse extends AbstractExecutionThreadService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.UrHouse");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
-	private final EventBus street;
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private EventBus street;
 	private final ConcurrentMap<A1icianID, Session> sessions;
 	private final Station station;
 	
-	public UrHouse(EventBus street) {
+	public UrHouse() {
 		
-		SharedUtils.checkNotNull(street);
 		station = Station.getInstance();
 		station.ensureStationExists();
-		this.street = street;
 		this.sessions = new ConcurrentHashMap<>();
 	}
 	
@@ -72,6 +71,11 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		street.unregister(this);
 	}
 	
+    public void setStreet(EventBus streetBus) {
+    
+        this.street = streetBus;
+    }
+    
 	protected EventBus getStreet() {
 	
 		return street;
@@ -83,7 +87,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 * 
 	 * @param dialog
 	 */
-	@Subscribe void dialogArrival(Dialog dialog) {
+	@Subscribe public void dialogArrival(Dialog dialog) {
 		DialogRequest request;
 		DialogResponse response;
 		A1icianID toA1icianID;
@@ -113,7 +117,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 * @param a1icianID
 	 * @return True if we have a session for the A1ician, false otherwise
 	 */
-	protected boolean isOurSession(A1icianID a1icianID) {
+	public boolean isOurSession(A1icianID a1icianID) {
 	
 		SharedUtils.checkNotNull(a1icianID);
 		return sessions.containsKey(a1icianID);
@@ -125,7 +129,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 	 * @param a1icianID The ID of the A1ician
 	 * @return The session, or null if there isn't one
 	 */
-	protected Session getSession(A1icianID a1icianID) {
+	public Session getSession(A1icianID a1icianID) {
 		Session session;
 		
 		SharedUtils.checkNotNull(a1icianID);
@@ -155,7 +159,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		sessions.remove(session.getA1icianID());
 	}
 	
-	protected abstract House getThisHouse();
+	public abstract House getThisHouse();
 	
 	protected abstract void newDialogRequest(DialogRequest request);
 	

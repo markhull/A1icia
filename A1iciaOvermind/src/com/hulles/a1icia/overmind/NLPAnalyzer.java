@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.jebus.JebusBible;
 import com.hulles.a1icia.jebus.JebusHub;
@@ -42,7 +43,7 @@ import redis.clients.jedis.Jedis;
 
 public final class NLPAnalyzer {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.NLPAnalyzer");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static long MAXNLPITEMS = 20L;
 	
 	@SuppressWarnings("resource")

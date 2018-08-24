@@ -45,6 +45,7 @@ import javax.sql.DataSource;
 
 import org.mariadb.jdbc.MariaDbDataSource;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.dummy.DummyDataSource;
@@ -55,7 +56,7 @@ import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.SensorValue;
 
 final public class LinuxMonitor {
 	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LinuxMonitor");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	final static Level LOGLEVEL = Level.INFO;
 	private static final int KB = 1024;
 	private final FoxtrotPhysicalState foxtrotState;

@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -49,7 +50,7 @@ import com.hulles.a1icia.tools.ExternalAperture;
  */
 public final class SierraRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaSierra.SierraRoom");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	private static Float saveTemp = null;
 	private static Float saveHumidity = null;

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
@@ -37,7 +38,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  */
 public final class A1iciaTimer {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaTimer");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static Map<String, Long> timerMap;
 	
 	private A1iciaTimer() {

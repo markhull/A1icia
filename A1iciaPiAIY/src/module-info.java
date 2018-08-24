@@ -7,7 +7,6 @@
  *
  */
 module com.hulles.a1icia.raspi.aiy {
-	exports com.hulles.a1icia.raspi.aiy;
 
 	requires transitive com.hulles.a1icia.api;
 	requires com.hulles.a1icia.cli;

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialMiniPerson;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
@@ -45,7 +46,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final public class PersonUtils {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaNovember.PersonUtils");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 
 	public PersonUtils() {
 

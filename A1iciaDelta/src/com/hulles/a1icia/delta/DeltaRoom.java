@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -51,7 +51,7 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class DeltaRoom extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaDelta.DeltaRoom");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 
 	public DeltaRoom() {
 		super();

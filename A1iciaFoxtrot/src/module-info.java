@@ -7,9 +7,9 @@
  *
  */
 module com.hulles.a1icia.foxtrot {
-	exports com.hulles.a1icia.foxtrot.dummy;
-	exports com.hulles.a1icia.foxtrot.monitor;
-	exports com.hulles.a1icia.foxtrot;
+//	exports com.hulles.a1icia.foxtrot.dummy;
+//	exports com.hulles.a1icia.foxtrot.monitor;
+//	exports com.hulles.a1icia.foxtrot;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
@@ -18,6 +18,7 @@ module com.hulles.a1icia.foxtrot {
 	requires java.logging;
 	requires transitive java.sql;
 	requires org.mariadb.jdbc;
+	// to here
 	
 	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.foxtrot.FoxtrotRoom;
 }

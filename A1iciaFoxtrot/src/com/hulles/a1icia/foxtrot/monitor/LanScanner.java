@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.tools.A1iciaTimer;
@@ -60,7 +61,7 @@ import com.hulles.a1icia.tools.A1iciaTimer;
 
 public final class LanScanner {
 	final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.LanScanner");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static int THREADCOUNT = 8000;
 	private final String submask;
 	private final ExecutorService scanExecutor;

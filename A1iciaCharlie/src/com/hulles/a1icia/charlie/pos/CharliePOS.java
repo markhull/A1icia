@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -37,7 +38,7 @@ import opennlp.tools.postag.POSTaggerME;
 
 final public class CharliePOS {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaCharlie.CharliePOS");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final POSTaggerME posTagger;
 
 	public CharliePOS() {

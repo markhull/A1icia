@@ -49,7 +49,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  */
 public class DialogSerialization {
 	final static Logger LOGGER = Logger.getLogger("A1iciaApi.DialogSerialization");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final int MAXHEADROOM = JebusApiHub.getMaxHardOutputBufferLimit();
 	
 	/**

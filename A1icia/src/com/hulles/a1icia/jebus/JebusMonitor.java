@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -41,7 +42,7 @@ import redis.clients.jedis.Jedis;
  */
 final class JebusMonitor implements Closeable {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.JebusMonitor");
-	final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	final JebusPool jebusPool;
 	JebusListener listener = null;
 	private ExecutorService executor;

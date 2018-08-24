@@ -39,6 +39,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.Controller;
@@ -60,26 +61,26 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 public abstract class UrRoom extends AbstractIdleService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.UrRoom");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
-	private final EventBus hall;
-	private final ImmutableSet<SerialSememe> roomSememes;
-	private final ListMultimap<Long, RoomResponse> responseCabinet;
-	private final ConcurrentMap<Long, RoomRequest> requestCabinet;
+	private EventBus hall;
+	private ImmutableSet<SerialSememe> roomSememes;
+	private ListMultimap<Long, RoomResponse> responseCabinet;
+	private ConcurrentMap<Long, RoomRequest> requestCabinet;
 	private final ExecutorService threadPool;
 	boolean shuttingDownOnClose = false;
 	
 	public UrRoom() {
-		Set<SerialSememe> sememes;
+//		Set<SerialSememe> sememes;
+//		
+//		sememes = loadSememes();
+//		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
+//		roomSememes = ImmutableSet.copyOf(sememes);
+//		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
+//		requestCabinet = new ConcurrentHashMap<>();
+				
+		Controller.showModuleInfo(this);
 		
-		this.hall = Controller.getInstance().getHall();
-		hall.register(this);
-		sememes = loadSememes();
-		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
-		roomSememes = ImmutableSet.copyOf(sememes);
-		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
-		requestCabinet = new ConcurrentHashMap<>();
-//		threadPool = Executors.newFixedThreadPool(THREADCOUNT);
 		threadPool = Executors.newCachedThreadPool();
 		addDelayedShutdownHook(threadPool);
 	}
@@ -128,7 +129,7 @@ public abstract class UrRoom extends AbstractIdleService {
 			return;
 		}
 		requestCabinet.put(request.getDocumentID(), request);
-		getHall().post(request);
+		hall.post(request);
 	}
 	
 	/**
@@ -152,11 +153,24 @@ public abstract class UrRoom extends AbstractIdleService {
 					", forged room is " + response.getFromRoom());
 			return;
 		}
-		getHall().post(response);
+		hall.post(response);
 	}
-	
+
+    
 	/**
-	 * Get the Guava asynchronous event bus (hall) for rooms
+	 * Set the Guava asynchronous event bus (hall) for the room
+	 * 
+	 * @param hallBus The bus
+	 */
+    public void setHall(EventBus hallBus) {
+        
+        this.hall = hallBus;
+		hall.register(this);
+    }
+    
+    
+	/**
+	 * Get the Guava asynchronous event bus (hall) for the room
 	 * 
 	 * @return The bus
 	 */
@@ -287,7 +301,7 @@ public abstract class UrRoom extends AbstractIdleService {
 		sendRoomResponse(response);
 	}
 	
-	protected abstract Room getThisRoom();
+	public abstract Room getThisRoom();
 	
 	protected abstract void roomStartup();
 	
@@ -371,6 +385,15 @@ public abstract class UrRoom extends AbstractIdleService {
 	@Override
 	protected final void startUp() {
 		
+		Set<SerialSememe> sememes;
+		
+		sememes = loadSememes();
+		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
+		roomSememes = ImmutableSet.copyOf(sememes);
+		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
+		requestCabinet = new ConcurrentHashMap<>();
+				
+		Controller.showModuleInfo(this);
 		roomStartup();
 	}
 	

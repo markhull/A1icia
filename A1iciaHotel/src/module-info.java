@@ -7,8 +7,6 @@
  *
  */
 module com.hulles.a1icia.hotel {
-	exports com.hulles.a1icia.hotel.task;
-	exports com.hulles.a1icia.hotel;
 
 	requires biweekly;
 	requires transitive com.hulles.a1icia;
@@ -18,6 +16,7 @@ module com.hulles.a1icia.hotel {
 	requires guava;
 	requires java.logging;
 	requires jedis;
+    // to here
 	
 	provides com.hulles.a1icia.room.UrRoom with com.hulles.a1icia.hotel.HotelRoom;
 }

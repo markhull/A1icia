@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.shared.SerialSememe;
@@ -57,7 +58,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final class Thimk {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.Thimk");
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static Random RANDOM = new Random();
 	private final OvermindRoom overmind;
 	

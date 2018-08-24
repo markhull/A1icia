@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -54,7 +55,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 final public class ExternalAperture {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.ExternalAperture");
 	@SuppressWarnings("unused")
-	private final static Level LOGLEVEL = LOGGER.getParent().getLevel();
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	
 	private ExternalAperture() {
 	}

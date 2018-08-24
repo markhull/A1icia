@@ -58,7 +58,13 @@ public final class AlphaRoom extends UrRoom {
 	/**
 	 * Here we create an ActionPackage from Alpha, either an analysis or an action, depending 
 	 * on the sememe that we receive, and return it to UrRoom.
-	 * 
+	 * <p>
+     * Note that we should only receive sememes that we've advertised (see @link{loadSememes}, so
+     * if we don't recognize the sememe we receive it's an error.
+     * 
+     * @oaram sememePkg The sememe package
+     * @param request The room request
+     * @return The ActionPackage we've created
 	 */
 	@Override
 	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
@@ -78,12 +84,12 @@ public final class AlphaRoom extends UrRoom {
 	/**
 	 * Here we carefully consider each sentence package in the ticket journal and determine
 	 * the best sememe package for the essence and nuances of the... just kidding. 
-	 * Actually we stick "aardvark" in as the best sememe package for each sentence.
+	 * Actually we stick "aardvark" in as the best action sememe for each sentence.
 	 * Because we can.
 	 * 
-	 * @param sememePkg
-	 * @param request
-	 * @return A SememeAnalysis package
+	 * @param sememePkg The SememePackage
+	 * @param request The RoomRequest
+	 * @return A SememeAnalysis action package
 	 */
 	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
@@ -161,6 +167,7 @@ public final class AlphaRoom extends UrRoom {
 	/**
 	 * Return this room name.
 	 * 
+     * @return The Room enum for this room.
 	 */
 	@Override
 	public Room getThisRoom() {
