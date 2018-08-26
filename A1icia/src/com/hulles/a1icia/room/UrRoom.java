@@ -42,9 +42,10 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.Controller;
+import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
+import com.hulles.a1icia.room.document.RoomDocumentType;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.WhatSememesAction;
@@ -64,27 +65,27 @@ public abstract class UrRoom extends AbstractIdleService {
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	private EventBus hall;
+    private Integer roomCount;
 	private ImmutableSet<SerialSememe> roomSememes;
-	private ListMultimap<Long, RoomResponse> responseCabinet;
-	private ConcurrentMap<Long, RoomRequest> requestCabinet;
+	private final ListMultimap<Long, RoomResponse> responseCabinet;
+	private final ConcurrentMap<Long, RoomRequest> requestCabinet;
 	private final ExecutorService threadPool;
 	boolean shuttingDownOnClose = false;
 	
 	public UrRoom() {
-//		Set<SerialSememe> sememes;
-//		
-//		sememes = loadSememes();
-//		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
-//		roomSememes = ImmutableSet.copyOf(sememes);
-//		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
-//		requestCabinet = new ConcurrentHashMap<>();
-				
-		Controller.showModuleInfo(this);
-		
+								
+		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
+		requestCabinet = new ConcurrentHashMap<>();
 		threadPool = Executors.newCachedThreadPool();
 		addDelayedShutdownHook(threadPool);
 	}
-	
+	public UrRoom(EventBus hallBus) {
+        this();
+        
+        SharedUtils.checkNotNull(hallBus);
+        setHall(hallBus);
+    }
+    
 	/**
 	 * Returns a new MUTABLE COPY of roomSememes
 	 * 
@@ -96,9 +97,9 @@ public abstract class UrRoom extends AbstractIdleService {
 	}
 	
 	/**
-	 * Get all of the defined Rooms.
+	 * Get all of the <b>defined</b> Rooms. The <b>implemented</b> rooms are a different set.
 	 * 
-	 * @return All of the Rooms
+	 * @return All of the defined Rooms
 	 */
 	public static Set<Room> getAllRooms() {
 		Set<Room> rooms;
@@ -113,9 +114,11 @@ public abstract class UrRoom extends AbstractIdleService {
 	 * @param request The outgoing request
 	 */
 	public void sendRoomRequest(RoomRequest request) {
-		
+		RoomDocumentType docType;
+        
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "UrRoom: in sendRoomRequest, request type = " + request.getDocumentType());
+		docType = request.getDocumentType();
+		LOGGER.log(LOGLEVEL, "UrRoom: in sendRoomRequest, request type = {0}", docType);
 		if (!request.documentIsReady()) {
 			A1iciaUtils.error("Document is not ready in UrRoom.sendRoomRequest",
 					"Document is from " + request.getFromRoom() +
@@ -156,13 +159,18 @@ public abstract class UrRoom extends AbstractIdleService {
 		hall.post(response);
 	}
 
+    public final void setRoomCount(Integer count) {
+        
+        SharedUtils.checkNotNull(count);
+        this.roomCount = count;
+    }
     
 	/**
 	 * Set the Guava asynchronous event bus (hall) for the room
 	 * 
 	 * @param hallBus The bus
 	 */
-    public void setHall(EventBus hallBus) {
+    public final void setHall(EventBus hallBus) {
         
         this.hall = hallBus;
 		hall.register(this);
@@ -193,13 +201,15 @@ public abstract class UrRoom extends AbstractIdleService {
 		List<RoomResponse> collectedResponses;
 		Long responseTo;
 		Room toRoom;
-		
+		String thisRoomName;
+        String fromName;
+        int cabinetSize;
+        
 		SharedUtils.checkNotNull(document);
-		LOGGER.log(Level.FINER, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-				": in documentArrival");
+        thisRoomName = this.getThisRoom().getDisplayName();
+		LOGGER.log(Level.FINER, "UrRoom for {0}: in documentArrival", thisRoomName);
 		if (document instanceof RoomResponse) {
-			LOGGER.log(Level.FINER, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-					": document is RoomResponse");
+			LOGGER.log(Level.FINER, "UrRoom for {0}: document is RoomResponse", thisRoomName);
 			roomResponse = (RoomResponse) document;
 			toRoom = roomResponse.getRespondToRoom();
 			if (toRoom != getThisRoom()) {
@@ -209,9 +219,10 @@ public abstract class UrRoom extends AbstractIdleService {
 			synchronized (responseCabinet) {
 				responseCabinet.put(roomResponse.getResponseToRequestID(), roomResponse);
 				collectedResponses = responseCabinet.get(responseTo);
-				LOGGER.log(Level.FINE, "put response from " + roomResponse.getFromRoom() + " into cabinet.");
+                fromName = roomResponse.getFromRoom().getDisplayName();
+				LOGGER.log(Level.FINE, "put response from {0} into cabinet.", fromName);
 			}
-			if (collectedResponses.size() == Room.values().length) {
+			if (collectedResponses.size() == roomCount) {
 				// we have them all, unless some rascal sent more than one back....
 				// also note that if something blows up the (other) responses will stay
 				// in the cabinet forever -- FIXME
@@ -224,36 +235,22 @@ public abstract class UrRoom extends AbstractIdleService {
 					responseCabinet.removeAll(responseTo);
 				}
 				requestCabinet.remove(responseTo);
-				LOGGER.log(LOGLEVEL, "we have them all for " + responseTo + "; there are " +
-						responseCabinet.keySet().size() + " documents remaining in the cabinet");
+                cabinetSize = responseCabinet.keySet().size();
+				LOGGER.log(LOGLEVEL, "we have them all for {0}; there are {1} documents remaining in the cabinet",
+                        new Object[]{responseTo, cabinetSize});
 			}
 		} else if (document instanceof RoomAnnouncement) {
-			LOGGER.log(Level.FINER, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-					": document is RoomAnnouncement");
+			LOGGER.log(Level.FINER, "UrRoom for {0}: document is RoomAnnouncement", thisRoomName);
 			announcement = (RoomAnnouncement) document;
-/*			switch (announcement.getDocumentType()) {
-			//  TODO create a "processRoomAnnouncements" abstract method and pass these to it
-                case TICKETOPENED:
-                case TICKETCLOSED:
-                case LOGGEDIN:
-                case LOGGEDOUT:
-                    break;
-				default:
-					A1iciaUtils.error("Unknown announcement type in documentArrival");
-					break;
-			}
-*/			
 			processRoomAnnouncement(announcement);
 		} else if (document instanceof RoomRequest) {
-			LOGGER.log(Level.FINER, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-					": document is RoomRequest");
+			LOGGER.log(Level.FINER, "UrRoom for {0}: document is RoomRequest", thisRoomName);
 			roomRequest = (RoomRequest) document;
 			// we trap WHAT_SPARKS before it gets to processRoomRequest
 			sememePackages = roomRequest.getSememePackages(); 
 			sememePackage = SememePackage.consume("what_sememes", sememePackages);
 			if (sememePackage != null) {
-				LOGGER.log(LOGLEVEL, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-						": sememe is WHAT_SPARKS");
+				LOGGER.log(LOGLEVEL, "UrRoom for {0}: sememe is WHAT_SPARKS", thisRoomName);
 				returnSememes(roomRequest, sememePackage);
 			}
 			if (!sememePackages.isEmpty()) {
@@ -278,22 +275,21 @@ public abstract class UrRoom extends AbstractIdleService {
 	protected final void processRoomRequest(List<SememePackage> updatedPkgs, RoomRequest request) {
 		RoomResponse response;
 		ActionPackage pkg;
-		
+		String thisRoomName;
+        
 		SharedUtils.checkNotNull(request);
 		// the contract states that we send a response no matter what
+        thisRoomName = this.getThisRoom().getDisplayName();
 		response = new RoomResponse(request);
 		response.setFromRoom(getThisRoom());
-		LOGGER.log(Level.FINE, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-				": evaluating sememes = " + updatedPkgs);
+		LOGGER.log(Level.FINE, "UrRoom for {0}: evaluating sememes = {1}", new Object[]{thisRoomName, updatedPkgs});
 		for (SememePackage sememePkg : updatedPkgs) {
 			if (roomSememes.contains(sememePkg.getSememe())) {
-				LOGGER.log(LOGLEVEL, "This should be a good sememe/room: " + 
-						sememePkg.getName() + " / " + getThisRoom());
+				LOGGER.log(LOGLEVEL, "This should be a good sememe/room: {0} / {1}", new Object[]{sememePkg.getName(), thisRoomName});
 				pkg = createActionPackage(sememePkg, request);
-				LOGGER.log(LOGLEVEL, "Got actionpackage back from " + getThisRoom());
+				LOGGER.log(LOGLEVEL, "Got actionpackage back from {0}", thisRoomName);
 				if (pkg != null) {
-					LOGGER.log(LOGLEVEL, "Adding actionpackage for " + sememePkg.getName() + 
-							" from " + getThisRoom());
+					LOGGER.log(LOGLEVEL, "Adding actionpackage for {0} from {1}", new Object[]{sememePkg.getName(), thisRoomName});
 					response.addActionPackage(pkg);
 				}
 			}
@@ -326,8 +322,7 @@ public abstract class UrRoom extends AbstractIdleService {
 		WhatSememesAction sememesAction;
 		ActionPackage pkg;
 		
-		LOGGER.log(LOGLEVEL, "UrRoom for " + this.getThisRoom().getDisplayName() + 
-				": in returnSememes");
+		LOGGER.log(LOGLEVEL, "UrRoom for {0}: in returnSememes", this.getThisRoom().getDisplayName());
 		sememesAction = new WhatSememesAction();
 		sememesAction.setSememes(roomSememes);
 		pkg = new ActionPackage(whatSememes);
@@ -345,8 +340,9 @@ public abstract class UrRoom extends AbstractIdleService {
 		try {
 			if (!pool.awaitTermination(3, TimeUnit.SECONDS)) {
 				pool.shutdownNow();
-				if (!pool.awaitTermination(3, TimeUnit.SECONDS))
-					System.err.println("URROOM -- Pool did not terminate");
+				if (!pool.awaitTermination(3, TimeUnit.SECONDS)) {
+                    System.err.println("URROOM -- Pool did not terminate");
+                }
 			}
 		} catch (InterruptedException ie) {
 			pool.shutdownNow();
@@ -384,16 +380,19 @@ public abstract class UrRoom extends AbstractIdleService {
 
 	@Override
 	protected final void startUp() {
-		
 		Set<SerialSememe> sememes;
 		
+        // we can't function at all without a bus and a knowledge of how many rooms are implemented (vs. defined)
+        if (this.hall == null) {
+            throw new A1iciaException("Starting room "  + getThisRoom().getDisplayName() + " with null event bus");
+        }
+        if (this.roomCount == null) {
+            throw new A1iciaException("Starting room "  + getThisRoom().getDisplayName() + " with null room count");
+        }
 		sememes = loadSememes();
-		LOGGER.log(LOGLEVEL, "SEMEMES: " + sememes.toString());
+		LOGGER.log(LOGLEVEL, "SEMEMES: {0}", sememes.toString());
 		roomSememes = ImmutableSet.copyOf(sememes);
-		responseCabinet = MultimapBuilder.hashKeys().arrayListValues().build();
-		requestCabinet = new ConcurrentHashMap<>();
-				
-		Controller.showModuleInfo(this);
+		
 		roomStartup();
 	}
 	

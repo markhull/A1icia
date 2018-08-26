@@ -58,7 +58,7 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final class Thimk {
 	private final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.Thimk");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+    private final static Level LOGLEVEL = OvermindRoom.LOGLEVEL;
 	private final static Random RANDOM = new Random();
 	private final OvermindRoom overmind;
 	

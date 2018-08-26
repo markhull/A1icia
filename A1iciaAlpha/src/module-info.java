@@ -7,7 +7,7 @@
  *
  */
 module com.hulles.a1icia.alpha {
-	exports com.hulles.a1icia.alpha;
+	exports com.hulles.a1icia.alpha to com.hulles.a1icia.central;
 	
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;

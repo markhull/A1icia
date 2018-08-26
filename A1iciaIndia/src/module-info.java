@@ -7,6 +7,7 @@
  *
  */
 module com.hulles.a1icia.india {
+	exports com.hulles.a1icia.india to com.hulles.a1icia.central;
 
 	requires com.hulles.fortuna;
 	requires transitive com.hulles.a1icia;

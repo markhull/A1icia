@@ -26,6 +26,10 @@ module com.hulles.a1icia {
 	requires java.logging;
 	requires jedis;
     // to here
+    requires commons.pool;
+    requires cayenne.client;
+    requires cayenne.di;
+    requires cayenne.server;
     	
 	uses com.hulles.a1icia.room.UrRoom;
 }

@@ -7,6 +7,7 @@
  *
  */
 module com.hulles.a1icia.hotel {
+	exports com.hulles.a1icia.hotel to com.hulles.a1icia.central;
 
 	requires biweekly;
 	requires transitive com.hulles.a1icia;

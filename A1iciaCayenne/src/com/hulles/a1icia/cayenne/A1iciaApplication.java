@@ -48,8 +48,8 @@ public final class A1iciaApplication {
     public synchronized static ServerRuntime getServerRuntime() {
     	
     	if (cayenneRuntime == null) {
-    		@SuppressWarnings("rawtypes")
-			Class clazz = A1iciaApplication.class;
+//    		@SuppressWarnings("rawtypes")
+//			Class clazz = A1iciaApplication.class;
 //    		System.out.println("Class " + clazz.getName());
 //    		System.out.println("Canonical name " + clazz.getCanonicalName());
 //    		System.out.println("Package name " + clazz.getPackageName());
@@ -58,11 +58,11 @@ public final class A1iciaApplication {
 //    		System.out.println("Generic string " + clazz.toGenericString());
 //    		System.out.println("Class resource URL " + clazz.getResource("cayenne-a1icia.xml"));
 //    		ClassLoader cl = clazz.getClassLoader();
-			System.out.println("CAYENNE");
-    		System.out.println("Module name " + clazz.getModule().getName());
-    		System.out.println("Module descriptor " + clazz.getModule().getDescriptor());
-    		System.out.println("Module layer " + clazz.getModule().getLayer());
-    		System.out.println();
+//			System.out.println("CAYENNE");
+//    		System.out.println("Module name " + clazz.getModule().getName());
+//    		System.out.println("Module descriptor " + clazz.getModule().getDescriptor());
+//    		System.out.println("Module layer " + clazz.getModule().getLayer());
+//    		System.out.println();
 //    		System.out.println("ClassLoader resource URL " + cl.getResource("cayenne-a1icia.xml"));
 //    		System.out.println("ClassLoader name " + cl.getName());
     		

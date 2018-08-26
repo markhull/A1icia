@@ -7,6 +7,7 @@
  *
  */
 module com.hulles.a1icia.sierra {
+	exports com.hulles.a1icia.sierra to com.hulles.a1icia.central;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;

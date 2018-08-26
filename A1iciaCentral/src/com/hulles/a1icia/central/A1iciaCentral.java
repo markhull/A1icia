@@ -29,6 +29,24 @@ import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.alpha.AlphaRoom;
 import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.charlie.CharlieRoom;
+import com.hulles.a1icia.delta.DeltaRoom;
+import com.hulles.a1icia.echo.EchoRoom;
+import com.hulles.a1icia.foxtrot.FoxtrotRoom;
+import com.hulles.a1icia.golf.GolfRoom;
+import com.hulles.a1icia.hotel.HotelRoom;
+import com.hulles.a1icia.india.IndiaRoom;
+import com.hulles.a1icia.juliet.JulietRoom;
+import com.hulles.a1icia.kilo.KiloRoom;
+import com.hulles.a1icia.lima.LimaRoom;
+import com.hulles.a1icia.mike.MikeRoom;
+import com.hulles.a1icia.november.NovemberRoom;
+import com.hulles.a1icia.oscar.OscarRoom;
+import com.hulles.a1icia.overmind.OvermindRoom;
+import com.hulles.a1icia.papa.PapaRoom;
+import com.hulles.a1icia.quebec.QuebecRoom;
+import com.hulles.a1icia.romeo.RomeoRoom;
+import com.hulles.a1icia.sierra.SierraRoom;
+import com.hulles.a1icia.tracker.TrackerRoom;
 
 /**
  * A1iciaCentral is a simple class with a main method to start up all the 
@@ -52,18 +70,41 @@ public class A1iciaCentral {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		boolean noprompt = false;
+ 		boolean noprompt = false;
 		
 		if (args.length > 0) {
 			if (args[0].equals("--noprompt")) {
 				noprompt = true;
 			}
 		}
-		new AlphaRoom();
-		new BravoRoom();
-		new CharlieRoom();
+
+        new TrackerRoom();
+        new OvermindRoom();
+        new AlphaRoom();
+        new BravoRoom();
+        new CharlieRoom();
+        new DeltaRoom();
+        new EchoRoom();
+        new FoxtrotRoom();
+        new GolfRoom();
+        new HotelRoom();
+        new IndiaRoom();
+        new JulietRoom();
+        new KiloRoom();
+        new LimaRoom();
+        new MikeRoom();
+        new NovemberRoom();
+        new OscarRoom();
+        new PapaRoom();
+        new QuebecRoom();
+        new RomeoRoom();
+        new SierraRoom();
+
 		try (A1icia a1icia = new A1icia(noprompt)) {
+            
+            
 			waitForKey();
 		}
 	}

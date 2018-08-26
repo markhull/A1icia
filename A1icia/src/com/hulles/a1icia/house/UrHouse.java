@@ -56,6 +56,12 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		station.ensureStationExists();
 		this.sessions = new ConcurrentHashMap<>();
 	}
+    public UrHouse(EventBus streetBus) {
+        this();
+        
+        SharedUtils.checkNotNull(streetBus);
+        setStreet(streetBus);
+    }
 	
 	@Override
 	protected final void startUp() {
@@ -71,7 +77,7 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		street.unregister(this);
 	}
 	
-    public void setStreet(EventBus streetBus) {
+    public final void setStreet(EventBus streetBus) {
     
         this.street = streetBus;
     }
@@ -91,12 +97,14 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
 		DialogRequest request;
 		DialogResponse response;
 		A1icianID toA1icianID;
-		
+		String thisHouseName;
+        
 		SharedUtils.checkNotNull(dialog);
-		LOGGER.log(LOGLEVEL, "UrHouse: dialogArrival for " + getThisHouse());
+        thisHouseName = this.getThisHouse().getDisplayName();
+		LOGGER.log(LOGLEVEL, "UrHouse: dialogArrival for {0}", thisHouseName);
 		toA1icianID = dialog.getToA1icianID();
 		if (!isOurSession(toA1icianID)) {
-			LOGGER.log(LOGLEVEL, "UrHouse: not our session: " + toA1icianID);
+			LOGGER.log(LOGLEVEL, "UrHouse: not our session: {0}", toA1icianID);
 			return;
 		}
 		if (dialog instanceof DialogRequest) {

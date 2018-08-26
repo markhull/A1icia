@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.room;
 
+import com.google.common.eventbus.EventBus;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.base.A1iciaException;
@@ -48,12 +48,13 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class BusMonitor extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.BusMonitor");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Level LOGLEVEL = Level.INFO;
 	private final static boolean VERBOSE = false;
 	private final static boolean SHOWWHATSPARKS = false;
 	
-	public BusMonitor() {
-		super();
+	public BusMonitor(EventBus hall) {
+		super(hall);
 	}
 
 	/**

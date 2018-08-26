@@ -7,6 +7,7 @@
  *
  */
 module com.hulles.a1icia.echo {
+	exports com.hulles.a1icia.echo to com.hulles.a1icia.central;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;

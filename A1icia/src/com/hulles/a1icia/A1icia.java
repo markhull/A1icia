@@ -83,7 +83,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
  */
 final public class A1icia implements Closeable {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1icia");
-	final static Level LOGLEVEL = Level.INFO;
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	final static Level LOGLEVEL = Level.INFO;
 	private static final String BUNDLE_NAME = "com.hulles.a1icia.Version";
 	final A1icianID a1icianID;
 	private final ExecutorService busPool;
@@ -182,24 +183,23 @@ final public class A1icia implements Closeable {
 	/**
 	 * Start the Guava Service Manager which in turn starts up the house-related services.
 	 * 
-	 * @param street The street bus
+	 * @param street The street event bus
+     * @param hall The hall event bus
 	 */
 	private void startServices(EventBus street, EventBus hall) {
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
-		UrRoom room;
-        UrHouse house;
         UrHouse stationServer;
+        String millis;
         
+        SharedUtils.checkNotNull(street);
+        SharedUtils.checkNotNull(hall);
 		services = new ArrayList<>(3);
-        house = new A1iciaHouse();
-        house.setStreet(street);
-		services.add(house);
-        room = new A1iciaRoom();
-        room.setHall(hall);
-		services.add(new Controller(hall, room));
-        stationServer = new A1iciaStationServer(noPrompts);
-        stationServer.setStreet(street);
+        a1iciaHouse = new A1iciaHouse(street);
+		services.add(a1iciaHouse);
+        a1iciaRoom = new A1iciaRoom(hall);
+		services.add(new Controller(hall, a1iciaRoom));
+        stationServer = new A1iciaStationServer(street, noPrompts);
 		services.add(stationServer);
 		
 		serviceManager = new ServiceManager(services);
@@ -207,8 +207,8 @@ final public class A1icia implements Closeable {
 		serviceManager.awaitHealthy();
 		startupTimes = serviceManager.startupTimes().entrySet();
 		for (Entry<Service,Long> entry : startupTimes) {
-			LOGGER.log(Level.INFO, entry.getKey() + " started in " + 
-					A1iciaUtils.formatElapsedMillis(entry.getValue()));
+			millis = A1iciaUtils.formatElapsedMillis(entry.getValue());
+			LOGGER.log(Level.INFO, "{0} started in {1}", new Object[]{entry.getKey(), millis});
 		}
 	}
 	
@@ -222,7 +222,9 @@ final public class A1icia implements Closeable {
 	 */
 	void forwardRequestToRoom(DialogRequest request) {
 		ClientDialogRequest clientRequest;
-		
+
+        SharedUtils.checkNotNull(request);
+        LOGGER.log(Level.INFO, "A1icia: in forwardRequestToRoom");
 		if (!request.isValid()) {
 			A1iciaUtils.error("A1icia: DialogRequest is not valid, refusing it",
 					request.toString());
@@ -242,12 +244,14 @@ final public class A1icia implements Closeable {
 	 * @param response
 	 */
 	void forwardResponseToHouse(DialogResponse response) {
-		
+
+        SharedUtils.checkNotNull(response);
+        LOGGER.log(Level.INFO, "A1icia: in forwardResponseToHouse");
 		a1iciaHouse.receiveResponse(response);
 	}
 	
 	/**
-	 * Close A1icia, shut down the Service Manager and destroy the Jebus pools and the street
+	 * Close A1icia, shut down the Service Manager and destroy the Jebus pools and the
 	 * bus pool.
 	 * 
 	 */
@@ -269,6 +273,7 @@ final public class A1icia implements Closeable {
 	 */
 	static void shutdownAndAwaitTermination(ExecutorService pool) {
 		
+        SharedUtils.checkNotNull(pool);
 		System.out.println("ALICIA -- Shutting down A1icia");
 		pool.shutdown();
 		try {
@@ -293,6 +298,7 @@ final public class A1icia implements Closeable {
 		Runnable shutdownHook;
 		Thread hook;
 		
+        SharedUtils.checkNotNull(pool);
 		shutdownHook = new ShutdownHook(pool);
 		hook = new Thread(shutdownHook);
 		Runtime.getRuntime().addShutdownHook(hook);
@@ -336,8 +342,8 @@ final public class A1icia implements Closeable {
 	 */
 	public final class A1iciaHouse extends UrHouse {
 
-		public A1iciaHouse() {
-			super();
+		public A1iciaHouse(EventBus street) {
+			super(street);
 
 		}
 
@@ -348,6 +354,7 @@ final public class A1icia implements Closeable {
 		 */
 		void receiveResponse(DialogResponse response) {
 			
+            LOGGER.log(Level.INFO, "A1iciaHouse: in receiveResponse");
 			SharedUtils.checkNotNull(response);
 			getStreet().post(response);
 		}
@@ -360,7 +367,6 @@ final public class A1icia implements Closeable {
 		protected void houseStartup() {
 			Session session;
 			
-			a1iciaHouse = this;
 			session = Session.getSession(a1icianID);
 			super.setSession(session);
 		}
@@ -390,7 +396,7 @@ final public class A1icia implements Closeable {
 		protected void newDialogRequest(DialogRequest request) {
 			
 			SharedUtils.checkNotNull(request);
-			LOGGER.log(LOGLEVEL, "Forwarding dialog request from house to room");
+			LOGGER.log(LOGLEVEL, "A1iciaHouse: Forwarding dialog request from house to room");
 			forwardRequestToRoom(request);
 		}
 
@@ -398,7 +404,7 @@ final public class A1icia implements Closeable {
 		 * Handle a new DialogResponse on the street for one of the A1icians in
 		 * our house.
 		 * 
-         * @param The response
+         * @param response
          * 
 		 */
 		@Override
@@ -422,6 +428,7 @@ final public class A1icia implements Closeable {
 		 * For A1icia's house, currently the run() method doesn't do anything except loop
 		 * until the service is stopped.
 		 * 
+         * @throws Exception
 		 */
 		@Override
 		protected void run() throws Exception {
@@ -445,8 +452,8 @@ final public class A1icia implements Closeable {
 	 */
 	public final class A1iciaRoom extends UrRoom {
 
-		public A1iciaRoom() {
-			super();
+		public A1iciaRoom(EventBus hall) {
+			super(hall);
 		}
 
 		/**
@@ -501,6 +508,7 @@ final public class A1icia implements Closeable {
 		/**
 		 * Return which room this is.
 		 * 
+         * @return This room
 		 */
 		@Override
 		public Room getThisRoom() {
@@ -511,7 +519,6 @@ final public class A1icia implements Closeable {
 		@Override
 		protected void roomStartup() {
 			
-			a1iciaRoom = this;
 		}
 
 		@Override
@@ -520,9 +527,12 @@ final public class A1icia implements Closeable {
 		}
 
 		/**
-		 * Handle the room responses returned to us that result from an earlier RoomRequest. This
-		 * used to be very complicated before we sundered the connection between requests and
-		 * responses; now it just closes the ticket.
+		 * Handle the room responses returned to us that result from an earlier RoomRequest. 
+         * This used to be very complicated before we sundered the connection between 
+         * requests and responses; now it just closes the ticket.
+         * 
+         * @param request The RoomRequest
+         * @param responses The list of RoomResponses
 		 */
 		@Override
 		protected void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
@@ -537,6 +547,9 @@ final public class A1icia implements Closeable {
 		/**
 		 * Create an action package for one of the sememes we have committed to process.
 		 * 
+         * @param sememePkg The sememe we advertised earlier
+         * @param request The room request 
+         * @return The new ActionPackage
 		 */
 		@Override
 		protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
@@ -630,6 +643,8 @@ final public class A1icia implements Closeable {
 		/**
 		 * Load the sememes we can process into a list that UrRoom can use.
 		 * 
+         * @return The set of sememes we advertise
+         * 
 		 */
 		@Override
 		protected Set<SerialSememe> loadSememes() {
@@ -651,6 +666,8 @@ final public class A1icia implements Closeable {
 		/**
 		 * We don't do anything with announcements.
 		 * 
+         * @param announcement The RoomAnnouncement
+         * 
 		 */
 		@Override
 		protected void processRoomAnnouncement(RoomAnnouncement announcement) {

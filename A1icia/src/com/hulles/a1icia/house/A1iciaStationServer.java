@@ -56,7 +56,7 @@ import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
 
 /**
- * A1iciaStationServer is responsible for communication with the outside world, notably with
+ * StationServer is responsible for communication with the outside world, notably with
  * A1iciaStations.
  * <p>
  * ALICIA PUBLISHES ON "a1icia:channel:from" and SUBSCRIBES TO "a1icia:channel:to".
@@ -67,7 +67,8 @@ import redis.clients.jedis.Jedis;
 public final class A1iciaStationServer extends UrHouse {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaStationServer");
 	final static Level LOGLEVEL1 = A1iciaConstants.getA1iciaLogLevel();
-	JebusListener listener = null;
+//	final static Level LOGLEVEL1 = Level.INFO;
+    JebusListener listener = null;
 	ExecutorService executor;
 	Timer promptTimer;
 	private List<Prompter> prompters;
@@ -78,8 +79,8 @@ public final class A1iciaStationServer extends UrHouse {
 	private final A1icianID broadcastID;
 	private final Boolean noPrompts;
 	
-	public A1iciaStationServer(Boolean noPrompts) {
-		super();
+	public A1iciaStationServer(EventBus street, Boolean noPrompts) {
+		super(street);
 	
 		SharedUtils.checkNotNull(noPrompts);
 		this.noPrompts = noPrompts;

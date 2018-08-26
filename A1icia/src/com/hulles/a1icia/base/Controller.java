@@ -52,6 +52,8 @@ import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.tools.A1iciaUtils;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 /**
  * The Controller is a little simpler than its name would suggest -- it basically just 
@@ -64,121 +66,96 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 public final class Controller extends AbstractIdleService {
 	final static Logger LOGGER = Logger.getLogger("A1icia.Controller");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-//	private final static int THREADCOUNT = 12;
-//	private final ExecutorService busPool;
-//	boolean shuttingDownOnClose = false;
+//	final static Level LOGLEVEL = Level.INFO;
 	final SetMultimap<SerialSememe, Room> sememeRooms;
 	private ControllerRoom controllerRoom;
 	private ServiceManager serviceManager;
     private final EventBus hallBus;
     private final UrRoom a1iciaRoom;
-//	private final A1icia a1iciaInstance;
-//	private static Controller controllerInstance = null;
-	final static Set<SerialSememe> ALLSEMEMES;
-	
-	static {
-		
-		ALLSEMEMES = Sememe.getAllSememes();
-		SerialSememe.setSememes(ALLSEMEMES);
-	}
+	final Set<SerialSememe> allSememes;
 	
 	public Controller(EventBus hallBus, UrRoom a1iciaRoom) {
 		
 		SharedUtils.checkNotNull(hallBus);
         SharedUtils.checkNotNull(a1iciaRoom);
-//		if (controllerInstance != null) {
-//			throw new A1iciaException("Controller: attempting multiple instances");
-//		}
 		this.hallBus = hallBus;
         this.a1iciaRoom = a1iciaRoom;
-//		busPool = Executors.newCachedThreadPool();
-//		addDelayedShutdownHook(busPool);
 		A1iciaApplication.setJdbcLogging(false); 
 		sememeRooms = MultimapBuilder.hashKeys().enumSetValues(Room.class).build();
-//		controllerInstance = this;
+        // This is probably our first Cayenne access
+		allSememes = Sememe.getAllSememes();
+        if (allSememes.isEmpty()) {
+            throw new A1iciaException("System error: no sememes loaded in Controller");
+        }
+		SerialSememe.setSememes(allSememes);
 	}
 	
-//	public synchronized static Controller getInstance() {
-//	
-//		return controllerInstance;
-//	}
-	
 	/**
-	 * Get the Guava asynchronous event bus (hall)
-	 * 
-	 * @return The bus
-	 */
-//	public EventBus getHall() {
-//		return hallBus;
-//	}
-	
-	/**
-	 * Return true if the ServiceManager says everything is up and running.
-	 * 
-	 * @return True if ready
-	 */
-//	public static boolean isReady() {
-//		
-//		if (controllerInstance.serviceManager == null) {
-//			return false;
-//		}
-//		return controllerInstance.serviceManager.isHealthy();
-//	}
-	
-	/**
-	 * Instantiate all the rooms and add them to the list of services the ServiceManager
+	 * Locate all the rooms and add them to the list of services the ServiceManager
 	 * will start.
 	 * 
 	 * @param hall The room bus
 	 * @return A list of services to start
 	 */
-	private List<Service> loadServices(EventBus hall) {
-		List<Service> services;
+	private List<UrRoom> loadServices(EventBus hall) {
+		List<UrRoom> services;
 		Iterable<UrRoom> rooms;
         UrRoom busMonitor;
+        Integer roomCount;
+        Set<Room> definedRooms;
         
 		SharedUtils.checkNotNull(hall);
         rooms = ServiceLoader.load(UrRoom.class);
  		services = new ArrayList<>(40);
-		controllerRoom = new ControllerRoom();
-        controllerRoom.setHall(hall);
+		controllerRoom = new ControllerRoom(hall);
         services.add(controllerRoom);
-        busMonitor = new BusMonitor();
-        busMonitor.setHall(hall);
+        busMonitor = new BusMonitor(hall);
 		services.add(busMonitor);
 		services.add(a1iciaRoom);
 		for (UrRoom room : rooms) {
-			LOGGER.log(Level.INFO, "ServiceLoader found " + room.getThisRoom());
+			LOGGER.log(LOGLEVEL, "ServiceLoader found {0}", room.getThisRoom());
             room.setHall(hall);
 			services.add(room);
 		}
+        // too bad we don't know the size of the Iterable returned from ServiceLoader....
+        //    and since we have to reiterate through the services anyway, we 
+        //    compare them to the list of defined rooms and see if any are missing
+        definedRooms = EnumSet.allOf(Room.class);
+        roomCount = services.size();
+        for (UrRoom room : services) {
+            room.setRoomCount(roomCount);
+            definedRooms.remove(room.getThisRoom());
+        }
+        for (Room room : definedRooms) {
+			LOGGER.log(Level.WARNING, "{0} Room is not implemented", room.getDisplayName());
+        }
 		return services;
 	}
 
-	public static void showModuleInfo(UrRoom room) {
-		Module module;
-		String moduleName;
-		Set<String> packages;
-		@SuppressWarnings("unused")
-		ClassLoader classLoader;
-		ModuleLayer layer;
-		Class<? extends UrRoom> a1iciaClass;
-		
-		a1iciaClass = room.getClass();
-		module = a1iciaClass.getModule();
-		moduleName = module.getName();
-		packages = module.getPackages();
-		classLoader = module.getClassLoader();
-		layer = module.getLayer();
-		System.out.print("==================== ");
-		System.out.println("ROOM: " + room.getThisRoom().getDisplayName());
-		System.out.println("\tClass: " + a1iciaClass.getName());
-		System.out.println("\tModule: " + moduleName);
-		System.out.println("\tLayer: " + layer.toString());
-		for (String pkg : packages) {
-			System.out.println("\t\tPackage: " + pkg);
-		}
-	}
+//	public static void showModuleInfo(UrRoom room) {
+//		Module module;
+//		String moduleName;
+//		Set<String> packages;
+//		@SuppressWarnings("unused")
+//		ClassLoader classLoader;
+//		ModuleLayer layer;
+//		Class<? extends UrRoom> a1iciaClass;
+//		
+//		a1iciaClass = room.getClass();
+//		module = a1iciaClass.getModule();
+//		moduleName = module.getName();
+//		packages = module.getPackages();
+//		classLoader = module.getClassLoader();
+//		layer = module.getLayer();
+//		System.out.print("==================== ");
+//		System.out.println("ROOM: " + room.getThisRoom().getDisplayName());
+//		System.out.println("\tClass: " + a1iciaClass.getName());
+//		System.out.println("\tModule: " + moduleName);
+//		System.out.println("\tLayer: " + layer.toString());
+//		for (String pkg : packages) {
+//			System.out.println("\t\tPackage: " + pkg);
+//		}
+//	}
 	
 	/**
 	 * Return a set of rooms that can process the sememe.
@@ -191,66 +168,6 @@ public final class Controller extends AbstractIdleService {
 		return sememeRooms.get(sememe);
 	}
 	
-	/**
-	 * Shut down the hall (room) bus.
-	 * 
-	 * @param pool
-	 */
-//	static void shutdownAndAwaitTermination(ExecutorService pool) {
-//		
-//		System.out.println("CONTROLLER -- Shutting down Controller");
-//		pool.shutdown();
-//		try {
-//			if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-//				pool.shutdownNow();
-//				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-//					System.err.println("CONTROLLER -- Pool did not terminate");
-//                }
-//			}
-//		} catch (InterruptedException ie) {
-//			pool.shutdownNow();
-//			Thread.currentThread().interrupt();
-//		}
-//	}
-//	
-//	/**
-//	 * Add a shutdown hook to close down the executor pool.
-//	 * 
-//	 * @param pool
-//	 */
-//	private void addDelayedShutdownHook(final ExecutorService pool) {
-//		Runnable shutdownHook;
-//		Thread hook;
-//		
-//		shutdownHook = new ShutdownHook(pool);
-//		hook = new Thread(shutdownHook);
-//		Runtime.getRuntime().addShutdownHook(hook);
-//	}
-//	
-//	/**
-//	 * The little class to do the shutdown.
-//	 * 
-//	 * @author hulles
-//	 *
-//	 */
-//	private class ShutdownHook implements Runnable {
-//		ExecutorService pool;
-//		
-//		ShutdownHook(ExecutorService pool) {
-//			this.pool = pool;
-//		}
-//		
-//	    @Override
-//		public void run() {
-//	    	
-//	    	if (shuttingDownOnClose) {
-//	    		System.out.println("CONTROLLER -- Orderly shutdown, hook not engaged");
-//	    	} else {
-//		    	System.out.println("CONTROLLER -- Exceptional shutdown, hook engaged");
-//				shutdownAndAwaitTermination(pool);
-//	    	}
-//	    }
-//	}
 
 	/**
 	 * Create a ServiceManager and start all the room services. We also send a "what_sememes"
@@ -261,7 +178,7 @@ public final class Controller extends AbstractIdleService {
 	protected void startUp() throws Exception {
 		RoomRequest sememesQuery;
 		Ticket ticket;
-		List<Service> services;
+		List<UrRoom> services;
 		Set<Entry<Service,Long>> startupTimes;
 		Long startupTime;
 		Long totalStartupTime = 0L;
@@ -290,7 +207,7 @@ public final class Controller extends AbstractIdleService {
 		sememesQuery = new RoomRequest(ticket);
 		sememesQuery.setFromRoom(Room.CONTROLLER);
 		sememesQuery.setSememePackages(SememePackage.getSingletonDefault("what_sememes"));
-		sememesQuery.setMessage("WHAT_SPARKS query");
+		sememesQuery.setMessage("WHAT_SEMEMES query");
 		controllerRoom.sendParentRequest(sememesQuery);
 	}
 
@@ -304,8 +221,6 @@ public final class Controller extends AbstractIdleService {
 		serviceManager.stopAsync();
 		serviceManager.awaitStopped();
 		A1iciaApplication.shutdown();
-//		shuttingDownOnClose = true;
-//		shutdownAndAwaitTermination(busPool);
 	}
 
 	/**
@@ -317,8 +232,8 @@ public final class Controller extends AbstractIdleService {
 	public class ControllerRoom extends UrRoom {
 		private final SerialSememe whatSememesSememe;
 		
-		ControllerRoom() {
-			super();
+		ControllerRoom(EventBus hall) {
+			super(hall);
 			
 			whatSememesSememe = SerialSememe.find("what_sememes");
 		}
@@ -330,6 +245,7 @@ public final class Controller extends AbstractIdleService {
 		 */
 		void sendParentRequest(RoomRequest request) {
 			
+            LOGGER.log(Level.INFO, "In sendParentRequest");
 			sendRoomRequest(request);
 		}
 
@@ -385,17 +301,18 @@ public final class Controller extends AbstractIdleService {
 					A1iciaUtils.error("Controller: unable to find what_sememes in action packages");
 				}
 			}
+            
 			// we do a couple quick reality checks before we go
 			for (SerialSememe s : sememeRooms.keySet()) {
-				if (!ALLSEMEMES.contains(s)) {
+				if (!allSememes.contains(s)) {
 					// Type I error
 					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " is not a valid sememe");
 				}
 			}
-			for (SerialSememe s : ALLSEMEMES) {
+			for (SerialSememe s : allSememes) {
 				if (!sememeRooms.containsKey(s)) {
 					// Type II error
-					A1iciaUtils.error("ControllerRoom: sememe " + s.getName() + " not implemented");
+					A1iciaUtils.warning("ControllerRoom: sememe " + s.getName() + " not implemented");
 				}
 			}
 			if (ticket != null) {

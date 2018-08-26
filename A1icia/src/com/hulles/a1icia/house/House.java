@@ -22,7 +22,16 @@
 package com.hulles.a1icia.house;
 
 public enum House {
-	ALICIA,
-	STATIONSERVER,
-	NODESERVER
+	ALICIA("A1icia House"),
+	STATIONSERVER("Station Server"),
+	NODESERVER("Node Server");
+    private final String displayName;
+    
+    private House(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }

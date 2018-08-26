@@ -7,6 +7,7 @@
  *
  */
 module com.hulles.a1icia.oscar {
+	exports com.hulles.a1icia.oscar to com.hulles.a1icia.central;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;

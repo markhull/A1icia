@@ -60,7 +60,8 @@ import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class OvermindRoom extends UrRoom {
 	final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.OvermindRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	final static Level LOGLEVEL = Level.INFO;
 	private final Thimk thimk;
 //	private final ConcurrentMap<Ticket, Thread> threadMap;
 	

@@ -7,12 +7,7 @@
  *
  */
 module com.hulles.a1icia.charlie {
-//	exports com.hulles.a1icia.charlie;
-//	exports com.hulles.a1icia.charlie.parse;
-//	exports com.hulles.a1icia.charlie.ner;
-//	exports com.hulles.a1icia.charlie.language;
-//	exports com.hulles.a1icia.charlie.pos;
-//	exports com.hulles.a1icia.charlie.doccat;
+	exports com.hulles.a1icia.charlie to com.hulles.a1icia.central;
 
 	requires transitive com.hulles.a1icia;
 	requires com.hulles.a1icia.api;
