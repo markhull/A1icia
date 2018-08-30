@@ -21,13 +21,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.NLPAnalysis;

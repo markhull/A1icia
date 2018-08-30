@@ -27,13 +27,28 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
+/**
+ * SharedUtils is a class that contains various A1icia utility functions. It
+ * implements "Serializable", and it is expected that all methods are
+ * GWT-safe.
+ * 
+ * @author hulles
+ */
 public class SharedUtils implements Serializable {
 	private static final long serialVersionUID = 8123983689858668155L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;
 	public final static int EXIT_ALREADY_RUNNING = 1;
-	
-	// see guava SharedUtils, this is just adapted from there
+
+    /**
+     * If the reference is null, throw an exception. See Guava Preconditions,
+     * this is just adapted from there
+     * 
+     * @see com.google.common.base.Preconditions.checkNotNull
+     * 
+     * @param <T> A generic
+     * @param reference The reference to check for null state
+     */
 	public static <T> void checkNotNull(T reference) {
 		
 		if (reference == null) {			
@@ -41,18 +56,35 @@ public class SharedUtils implements Serializable {
 		}
 	}
 
+    /**
+     * This doesn't do anything, it just indicates there might be valid null values
+     * so we don't use checkNotNull, vs. forgetting to use checkNotNull. This works
+     * really well in practice, and Guava should probably have it. ;)
+     * 
+     * @param <T>
+     * @param reference 
+     */
 	public static <T> void nullsOkay(T reference) {
-		// doesn't do anything, just indicates we don't use checkNotNull
 	}
 	
+    /**
+     * Test if an application is already running on this machine. We
+     * attempt to assign a known port number to a ServerSocket; if it works
+     * we save it in a static variable, otherwise we return true because the
+     * socket was created earlier.
+     * 
+     * @param portCheck The PortCheck for this program
+     * @return True if there is another instance of this program already running.
+     */
 	public static boolean alreadyRunning(PortCheck portCheck) {
 	
+        com.google.common.base.Preconditions.
 		checkNotNull(portCheck);
 		try {
 			canary = new ServerSocket(portCheck.getPortNumber(), 10, InetAddress.getLocalHost());
 		} catch (UnknownHostException e) {
 			// shouldn't happen, it's localhost
-			throw new A1iciaAPIException();
+			throw new A1iciaException();
 		} catch (IOException e) {
 			// port taken, so app is already running
 			return true;
@@ -60,6 +92,11 @@ public class SharedUtils implements Serializable {
 		return false;
 	}
 	
+    /**
+     * Exit this program if another instance of it is already running.
+     * 
+     * @param portCheck The PortCheck for this program
+     */
 	public static void exitIfAlreadyRunning(PortCheck portCheck) {
 		
 		checkNotNull(portCheck);
@@ -69,14 +106,18 @@ public class SharedUtils implements Serializable {
 		}
 	}
 	
+    /**
+     * A list of A1icia executable programs and their assigned port numbers
+     * 
+     */
 	public enum PortCheck {
-	    A1ICIA(12345, "A1icia"),
+	    A1ICIA(12345, "A1icia Central"),
 	    A1ICIA_CLI(12346, "A1icia CLI"),
 	    A1ICIA_MAGIC_MIRROR(12347, "A1icia Magic Mirror"),
 	    A1ICIA_PI_CONSOLE(12348, "A1icia Pi Console"),
 	    A1ICIA_NODE(12349, "A1icia Node Server"),
 	    A1ICIA_SWING_CONSOLE(12350, "A1icia Swing Console");
-	    private int portNumber;
+	    private final int portNumber;
 	    private final String displayName;
 
 	    private PortCheck(int portNumber, String displayName) {

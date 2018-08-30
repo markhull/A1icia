@@ -21,6 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.mike;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -34,39 +36,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import java.nio.file.FileVisitOption;
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+import java.util.EnumSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LibraryLister extends SimpleFileVisitor<Path> {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaMike.LibraryLister");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = Level.INFO;
 //	private final static String WAVPATTERN = "*.wav";
 	private final static String MEDIAPATTERN = "*.{wav,mp3,mp4,flv,mov,png,jpg,gif}";
 	private final PathMatcher matcher;
 //	private int numMatches = 0;
-	private List<String> fileNames = null;
+	private List<Path> filePaths = null;
 	
 	LibraryLister(String pattern) {
-		fileNames = new ArrayList<>();
+		filePaths = new ArrayList<>();
 		matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
 	}
 
-	public static List<String> listFiles(String logDir) {
+	public static List<Path> listFiles(String logDir) {
 		
 		return listFiles(logDir, MEDIAPATTERN);
 	}
 	
-	public static List<String> listFiles(String logDir, String pattern) {
+	public static List<Path> listFiles(String logDir, String pattern) {
         LibraryLister lister;
         Path logDirPath;
+        EnumSet<FileVisitOption> opts;
         
         SharedUtils.checkNotNull(logDir);
+        LOGGER.log(LOGLEVEL, "LibraryLister: list files for {0}, pattern {1}", new String[]{logDir, pattern});
         lister = new LibraryLister(pattern);
         logDirPath = Paths.get(logDir);
+        opts = EnumSet.of(FOLLOW_LINKS);
         try {
-			Files.walkFileTree(logDirPath, lister);
+			Files.walkFileTree(logDirPath, opts, Integer.MAX_VALUE, lister);
 		} catch (IOException e) {
 			throw new A1iciaException("IO Exception listing library files", e);
 		}
         lister.done();
-        return lister.getFileNames();
+        return lister.getFilePaths();
 	}
 	
 	// Compares the glob pattern against
@@ -77,6 +89,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
         SharedUtils.checkNotNull(file);
 		filePath = file.getFileName();
 		if (filePath != null && matcher.matches(filePath)) {
+            LOGGER.log(LOGLEVEL, "LibraryLister: find matches {0}", filePath);
 //			numMatches++;
 //			System.out.println("Found file " + filePath);
 			try {
@@ -84,8 +97,10 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 			} catch (IOException e) {
 				throw new A1iciaException("Can't create real path to file " + file.getFileName());
 			}
-			fileNames.add(filePath.toString());
-		}
+			filePaths.add(filePath);
+		} else {
+            LOGGER.log(LOGLEVEL, "LibraryLister: find doesn't match {0}", filePath);
+        }
 	}
 
 	private void done() {
@@ -97,6 +112,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 
 		SharedUtils.checkNotNull(file);
         SharedUtils.checkNotNull(attrs);
+        LOGGER.log(LOGLEVEL, "LibraryLister: visit file {0}", file);
 		find(file);
 		return FileVisitResult.CONTINUE;
 	}
@@ -108,9 +124,9 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 		return FileVisitResult.CONTINUE;
 	}
 
-	public List<String> getFileNames() {
+	public List<Path> getFilePaths() {
 		
-		return fileNames;
+		return filePaths;
 	}
 }
 

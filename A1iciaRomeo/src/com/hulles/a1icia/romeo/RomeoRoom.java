@@ -21,13 +21,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.romeo;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.MessageAction;
@@ -53,9 +53,12 @@ public final class RomeoRoom extends UrRoom {
 	}
 
 	/**
-	 * Here we create an ActionPackage from Alpha, either an analysis or an action, depending 
+	 * Here we create an ActionPackage from Romeo, either an analysis or an action, depending 
 	 * on the sememe that we receive, and return it to UrRoom.
 	 * 
+     * @param sememePkg The sememe
+     * @param request The incoming request
+     * @return The appropriate ActionPackage
 	 */
 	@Override
 	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
@@ -69,11 +72,10 @@ public final class RomeoRoom extends UrRoom {
 	}
 
 	/**
-	 * Create an action package for the "aardvark" sememe, which consists of saying some form
-	 * of the word "aardvark".
+	 * Create an action package for the "Name That Tune" game.
 	 * 
-	 * @param sememePkg
-	 * @param request
+	 * @param sememePkg The name_that_tune sememe
+	 * @param request The incoming room request
 	 * @return
 	 */
 	private static ActionPackage createNTTActionPackage(SememePackage sememePkg, RoomRequest request) {
@@ -93,6 +95,7 @@ public final class RomeoRoom extends UrRoom {
 	/**
 	 * Return this room name.
 	 * 
+     * @return This room
 	 */
 	@Override
 	public Room getThisRoom() {
@@ -103,6 +106,8 @@ public final class RomeoRoom extends UrRoom {
 	/**
 	 * We don't get responses for anything, so if there is one it's an error.
 	 * 
+     * @param request The room request we (didn't) sent
+     * @param responses The responses we (didn't) got
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
@@ -121,6 +126,7 @@ public final class RomeoRoom extends UrRoom {
 	/**
 	 * Advertise which sememes we handle.
 	 * 
+     * @return The set of sememes that we support
 	 */
 	@Override
 	protected Set<SerialSememe> loadSememes() {
@@ -135,6 +141,8 @@ public final class RomeoRoom extends UrRoom {
 	 * We don't do anything with RoomAnnouncements but it is legitimate to receive them here,
 	 * so no error.
 	 * 
+     * @param announcement The announcement
+     * 
 	 */
 	@Override
 	protected void processRoomAnnouncement(RoomAnnouncement announcement) {

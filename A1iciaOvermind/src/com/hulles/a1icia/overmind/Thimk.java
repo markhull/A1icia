@@ -31,12 +31,12 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.document.RoomRequest;
@@ -45,7 +45,6 @@ import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Thimk handles decision points as we choose what to send on to the client. 
@@ -135,12 +134,14 @@ final class Thimk {
 			}
 		}
 		for (String sentencePackageID : sentenceSememePackages.keySet()) {
-			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sentencePackageID = " + sentencePackageID);
+			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sentencePackageID = {0}", 
+                    sentencePackageID);
 			sememePackages = sentenceSememePackages.get(sentencePackageID);
-			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe packages count = " + sememePackages.size());
+			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe packages count = {0}", 
+                    sememePackages.size());
 			for (SememePackage sp : sememePackages) {
-				LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe package " + sp.getName() + 
-						" score is " + sp.getConfidence());
+				LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe package {0} score is {1}", 
+                        new Object[]{sp.getName(), sp.getConfidence()});
 			}
 			if (sememePackages.isEmpty()) {
 				continue;
@@ -200,7 +201,7 @@ final class Thimk {
 		
 		// okay, we need to figure out what's wanted, so first we start with awesome Charlie
 		//    for some NLP action
-		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction, msg = " + msg);
+		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction, msg = {0}", msg);
 		newRequest = new RoomRequest(ticket);
 		newRequest.setFromRoom(Room.OVERMIND);
 		sememePackages = SememePackage.getSingletonDefault("nlp_analysis");

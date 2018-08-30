@@ -46,8 +46,8 @@ import com.hulles.a1icia.api.dialog.DialogHeader;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.dialog.DialogSerialization;
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
@@ -56,11 +56,12 @@ import com.hulles.a1icia.api.object.ChangeLanguageObject;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.object.LoginResponseObject;
 import com.hulles.a1icia.api.object.MediaObject;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
@@ -132,13 +133,13 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		language = station.getDefaultLanguage();
 		this.display = display;
 		executor = Executors.newCachedThreadPool();
-	    jebusCentral = JebusApiHub.getJebusCentral(jebusHost, jebusPort);
+	    jebusCentral = JebusHub.getJebusCentral(jebusHost, jebusPort);
 		if (!reachableHost(jebusCentral)) {
-			throw new A1iciaAPIException("Can't reach JebusCentral host = " + jebusHost + ", port = " + jebusPort);
+			throw new A1iciaException("Can't reach JebusCentral host = " + jebusHost + ", port = " + jebusPort);
 		}
-		jebusLocal = JebusApiHub.getJebusLocal();
+		jebusLocal = JebusHub.getJebusLocal();
 		if (!reachableHost(jebusLocal)) {
-			throw new A1iciaAPIException("Can't reach JebusLocal host");
+			throw new A1iciaException("Can't reach JebusLocal host");
 		}
     }
 	
@@ -306,7 +307,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		return userName;
 	}
 	
-	protected Station getStation() {
+	private Station getStation() {
 	
 		return station;
 	}
@@ -322,7 +323,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		try (Jedis jebus = jebusCentral.getResource()) {
 			listener = new JebusListener();
 			// the following line blocks while waiting for responses...
-			jebus.subscribe(listener, JebusApiBible.getA1iciaFromChannelBytes(jebusCentral));
+			jebus.subscribe(listener, JebusBible.getBytesKey(JebusBible.JebusKey.FROMCHANNEL, jebusCentral));
 		}
 	}
 	
@@ -381,6 +382,8 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	 * support just one action per request.
 	 * 
 	 * @param sememe The sememe to send
+     * @param message The optional message
+     * @return True if sent correctly
 	 */
 	public boolean sendCommand(SerialSememe sememe, String message) {
 		DialogRequest request;
@@ -432,7 +435,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 	
 	private boolean sendRequest(DialogRequest request) {
 		DialogHeader header;
-		byte[] dialogBytes = null;
+		byte[] dialogBytes;
 		
 		SharedUtils.checkNotNull(request);
 		if (!serverUp) {
@@ -443,11 +446,11 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: serializing request");
 		dialogBytes = DialogSerialization.serialize(header, request);
 		if (dialogBytes == null) {
-			throw new A1iciaAPIException("Couldn't create dialog to send");
+			throw new A1iciaException("Couldn't create dialog to send");
 		}
 		LOGGER.log(LOGLEVEL, "A1iciaRemote: sending request");
 		try (Jedis jebus = jebusCentral.getResource()) {
-			jebus.publish(JebusApiBible.getA1iciaToChannelBytes(jebusCentral), dialogBytes);
+			jebus.publish(JebusBible.getBytesKey(JebusBible.JebusKey.TOCHANNEL, jebusCentral), dialogBytes);
 		}
 		return true;
 	}
@@ -468,7 +471,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		try { // TODO make me better :)
 			dialog = DialogSerialization.deSerialize(a1icianID, responseBytes);
 		} catch (Exception e1) {
-            throw new A1iciaAPIException("Can't deserialize response", e1);
+            throw new A1iciaException("Can't deserialize response", e1);
 		}
 		if (dialog == null) {
 			// dialog not sent to us...
@@ -641,7 +644,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 				image = MediaUtils.byteArrayToImage(imageArray);
 				imageDisplayer.displayImage(image, imageTitle);
 			} catch (IOException e) {
-	            throw new A1iciaAPIException("Can't restore image from bytes", e);
+	            throw new A1iciaException("Can't restore image from bytes", e);
 			}
 		}
 	}
@@ -667,7 +670,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		audioBytes = audioObject.getMediaBytes();
 		serialFormat = audioObject.getAudioFormat();
 		if (audioBytes == null) {
-            throw new A1iciaAPIException("Can't play audio from file");
+            throw new A1iciaException("Can't play audio from file");
 		}
 		for (byte[] audioArray : audioBytes) {
 			try {
@@ -681,7 +684,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 							audioObject.getLengthSeconds());
 				}
 			} catch (Exception e) {
-			    throw new A1iciaAPIException("Can't play audio from byte array", e);
+			    throw new A1iciaException("Can't play audio from byte array", e);
 			}
 		}
 	}
@@ -698,7 +701,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		videoBytes = object.getMediaBytes();
 		format = object.getMediaFormat();
 		if (videoBytes == null || format == null) {
-            throw new A1iciaAPIException("A1iciaRemote: bad argument(s) in playVideo");
+            throw new A1iciaException("A1iciaRemote: bad argument(s) in playVideo");
 		}
 		LOGGER.log(LOGLEVEL, "A1iciaRemote:playVideo: video from byte array");
 		MediaUtils.playMediaBytes(videoBytes, format);
@@ -738,7 +741,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 				serverUp = false;
 				break;
 			default:
-				break;
+ 				break;
 		}
 		display.receiveCommand(sememe);
 	}
@@ -775,7 +778,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 		try {
 			inetAddress = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
-            throw new A1iciaAPIException("Can't get my IP address", e);
+            throw new A1iciaException("Can't get my IP address", e);
 		}
 		return inetAddress.getHostAddress();
 	}

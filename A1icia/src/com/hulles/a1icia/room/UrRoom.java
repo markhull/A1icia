@@ -40,9 +40,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
+import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomDocument;
 import com.hulles.a1icia.room.document.RoomDocumentType;
@@ -51,7 +53,7 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.room.document.WhatSememesAction;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.ticket.Ticket;
 
 /**
  * UrRoom is the base room (superclass) for all the Mind rooms. It contains the logic to send
@@ -296,7 +298,30 @@ public abstract class UrRoom extends AbstractIdleService {
 		}
 		sendRoomResponse(response);
 	}
-	
+		
+    /**
+     * Send a push notification to an A1icianID <i>via</i> a RoomRequest. A1icia advertises 
+     * and handles the "indie_response" sememe (TODO needs a new name) and forwards
+     * it to the specified A1icianID (station), so the "request" part of the title
+     * is really a request to A1icia to forward the wrapped ClientDialogResponse.
+     * 
+     * @param response 
+     */
+	protected final void postPushRequest(ClientDialogResponse response) {
+		Ticket ticket;
+		RoomRequest roomRequest;
+
+		SharedUtils.checkNotNull(response);
+		ticket = Ticket.createNewTicket(getHall(), getThisRoom());
+		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
+		roomRequest = new RoomRequest(ticket);
+		roomRequest.setFromRoom(getThisRoom());
+		roomRequest.setSememePackages(SememePackage.getSingletonDefault("indie_response"));
+		roomRequest.setMessage("Indie client response");
+		roomRequest.setRoomObject(response);
+		sendRoomRequest(roomRequest);
+	}
+    
 	public abstract Room getThisRoom();
 	
 	protected abstract void roomStartup();

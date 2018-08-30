@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaTimer;
 import com.hulles.a1icia.cayenne.NbestAnswer;
 import com.hulles.a1icia.cayenne.Nfl6Question;
 import com.hulles.a1icia.juliet.fuzzywuzzy.FuzzySearch;
 import com.hulles.a1icia.juliet.fuzzywuzzy.model.ExtractedResult;
-import com.hulles.a1icia.tools.A1iciaTimer;
 import com.hulles.a1icia.tools.FuzzyMatch;
 
 public final class JulietResponder {

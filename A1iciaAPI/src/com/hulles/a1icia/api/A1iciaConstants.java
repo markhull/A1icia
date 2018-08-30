@@ -68,6 +68,11 @@ public class A1iciaConstants {
 		return ALICIAS_WELCOME;
 	}
 	
+    /**
+     * Get A1icia's current default logging level.
+     * 
+     * @return The Level
+     */
     public static Level getA1iciaLogLevel() {
         
         return ALICIA_LEVEL;

@@ -19,16 +19,17 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.base;
+package com.hulles.a1icia.api.shared;
 
 /**
- * The A1icia version of the RuntimeException, for possible expanded use later.
+ * The A1icia API version of the RuntimeException, for possible expanded use later. This <b>should</b>
+ * be GWT-safe.
  * 
  * @author hulles
  *
  */
 public final class A1iciaException extends RuntimeException {
-	private static final long serialVersionUID = 1375561019112558941L;
+	private static final long serialVersionUID = -4744550566143714488L;
 	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public A1iciaException() {

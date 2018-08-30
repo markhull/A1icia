@@ -41,16 +41,25 @@ import com.hulles.a1icia.api.dialog.DialogHeader;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.dialog.DialogSerialization;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
+import com.hulles.a1icia.crypto.PurdahKeys;
 import com.hulles.a1icia.media.Language;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -64,8 +73,8 @@ import redis.clients.jedis.Jedis;
  * @author hulles
  *
  */
-public final class A1iciaStationServer extends UrHouse {
-	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaStationServer");
+public final class StationServer extends UrHouse {
+	final static Logger LOGGER = Logger.getLogger("A1icia.StationServer");
 	final static Level LOGLEVEL1 = A1iciaConstants.getA1iciaLogLevel();
 //	final static Level LOGLEVEL1 = Level.INFO;
     JebusListener listener = null;
@@ -79,7 +88,7 @@ public final class A1iciaStationServer extends UrHouse {
 	private final A1icianID broadcastID;
 	private final Boolean noPrompts;
 	
-	public A1iciaStationServer(EventBus street, Boolean noPrompts) {
+	public StationServer(EventBus street, Boolean noPrompts) {
 		super(street);
 	
 		SharedUtils.checkNotNull(noPrompts);
@@ -94,6 +103,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * Return which house we are.
 	 * 
 	 *
+     * @return Our house
 	 */
 	@Override
 	public House getThisHouse() {
@@ -104,6 +114,8 @@ public final class A1iciaStationServer extends UrHouse {
 	 * We don't handle incoming dialog requests, so if one is addressed to us it's an error.
 	 * 
 	 * @see UrHouse
+     * 
+     * @param request The incoming DialogRequest
 	 * 
 	 */
 	@Override
@@ -115,6 +127,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * We got a response from A1icia (presumably) so we send it along to its ultimate
 	 * destination A1ician.
 	 * 
+     * @param response The incoming DialogResponse to be routed
 	 */
 	@Override
 	protected void newDialogResponse(DialogResponse response) {
@@ -141,6 +154,9 @@ public final class A1iciaStationServer extends UrHouse {
 		}
 		openSememe = SerialSememe.find("central_startup");
 		stationBroadcast("Alicia Central starting up....", openSememe);
+        
+//        String translation = translate(Language.AMERICAN_ENGLISH, Language.FRENCH, "Where is my aunt's pen?");
+//        System.out.println("TRANSLATION: " + translation);
 	}
 
 	/**
@@ -186,7 +202,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param requestBytes The request
 	 */
 	void stationReceive(byte[] requestBytes) {
-		Dialog dialog = null;
+		Dialog dialog;
 		DialogRequest dialogRequest;
 		Prompter prompter;
 		A1icianID fromA1icianID;
@@ -215,13 +231,13 @@ public final class A1iciaStationServer extends UrHouse {
 			return;
 		}
 		fromA1icianID = dialogRequest.getFromA1icianID();
-		LOGGER.log(LOGLEVEL1, "StationServer: dialog request from " + fromA1icianID);
+		LOGGER.log(LOGLEVEL1, "StationServer: dialog request from {0}", fromA1icianID);
 		sememesCopy = new HashSet<>(dialogRequest.getRequestActions());
 		sememe = SerialSememe.consume("client_startup", sememesCopy);
-		LOGGER.log(LOGLEVEL1, "StationServer: consumed startup , sememe = " + sememe);
+		LOGGER.log(LOGLEVEL1, "StationServer: consumed startup , sememe = {0}", sememe);
 		if (sememe != null) {
 			// it's a new session
-			LOGGER.log(LOGLEVEL1, "StationServer: starting new session for " + fromA1icianID);
+			LOGGER.log(LOGLEVEL1, "StationServer: starting new session for {0}", fromA1icianID);
 			session = Session.getSession(fromA1icianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
@@ -233,12 +249,12 @@ public final class A1iciaStationServer extends UrHouse {
 			sememe = SerialSememe.consume("client_shutdown", sememesCopy);
 			if (sememe != null) {
 				// close the session
-				LOGGER.log(LOGLEVEL1, "StationServer: closing session for " + fromA1icianID);
+				LOGGER.log(LOGLEVEL1, "StationServer: closing session for {0}", fromA1icianID);
 				removeSession(session);
 //				return; // we don't need to pass this on, at least for now
 			} else {
 				// update the session
-				LOGGER.log(LOGLEVEL1, "StationServer: updating session for " + fromA1icianID);
+				LOGGER.log(LOGLEVEL1, "StationServer: updating session for {0}", fromA1icianID);
 				session.update();
 				session.setPersonUUID(dialogRequest.getPersonUUID());
 				session.setStationUUID(dialogRequest.getStationUUID());
@@ -247,25 +263,23 @@ public final class A1iciaStationServer extends UrHouse {
 		} else {
 			// not startup, but session doesn't exist in our map, so station was up
 			//    prior to our starting (we presume)
-			LOGGER.log(LOGLEVEL1, "StationServer: starting (pre-existing) new session for " + 
-					fromA1icianID);
+			LOGGER.log(LOGLEVEL1, "StationServer: starting (pre-existing) new session for {0}", fromA1icianID);
 			session = Session.getSession(fromA1icianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
 			session.setLanguage(dialogRequest.getLanguage());
-			LOGGER.log(LOGLEVEL1, "StationServer: before setSession for " + fromA1icianID);
+			LOGGER.log(LOGLEVEL1, "StationServer: before setSession for {0}", fromA1icianID);
 			setSession(session);
-			LOGGER.log(LOGLEVEL1, "StationServer: after setSession for " + fromA1icianID);
+			LOGGER.log(LOGLEVEL1, "StationServer: after setSession for {0}", fromA1icianID);
 			// be nice and send them a green server LED
 			serverLight = SerialSememe.find("set_green_LED_on");
 			stationSend(fromA1icianID, "Connecting to running server....", serverLight);
 		}
 		dialogRequest.setRequestActions(sememesCopy);
-		LOGGER.log(LOGLEVEL1, "StationServer: made it past session checks for " + fromA1icianID);
+		LOGGER.log(LOGLEVEL1, "StationServer: made it past session checks for {0}", fromA1icianID);
 		
 		if (!noPrompts) {
 			// cancel existing prompter for this station, if any...
-			prompter = null;
 			for (Iterator<Prompter> iter = prompters.iterator(); iter.hasNext(); ) {
 				prompter = iter.next();
 				if (prompter.getA1icianID().equals(fromA1icianID)) {
@@ -281,7 +295,7 @@ public final class A1iciaStationServer extends UrHouse {
 		}
 		speechToText(dialogRequest, session.getLanguage());
         translateRequest(dialogRequest, session.getLanguage());
-		LOGGER.log(LOGLEVEL1, "StationServer: posting dialog request for " + fromA1icianID);
+		LOGGER.log(LOGLEVEL1, "StationServer: posting dialog request for {0}", fromA1icianID);
         getStreet().post(dialogRequest);
 	}
 	
@@ -341,9 +355,10 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	private void stationSend(A1icianID a1icianID, DialogResponse response) {
 		DialogHeader header;
-		byte[] responseBytes = null;
+		byte[] responseBytes;
 		Session session;
-		
+		byte[] key;
+        
 		SharedUtils.checkNotNull(a1icianID);
 		SharedUtils.checkNotNull(response);
 		// we don't translate broadcasts, for obvious reasons
@@ -360,7 +375,8 @@ public final class A1iciaStationServer extends UrHouse {
         if (responseBytes != null) {
             LOGGER.log(LOGLEVEL1, "StationServer:stationSend: bytes not null, going to jebus them");
 			try (Jedis jebus = jebusPool.getResource()) {
-				jebus.publish(JebusBible.getA1iciaFromChannelBytes(jebusPool), responseBytes);
+				key = JebusBible.getBytesKey(JebusKey.FROMCHANNEL, jebusPool);
+				jebus.publish(key, responseBytes);
 	            LOGGER.log(LOGLEVEL1, "StationServer:stationSend: bytes were jebussed");
 			}        	
         }
@@ -375,7 +391,7 @@ public final class A1iciaStationServer extends UrHouse {
 	 */
 	private static void speechToText(DialogRequest request, Language lang) {
 		byte[] audioBytes;
-		String audioText = null;
+		String audioText;
 		
 		SharedUtils.checkNotNull(request);
 		SharedUtils.checkNotNull(lang);
@@ -387,7 +403,7 @@ public final class A1iciaStationServer extends UrHouse {
 				A1iciaUtils.error("A1iciaStationServer: unable to transcribe audio", ex);
 				return;
 			}
-	        LOGGER.log(Level.INFO, "StationServer: audioText is \"" + audioText + "\"");
+	        LOGGER.log(Level.INFO, "StationServer: audioText is \"{0}\"", audioText);
 			if (audioText.length() > 0) {
 				// note that this overwrites any message text that was also sent in the DialogRequest...
 				request.setRequestMessage(audioText);
@@ -405,16 +421,15 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param lang The language from which to translate
 	 */
 	private static void translateRequest(DialogRequest request, Language lang) {
-//		String translation;
+		String translation;
 		
 		SharedUtils.checkNotNull(request);
 		SharedUtils.checkNotNull(lang);
 		if ((lang != Language.AMERICAN_ENGLISH) && (lang != Language.BRITISH_ENGLISH)) {
-			LOGGER.log(Level.WARNING, "StationServer: translating request from " + lang.getDisplayName() + 
-					" to American English");
-//			translation = A1iciaGoogleTranslator.translate(lang, Language.AMERICAN_ENGLISH, 
-//					request.getRequestMessage());
-//			request.setRequestMessage(translation);
+			LOGGER.log(Level.WARNING, "StationServer: translating request from {0} to American English", 
+                    lang.getDisplayName());
+            translation = translate(lang, Language.AMERICAN_ENGLISH, request.getRequestMessage());
+			request.setRequestMessage(translation);
 		}
 	}
 
@@ -428,9 +443,9 @@ public final class A1iciaStationServer extends UrHouse {
 	 * @param lang The language into which to translate
 	 */
 	private static void translateResponse(DialogResponse response, Language lang) {
-//		String messageTranslation;
-//		String explanationTranslation;
-//		String expl;
+		String messageTranslation;
+		String explanationTranslation;
+		String expl;
 		Language langIn;
 		
 		SharedUtils.checkNotNull(lang);
@@ -440,32 +455,73 @@ public final class A1iciaStationServer extends UrHouse {
 		}
 		response.setLanguage(lang);
 		if (langIn != lang) {
-			LOGGER.log(Level.WARNING, "StationServer: translating response from " + langIn.getDisplayName() + 
-					" to " + lang.getDisplayName());
+			LOGGER.log(Level.WARNING, "StationServer: translating response from {0} to {1}", 
+                    new String[]{langIn.getDisplayName(), lang.getDisplayName()});
 			// also translates American to British and vice versa... TODO change it maybe
-//			messageTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
-//					response.getMessage());
-//			response.setMessage(messageTranslation);
-//			expl = response.getExplanation();
-//			if (expl != null && !expl.isEmpty()) {
-//				explanationTranslation = A1iciaGoogleTranslator.translate(langIn, lang, 
-//						expl);
-//				response.setExplanation(explanationTranslation);
-//			}
+            // TODO change this to make only one translate call with 2 texts if explantion exists;
+            //    supposedly you can repeat the q parameter in the POST to translate multiple texts
+            messageTranslation = translate(langIn, lang, response.getMessage());
+			response.setMessage(messageTranslation);
+			expl = response.getExplanation();
+			if (expl != null && !expl.isEmpty()) {
+				explanationTranslation = translate(langIn, lang, expl);
+				response.setExplanation(explanationTranslation);
+			}
 		}
 	}
 	
+    private static String translate(Language from, Language to, String textToTranslate) {
+        String result;
+        PurdahKeys purdah;
+        String key;
+        JsonObject resultData;
+        JsonObject data;
+        JsonArray translations;
+        JsonObject translationObject;
+        String translation;
+        
+        SharedUtils.checkNotNull(from);
+        SharedUtils.checkNotNull(to);
+        SharedUtils.checkNotNull(textToTranslate);
+        purdah = PurdahKeys.getInstance();
+        key = purdah.getPurdahKey(PurdahKeys.PurdahKey.GOOGLEXLATEKEY);
+        result = ExternalAperture.getGoogleTranslation(from, to, textToTranslate, "text", key);
+        LOGGER.log(LOGLEVEL1, "Translate result: {0}", result);        
+		try (BufferedReader reader = new BufferedReader(new StringReader(result))) {
+			try (JsonReader jsonReader = Json.createReader(reader)) {
+                resultData = jsonReader.readObject();
+                LOGGER.log(LOGLEVEL1, "ResultData: {0}", resultData);
+                data = resultData.getJsonObject("data");
+                LOGGER.log(LOGLEVEL1, "Data: {0}", data);
+                translations = data.getJsonArray("translations");
+                LOGGER.log(LOGLEVEL1, "Translations: {0}", translations);
+                if (translations.size() != 1) {
+                    A1iciaUtils.error("Invalid translations size = " + translations.size());
+                    translation = null;
+                } else {
+                    translationObject = translations.getJsonObject(0);
+                    translation = translationObject.getString("translatedText");
+                }
+            }
+		} catch (IOException e) {
+            throw new A1iciaException("IO exception in StringReader for some reason", e);
+		}
+        return translation;
+    }
+    
 	/**
 	 * Start our Jebus pub/sub listener.
 	 * 
 	 */
 	@Override
 	protected void run() {
-		
+		byte[] channel;
+        
 		try (Jedis jebus = jebusPool.getResource()) {
 			listener = new JebusListener();
 			// the following line blocks while waiting for responses...
-			jebus.subscribe(listener, JebusBible.getA1iciaToChannelBytes(jebusPool));
+			channel = JebusBible.getBytesKey(JebusKey.TOCHANNEL, jebusPool);
+			jebus.subscribe(listener, channel);
 		}
 	}
 	
@@ -507,13 +563,13 @@ public final class A1iciaStationServer extends UrHouse {
 		@Override
 		public void onSubscribe(byte[] channel, int subscribedChannels) {
         	
-        	LOGGER.log(LOGLEVEL1, "Subscribed to " + channelName(channel));
+        	LOGGER.log(LOGLEVEL1, "Subscribed to {0}", channelName(channel));
         }
 
 		@Override
 		public void onUnsubscribe(byte[] channel, int subscribedChannels) {
         	
-        	LOGGER.log(LOGLEVEL1, "Unsubscribed to " + channelName(channel));
+        	LOGGER.log(LOGLEVEL1, "Unsubscribed to {0}", channelName(channel));
         }
 	}
 	

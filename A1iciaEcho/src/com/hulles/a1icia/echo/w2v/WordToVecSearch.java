@@ -21,6 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo.w2v;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,8 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.echo.EchoWordToVecException;
-import com.hulles.a1icia.tools.A1iciaTimer;
+import com.hulles.a1icia.api.tools.A1iciaTimer;
 
 /**
  * WordToVecSearch is the class that uses the loaded word2vec BIN file for word matches 
@@ -44,8 +45,8 @@ import com.hulles.a1icia.tools.A1iciaTimer;
  *
  */
 final public class WordToVecSearch {
-	final static Logger logger = Logger.getLogger("A1iciaEcho.WordToVecSearch");
-	final static Level LOGLEVEL = Level.FINE;
+	final static Logger LOGGER = Logger.getLogger("A1iciaEcho.WordToVecSearch");
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static String DISTANCE_FORMAT = "(%.4f)";
 	private Map<String, float[]> wordVectors = null;
 	
@@ -68,10 +69,10 @@ final public class WordToVecSearch {
 		
 		SharedUtils.checkNotNull(fileName);
 		loader = new WordToVecLoader();
-		logger.log(LOGLEVEL, "WordToVecSearch: about to load w2v file");
+		LOGGER.log(LOGLEVEL, "WordToVecSearch: about to load w2v file");
 		loader.load(fileName);
 		wordVectors = loader.getMap();
-		logger.log(LOGLEVEL, "WordToVecSearch: finished loading w2v file");
+		LOGGER.log(LOGLEVEL, "WordToVecSearch: finished loading w2v file");
 	}
 	
 	/**
@@ -95,7 +96,6 @@ final public class WordToVecSearch {
 	 * @param word The word to match
 	 * @param maxNumberOfMatches Self-explanatory
 	 * @return A list of "matching" WordDistances
-	 * @throws EchoWordToVecException
 	 */
 	public static List<WordDistance> getWordMatches(String word, Map<String, float[]> vectorMap, Integer maxNumberOfMatches) {
 		float[] result;
@@ -128,9 +128,9 @@ final public class WordToVecSearch {
 	 * @param word3
 	 * @param maxNumberOfMatches
 	 * @return A list of "matching" WordDistances
-	 * @throws EchoWordToVecException
+	 * @throws A1iciaException
 	 */
-	public static List<WordDistance> getAnalogy(String word1, String word2, String word3, Map<String, float[]> vectorMap, Integer maxNumberOfMatches) throws EchoWordToVecException {
+	public static List<WordDistance> getAnalogy(String word1, String word2, String word3, Map<String, float[]> vectorMap, Integer maxNumberOfMatches) throws A1iciaException {
 		float[] result1;
 		float[] result2;
 		float[] result3;
@@ -147,15 +147,15 @@ final public class WordToVecSearch {
 		A1iciaTimer.startTimer("ANALOGY");
 		result1 = vectorMap.get(word1);
 		if (result1 == null) {
-			throw new EchoWordToVecException(word1);
+			throw new A1iciaException(word1);
 		}
 		result2 = vectorMap.get(word2);
 		if (result2 == null) {
-			throw new EchoWordToVecException(word2);
+			throw new A1iciaException(word2);
 		}
 		result3 = vectorMap.get(word3);
 		if (result3 == null) {
-			throw new EchoWordToVecException(word3);
+			throw new A1iciaException(word3);
 		}
 		ignores = new ArrayList<>(3);
 		ignores.add(word1);
@@ -171,7 +171,7 @@ final public class WordToVecSearch {
 		return matches;
 	}
 
-	public List<WordDistance> getAnalogy(String word1, String word2, String word3, Integer maxNumberOfMatches)  throws EchoWordToVecException {
+	public List<WordDistance> getAnalogy(String word1, String word2, String word3, Integer maxNumberOfMatches)  throws A1iciaException {
 		return getAnalogy(word1, word2, word3, wordVectors, maxNumberOfMatches);
 	}
 	
@@ -182,7 +182,7 @@ final public class WordToVecSearch {
 	 * @return A normalized sum of the words' vectors
 	 */
 	public static float[] getMashUp(List<String> words, Map<String, float[]> vectorMap) {
-		double[] vectorSum = null;
+		double[] vectorSum;
 		float[] result;
 		int vectorSize;
 		
@@ -236,7 +236,6 @@ final public class WordToVecSearch {
 	 * @param thisVector The vector of the word we're matching
 	 * @param maxNumberOfMatches Self-explanatory
 	 * @return A list of "matching" WordDistances
-	 * @throws EchoWordToVecException
 	 */
 	public static List<WordDistance> getVectorMatches(List<String> ignores, float[] thisVector, Map<String, float[]> vectorMap, Integer maxNumberOfMatches) {
 		Set<Entry<String, float[]>> entrySet;
@@ -253,7 +252,7 @@ final public class WordToVecSearch {
 		bestMatches = new ArrayList<>(maxNumberOfMatches);
 		wDistance = new WordDistance("init", 0.0);
 		bestMatches.addAll(Collections.nCopies(maxNumberOfMatches, wDistance));
-		logger.log(LOGLEVEL, "WordToVecSearch: searching entry table");
+		LOGGER.log(LOGLEVEL, "WordToVecSearch: searching entry table");
 		for (Entry<String, float[]> entry : entrySet) {
 			if (ignores.contains(entry.getKey())) {
 				continue;
@@ -266,7 +265,7 @@ final public class WordToVecSearch {
 				leastBestDistance = updateBestMatches(distance, bestMatches, entry.getKey());
 			}
 		}
-		logger.log(LOGLEVEL, "WordToVecSearch: built match table for search");
+		LOGGER.log(LOGLEVEL, "WordToVecSearch: built match table for search");
 		return bestMatches;
 	}
 

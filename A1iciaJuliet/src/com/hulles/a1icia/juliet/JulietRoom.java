@@ -21,13 +21,14 @@
  *******************************************************************************/
 package com.hulles.a1icia.juliet;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -35,7 +36,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Juliet Room works with the nfL6 dataset, a dataset of non-factoid questions and answers (a *lot* of
@@ -98,7 +98,7 @@ public final class JulietRoom extends UrRoom {
 		String result = null;
 		String clientMsg;
 		List<ScratchNfl6Question> questions;
-		JulietAnalysis response = null;
+		JulietAnalysis response;
 		ScratchNfl6Question question;
 		ActionPackage pkg;
 		

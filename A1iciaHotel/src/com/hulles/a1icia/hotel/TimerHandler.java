@@ -32,14 +32,15 @@ import java.util.concurrent.TimeUnit;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogResponse;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.house.ClientDialogResponse;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.document.ClientObjectWrapper;
 
@@ -101,7 +102,7 @@ final class TimerHandler implements Closeable {
 		SharedUtils.checkNotNull(mediaObject);
 		timerID = Long.parseLong(mediaObject.getMessage());
 		for (HotelTimer timer : timerQueue) {
-			if (timer.getTimerID() == timerID) {
+			if (timer.getTimerID().equals(timerID)) {
 				timer.setMediaObject(mediaObject);
 				break;
 			}
@@ -142,7 +143,6 @@ final class TimerHandler implements Closeable {
 		response.setLanguage(Language.AMERICAN_ENGLISH);
 		response.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
 //		response.setPersonUUID(timer.getPersonUUID());
-		
 		response.setToA1icianID(timer.getA1icianID());
 		sememe = SerialSememe.find("wake_up_console");
 		response.setResponseAction(sememe);
@@ -207,8 +207,9 @@ final class TimerHandler implements Closeable {
 			if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
 				pool.shutdownNow(); // Cancel currently executing tasks
 				// Wait a while for tasks to respond to being cancelled
-				if (!pool.awaitTermination(10, TimeUnit.SECONDS))
-					System.err.println("TimerHandler -- executor did not terminate");
+				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+                    System.err.println("TimerHandler -- executor did not terminate");
+                }
 			}
 		} catch (InterruptedException ie) {
 			// (Re-)Cancel if current thread also interrupted
@@ -317,10 +318,12 @@ final class TimerHandler implements Closeable {
 	
 	static long getNewTimerID() {
 		JebusPool jebusPool;
-		
+        String key;
+        
 		jebusPool = JebusHub.getJebusLocal();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusBible.getTimerCounterKey(jebusPool));
+			 key = JebusBible.getStringKey(JebusKey.ALICIATIMERCOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 }

@@ -23,8 +23,8 @@ package com.hulles.a1icia.api.remote;
 
 import java.io.Serializable;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
@@ -105,9 +105,9 @@ public class A1icianID implements Serializable {
 		String a1icianID;
 		String counterKey;
 		
-		jebusPool = JebusApiHub.getJebusCentral();
+		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			counterKey = JebusApiBible.getA1icianCounterKey(jebusPool);
+			counterKey = JebusBible.getStringKey(JebusBible.JebusKey.ALICIANCOUNTERKEY, jebusPool);
 			a1icianID = jebus.incr(counterKey).toString();
 		}
 		return new A1icianID(a1icianID);

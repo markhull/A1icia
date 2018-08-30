@@ -21,6 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.golf;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashSet;
@@ -31,7 +33,7 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -39,7 +41,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
@@ -50,8 +51,8 @@ import com.hulles.a1icia.tools.ExternalAperture;
  *
  */
 public final class GolfRoom extends UrRoom {
-	private final static Logger logger = Logger.getLogger("A1iciaGolf.GolfRoom");
-	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = Logger.getLogger("A1iciaGolf.GolfRoom");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final String FOUNDPHRASE = "Here's what I found: ";
 	private static final String ISA_FORMAT = "'%s' is a %s";
 	private static final String ISAN_FORMAT = "'%s' is an %s";
@@ -86,7 +87,7 @@ public final class GolfRoom extends UrRoom {
 	//  for each claim in entity's claims from previous step, build result
 	//  while building result, look up Q values and whatever the hell else there is
 	private static ActionPackage createWikiActionPackage(SememePackage sememePkg, RoomRequest request) {
-		String searchStr = null;
+		String searchStr;
 		String result = null;
 		List<WikiDataSearchResult> searchResults = null;
 		StringBuilder sb;
@@ -113,12 +114,12 @@ public final class GolfRoom extends UrRoom {
 		} catch (UnsupportedEncodingException e) {
 			throw new A1iciaException("Error encoding query in GolfRoom", e);
 		}
-		logger.log(LOGLEVEL, "Golf escaped target is [" + escapedTarget + "]");
+		LOGGER.log(LOGLEVEL, "Golf escaped target is [{0}]", escapedTarget);
 		searchStr = ExternalAperture.searchWikiData(escapedTarget);
 		if (searchStr != null) {
-			logger.log(LOGLEVEL, "Golf search string is [" + searchStr + "]");
+			LOGGER.log(LOGLEVEL, "Golf search string is [{0}]", searchStr);
 			searchResults = WikiDataParser.parseSearch(searchStr);
-			logger.log(LOGLEVEL, "Golf search results has " + searchResults.size() + " entries");
+			LOGGER.log(LOGLEVEL, "Golf search results has {0} entries", searchResults.size());
 			if (!searchResults.isEmpty()) {
 				firstResult = true;
 				sb = new StringBuilder();

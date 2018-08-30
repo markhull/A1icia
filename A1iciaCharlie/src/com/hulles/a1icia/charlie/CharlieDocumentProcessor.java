@@ -21,12 +21,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaTimer;
 import com.hulles.a1icia.charlie.doccat.CharlieDocCat;
 import com.hulles.a1icia.charlie.ner.CharlieNER;
 import com.hulles.a1icia.charlie.parse.CharlieChunker;
@@ -36,7 +37,6 @@ import com.hulles.a1icia.charlie.pos.CharliePOS;
 import com.hulles.a1icia.room.document.NLPAnalysis;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.SentenceAnalysis;
-import com.hulles.a1icia.tools.A1iciaTimer;
 
 final public class CharlieDocumentProcessor {
 	private final CharlieParser parser;
@@ -79,7 +79,7 @@ final public class CharlieDocumentProcessor {
 		String docCategory;
 		String posDef;
 		List<SentenceAnalysis> sentenceAnalyses;
-		SentenceAnalysis sentenceAnalysis = null;
+		SentenceAnalysis sentenceAnalysis;
 		List<String> defs;
 		
 		SharedUtils.checkNotNull(request);

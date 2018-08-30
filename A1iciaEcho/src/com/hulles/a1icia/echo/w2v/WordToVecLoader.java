@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo.w2v;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,11 +36,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.echo.EchoWordToVecException;
-import com.hulles.a1icia.tools.A1iciaTimer;
+import com.hulles.a1icia.api.tools.A1iciaTimer;
 
 final class WordToVecLoader {
-	final static Logger logger = Logger.getLogger("A1iciaEcho.WordToVecLoader");
+	final static Logger LOGGER = Logger.getLogger("A1iciaEcho.WordToVecLoader");
 	private final static Level LOGLEVEL1 = Level.FINE;
 	private final static Level LOGLEVEL2 = Level.INFO;
 	private final static String DUMPVALUE = "%.8f";
@@ -65,7 +65,7 @@ final class WordToVecLoader {
 	}
 	
 	/**
-	 * Return the vector size, obtained from the file that has aleady been loaded
+	 * Return the vector size, obtained from the file that has already been loaded
 	 * @return
 	 */
 	Integer getVectorSize() {
@@ -95,13 +95,11 @@ final class WordToVecLoader {
 		try {
 			fileStream = new FileInputStream(fileName);
 		} catch (SecurityException e) {
-			e.printStackTrace();
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Unable to open file (security exception)");
+			throw new A1iciaException("Unable to open file (security exception)", e);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Unable to open file (file not found exception)");
+			throw new A1iciaException("Unable to open file (file not found exception)", e);
 		}
 		
 		// get an nio file channel
@@ -109,9 +107,8 @@ final class WordToVecLoader {
 		try {
 			fileSize = channel.size();
 		} catch (IOException e) {
-			e.printStackTrace();
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Unable to get file size");
+			throw new A1iciaException("Unable to get file size", e);
 		}
 		
 		// allocate a (probably large) buffer in direct memory (i.e. not on the heap)
@@ -122,16 +119,15 @@ final class WordToVecLoader {
 		try {
 			channel.read(buffer);
 		} catch (IOException e) {
-			e.printStackTrace();
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Error reading file");
+			throw new A1iciaException("Error reading file", e);
 		}
 		buffer.rewind();
 		// read first line to get vocabulary size and layer size
 		getFirstLine(buffer);
 		if (!(vocabSize > 0) || !(vectorSize > 0)) {
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Invalid vocab size and/or vector size");
+			throw new A1iciaException("Invalid vocab size and/or vector size");
 		}
 		
 		// load it!
@@ -198,7 +194,8 @@ final class WordToVecLoader {
 		// we use a LinkedHashMap to get decent performance from sequential access
 		wordVectors = new LinkedHashMap<>(vocabSize);
 		dupeCount = 0;
-		logger.log(LOGLEVEL2, "Loading map for " + vocabSize + " word vectors, dimension " + vectorSize);
+		LOGGER.log(LOGLEVEL2, "Loading map for {0} word vectors, dimension {1}", 
+                new Object[]{vocabSize, vectorSize});
 		
 		// we already know the number of words from reading the first line
 		// we use the convenience of nio buffer.mark and buffer.reset to make sure that we don't split 
@@ -236,7 +233,7 @@ final class WordToVecLoader {
 			}
 		}
 		closeResources(fileStream, channel);
-		logger.log(LOGLEVEL2, "Loaded map with " + dupeCount + " duplicates ignored");
+		LOGGER.log(LOGLEVEL2, "Loaded map with {0} duplicates ignored", dupeCount);
 	}
 	
 	/**
@@ -265,22 +262,21 @@ final class WordToVecLoader {
 		SharedUtils.checkNotNull(channel);
 		SharedUtils.checkNotNull(buffer);
 		buffer.reset();
-		logger.log(LOGLEVEL1, "WordToVecLoader: refilling");
-		logger.log(LOGLEVEL1, "WordToVecLoader: channelStart = " + channelStart);
+		LOGGER.log(LOGLEVEL1, "WordToVecLoader: refilling");
+		LOGGER.log(LOGLEVEL1, "WordToVecLoader: channelStart = {0}", channelStart);
 		channelStart = channelStart + buffer.position();
-		logger.log(LOGLEVEL1, "WordToVecLoader: buffer position = " + buffer.position());
-		logger.log(LOGLEVEL1, "WordToVecLoader: new channelStart = " + channelStart);
+		LOGGER.log(LOGLEVEL1, "WordToVecLoader: buffer position = {0}", buffer.position());
+		LOGGER.log(LOGLEVEL1, "WordToVecLoader: new channelStart = {0}", channelStart);
 		try {
 			buffer.clear();
 			channel.position(channelStart);
 			bytes = channel.read(buffer);
 			buffer.rewind();
-			logger.log(LOGLEVEL1, "WordToVecLoader: after read, bytes read = " + bytes);
-			logger.log(LOGLEVEL2, "WordToVecLoader: after read, channel position = " + channel.position());
+			LOGGER.log(LOGLEVEL1, "WordToVecLoader: after read, bytes read = {0}", bytes);
+			LOGGER.log(LOGLEVEL2, "WordToVecLoader: after read, channel position = {0}", channel.position());
 		} catch (IOException e) {
-			e.printStackTrace();
 			closeResources(fileStream, channel);
-			throw new EchoWordToVecException("Error refilling file");
+			throw new A1iciaException("Error refilling file", e);
 		}
 	}
 	
@@ -370,16 +366,14 @@ final class WordToVecLoader {
 			try {
 				channel.close();
 			} catch (IOException e) {
-				System.err.println("Error closing channel");
-				e.printStackTrace();
+				throw new A1iciaException("Error closing channel", e);
 			}
 		}
 		if (stream != null) {
 			try {
 				stream.close();
 			} catch (IOException e) {
-				System.err.println("Error closing file stream");
-				e.printStackTrace();
+				throw new A1iciaException("Error closing file stream");
 			}
 		}
 	}

@@ -32,10 +32,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 
 import opennlp.tools.doccat.DoccatFactory;
 import opennlp.tools.doccat.DoccatModel;
@@ -80,7 +80,7 @@ final public class CharlieDocCat {
 		outcomes = categorizer.categorize(tokenizedInput);
 		bestCategory = categorizer.getBestCategory(outcomes);
 		LOGGER.log(LOGLEVEL, "DocCat Results:");
-		LOGGER.log(LOGLEVEL, "Best category: " + bestCategory);
+		LOGGER.log(LOGLEVEL, "Best category: {0}", bestCategory);
 		LOGGER.log(LOGLEVEL, categorizer.getAllResults(outcomes));
 		// can also do categorizer.getScoreMap and/or categorizer.getSortedScoreMap
 		return bestCategory;

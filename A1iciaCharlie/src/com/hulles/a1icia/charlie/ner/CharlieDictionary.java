@@ -21,10 +21,10 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.ner;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.OwmCity;
 import com.hulles.a1icia.cayenne.Person;
 

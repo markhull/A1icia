@@ -35,9 +35,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaTimer;
+import com.hulles.a1icia.api.tools.A1iciaTimer;
+import java.io.IOException;
 
 /**
  * Class that scans ip local network. Any address in the range 192.168.xxx.xxx is
@@ -90,7 +91,7 @@ public final class LanScanner {
 		} else {
 			throw new A1iciaException();
 		}
-		LOGGER.log(LOGLEVEL, "Scan being performed on submask : " + submask);
+		LOGGER.log(LOGLEVEL, "Scan being performed on submask : {0}", submask);
 	}
 
 	/**
@@ -115,6 +116,7 @@ public final class LanScanner {
 
 		try {
 			for (final Future<ScanResult> f : futures) {
+                // future.get() blocks until the result is ready
 				scanResult = f.get();
 				if (scanResult.isOpen()) {
 					this.liveHosts.add(scanResult.getEntity());
@@ -141,7 +143,7 @@ public final class LanScanner {
 						liveHosts.add(ipScanned);
 						isOpen = true;
 					}
-				} catch (Exception e) {
+				} catch (IOException e) {
 					throw new A1iciaException("LanScanner: error scanning host " + ipScanned, e);
 				}
 				return new ScanResult(ipScanned, isOpen);
@@ -175,7 +177,7 @@ public final class LanScanner {
 		A1iciaTimer.stopTimer(ip);
 		
 		for (String host : upHosts) {
-			LOGGER.log(LOGLEVEL, "Host " + host + " is up");
+			LOGGER.log(LOGLEVEL, "Host {0} is up", host);
 		}
 		return upHosts;
 	}
@@ -184,16 +186,16 @@ public final class LanScanner {
 		private final String host;
 		private final boolean isOpen;
 
-		public ScanResult(String host, boolean isOpen) {
+		ScanResult(String host, boolean isOpen) {
 			this.host = host;
 			this.isOpen = isOpen;
 		}
 
-		public String getEntity() {
+		String getEntity() {
 			return host;
 		}
 
-		public boolean isOpen() {
+		boolean isOpen() {
 			return isOpen;
 		}
 	}

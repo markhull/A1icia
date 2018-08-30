@@ -41,6 +41,13 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
+import com.hulles.a1icia.media.Language;
+import java.io.UnsupportedEncodingException;
+import java.net.ProtocolException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * ExternalAperture is where ALL external access in A1icia occurs, except for A1iciaGoogleTranslate,
@@ -56,7 +63,7 @@ final public class ExternalAperture {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.ExternalAperture");
 	@SuppressWarnings("unused")
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	
+    
 	private ExternalAperture() {
 	}
 	
@@ -90,6 +97,31 @@ final public class ExternalAperture {
 		}
 	}
 
+    public static String getGoogleTranslation(Language from, Language to, String textToTranslate, String format, String key) {
+//        String urlTemplate = "https://translation.googleapis.com/language/translate/v2?source=%s&target=%s&q=%s&format=%s&key=%s";
+        String urlTemplate;
+        String urlString;
+        String encodedText;
+        ApplicationKeys appKeys;
+        
+        SharedUtils.checkNotNull(from);
+        SharedUtils.checkNotNull(to);
+        SharedUtils.checkNotNull(textToTranslate);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.GOOGLEXLATE);       
+//        xkey = "AIzaSyCsD4HkuRu7Gb1lvVUrQOYQM5Ejw4GggLk";
+        try {
+            encodedText = URLEncoder.encode(textToTranslate, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            A1iciaUtils.error("ExternalAperture: can't encode url = " + textToTranslate, ex);
+            return null;
+        }
+        urlString = String.format(urlTemplate, from.getGoogleName(), to.getGoogleName(), 
+                encodedText, format, key);
+		return getURLStringResult(urlString);
+    }
+    
+    
 	/**
 	 * Get the current temperature and humidity from an ESP8266 mini-server as a string.
 	 * 
@@ -335,7 +367,7 @@ final public class ExternalAperture {
 	/**
 	 * Query Mozilla DeepSpeech server.
 	 * 
-	 * @param query
+	 * @param audio The audio byte array
 	 * @return
 	 */
 	public static String queryDeepSpeech(byte[] audio) {
@@ -349,9 +381,27 @@ final public class ExternalAperture {
 	}
 
 	/**
+	 * Query Tika server for file metadata.
+	 * 
+	 * @param filePath The path of the file about which we want information
+	 * @return The information
+	 */
+	public static String queryTika(Path filePath) {
+		String urlString;
+        String urlTemplate;
+		ApplicationKeys appKeys;
+		
+		SharedUtils.checkNotNull(filePath);
+		appKeys = ApplicationKeys.getInstance();
+		urlTemplate = appKeys.getKey(ApplicationKey.TIKA);
+        urlString = String.format(urlTemplate, "meta");
+		return putURLStringResult(urlString, filePath);
+	}
+
+	/**
 	 * This is a test query for A1icia Node. TODO move to JUnit.
 	 * 
-	 * @param query
+	 * @param query The test query
 	 * @return
 	 */
 	public static String postTestQueryToA1iciaNode(String query) {
@@ -373,7 +423,7 @@ final public class ExternalAperture {
 		URL url;
 		URLConnection conn;
 		StringBuilder sb;
-		String line = null;
+		String line;
 	    
 		SharedUtils.checkNotNull(urlString);
 	    SharedUtils.checkNotNull(query);
@@ -382,7 +432,6 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
 					", query: " + query + ", content type: " + contentType, ex);
 			return null;
@@ -390,7 +439,6 @@ final public class ExternalAperture {
 		try {
 			conn = url.openConnection();			
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
 					", query: " + query + ", content type: " + contentType, ex);
 			return null;
@@ -404,7 +452,6 @@ final public class ExternalAperture {
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
 					", query: " + query + ", content type: " + contentType, ex);
 			return null;
@@ -416,7 +463,6 @@ final public class ExternalAperture {
 				out.flush();
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
 					", query: " + query + ", content type: " + contentType, ex);
 			return null;
@@ -432,14 +478,12 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						ex.printStackTrace();
 						A1iciaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
 								", query: " + query + ", content type: " + contentType, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
 					", query: " + query + ", content type: " + contentType, ex);
 			return null;
@@ -461,7 +505,7 @@ final public class ExternalAperture {
 		URL url;
 		URLConnection conn;
 		StringBuilder sb;
-		String line = null;
+		String line;
 	    
 		SharedUtils.checkNotNull(urlString);
 	    SharedUtils.checkNotNull(bytes);
@@ -470,7 +514,6 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
 					", content type: " + contentType, ex);
 			return null;
@@ -478,7 +521,6 @@ final public class ExternalAperture {
 		try {
 			conn = url.openConnection();			
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
 					", content type: " + contentType, ex);
 			return null;
@@ -491,7 +533,6 @@ final public class ExternalAperture {
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
 					", content type: " + contentType, ex);
 			return null;
@@ -501,7 +542,6 @@ final public class ExternalAperture {
 			outStream.write(bytes);
 			outStream.flush();
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
 					", content type: " + contentType, ex);
 			return null;
@@ -517,16 +557,100 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						ex.printStackTrace();
 						A1iciaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
 								", content type: " + contentType, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
 					", content type: " + contentType, ex);
+			return null;
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * This is a helper function that returns a String result from an HTTP POST.
+	 * It accepts a byte array (audio e.g.) as input.
+	 * @see postURLStringResult(String, String, String)
+	 * 
+	 * @param urlString The string URL
+	 * @param query The query to post
+	 * @param contentType The content type, for the POST parameter; "plain/text" e.g.
+	 * @return The result
+	 */
+	private static String putURLStringResult(String urlString, Path path) {
+		URL url;
+		HttpURLConnection conn;
+		StringBuilder sb;
+		String line;
+	    
+		SharedUtils.checkNotNull(urlString);
+	    SharedUtils.checkNotNull(path);
+		sb = new StringBuilder();
+		try {
+			url = new URL(urlString);
+		} catch (MalformedURLException ex) {
+			A1iciaUtils.error("Bad URL in putURLStringResult\nURL string: " + urlString, ex);
+			return null;
+		}
+		try {
+			conn = (HttpURLConnection) url.openConnection();			
+		} catch (IOException ex) {
+			A1iciaUtils.error("I/O Exception opening connection in putURLStringResult\nURL string: " + 
+                    urlString, ex);
+			return null;
+		}
+		
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+ 		conn.setRequestProperty("Accept", "application/json");
+        try {
+            conn.setRequestMethod("PUT");
+        } catch (ProtocolException ex) {
+			A1iciaUtils.error("Protocol Exception with connection in putURLStringResult\nURL string: " + 
+                    urlString, ex);
+			return null;
+        }
+		try {
+			conn.connect();
+		} catch (IOException ex) {
+			A1iciaUtils.error("I/O Exception connecting connection in putURLStringResult\nURL string: " + 
+                    urlString, ex);
+			return null;
+		}
+		
+		try (OutputStream outStream = conn.getOutputStream()) {
+            Files.copy(path, outStream);
+			outStream.flush();
+		} catch (IOException ex) {
+			A1iciaUtils.error("I/O Exception writing output stream in putURLStringResult\nURL string: " + 
+                    urlString, ex);
+			return null;
+		}
+			  
+		try (InputStream inStream = conn.getInputStream()) { 
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(inStream))) {
+				while (true) {
+					try {
+						line = in.readLine();
+						if (line == null) {
+							break;
+						}
+						sb.append(line);
+                        sb.append("\n");
+					} catch (IOException ex) {
+						A1iciaUtils.error("I/O Exception reading input stream in putURLStringResult\nURL string: " + 
+                                urlString, ex);
+					}
+				}
+			}
+		} catch (IOException ex) {
+			A1iciaUtils.error("I/O Exception creating input stream in putURLStringResult\nURL string: " + 
+                    urlString, ex);
+            ex.printStackTrace();
+            
 			return null;
 		}
 		return sb.toString();
@@ -542,15 +666,14 @@ final public class ExternalAperture {
 	private static String getURLStringResult(String query) {
 		URL url;
 		StringBuilder sb;
-		String line = null;
+		String line;
 	    
 	    SharedUtils.checkNotNull(query);
 		sb = new StringBuilder();
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
-			A1iciaUtils.error("Bad URL in postURLStringResult\nquery: " + query, ex);
+			A1iciaUtils.error("Bad URL in getURLStringResult\nquery: " + query, ex);
 			return null;
 		}
 		try (InputStream inStream = url.openStream()) { 
@@ -563,13 +686,11 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						ex.printStackTrace();
 						A1iciaUtils.error("I/O Exception reading input stream in getURLStringResult\nquery: " + query, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception creating input stream in getURLStringResult\nquery: " + query, ex);
 			return null;
 		}
@@ -592,14 +713,12 @@ final public class ExternalAperture {
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("Bad URL in getURLImageResult\nquery: " + query, ex);
 			return null;
 		}
 		try {
 			image = ImageIO.read(url);
 		} catch (IOException ex) {
-			ex.printStackTrace();
 			A1iciaUtils.error("I/O Exception reading input stream in getURLImageResult\nquery: " + query, ex);
 			return null;
 		}

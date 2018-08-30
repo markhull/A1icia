@@ -35,9 +35,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.io.MoreFiles;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 public final class FoxtrotUtils {
 	private static final int RUNCOMMANDLEN = 50 * 1024;
@@ -54,8 +54,7 @@ public final class FoxtrotUtils {
 		try {
 			out = MoreFiles.asCharSource(filePath, StandardCharsets.UTF_8).read();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("IOException reading file " + fileName);
+			throw new A1iciaException("IOException reading file " + fileName, e);
 		}
 		return out;
 	}
@@ -73,8 +72,7 @@ public final class FoxtrotUtils {
 //			results = Files.readAllLines(filePath);
 			results = MoreFiles.asCharSource(filePath, StandardCharsets.UTF_8).readLines();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("IOException reading file " + fileName);
+			throw new A1iciaException("IOException reading file " + fileName, e);
 		}
 		return results;
 	}
@@ -107,20 +105,17 @@ public final class FoxtrotUtils {
 		try {
 			proc = builder.start();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't start statCommand process");
+			throw new A1iciaException("Can't start statCommand process", e);
 		}
 		try {
 			proc.waitFor();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new A1iciaException("statCommand interrupted");
+			throw new A1iciaException("statCommand interrupted", e);
 		}
 		try {
 			retVal = proc.exitValue();
 		} catch (IllegalThreadStateException e) {
-			e.printStackTrace();
-			throw new A1iciaException("statCommand not terminated when queried");
+			throw new A1iciaException("statCommand not terminated when queried", e);
 		}
 		return retVal;
 	}
@@ -144,8 +139,7 @@ public final class FoxtrotUtils {
 		try {
 			proc = builder.start();
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't start runCommand process: lm-sensors installed?");
+			throw new A1iciaException("Can't start runCommand process: lm-sensors installed?", e);
 		}
 		try (BufferedReader inStream = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
 			stdOut = new StringBuilder(RUNCOMMANDLEN);
@@ -155,12 +149,10 @@ public final class FoxtrotUtils {
 					stdOut.append(charBuffer, 0, bufLen);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-				throw new A1iciaException("Can't read runCommand stream");
+				throw new A1iciaException("Can't read runCommand stream", e);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't close runCommand stdout stream");
+			throw new A1iciaException("Can't close runCommand stdout stream", e);
 		}
 		
 		try (BufferedReader errStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()))) {
@@ -171,12 +163,10 @@ public final class FoxtrotUtils {
 					stdErr.append(charBuffer, 0, bufLen);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-				throw new A1iciaException("Can't read stderr");
+				throw new A1iciaException("Can't read stderr", e);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't close runCommand stderr stream");
+			throw new A1iciaException("Can't close runCommand stderr stream", e);
 		}
 		if (stdErr.length() > 0) {
 			A1iciaUtils.error("runCommand produced stderr stream, as follows:", stdErr.toString());

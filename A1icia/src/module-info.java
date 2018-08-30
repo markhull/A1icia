@@ -8,10 +8,8 @@
  */
 module com.hulles.a1icia {
 	exports com.hulles.a1icia;
-	exports com.hulles.a1icia.jebus;
 	exports com.hulles.a1icia.ticket;
 	exports com.hulles.a1icia.room;
-	exports com.hulles.a1icia.base;
 	exports com.hulles.a1icia.room.document;
 	exports com.hulles.a1icia.tools;
 	exports com.hulles.a1icia.house;
@@ -30,6 +28,7 @@ module com.hulles.a1icia {
     requires cayenne.client;
     requires cayenne.di;
     requires cayenne.server;
+    requires javax.json;
     	
 	uses com.hulles.a1icia.room.UrRoom;
 }

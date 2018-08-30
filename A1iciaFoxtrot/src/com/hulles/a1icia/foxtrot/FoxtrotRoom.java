@@ -21,12 +21,12 @@
  *******************************************************************************/
 package com.hulles.a1icia.foxtrot;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.crypto.PurdahKeys;
 import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState;

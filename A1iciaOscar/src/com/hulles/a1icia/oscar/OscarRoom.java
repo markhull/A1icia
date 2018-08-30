@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.hulles.a1icia.api.object.ChangeLanguageObject;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -95,6 +95,7 @@ public final class OscarRoom extends UrRoom {
 			case "pronounce_hulles":
 			case "like_gophers":
 			case "not_dave":
+            case "i_fink_u_freeky":
 				return createConstantsActionPackage(sememePkg, request);
 			default:
 				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
@@ -156,6 +157,7 @@ public final class OscarRoom extends UrRoom {
 		sememes.add(SerialSememe.find("change_language"));
 		sememes.add(SerialSememe.find("like_gophers"));
 		sememes.add(SerialSememe.find("not_dave"));
+        sememes.add(SerialSememe.find("i_fink_u_freeky"));
 		return sememes;
 	}
 

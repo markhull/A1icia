@@ -68,14 +68,14 @@ public class MediaFile extends _MediaFile {
 		context = A1iciaApplication.getEntityContext();
 		dbMediaFiles = ObjectSelect
 				.query(MediaFile.class)
-				.orderBy("artist")
-				.orderBy("title")
+//				.orderBy("artist")
+//				.orderBy("title")
 				.select(context);
 		return dbMediaFiles;
     }
     public static List<MediaFile> getMediaFiles(String artist) {
 		ObjectContext context;
-		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> dbMediaFiles;
 		
 		SharedUtils.checkNotNull(artist);
 		context = A1iciaApplication.getEntityContext();
@@ -87,7 +87,7 @@ public class MediaFile extends _MediaFile {
     }
     public static List<MediaFile> getMediaFiles(MediaFormat format) {
 		ObjectContext context;
-		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> dbMediaFiles;
 		
 		SharedUtils.checkNotNull(format);
 		context = A1iciaApplication.getEntityContext();
@@ -100,7 +100,7 @@ public class MediaFile extends _MediaFile {
     
     public static List<MediaFile> getAudioFiles() {
 		ObjectContext context;
-		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> dbMediaFiles;
 		List<MediaFile> mediaFiles;
 		MediaFormat format;
 		
@@ -120,7 +120,7 @@ public class MediaFile extends _MediaFile {
     
     public static List<MediaFile> getVideoFiles() {
 		ObjectContext context;
-		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> dbMediaFiles;
 		List<MediaFile> mediaFiles;
 		MediaFormat format;
 		
@@ -140,7 +140,7 @@ public class MediaFile extends _MediaFile {
     
     public static List<MediaFile> getImageFiles() {
 		ObjectContext context;
-		List<MediaFile> dbMediaFiles = null;
+		List<MediaFile> dbMediaFiles;
 		List<MediaFile> mediaFiles;
 		MediaFormat format;
 		
@@ -160,7 +160,7 @@ public class MediaFile extends _MediaFile {
     
     public static MediaFile getMediaFile(String title) {
 		ObjectContext context;
-		MediaFile dbMediaFile = null;
+		MediaFile dbMediaFile;
 		
 		SharedUtils.checkNotNull(title);
 		context = A1iciaApplication.getEntityContext();

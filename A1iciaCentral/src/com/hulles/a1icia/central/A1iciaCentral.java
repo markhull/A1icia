@@ -25,8 +25,8 @@ package com.hulles.a1icia.central;
 import java.io.IOException;
 
 import com.hulles.a1icia.A1icia;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.alpha.AlphaRoom;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.bravo.BravoRoom;
 import com.hulles.a1icia.charlie.CharlieRoom;
 import com.hulles.a1icia.delta.DeltaRoom;

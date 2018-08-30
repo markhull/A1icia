@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.kilo;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -39,7 +40,7 @@ public class KiloLocation {
 		PurdahKeys purdahKeys;
 		String locationJSON;
 		JsonObject locObj;
-		KiloLocationAction action = null;
+		KiloLocationAction action;
 		String locStr;
 		String[] locs;
 		Float lat;
@@ -66,8 +67,7 @@ public class KiloLocation {
 				action.setPostalCode(locObj.getString("postal"));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            throw new A1iciaException("KiloLocation: IO error attempting string read", e);
 		}
 		return action;
 	}

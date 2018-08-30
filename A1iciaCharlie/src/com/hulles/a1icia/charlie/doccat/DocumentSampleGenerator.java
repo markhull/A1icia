@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.doccat;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +33,6 @@ import java.util.List;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.charlie.parse.CharlieParser;
 
 import opennlp.tools.doccat.DocumentSample;

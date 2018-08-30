@@ -34,7 +34,7 @@ final public class SerialPerson extends SerialEntity {
 	private String mobile;
 	private String fullNameLF; // lastname, firstname
 	private String fullNameFL; // firstname lastname
-	private LocaleEnum locale;
+	private Locale locale;
 	private Date dob;
 	private String dobString;
 	private Integer ageInYears;
@@ -275,12 +275,12 @@ final public class SerialPerson extends SerialEntity {
 		this.mobile = mobile;
 	}
 
-	public LocaleEnum getLocale() {
+	public Locale getLocale() {
 		
 		return locale;
 	}
 
-	public void setLocale(LocaleEnum locale) {
+	public void setLocale(Locale locale) {
 		
 		SharedUtils.checkNotNull(locale);
 		this.locale = locale;

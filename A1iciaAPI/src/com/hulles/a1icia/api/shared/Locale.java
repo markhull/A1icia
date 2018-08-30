@@ -26,12 +26,12 @@ package com.hulles.a1icia.api.shared;
  *
  * @author hulles
  */
-public enum LocaleEnum {
+public enum Locale {
     ENGLISH("en"),
     SPANISH("es");
     private final String storeName;
 
-    private LocaleEnum(String storeName) {
+    private Locale(String storeName) {
     	
         this.storeName = storeName;
      }
@@ -41,7 +41,7 @@ public enum LocaleEnum {
         return storeName;
     }
     
-    public static LocaleEnum findLocale(String name) {
+    public static Locale findLocale(String name) {
     	
 		SharedUtils.checkNotNull(name);
         if (ENGLISH.storeName.equals(name)) {

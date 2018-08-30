@@ -34,9 +34,10 @@ import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.media.Language;
@@ -56,7 +57,6 @@ import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 public class OvermindRoom extends UrRoom {
 	final static Logger LOGGER = Logger.getLogger("A1iciaOvermind.OvermindRoom");
@@ -129,7 +129,7 @@ public class OvermindRoom extends UrRoom {
 			LOGGER.log(LOGLEVEL, "Overmind: got client sememe(s), bypassing analysis");
 			sememePackages = new ArrayList<>();
 			for (SerialSememe s : clientSememes) {
-				LOGGER.log(LOGLEVEL, "Client SerialSememe: " + s.getName());
+				LOGGER.log(LOGLEVEL, "Client SerialSememe: {0}", s.getName());
 				newSememePackage = SememePackage.getDefaultPackage(s);
 				if (!newSememePackage.isValid()) {
 					throw new A1iciaException("Overmind: created invalid sememe package 1");
@@ -236,11 +236,12 @@ public class OvermindRoom extends UrRoom {
 			return;
 		}
 		
-		LOGGER.log(LOGLEVEL, "Overmind: checking packages after analyses, packageBag empty? " + packageBag.isEmpty());
+		LOGGER.log(LOGLEVEL, "Overmind: checking packages after analyses, packageBag empty? {0}", 
+                packageBag.isEmpty());
 		if (!packageBag.isEmpty()) {
 			LOGGER.log(LOGLEVEL, "Overmind: advancing to processRoomActions with packages:");
 			for (ActionPackage p : packageBag) {
-				LOGGER.log(LOGLEVEL, "Package: " + p.getSememe().getName());
+				LOGGER.log(LOGLEVEL, "Package: {0}", p.getSememe().getName());
 			}
 			processRoomActions(uberTicket, packageBag);
 		}
@@ -328,8 +329,6 @@ public class OvermindRoom extends UrRoom {
 				messageSb.append(".\n");
 				explanationSb.append("\n\n");
 			}
-			msg = null;
-			expl = null;
 			pkgs = ActionPackage.hasActions(sememe, packageBag);
 			if (pkgs.isEmpty()) {
 				A1iciaUtils.error("Unhandled sememe in Overmind.determineClientAction = " +
@@ -346,7 +345,7 @@ public class OvermindRoom extends UrRoom {
                     if (action instanceof ClientObjectWrapper) {
                         objectWrapper = (ClientObjectWrapper) action;
                         obj = objectWrapper.getClientObject();
-    					LOGGER.log(LOGLEVEL, "Overmind: using wrapped object for " + pkg);
+    					LOGGER.log(LOGLEVEL, "Overmind: using wrapped object for {0}", pkg);
                     }
 				}
 				if (action instanceof A1icianAction) {
@@ -354,7 +353,7 @@ public class OvermindRoom extends UrRoom {
 					remoteObject = (A1icianAction) action;
 					clientSememe = remoteObject.getClientAction();
 					overrideA1icianID = remoteObject.getToA1icianID();
-					LOGGER.log(LOGLEVEL, "Overmind: overrideA1icianID = " + overrideA1icianID);
+					LOGGER.log(LOGLEVEL, "Overmind: overrideA1icianID = {0}", overrideA1icianID);
 				}
 				journal.addActionPackage(pkg);
 			}
@@ -375,7 +374,8 @@ public class OvermindRoom extends UrRoom {
 		if (overrideA1icianID == null) {
 			response.setToA1icianID(ticket.getFromA1icianID());
 		} else {
-			LOGGER.log(LOGLEVEL, "Overmind: overriding ToA1icianID, overrideA1icianID = " + overrideA1icianID);
+			LOGGER.log(LOGLEVEL, "Overmind: overriding ToA1icianID, overrideA1icianID = {0}", 
+                    overrideA1icianID);
 			response.setToA1icianID(overrideA1icianID);
 		}
 		response.setMessage(messageSb.toString());

@@ -21,17 +21,18 @@
  *******************************************************************************/
 package com.hulles.a1icia.ticket;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Sememe;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 
 import redis.clients.jedis.Jedis;
 
@@ -126,7 +127,7 @@ public class SememePackage {
 	 * Return the sememe package with the named sememe if it's in the list, null otherwise.
 	 * 
 	 * @param name The sememe name
-	 * @param sememes The list of sememe packages that possibly contains the named sememe
+	 * @param sememePackages The list of sememe packages that possibly contains the named sememe
 	 * @return The package with the named sememe, or null if not a member of the list
 	 */
 	public static SememePackage has(String name, List<SememePackage> sememePackages) {
@@ -146,7 +147,7 @@ public class SememePackage {
 	 * return null.
 	 * 
 	 * @param name The sememe name
-	 * @param sememes The list of sememes that possibly contains the named sememe
+	 * @param sememePackages The list of sememes that possibly contains the named sememe
 	 * @return The named sememe, or null if not a member of the list
 	 */
 	public static SememePackage consume(String name, List<SememePackage> sememePackages) {
@@ -170,7 +171,7 @@ public class SememePackage {
 	 * set should be empty after its removal.
 	 * 
 	 * @param name The sememe name
-	 * @param sememes The list of sememes that possibly contains the named sememe
+	 * @param sememePackages The list of sememes that possibly contains the named sememe
 	 * @return The named sememe, or null if not a member of the list
 	 */
 	public static SememePackage consumeFinal(String name, List<SememePackage> sememePackages) {
@@ -195,10 +196,12 @@ public class SememePackage {
 	
 	private static long getNewSememePackageID() {
 		JebusPool jebusPool;
-		
+        String key;
+        
 		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusBible.getA1iciaSememeCounterKey(jebusPool));
+			key = JebusBible.getStringKey(JebusKey.ALICIASEMEMECOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 

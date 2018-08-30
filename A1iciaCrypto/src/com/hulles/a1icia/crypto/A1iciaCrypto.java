@@ -31,10 +31,11 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.Serialization;
@@ -92,7 +93,7 @@ public class A1iciaCrypto {
 		boolean password_verified;
 
 		if (null == stored_hash || !stored_hash.startsWith("$2a$")) {
-			throw new A1iciaAPIException("Invalid hash provided for comparison in A1iciaCrypto.checkPassword()");
+			throw new A1iciaException("Invalid hash provided for comparison in A1iciaCrypto.checkPassword()");
 		}
 		password_verified = BCrypt.checkpw(passwordPlaintext, stored_hash);
 		return(password_verified);
@@ -126,8 +127,8 @@ public class A1iciaCrypto {
 	    byte[] aesKey;
 	    byte[] aesBytes;
 	    
-    	jebusPool = JebusApiHub.getJebusCentral();
-    	aesKey = JebusApiBible.getA1iciaAESKey(jebusPool).getBytes();
+    	jebusPool = JebusHub.getJebusCentral();
+    	aesKey = JebusBible.getBytesKey(JebusKey.ALICIAAESKEY, jebusPool);
     	try (Jedis jebus = jebusPool.getResource()) {
     		aesBytes = jebus.get(aesKey);
     		if (aesBytes != null) {
@@ -173,8 +174,8 @@ public class A1iciaCrypto {
 	    byte[] aesKey;
 	    byte[] aesBytes;
 	    
-    	jebusPool = JebusApiHub.getJebusCentral();
-    	aesKey = JebusApiBible.getA1iciaAESKey(jebusPool).getBytes();
+    	jebusPool = JebusHub.getJebusCentral();
+   	aesKey = JebusBible.getBytesKey(JebusKey.ALICIAAESKEY, jebusPool);
 	    aesBytes = Serialization.serialize(key);
     	try (Jedis jebus = jebusPool.getResource()) {
     	    jebus.set(aesKey, aesBytes);
@@ -282,7 +283,7 @@ public class A1iciaCrypto {
 		try {
 			bytes = Files.readAllBytes(infile);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("Can't create byte array from file", e);
+			throw new A1iciaException("Can't create byte array from file", e);
 		}
 		return bytes;
 	}
@@ -300,7 +301,7 @@ public class A1iciaCrypto {
 		try {
 			Files.write(infile, bytes);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("Can't create file from byte array", e);
+			throw new A1iciaException("Can't create file from byte array", e);
 		}
 	}
 }

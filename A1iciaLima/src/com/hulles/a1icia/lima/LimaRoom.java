@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.lima;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +31,6 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.AnswerHistory;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -97,7 +97,7 @@ public final class LimaRoom extends UrRoom {
 		for (SentencePackage sentencePackage : sentencePackages) {
 			
 			historyList = limaHistory.getMatchingHistory(sentencePackage);
-			LOGGER.log(LOGLEVEL, "LimaRoom: got " + historyList.size() + " results from LimaHistory");
+			LOGGER.log(LOGLEVEL, "LimaRoom: got {0} results from LimaHistory", historyList.size());
 			
 			if (!historyList.isEmpty()) {
 				// for now we just look at the first one (they've been sorted best to worst)
@@ -123,7 +123,7 @@ public final class LimaRoom extends UrRoom {
 		}
 		sememeAnalysis.setSememePackages(sememePackages);
 		pkg.setActionObject(sememeAnalysis);
-		LOGGER.log(LOGLEVEL, "LimaRoom: returning " + sememePackages.size() + " sememe packages");
+		LOGGER.log(LOGLEVEL, "LimaRoom: returning {0} sememe packages", sememePackages.size());
 		return pkg;
 	}
 

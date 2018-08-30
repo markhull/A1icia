@@ -32,7 +32,7 @@ import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.Station;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
@@ -79,7 +79,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				javaConsole = null;
 				break;
 			default:
-				throw new A1iciaAPIException("Invalid console type");
+				throw new A1iciaException("Invalid console type");
 		}
 		System.out.println("Welcome to " + getConsoleName() + ".");
 		System.out.println("This station connects to A1icia Central at " + host + 
@@ -203,9 +203,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 	@Override
 	public void receiveText(String text) {
 
-		if (!remote.useTTS()) {
-			System.out.println("A1icia: " + text);
-		}
+        System.out.println("A1icia: " + text);
 	}
 
 	private void showHelp() {

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 final public class FoxtrotPhysicalState {
 	private String hostName;			// "betty"
@@ -532,138 +532,230 @@ final public class FoxtrotPhysicalState {
 		sb.append("<h3>SYSTEM INFO</h3>\n");
 		sb.append("<dl>\n");
         sb.append("<dt>Host Name</dt>\n");
-        sb.append("<dd>" + this.getHostName() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getHostName());
+        sb.append("</dd>\n");
         sb.append("<dt>Architecture</dt>\n");
-        sb.append("<dd>" + this.getArchitecture() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getArchitecture());
+        sb.append("</dd>\n");
         sb.append("<dt>OS Name</dt>\n");
-        sb.append("<dd>" + this.getOSName() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getOSName());
+        sb.append("</dd>\n");
         sb.append("<dt>OS Version</dt>\n");
-        sb.append("<dd>" + this.getOSVersion() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getOSVersion());
+        sb.append("</dd>\n");
         sb.append("<dt>OS Flavor</dt>\n");
-        sb.append("<dd>" + this.getOSFlavor() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getOSFlavor());
+        sb.append("</dd>\n");
 		seconds = this.getUpTimeInSeconds();
 		sb.append("<dt>Up Time</dt>\n");
-		sb.append("<dd>" + A1iciaUtils.formatElapsedSeconds(seconds) + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(A1iciaUtils.formatElapsedSeconds(seconds));
+        sb.append("</dd>\n");
 		sb.append("<dt>CPU Info</dt>\n");
 		sb.append("<dd>");
 		for (Processor cpu : this.getProcessors()) {
-			sb.append("Processor " + cpu.getProcessorNumber());
-			sb.append(" " + cpu.getModelName());
-			sb.append(" " + cpu.getCpuMhz() + "MHz<br />\n");
+			sb.append("Processor ");
+            sb.append(cpu.getProcessorNumber());
+			sb.append(" ");
+            sb.append(cpu.getModelName());
+			sb.append(" ");
+            sb.append(cpu.getCpuMhz());
+            sb.append("MHz<br />\n");
 		}
 		sb.append("</dd>\n");
 		sb.append("<dt>Total memory</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getTotalMemoryKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>Free memory</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getFreeMemoryKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>Total swap</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getTotalSwapKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>Free swap</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getFreeSwapKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>Java Vendor</dt>\n");
-		sb.append("<dd>" + this.getJavaVendor() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getJavaVendor());
+        sb.append("</dd>\n");
         sb.append("<dt>Java Version</dt>\n");
-        sb.append("<dd>" + this.getJavaVersion() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getJavaVersion());
+        sb.append("</dd>\n");
         sb.append("<dt>Java Home</dt>\n");
-        sb.append("<dd>" + this.getJavaHome() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getJavaHome());
+        sb.append("</dd>\n");
         sb.append("<dt>Java User Name</dt>\n");
-        sb.append("<dd>" + this.getJavaUserName() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getJavaUserName());
+        sb.append("</dd>\n");
         sb.append("<dt>Java User Home Directory</dt>\n");
-        sb.append("<dd>" + this.getJavaUserHome() + "</dd>\n");
+        sb.append("<dd>");
+        sb.append(this.getJavaUserHome());
+        sb.append("</dd>\n");
 		sb.append("<dt>JVM Processors</dt>\n");
-		sb.append("<dd>" + this.getJVMProcessors() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getJVMProcessors());
+        sb.append("</dd>\n");
 		sb.append("<dt>JVM Free Memory</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getJVMFreeMemoryKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>JVM Max Memory</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getJVMMaxMemoryKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 		sb.append("<dt>JVM Total Memory</dt>\n");
 		kbStr = A1iciaUtils.formatKb(this.getJVMTotalMemoryKb());
-		sb.append("<dd>" + kbStr + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(kbStr);
+        sb.append("</dd>\n");
 
 		sb.append("<dt>Database Product</dt>\n");
-		sb.append("<dd>" + this.getDbProductName() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbProductName());
+        sb.append("</dd>\n");
 		sb.append("<dt>Database Version</dt>\n");
-		sb.append("<dd>" + this.getDbProductVersion() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbProductVersion());
+        sb.append("</dd>\n");
 		sb.append("<dt>Database Driver Name</dt>\n");
-		sb.append("<dd>" + this.getDbDriverName() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbDriverName());
+        sb.append("</dd>\n");
 		sb.append("<dt>Database Driver Version</dt>\n");
-		sb.append("<dd>" + this.getDbDriverVersion() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbDriverVersion());
+        sb.append("</dd>\n");
 		sb.append("<dt>Database User Name</dt>\n");
-		sb.append("<dd>" + this.getDbUserName() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbUserName());
+        sb.append("</dd>\n");
 		sb.append("<dt>Database URL</dt>\n");
-		sb.append("<dd>" + this.getDbURL() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.getDbURL());
+        sb.append("</dd>\n");
 
 		if (this.getWebServer() != null) {
 			sb.append("<dt>Web Server</dt>\n");
-			sb.append("<dd>" + this.getWebServer() + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(this.getWebServer());
+            sb.append("</dd>\n");
 		}
 		if (this.getServerName() != null) {
 			sb.append("<dt>Web Server Host Name</dt>\n");
-			sb.append("<dd>" + this.getServerName() + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(this.getServerName());
+            sb.append("</dd>\n");
 		}
 		if (this.getServerVersion() != null) {
 			sb.append("<dt>Web Server Version</dt>\n");
-			sb.append("<dd>" + this.getServerVersion() + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(this.getServerVersion());
+            sb.append("</dd>\n");
 		}
 		if (this.getServerUptime() != null) {
 			sb.append("<dt>Web Server Total Uptime</dt>\n");
 			etStr = A1iciaUtils.formatElapsedSeconds(this.getServerUptime());
-			sb.append("<dd>" + etStr + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(etStr);
+            sb.append("</dd>\n");
 		}
 		if (this.getServerAccesses() != null) {
 			sb.append("<dt>Web Server Total Accesses</dt>\n");
-			sb.append("<dd>" + this.getServerAccesses() + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(this.getServerAccesses());
+            sb.append("</dd>\n");
 		}
 		if (this.getServerKBytes() != null) {
 			sb.append("<dt>Web Server Total kBytes Served</dt>\n");
 			kbStr = A1iciaUtils.formatKb(this.getServerKBytes());
-			sb.append("<dd>" + kbStr + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(kbStr);
+            sb.append("</dd>\n");
 		}		
 		
 		for (SensorValue sv : this.getSensorValues().values()) {
-			sb.append("<dt>Sensor " + sv.getLabel() + "</dt>\n");
-			sb.append("<dd>" + sv.getValue());
+			sb.append("<dt>Sensor ");
+            sb.append(sv.getLabel());
+            sb.append("</dt>\n");
+			sb.append("<dd>");
+            sb.append(sv.getValue());
 			if (sv.getAlarm()) {
 				sb.append(" ALARM");
 			}
 			sb.append("</dd>\n");
 		}
 		for (FoxtrotFS fs : this.getFileSystems()) {
-			sb.append("<dt>File System " + fs.getFsName() + "</dt>\n");
+			sb.append("<dt>File System ");
+            sb.append(fs.getFsName());
+            sb.append("</dt>\n");
 			kbStr = A1iciaUtils.formatKb(fs.getTotalSpaceKb());
-			sb.append("<dd>Total Space " + kbStr);
+			sb.append("<dd>Total Space ");
+            sb.append(kbStr);
 			kbStr = A1iciaUtils.formatKb(fs.getUsedSpaceKb());
-			sb.append(" | Used Space " + kbStr);
+			sb.append(" | Used Space ");
+            sb.append(kbStr);
 			kbStr = A1iciaUtils.formatKb(fs.getFreeSpaceKb());
-			sb.append(" | Free Space " + kbStr);
-			sb.append(" | Used " + fs.getUsedPercent() + "%");
-			sb.append(" | Mounted at " + fs.getMountPoint() + "</dd>\n");
+			sb.append(" | Free Space ");
+            sb.append(kbStr);
+			sb.append(" | Used ");
+            sb.append(fs.getUsedPercent());
+            sb.append("%");
+			sb.append(" | Mounted at ");sb.append(fs.getMountPoint());
+            sb.append("</dd>\n");
 		}
 		for (NetworkDevice device : this.getNetworkDevices()) {
-			sb.append("<dt>Network Device " + device.getDeviceName() + "</dt>\n");
+			sb.append("<dt>Network Device ");
+            sb.append(device.getDeviceName());
+            sb.append("</dt>\n");
 			kbStr = A1iciaUtils.formatKb(device.getTransmitKb());
-			sb.append("<dd>Transmitted " +  kbStr);
+			sb.append("<dd>Transmitted ");
+            sb.append(kbStr);
 			kbStr = A1iciaUtils.formatKb(device.getReceiveKb());
-			sb.append(" | Received " + kbStr + "</dd>\n");
+			sb.append(" | Received ");
+            sb.append(kbStr);
+            sb.append("</dd>\n");
 		}
 		sb.append("<dt>Current LAN Host IPs</dt>\n");
 		for (String host : this.getLanHosts()) {
-			sb.append("<dd>" +  host + "</dd>\n");
+			sb.append("<dd>");
+            sb.append(host);
+            sb.append("</dd>\n");
 		}
 		sb.append("<dt>Have Internet</dt>\n");
-		sb.append("<dd>"+ this.haveInternet() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.haveInternet());
+        sb.append("</dd>\n");
 		sb.append("<dt>Have Http Server</dt>\n");
-		sb.append("<dd>"+ this.haveWebServer() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.haveWebServer());
+        sb.append("</dd>\n");
 		sb.append("<dt>Have Tomcat</dt>\n");
-		sb.append("<dd>"+ this.haveTomcat() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.haveTomcat());
+        sb.append("</dd>\n");
 		sb.append("<dt>Have Database</dt>\n");
-		sb.append("<dd>"+ this.haveDatabase() + "</dd>\n");
+		sb.append("<dd>");
+        sb.append(this.haveDatabase());
+        sb.append("</dd>\n");
 		sb.append("</dl>\n");
 		return sb.toString();
 	}

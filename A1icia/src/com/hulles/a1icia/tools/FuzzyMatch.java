@@ -46,10 +46,10 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  *
  */
 public class FuzzyMatch {
-	private static final LevenshteinDistance levDistance;
+	private static final LevenshteinDistance LEVDISTANCE;
 
 	static {
-		levDistance = new LevenshteinDistance();
+		LEVDISTANCE = new LevenshteinDistance();
 	}
 	
 	/*
@@ -112,8 +112,9 @@ public class FuzzyMatch {
 
 		if (debug) {
 		    System.out.print("Sorted intersection --> ");
-		for (String s:sortedIntersection) 
-			System.out.print(s + " ");
+		for (String s:sortedIntersection) {
+            System.out.print(s + " ");
+            }
 		}
 		
 		// Find out difference of sets set1 and intersection of set1,set2
@@ -124,12 +125,14 @@ public class FuzzyMatch {
 		
 		if (debug) {
 			System.out.print("\nSorted rest of 1 --> ");
-			for (String s:sortedRestOfSet1) 
-				System.out.print(s + " ");
+			for (String s:sortedRestOfSet1) {
+                System.out.print(s + " ");
+            }
 			
 			System.out.print("\nSorted rest of 2 -->");
-			for (String s:sortedRestOfSet2) 
-				System.out.print(s + " ");
+			for (String s:sortedRestOfSet2) {
+                System.out.print(s + " ");
+            }
 		}
 		
 		String t0 = "";
@@ -173,7 +176,7 @@ public class FuzzyMatch {
 		int distance;
 		double ratio;
 		
-		distance = levDistance.apply(s1, s2);
+		distance = LEVDISTANCE.apply(s1, s2);
 		ratio = ((double) distance) / (Math.max(s1.length(), s2.length()));
 		return 100 - ((Double)(ratio*100)).intValue();		
 	}

@@ -120,7 +120,7 @@ public class MediaUtils {
 	
 	public static AudioFormat getAudioFormat(String audioFile) {
 		AudioFormat	audioFormat = null;
-		File file = null;
+		File file;
 
 		MediaUtils.checkNotNull(audioFile);
 		file = new File(audioFile);
@@ -134,9 +134,25 @@ public class MediaUtils {
 		return audioFormat;
 	}
 	
+	public static AudioFormat getAudioFormat(Path audioPath) {
+		AudioFormat	audioFormat = null;
+		File file;
+
+		MediaUtils.checkNotNull(audioPath);
+		file = audioPath.toFile();
+		try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file)) {
+			audioFormat = audioInputStream.getFormat();
+		} catch (IOException e) {
+			throw new A1iciaMediaException("MediaUtils: can't get audio format", e);
+		} catch (UnsupportedAudioFileException e) {
+			throw new A1iciaMediaException("MediaUtils: audio format not supported", e);
+		}
+		return audioFormat;
+	}
+	
 	public static String getAudioFormatString(String audioFile) {
 		AudioFormat	audioFormat = null;
-		File file = null;
+		File file;
 		StringBuilder sb;
 		
 		MediaUtils.checkNotNull(audioFile);
@@ -216,7 +232,8 @@ public class MediaUtils {
     /**
      * Create a byte array from an image for database storage e.g., using the
      * default IMAGE_TYPE.
-     *  
+     *
+     * @throws IOException
      * @param image The image to convert.
      * @return The image converted to an array of bytes.
      */
@@ -227,6 +244,7 @@ public class MediaUtils {
     /**
      * Create a byte array from an image for database storage, e.g.
      * 
+     * @throws IOException
      * @param image The image to convert.
      * @param format The format for the image ("png" for example)
      * @return The image converted to an array of bytes.
@@ -259,7 +277,7 @@ public class MediaUtils {
     
     public static BufferedImage byteArrayToImage(byte[] imageBytes) throws IOException {
 		ByteArrayInputStream byteInput;
-		BufferedImage image = null;
+		BufferedImage image;
 
 		MediaUtils.checkNotNull(imageBytes);
 		byteInput = new ByteArrayInputStream(imageBytes);
@@ -295,7 +313,7 @@ public class MediaUtils {
 		} catch (IOException e) {
 			throw new A1iciaMediaException("MediaUtils: can't read runCommand stream", e);
 		}
-		LOGGER.log(LOGLEVEL, "statCommand: " + stdOut);
+		LOGGER.log(LOGLEVEL, "statCommand: {0}", stdOut);
 		
 		stdErr = new StringBuilder();
 		charBuffer = new char[1024];
@@ -308,7 +326,7 @@ public class MediaUtils {
 			throw new A1iciaMediaException("Can't read stderr", e);
 		}
 		if (stdErr.length() > 0) {
-			LOGGER.log(LOGLEVEL, "statCommand Error: " + stdErr.toString());
+			LOGGER.log(LOGLEVEL, "statCommand Error: {0}", stdErr.toString());
 			throw new A1iciaMediaException("MediaUtils: standard error not empty: " + stdErr.toString());
 		}
 

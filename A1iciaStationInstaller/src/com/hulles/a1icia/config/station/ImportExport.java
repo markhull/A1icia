@@ -37,13 +37,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.Station;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -89,7 +91,6 @@ public class ImportExport {
 		station = new Station();
 		stringMap = new HashMap<>();
 		try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
-		    line = null;
 		    while ((line = reader.readLine()) != null) {
 		    	if (line.isEmpty()) {
 		    		continue;
@@ -99,8 +100,8 @@ public class ImportExport {
 		    		continue;
 		    	}
 		    	keyValue = line.split("=", 2);
-		    	LOGGER.log(LOGLEVEL, "IMPORT: Line is " + line + ", values = " + keyValue.length);
-		    	LOGGER.log(LOGLEVEL, "IMPORT: Key is " + keyValue[0] + ", Value is " + keyValue[1]);
+		    	LOGGER.log(LOGLEVEL, "IMPORT: Line is {0}, values = {1}", new Object[]{line, keyValue.length});
+		    	LOGGER.log(LOGLEVEL, "IMPORT: Key is {0}, Value is {1}", new Object[]{keyValue[0], keyValue[1]});
 		    	if (keyValue[0].equals("STATIONID") && (keyValue.length == 1 || keyValue[1].isEmpty())) {
 		    		LOGGER.log(LOGLEVEL, "Generating UUID");
 		    		// for "STATIONID=", we can help out by generating our own UUID
@@ -127,12 +128,12 @@ public class ImportExport {
 		byte[] stationKeyBytes;
 
 		SharedUtils.checkNotNull(station);
-		jebusPool = JebusApiHub.getJebusLocal();
-		stationKeyBytes = JebusApiBible.getA1iciaStationKey(jebusPool).getBytes();
+		jebusPool = JebusHub.getJebusLocal();
+		stationKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIASTATIONKEY, jebusPool);
 		try {
 			stationBytes = Serialization.serialize(station);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("ImportExport: can't serialize station", e);
+			throw new A1iciaException("ImportExport: can't serialize station", e);
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.set(stationKeyBytes, stationBytes);		
@@ -157,10 +158,9 @@ public class ImportExport {
 			if (importStation) {
 				path = getPath(reader, false);
 				importStation(path);
-				return;
 			}
 		} catch (IOException e) {
-			System.err.println("System error: I/O error, exiting");
+			A1iciaUtils.error("System error: I/O error, exiting");
 			System.exit(1);
 		}
 		
@@ -191,7 +191,6 @@ public class ImportExport {
 			if (!writing && !Files.exists(path)) {
 				System.out.println("That file doesn't exist");
 				fn = null;
-				continue;
 			}
 		}
 		return path;

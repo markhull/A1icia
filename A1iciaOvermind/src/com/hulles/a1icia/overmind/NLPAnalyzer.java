@@ -27,17 +27,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.document.NLPAnalysis;
 import com.hulles.a1icia.room.document.SentenceAnalysis;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.SentencePackage.SentenceChunk;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -58,12 +59,12 @@ public final class NLPAnalyzer {
 		
 		SharedUtils.checkNotNull(analysis);
 		LOGGER.log(LOGLEVEL, "In NLPAnalyzer processAnalysis");
-		jebusPool = JebusHub.getJebusLocal();
+		jebusPool = JebusHub.getJebusCentral();
 		
 		// First, we save the analysis explanation to Jebus so we can pore over it 
 		//    later wearing green eyeshades in a dimly-lit room late at night....
 		try (Jedis jebus = jebusPool.getResource()) {
-			listKey = JebusBible.getA1iciaNLPKey(jebusPool);
+			listKey = JebusBible.getStringKey(JebusKey.ALICIANLPKEY, jebusPool);
 			jebus.lpush(listKey, analysis.getExplanation());
 			jebus.ltrim(listKey, 0, MAXNLPITEMS);
 		}
@@ -165,13 +166,13 @@ public final class NLPAnalyzer {
 			} while (tag.startsWith("I-"));
 			tagString = chunkSb.toString();
 			sentenceChunk.setPosTagString(tagString);
-			LOGGER.log(LOGLEVEL, "NLPAnalyzer: chunk = " + chunk + ", tags = " + tagString);
+			LOGGER.log(LOGLEVEL, "NLPAnalyzer: chunk = {0}, tags = {1}", new String[]{chunk, tagString});
 			sentenceChunks.add(chunkIx, sentenceChunk);
 			chunkIx++;
 		}
 		sentencePackage.setChunks(sentenceChunks);
 		
-		LOGGER.log(LOGLEVEL, "NLPAnalyzer: lemmatizedSentence = " + lemmatizedSentence);
+		LOGGER.log(LOGLEVEL, "NLPAnalyzer: lemmatizedSentence = {0}", lemmatizedSentence);
 		return sentencePackage;
 	}
 
@@ -185,7 +186,7 @@ public final class NLPAnalyzer {
 		jebusPool = JebusHub.getJebusLocal();
 		System.out.println("NLP ANALYSES\n\n");
 		try (Jedis jebus = jebusPool.getResource()) {
-			listKey = JebusBible.getA1iciaNLPKey(jebusPool);
+			listKey = JebusBible.getStringKey(JebusKey.ALICIANLPKEY, jebusPool);
 			listCount = jebus.llen(listKey);
 			for (int i=0; i<listCount; i++) {
 				analysis = jebus.lindex(listKey, i);

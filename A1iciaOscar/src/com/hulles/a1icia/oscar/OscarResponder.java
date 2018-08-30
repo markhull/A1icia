@@ -35,8 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.ticket.SememePackage;
 
@@ -90,6 +90,9 @@ public class OscarResponder {
 		String sememeCanonicalForm;
 		
 		switch (sememePkg.getName()) {
+            case "i_fink_u_freeky":
+                message = "I fink u freeky 2.";
+                break;
 			case "what_is_pi":
 				message = "The value of pi is approximately ";
 				message += String.valueOf(Math.PI);
@@ -163,7 +166,7 @@ public class OscarResponder {
 				for (Integer hIx : helpIxs) {
 					sememeCanonicalForm = externalSememes.get(hIx).getCanonicalForm();
 					helpStr = sememeCanonicalForm.replaceAll("[\\{\\}]", "");
-					LOGGER.log(LOGLEVEL, "HELP: " + helpStr);
+					LOGGER.log(LOGLEVEL, "HELP: {0}", helpStr);
 					sb.append(helpStr);
 					sb.append("\n");
 				}

@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * The response from a room to a RoomRequest.

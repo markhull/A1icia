@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.base;
+package com.hulles.a1icia;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,8 +37,10 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ServiceManager;
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Sememe;
 import com.hulles.a1icia.room.BusMonitor;
@@ -51,8 +53,6 @@ import com.hulles.a1icia.room.document.WhatSememesAction;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
@@ -63,7 +63,7 @@ import java.util.EnumSet;
  * @author hulles
  *
  */
-public final class Controller extends AbstractIdleService {
+final class Controller extends AbstractIdleService {
 	final static Logger LOGGER = Logger.getLogger("A1icia.Controller");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 //	final static Level LOGLEVEL = Level.INFO;
@@ -74,7 +74,7 @@ public final class Controller extends AbstractIdleService {
     private final UrRoom a1iciaRoom;
 	final Set<SerialSememe> allSememes;
 	
-	public Controller(EventBus hallBus, UrRoom a1iciaRoom) {
+	Controller(EventBus hallBus, UrRoom a1iciaRoom) {
 		
 		SharedUtils.checkNotNull(hallBus);
         SharedUtils.checkNotNull(a1iciaRoom);
@@ -163,7 +163,7 @@ public final class Controller extends AbstractIdleService {
 	 * @param sememe The sememe in question
 	 * @return A list of rooms that have advertised they can process the sememe
 	 */
-	public Set<Room> getRoomsForSememe(SerialSememe sememe) {
+	private Set<Room> getRoomsForSememe(SerialSememe sememe) {
 		
 		return sememeRooms.get(sememe);
 	}
@@ -191,15 +191,14 @@ public final class Controller extends AbstractIdleService {
 		for (Entry<Service,Long> entry : startupTimes) {
 			startupTime = entry.getValue();
 			totalStartupTime += startupTime;
-			LOGGER.log(Level.INFO, entry.getKey() + " started in " + 
-					A1iciaUtils.formatElapsedMillis(startupTime));
+			LOGGER.log(Level.INFO, "{0} started in {1}", 
+                    new Object[]{entry.getKey(), A1iciaUtils.formatElapsedMillis(startupTime)});
 		}
 		// Note that the total of startup times is not the same as the total 
 		//    elapsed startup time thanks to the miracle of parallel processing....
 		// The total of startup times IS useful to compare startup speeds for different 
 		//    servers, however....
-		LOGGER.log(Level.INFO, "Total of startup times is " + 
-				A1iciaUtils.formatElapsedMillis(totalStartupTime));
+		LOGGER.log(Level.INFO, "Total of startup times is {0}", A1iciaUtils.formatElapsedMillis(totalStartupTime));
 		
 		// send WHAT_SPARKS request to load sememeRooms
 		ticket = Ticket.createNewTicket(hallBus, Room.CONTROLLER);
@@ -278,7 +277,7 @@ public final class Controller extends AbstractIdleService {
 			WhatSememesAction action;
 			Set<SerialSememe> sememes;
 			Room fromRoom;
-			Ticket ticket = null;
+			Ticket ticket;
 			
 			SharedUtils.checkNotNull(responses);
 			ticket = request.getTicket();
@@ -292,8 +291,8 @@ public final class Controller extends AbstractIdleService {
 				if (pkg != null) {
 					action = (WhatSememesAction) pkg.getActionObject();
 					sememes = action.getSememes();
-					LOGGER.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from " +
-							fromRoom + ", sememes from action = " + sememes);
+					LOGGER.log(LOGLEVEL, "In ControllerRoom:processRoomResponse with response from {0}, sememes from action = {1}", 
+                            new Object[]{fromRoom, sememes});
 					for (SerialSememe s : sememes) {
 						sememeRooms.put(s, fromRoom);
 					}

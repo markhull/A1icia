@@ -37,7 +37,7 @@ import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
 
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.Gender;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
@@ -145,7 +145,7 @@ public class Person extends _Person {
 			try {
 				image = MediaUtils.byteArrayToImage(imageBytes);
 			} catch (IOException e) {
-				throw new A1iciaAPIException("Person: can't restore image from bytes", e);
+				throw new A1iciaException("Person: can't restore image from bytes", e);
 			}
 		}
 		return image;
@@ -161,7 +161,7 @@ public class Person extends _Person {
             try {
 				imageBytes = MediaUtils.imageToByteArray(image);
 			} catch (IOException e) {
-				throw new A1iciaAPIException("Person: can't convert image to bytes", e);
+				throw new A1iciaException("Person: can't convert image to bytes", e);
 			}
             this.setAvatarBytes(imageBytes);
         }

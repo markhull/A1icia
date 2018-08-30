@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.room;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 
 /**
  * This is an enumeration of the various possible A1icia Rooms. Not all of them are functional yet.

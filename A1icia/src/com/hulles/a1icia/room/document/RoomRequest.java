@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * A RoomRequest is a request to the various rooms for action of some kind or another. 

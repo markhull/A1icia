@@ -26,7 +26,7 @@ import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.WakeUp;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
@@ -54,7 +54,7 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 	public void receiveText(String text) {
 
 		if (!remote.useTTS()) {
-			throw new A1iciaAPIException("Command line interface not enabled in A1iciaMagicMirror");
+			throw new A1iciaException("Command line interface not enabled in A1iciaMagicMirror");
 		}
 	}
 	

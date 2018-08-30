@@ -21,6 +21,10 @@
  *******************************************************************************/
 package com.hulles.a1icia.alpha;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.dialog.DialogResponse;
+import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,10 +32,13 @@ import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.house.ClientDialogResponse;
+import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
+import com.hulles.a1icia.room.document.ClientObjectWrapper;
 import com.hulles.a1icia.room.document.MessageAction;
+import com.hulles.a1icia.room.document.RoomActionObject;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
 import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
@@ -41,18 +48,32 @@ import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
+import com.hulles.a1icia.tools.ExternalAperture;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Alpha Room is an exemplary implementation for rooms. It simply returns a form of "Aardvark" 
  * when queried. I love Alpha.
+ * <p>
+ * At least temporarily, Alpha also tests push notfications. Go Alpha.
  * 
  * @author hulles
  *
  */
 public final class AlphaRoom extends UrRoom {
-	
+	private final ScheduledExecutorService executor;
+	private volatile boolean alreadySentNotification = false;
+    
 	public AlphaRoom() {
 		super();
+        
+		executor = Executors.newScheduledThreadPool(1);        
+		addDelayedShutdownHook(executor);
 	}
 
 	/**
@@ -62,7 +83,7 @@ public final class AlphaRoom extends UrRoom {
      * Note that we should only receive sememes that we've advertised (see @link{loadSememes}, so
      * if we don't recognize the sememe we receive it's an error.
      * 
-     * @oaram sememePkg The sememe package
+     * @param sememePkg The sememe package
      * @param request The room request
      * @return The ActionPackage we've created
 	 */
@@ -91,7 +112,7 @@ public final class AlphaRoom extends UrRoom {
 	 * @param request The RoomRequest
 	 * @return A SememeAnalysis action package
 	 */
-	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
+	private ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
 		SememeAnalysis analysis;
 		Ticket ticket;
@@ -99,9 +120,15 @@ public final class AlphaRoom extends UrRoom {
 		List<SememePackage> sememePackages;
 		List<SentencePackage> sentencePackages;
 		SememePackage aardPkg;
-		
+		A1icianID a1icianID;
+        
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
+        if (!alreadySentNotification) {
+            a1icianID = request.getTicket().getFromA1icianID();
+            startNotificationService(a1icianID);
+            alreadySentNotification = true;
+        }
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		actionPkg = new ActionPackage(sememePkg);
@@ -130,14 +157,20 @@ public final class AlphaRoom extends UrRoom {
 	 * @param request
 	 * @return
 	 */
-	private static ActionPackage createAardvarkActionPackage(SememePackage sememePkg, RoomRequest request) {
+	private ActionPackage createAardvarkActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		MessageAction action;
 		String clientMsg;
 		String result;
-		
+		A1icianID a1icianID;
+        
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
+        if (!alreadySentNotification) {
+            a1icianID = request.getTicket().getFromA1icianID();
+            startNotificationService(a1icianID);
+            alreadySentNotification = true;
+        }
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		clientMsg = request.getMessage().trim();
@@ -164,6 +197,74 @@ public final class AlphaRoom extends UrRoom {
 		return pkg;
 	}
 	
+	private void startNotificationService(A1icianID a1icianID) {
+		
+        SharedUtils.checkNotNull(a1icianID);
+		final Runnable checker = new Runnable() {
+			@Override
+			public void run() {
+                ClientDialogResponse clientResponse;
+                SerialSememe sememe;
+                DialogResponse response;
+                
+                clientResponse = new ClientDialogResponse();
+                response = clientResponse.getDialogResponse();
+                response.setLanguage(Language.AMERICAN_ENGLISH);
+                response.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
+                response.setMessage("Hello from Alpha! Aardvark!");
+                response.setExplanation("I was told to say that.");
+                response.setToA1icianID(a1icianID);
+                sememe = SerialSememe.find("notify");
+                response.setResponseAction(sememe);
+                AlphaRoom.super.postPushRequest(clientResponse);
+			}
+		};
+		executor.schedule(checker, 120, TimeUnit.SECONDS);
+	}
+    
+	static void shutdownAndAwaitTermination(ExecutorService pool) {
+		
+		pool.shutdown(); // Disable new tasks from being submitted
+		try {
+			// Wait a while for existing tasks to terminate
+			if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+				pool.shutdownNow(); // Cancel currently executing tasks
+				// Wait a while for tasks to respond to being cancelled
+				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+                    System.err.println("TimerHandler -- executor did not terminate");
+                }
+			}
+		} catch (InterruptedException ie) {
+			// (Re-)Cancel if current thread also interrupted
+			pool.shutdownNow();
+			// Preserve interrupt status
+			Thread.currentThread().interrupt();
+		}
+	}
+	
+	private void addDelayedShutdownHook(final ScheduledExecutorService pool) {
+		Runnable shutdownHook;
+		Thread hook;
+		
+		shutdownHook = new ShutdownHook(pool);
+		hook = new Thread(shutdownHook);
+		Runtime.getRuntime().addShutdownHook(hook);
+	}
+	
+	private class ShutdownHook implements Runnable {
+		ScheduledExecutorService pool;
+		
+		ShutdownHook(ScheduledExecutorService pool) {
+			this.pool = pool;
+		}
+		
+	    @Override
+		public void run() {
+	    	
+			shutdownAndAwaitTermination(pool);
+	    }
+	}
+	
 	/**
 	 * Return this room name.
 	 * 
@@ -175,27 +276,71 @@ public final class AlphaRoom extends UrRoom {
 		return Room.ALPHA;
 	}
 
+
 	/**
-	 * We don't get responses for anything, so if there is one it's an error.
+     * This method is executed when we receive a list of responses from our notification request. We
+     * don't really care about the responses -- we just send an uber-request to
+     * A1icia to forward the notification, and this is what she sends back. Regarding the method body, well, 
+	 * while this looks like a lot of nonsense, and on one level that's true of course, it also
+	 * tests the complex machinery that generates responses to requests. That's my story and I'm
+	 * sticking to it.
 	 * 
+     * @param request The room request
+     * @param responses The responses to the request
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
-		throw new A1iciaException("Response not implemented in " + 
-				getThisRoom().getDisplayName());
+		List<ActionPackage> pkgs;
+		RoomActionObject obj;
+		MessageAction msgAction;
+		Ticket ticket;
+		ClientObjectWrapper cow;
+		
+		SharedUtils.checkNotNull(request);
+		SharedUtils.checkNotNull(responses);
+		// note that here we're ignoring the fact that we might get more than one response, 
+		// particularly for the media request -- FIXME
+		for (RoomResponse rr : responses) {
+			if (!rr.hasNoResponse()) {
+				// see if we can learn anything....
+				pkgs = rr.getActionPackages();
+				for (ActionPackage pkg : pkgs) {
+					obj = pkg.getActionObject();
+					if (obj instanceof MessageAction) {
+						msgAction = (MessageAction) obj;
+                        System.out.println("We got us some learning => " + msgAction.getMessage() +
+                                ", " + msgAction.getExplanation());
+					}
+				}
+			}
+		}
+		ticket = request.getTicket();
+		ticket.close();
 	}
 
 	@Override
 	protected void roomStartup() {
+//        String result;
+//        Path path;
+//        
+//        path = Paths.get("/home/hulles/Music/MP3s/Jonny Lang/Wander This World/Jonny Lang - Walking Away.mp3");
+//        result = ExternalAperture.queryTika(path);
+//        System.out.println("Tika result:\n" + result);
+//        path = Paths.get("/home/hulles/Media/Music Videos/Sorry For It All _ Dead Sara _ Official Video.mp4");
+//        result = ExternalAperture.queryTika(path);
+//        System.out.println("Tika result:\n" + result);
 	}
 
 	@Override
 	protected void roomShutdown() {
+        
+		shutdownAndAwaitTermination(executor);
 	}
 
 	/**
 	 * Advertise which sememes we handle.
 	 * 
+     * @return The list of sememes we process
 	 */
 	@Override
 	protected Set<SerialSememe> loadSememes() {
@@ -211,6 +356,8 @@ public final class AlphaRoom extends UrRoom {
 	 * We don't do anything with RoomAnnouncements but it is legitimate to receive them here,
 	 * so no error.
 	 * 
+     * @param announcement
+     * 
 	 */
 	@Override
 	protected void processRoomAnnouncement(RoomAnnouncement announcement) {

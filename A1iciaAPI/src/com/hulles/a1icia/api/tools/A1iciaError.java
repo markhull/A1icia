@@ -19,15 +19,16 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.base;
+package com.hulles.a1icia.api.tools;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import java.time.Instant;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 
 import redis.clients.jedis.Jedis;
 
@@ -58,18 +59,20 @@ public final class A1iciaError {
 		Set<String> ids;
 		String timelineKey;
 		String deadHashKey;
-		
+		String counterKey;
+        
 		jebusPool = JebusHub.getJebusLocal();
-		timelineKey = JebusBible.getErrorTimelineKey(jebusPool);
+		timelineKey = JebusBible.getStringKey(JebusKey.ALICIAERRORTIMELINEKEY, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
-			this.idNo = jebus.incr(JebusBible.getErrorCounterKey(jebusPool));
+            counterKey = JebusBible.getStringKey(JebusKey.ALICIAERRORCOUNTERKEY, jebusPool);
+			this.idNo = jebus.incr(counterKey);
 			this.hashKey = JebusBible.getErrorHashKey(jebusPool, idNo);
 			timestamp = Instant.now();
 			timestampStr = timestamp.toString();
 			// we use millis for sorting purposes
 			timeScore = Double.valueOf(System.currentTimeMillis());
 			jebus.hset(hashKey,
-					JebusBible.getErrorTimestampField(jebusPool), 
+					JebusBible.getStringKey(JebusKey.TIMESTAMPFIELD, jebusPool), 
 					timestampStr);
 			jebus.zadd(timelineKey,
 					timeScore, 
@@ -83,7 +86,7 @@ public final class A1iciaError {
 				jebus.del(deadHashKey);
 			}
 			// notify
-			jebus.publish(JebusBible.getErrorChannelKey(jebusPool), 
+			jebus.publish(JebusBible.getStringKey(JebusKey.ALICIAERRORCHANNELKEY, jebusPool), 
 					"Recieved error " + idNo.toString() + " at " + timestamp.toString());
 		}
 	}
@@ -120,7 +123,7 @@ public final class A1iciaError {
 		
 		try (Jedis jebus = jebusPool.getResource()) {
 			messageStr = jebus.hget(hashKey,
-					JebusBible.getErrorMessageField(jebusPool));
+					JebusBible.getStringKey(JebusKey.MESSAGEFIELD, jebusPool));
 			return messageStr;
 		}		
 	}
@@ -138,7 +141,7 @@ public final class A1iciaError {
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.hset(hashKey,
-					JebusBible.getErrorMessageField(jebusPool),
+					JebusBible.getStringKey(JebusKey.MESSAGEFIELD, jebusPool),
 					value);
 		}		
 	}
@@ -154,7 +157,7 @@ public final class A1iciaError {
 		
 		try (Jedis jebus = jebusPool.getResource()) {
 			instantStr = jebus.hget(hashKey, 
-					JebusBible.getErrorTimestampField(jebusPool));
+					JebusBible.getStringKey(JebusKey.TIMESTAMPFIELD, jebusPool)); 
 			instant = Instant.parse(instantStr);
 			return instant;
 		}		

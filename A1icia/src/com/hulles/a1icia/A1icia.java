@@ -41,23 +41,23 @@ import com.google.common.util.concurrent.ServiceManager;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.dialog.DialogResponse;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.base.Controller;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.crypto.PurdahKeys;
 import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
-import com.hulles.a1icia.house.A1iciaStationServer;
+import com.hulles.a1icia.house.StationServer;
 import com.hulles.a1icia.house.ClientDialogRequest;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.house.House;
 import com.hulles.a1icia.house.Session;
 import com.hulles.a1icia.house.UrHouse;
-import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.MessageAction;
@@ -69,7 +69,6 @@ import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * This class and this project are totally not named after A1icia Vikander.
@@ -107,6 +106,7 @@ final public class A1icia implements Closeable {
 		System.out.println(getJebusString());
 		System.out.println(A1iciaConstants.getA1iciasWelcome());
 		System.out.println();
+        
 		SharedUtils.exitIfAlreadyRunning(PortCheck.A1ICIA);
 		a1icianID = A1iciaConstants.getA1iciaA1icianID();
 		busPool = Executors.newCachedThreadPool();
@@ -199,7 +199,7 @@ final public class A1icia implements Closeable {
 		services.add(a1iciaHouse);
         a1iciaRoom = new A1iciaRoom(hall);
 		services.add(new Controller(hall, a1iciaRoom));
-        stationServer = new A1iciaStationServer(street, noPrompts);
+        stationServer = new StationServer(street, noPrompts);
 		services.add(stationServer);
 		
 		serviceManager = new ServiceManager(services);
@@ -603,6 +603,7 @@ final public class A1icia implements Closeable {
 			ActionPackage pkg;
 			MessageAction action;
 			String result;
+            String expl;
 			ClientDialogResponse clientResponse;
 			DialogResponse dialogResponse;
 			RoomObject obj;
@@ -632,10 +633,10 @@ final public class A1icia implements Closeable {
 			action = new MessageAction();
 			result = "gargouillade";
 			action.setMessage(result);
-			result = "A complex balletic step, defined differently for different schools " +
+			expl = "A complex balletic step, defined differently for different schools " +
 					"but generally involving a double rond de jambe. ‒ Wikipedia [Please don't " +
 					"make me read this out loud. ‒ A1icia]";
-			action.setExplanation(result);
+			action.setExplanation(expl);
 			pkg.setActionObject(action);
 			return pkg;
 		}
@@ -660,6 +661,7 @@ final public class A1icia implements Closeable {
 			sememes.add(SerialSememe.find("central_shutdown"));
 			sememes.add(SerialSememe.find("client_startup"));
 			sememes.add(SerialSememe.find("client_shutdown"));
+            sememes.add(SerialSememe.find("notify"));
 			return sememes;
 		}
 

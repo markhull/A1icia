@@ -29,10 +29,10 @@ import java.util.Map.Entry;
 
 import javax.crypto.SecretKey;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
@@ -74,111 +74,6 @@ public class PurdahKeys implements Serializable {
 		keyMap.put(key, value);
 	}
 
-/*	public String getWolframRemoteID() {
-		
-		return keyMap.get(PurdahKey.WOLFRAMALPHAREMOTEKEY);
-	}
-
-	public void setWolframRemoteID(String id) {
-		
-		SharedUtils.checkNotNull(id);
-		keyMap.put(PurdahKey.WOLFRAMALPHAREMOTEKEY, id);
-	}
-
-	public String getDatabaseUser() {
-		
-		return keyMap.get(PurdahKey.DATABASEUSER);
-	}
-
-	public void setDatabaseUser(String user) {
-		
-		SharedUtils.checkNotNull(user);
-		keyMap.put(PurdahKey.DATABASEUSER, user);
-	}
-
-	public String getDatabasePassword() {
-		
-		return keyMap.get(PurdahKey.DATABASEPW);
-	}
-
-	public void setDatabasePassword(String password) {
-		
-		SharedUtils.checkNotNull(password);
-		keyMap.put(PurdahKey.DATABASEPW, password);
-	}
-
-	public String getDatabaseServer() {
-		
-		return keyMap.get(PurdahKey.DATABASESERVER);
-	}
-
-	public void setDatabaseServer(String server) {
-		
-		SharedUtils.checkNotNull(server);
-		keyMap.put(PurdahKey.DATABASESERVER, server);
-	}
-
-	public Integer getDatabasePort() {
-		String portStr;
-		
-		portStr = keyMap.get(PurdahKey.DATABASEPORT);
-		return Integer.parseInt(portStr);
-	}
-
-	public void setDatabasePort(Integer port) {
-		String portStr;
-		
-		SharedUtils.checkNotNull(port);
-		portStr = port.toString();
-		keyMap.put(PurdahKey.DATABASEPORT, portStr);
-	}
-	
-	public String getDatabaseName() {
-		
-		return keyMap.get(PurdahKey.DATABASENAME);
-	}
-	
-	public void setDatabaseName(String name) {
-		
-		SharedUtils.checkNotNull(name);
-		keyMap.put(PurdahKey.DATABASENAME, name);
-	}
-
-	public Boolean getDatabaseUseSSL() {
-		String sslStr;
-		
-		sslStr = keyMap.get(PurdahKey.DATABASEUSESSL);
-		return Boolean.parseBoolean(sslStr);
-	}
-	
-	public void setDatabaseUseSSL(Boolean value) {
-	
-		SharedUtils.checkNotNull(value);
-		keyMap.put(PurdahKey.DATABASEUSESSL, value.toString());
-	}
-
-	public String getIpInfoToken() {
-		
-		return keyMap.get(PurdahKey.IPINFOKEY);
-	}
-
-	public void setIpInfoToken(String token) {
-		
-		SharedUtils.checkNotNull(token);
-		keyMap.put(PurdahKey.IPINFOKEY, token);
-	}
-
-	public String getOpenWeatherID() {
-		
-		return keyMap.get(PurdahKey.OPENWEATHERID);
-	}
-
-	public void setOpenWeatherID(String openWeatherID) {
-		
-		SharedUtils.checkNotNull(openWeatherID);
-		keyMap.put(PurdahKey.OPENWEATHERID, openWeatherID);
-	}
-*/
 	public static void setInstance(PurdahKeys keys) {
 		
 		SharedUtils.checkNotNull(keys);
@@ -194,24 +89,24 @@ public class PurdahKeys implements Serializable {
 		PurdahKeys purdahKeys;
 		JebusPool jebusPool;
 		
-		jebusPool = JebusApiHub.getJebusCentral();
+		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
 			try {
 				aesKey = A1iciaCrypto.getA1iciaFileAESKey();
 			} catch (Exception e) {
-				throw new A1iciaAPIException("PurdahKeys: can't recover AES key", e);
+				throw new A1iciaException("PurdahKeys: can't recover AES key", e);
 			}
-			purdahKeyBytes = JebusApiBible.getA1iciaPurdahKey(jebusPool).getBytes();
+			purdahKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAPURDAHKEY, jebusPool);
 			purdah = jebus.get(purdahKeyBytes);
 			try {
 				purdahBytes = A1iciaCrypto.decrypt(aesKey, purdah);
 			} catch (Exception e) {
-				throw new A1iciaAPIException("PurdahKeys: can't decrypt purdah", e);
+				throw new A1iciaException("PurdahKeys: can't decrypt purdah", e);
 			}
 			try {
 				purdahKeys = (PurdahKeys) Serialization.deSerialize(purdahBytes);
 			} catch (ClassNotFoundException | IOException e) {
-				throw new A1iciaAPIException("PurdahKeys: can't deserialize purdah", e);
+				throw new A1iciaException("PurdahKeys: can't deserialize purdah", e);
 			}
 		}
 		return purdahKeys;
@@ -269,6 +164,7 @@ public class PurdahKeys implements Serializable {
 		IPINFOKEY,
 		OPENWEATHERID,
 		WOLFRAMALPHAKEY,
-		WOLFRAMALPHAREMOTEKEY
+		WOLFRAMALPHAREMOTEKEY,
+        GOOGLEXLATEKEY
 	}
 }

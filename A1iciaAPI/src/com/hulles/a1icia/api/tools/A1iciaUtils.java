@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.tools;
+package com.hulles.a1icia.api.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,12 +31,13 @@ import java.util.Date;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.CharStreams;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaError;
-import com.hulles.a1icia.base.A1iciaException;
 
 /**
- * An olio class for various useful functions in A1icia.
+ * An olio class for various useful functions in A1icia. These methods are <b>NOT</b> GWT-safe.
+ * 
+ * @see com.hulles.a1icia.api.SharedUtils
  * 
  * @author hulles
  *
@@ -71,7 +72,7 @@ public final class A1iciaUtils {
     	long days = 0;
     	long hours = 0;
     	long minutes = 0;
-    	float seconds = 0f; 	
+    	float seconds; 	
     	long millis;
     	
     	millis = milliseconds;
@@ -117,7 +118,7 @@ public final class A1iciaUtils {
 	public static String formatElapsedMinutes(long timeInMinutes) {
 		long days = 0;
 		long hours = 0;
-		long minutes = 0;
+		long minutes;
 		long time;
 		
 		SharedUtils.checkNotNull(timeInMinutes);
@@ -180,7 +181,7 @@ public final class A1iciaUtils {
 	 * a more interesting approach given an entire string, see PorterStemmer cons function.
 	 * 
 	 * @param c The character to test
-	 * @return True if the character is a primary vowel
+	 * @return True if the character is a primary vowel (aeiou)
 	 */
 	public static boolean isVowel(Character c) {
 		CharMatcher matcher;

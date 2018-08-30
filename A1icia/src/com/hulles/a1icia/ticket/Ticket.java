@@ -22,13 +22,14 @@
 package com.hulles.a1icia.ticket;
 
 import com.google.common.eventbus.EventBus;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.Room;
 
 import redis.clients.jedis.Jedis;
@@ -69,7 +70,8 @@ public final class Ticket {
 	/**
 	 * Create a new ticket.
 	 * 
-     * @param bus
+     * @param bus The hall bus
+     * @param room The room creating the ticket
 	 * @return A new ticket
 	 */
 	public static Ticket createNewTicket(EventBus bus, Room room) {
@@ -175,10 +177,12 @@ public final class Ticket {
 	
 	private static long getNewTicketID() {
 		JebusPool jebusPool;
-		
+        String key;
+        
 		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusBible.getA1iciaTicketCounterKey(jebusPool));
+			key = JebusBible.getStringKey(JebusKey.ALICIATICKETCOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 	

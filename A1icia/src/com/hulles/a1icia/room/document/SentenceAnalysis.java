@@ -21,10 +21,10 @@
  *******************************************************************************/
 package com.hulles.a1icia.room.document;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 
 /**
  * The result of the NLP analysis for this sentence, among all the sentences discerned in the
@@ -289,49 +289,56 @@ final public class SentenceAnalysis {
 		sb.append("<dt>TOKENS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : tokens) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>NER PERSONS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : nerPersons) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>NER LOCATIONS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : nerLocations) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>NER ORGANIZATIONS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : nerOrganizations) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>MYRIA CITIZENS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : myriaCitizens) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>MYRIA LOCATIONS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : myriaLocations) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>MYRIA ORGANIZATIONS</dt>\n");
 		sb.append("<dd>\n");
 		for (String s : myriaOrganizations) {
-			sb.append(s + "<br />\n");
+			sb.append(s);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
@@ -360,21 +367,24 @@ final public class SentenceAnalysis {
 		sb.append("<dt>CHUNK SPANS</dt>\n");
 		sb.append("<dd>\n");
 		for (String span : chunkSegments) {
-			sb.append(span + "<br />\n");
+			sb.append(span);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>LEMMATA</dt>\n");
 		sb.append("<dd>\n");
 		for (String lemma : lemmata) {
-			sb.append(lemma + "<br />\n");
+			sb.append(lemma);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		
 		sb.append("<dt>DICTIONARY LEMMATA</dt>\n");
 		sb.append("<dd>\n");
 		for (String lemma : dictionaryLemmata) {
-			sb.append(lemma + "<br />\n");
+			sb.append(lemma);
+			sb.append("<br />\n");
 		}
 		sb.append("</dd>\n");
 		

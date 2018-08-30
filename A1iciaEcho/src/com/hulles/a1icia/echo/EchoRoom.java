@@ -28,11 +28,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.echo.EchoAnalysis.VectorLoad;
 import com.hulles.a1icia.echo.w2v.WordDistance;
 import com.hulles.a1icia.echo.w2v.WordToVecSearch;
@@ -73,7 +73,7 @@ public final class EchoRoom extends UrRoom {
 		}
 		try {
 			matches = searcher.getWordMatches(clientMsg, 20);
-		} catch (EchoWordToVecException e) {
+		} catch (A1iciaException e) {
 			return null;
 		}
 		return formatResult(matches);
@@ -90,7 +90,7 @@ public final class EchoRoom extends UrRoom {
 		}
 		try {
 			matches = searcher.getAnalogy(word1, word2, word3, 8);
-		} catch (EchoWordToVecException e) {
+		} catch (A1iciaException e) {
 			return null;
 		}
 		return formatResult(matches);
@@ -205,12 +205,12 @@ public final class EchoRoom extends UrRoom {
 			if (wordToMatch == null || wordToMatch.isEmpty()) {
 				result = "No matching input";
 			} else {
-				wordToMatch.replace(" ", "_");
+				wordToMatch = wordToMatch.replace(" ", "_");
 				result = matchWordOrPhrase(wordToMatch);
 				if (result == null) {
 					result = "No matching results";
 				} else {
-					result.replace("_", " ");
+					result = result.replace("_", " ");
 				}
 			}
 		}

@@ -21,6 +21,10 @@
  *******************************************************************************/
 package com.hulles.a1icia.golf;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,16 +42,13 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 import redis.clients.jedis.Jedis;
 
 public class WikiDataParser {
-	private final static Logger logger = Logger.getLogger("A1iciaGolf.WikiDataParser");
+	private final static Logger LOGGER = Logger.getLogger("A1iciaGolf.WikiDataParser");
 	private final static Level LOGLEVEL = Level.FINE;
 	private final static String DATEPARSE = "+yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private static SimpleDateFormat sdf = null;
@@ -72,12 +73,12 @@ public class WikiDataParser {
         try (JsonReader reader = Json.createReader(sReader)) {
         	search = reader.readObject();
         }
-        logger.log(LOGLEVEL,"Searchinfo: search:" + search.getJsonObject("searchinfo").getJsonString("search"));
-        logger.log(LOGLEVEL,"Search-continue: " + search.getJsonNumber("search-continue"));
-        logger.log(LOGLEVEL,"Success: " + search.getJsonNumber("success"));
+        LOGGER.log(LOGLEVEL, "Searchinfo: search:{0}", search.getJsonObject("searchinfo").getJsonString("search"));
+        LOGGER.log(LOGLEVEL, "Search-continue: {0}", search.getJsonNumber("search-continue"));
+        LOGGER.log(LOGLEVEL, "Success: {0}", search.getJsonNumber("success"));
         searchBody = search.getJsonArray("search");
         bodyCount = searchBody.size();
-        logger.log(LOGLEVEL,"Search body length: " + bodyCount);
+        LOGGER.log(LOGLEVEL, "Search body length: {0}", bodyCount);
         results = new ArrayList<>(bodyCount);
         for (int ix = 0; ix < bodyCount; ix++) {
         	sbo = searchBody.getJsonObject(ix);
@@ -93,7 +94,7 @@ public class WikiDataParser {
         	}
         }
         for (WikiDataSearchResult sr : results) {
-        	logger.log(LOGLEVEL,"Desc: " + sr.getDescription());
+        	LOGGER.log(LOGLEVEL, "Desc: {0}", sr.getDescription());
         }
         return results;
 	}
@@ -117,7 +118,7 @@ public class WikiDataParser {
         try (JsonReader reader = Json.createReader(sReader)) {
         	entity = reader.readObject();
         }
-        logger.log(LOGLEVEL,"Success: " + entity.getJsonNumber("success"));
+        LOGGER.log(LOGLEVEL, "Success: {0}", entity.getJsonNumber("success"));
         entityBody = entity.getJsonObject("entities");
         values = entityBody.values();
         results = new ArrayList<>();
@@ -163,7 +164,7 @@ public class WikiDataParser {
 		SharedUtils.checkNotNull(entity);
 		jebusPool = JebusHub.getJebusLocal();
 		wdEntity = new WikiDataEntity();
-		logger.log(LOGLEVEL,"Type: " + entity.getString("type", "(no type)"));
+		LOGGER.log(LOGLEVEL, "Type: {0}", entity.getString("type", "(no type)"));
 		labels = entity.getJsonObject("labels");
 		if (labels == null) {
 			label = "(no label)";
@@ -175,7 +176,7 @@ public class WikiDataParser {
 				label = labels.getString("value", "(no label)");
 			}
 		}
-		logger.log(LOGLEVEL,"Labels: " + label);
+		LOGGER.log(LOGLEVEL, "Labels: {0}", label);
 		wdEntity.setLabel(label);
 		descriptions = entity.getJsonObject("descriptions");
 		if (descriptions == null) {
@@ -188,18 +189,16 @@ public class WikiDataParser {
 				description = descriptions.getString("value", "(no description)");
 			}
 		}
-		logger.log(LOGLEVEL,"Descriptions: " + description);
+		LOGGER.log(LOGLEVEL, "Descriptions: {0}", description);
 		wdEntity.setDescription(description);
 		aliases = entity.getJsonObject("aliases");
-		if (aliases == null) {
-			aliasStr = "(no alias)";
-		} else {
+		if (aliases != null) {
 			aliasArray = aliases.getJsonArray("en");
 			if (aliasArray != null) {
 				for (JsonValue value : aliasArray) {
 					alias = (JsonObject)value;
 					aliasStr = alias.getString("value", "(no alias)");
-					logger.log(LOGLEVEL,"Alias: " + aliasStr);
+					LOGGER.log(LOGLEVEL, "Alias: {0}", aliasStr);
 					wdEntity.addAlias(aliasStr);
 				}
 			}
@@ -218,7 +217,7 @@ public class WikiDataParser {
 				propID = mainSnak.getString("property", "(no property)");
 				try (Jedis jebus = jebusPool.getResource()) {
 					hashKey = JebusBible.getWikiDataHashKey(jebusPool, propID);
-					propLabel = jebus.hget(hashKey, JebusBible.getWikiDataLabelField(jebusPool));
+					propLabel = jebus.hget(hashKey, JebusBible.getStringKey(JebusKey.WIKIDATALABEL, jebusPool));
 				}
 				if (propLabel == null) {
 					A1iciaUtils.error("Property " + propID + " not in map");
@@ -226,8 +225,7 @@ public class WikiDataParser {
 				}
 				dataType = mainSnak.getString("datatype");
 				dataValue = parseDataValue(mainSnak.getJsonObject("datavalue"), dataType);
-				logger.log(LOGLEVEL, "Property: " + propID + " " + propLabel + " : " +
-							dataValue.toString());
+				LOGGER.log(LOGLEVEL, "Property: {0} {1} : {2}", new Object[]{propID, propLabel, dataValue.toString()});
 				claim = new WikiDataClaim(propID);
 				claim.setLabel(propLabel);
 				claim.setValue(dataValue);
@@ -253,7 +251,7 @@ public class WikiDataParser {
 					wdID = (String)cl.getValue();
 					for (WikiDataEntity wd : secondaryEntities) {
 						if (wdID.equals(wd.getqID())) {
-							logger.log(LOGLEVEL,"Successfully updated " + wdID);
+							LOGGER.log(LOGLEVEL, "Successfully updated {0}", wdID);
 							cl.setSecondaryLabel(wd.getLabel());
 						}
 					}
@@ -271,7 +269,7 @@ public class WikiDataParser {
 		
 		SharedUtils.checkNotNull(entity);
 		wdEntity = new WikiDataEntity();
-		logger.log(LOGLEVEL,"Type: " + entity.getString("type", "(no type)"));
+		LOGGER.log(LOGLEVEL, "Type: {0}", entity.getString("type", "(no type)"));
 		labels = entity.getJsonObject("labels");
 		if (labels == null) {
 			label = "(no label)";
@@ -283,7 +281,7 @@ public class WikiDataParser {
 				label = labels.getString("value", "(no label)");
 			}
 		}
-		logger.log(LOGLEVEL,"Labels: " + label);
+		LOGGER.log(LOGLEVEL, "Labels: {0}", label);
 		wdEntity.setLabel(label);
 		return wdEntity;
 	}
@@ -331,8 +329,7 @@ public class WikiDataParser {
 					try {
 						date = sdf.parse(time);
 					} catch (ParseException e) {
-						A1iciaUtils.error("Can't parse date/time string " + time);
-						e.printStackTrace();
+						A1iciaUtils.error("Can't parse date/time string " + time, e);
 					}
 					return date;
 				} 

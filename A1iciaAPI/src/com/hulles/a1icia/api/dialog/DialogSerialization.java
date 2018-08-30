@@ -35,9 +35,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.remote.A1icianID;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 /**
@@ -50,7 +50,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 public class DialogSerialization {
 	final static Logger LOGGER = Logger.getLogger("A1iciaApi.DialogSerialization");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	private static final int MAXHEADROOM = JebusApiHub.getMaxHardOutputBufferLimit();
+	private static final int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 	
 	/**
 	 * Deserialize a byte array for an A1ician. We deserialize at least the header,
@@ -105,15 +105,15 @@ public class DialogSerialization {
 				LOGGER.log(LOGLEVEL, debugString);
 			}
 		} catch (InvalidClassException e) {
-			throw new A1iciaAPIException("DialogSerialization:deSerialize: invalid class", e);
+			throw new A1iciaException("DialogSerialization:deSerialize: invalid class", e);
 		} catch (ClassNotFoundException e) {
-			throw new A1iciaAPIException("DialogSerialization:deSerialize: class not found", e);
+			throw new A1iciaException("DialogSerialization:deSerialize: class not found", e);
 		} catch (StreamCorruptedException e) {
-			throw new A1iciaAPIException("DialogSerialization:deSerialize: stream corrupted", e);
+			throw new A1iciaException("DialogSerialization:deSerialize: stream corrupted", e);
 		} catch (OptionalDataException e) {
-			throw new A1iciaAPIException("DialogSerialization:deSerialize: optional data", e);
+			throw new A1iciaException("DialogSerialization:deSerialize: optional data", e);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("DialogSerialization:deSerialize: IO exception", e);
+			throw new A1iciaException("DialogSerialization:deSerialize: IO exception", e);
 		}
 		LOGGER.log(LOGLEVEL, "FINISHED DESERIALIZING");
 		return dialog;
@@ -139,7 +139,7 @@ public class DialogSerialization {
 			request = (DialogRequest) dialog;
 			if (!request.isValid()) {
 				System.err.println(request.toString());
-				throw new A1iciaAPIException("DialogSerialization:serialize: invalid dialog request");
+				throw new A1iciaException("DialogSerialization:serialize: invalid dialog request");
 			}
 			LOGGER.log(LOGLEVEL, "DEBUG DIALOGREQUEST");
 			debugString = request.toString();
@@ -147,7 +147,7 @@ public class DialogSerialization {
 			response = (DialogResponse) dialog;
 			if (!response.isValid()) {
 				System.err.println(response.toString());
-				throw new A1iciaAPIException("DialogSerialization:serialize: invalid dialog response");
+				throw new A1iciaException("DialogSerialization:serialize: invalid dialog response");
 			}
 			LOGGER.log(LOGLEVEL, "DEBUG DIALOGRESPONSE");
 			debugString = response.toString();
@@ -161,15 +161,15 @@ public class DialogSerialization {
 			objectOutputStream.flush();
 			objectOutputStream.close();
 		} catch (InvalidClassException e) {
-			throw new A1iciaAPIException("DialogSerialization:serialize: invalid class", e);
+			throw new A1iciaException("DialogSerialization:serialize: invalid class", e);
 		} catch (NotSerializableException e) {
-			throw new A1iciaAPIException("DialogSerialization:serialize: not serializable", e);
+			throw new A1iciaException("DialogSerialization:serialize: not serializable", e);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("DialogSerialization:serialize: IO exception");
+			throw new A1iciaException("DialogSerialization:serialize: IO exception");
 		}
 		LOGGER.log(LOGLEVEL, "WROTE OBJECTS");
 		if (byteOutputStream.size() > MAXHEADROOM) {
-			throw new A1iciaAPIException("DialogSerialization: serialized size exceeds Redis max");
+			throw new A1iciaException("DialogSerialization: serialized size exceeds Redis max");
 		}
 		return byteOutputStream.toByteArray();
 	}

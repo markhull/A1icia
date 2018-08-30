@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.papa;
 
+import com.hulles.a1icia.api.jebus.JebusHub;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,12 +33,12 @@ import java.util.Set;
 
 import com.hulles.a1icia.api.object.A1iciaClientObject.ClientObjectType;
 import com.hulles.a1icia.api.object.MediaObject;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.crypto.PurdahKeys;
 import com.hulles.a1icia.crypto.PurdahKeys.PurdahKey;
-import com.hulles.a1icia.jebus.JebusHub;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
 import com.hulles.a1icia.room.Room;
@@ -52,7 +53,6 @@ import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
@@ -152,10 +152,10 @@ public final class PapaRoom extends UrRoom {
 		ClientObjectWrapper action;
 		MediaObject mediaObject;
 		String lookupString;
-		String message = null;
+		String message;
 		String encodedQuery;
-		String responseText = null;
-		BufferedImage responseImage = null;
+		String responseText;
+		BufferedImage responseImage;
 		byte[] imageBytes = null;
 		SentencePackage sentencePkg;
 		byte[][] imageArrays;

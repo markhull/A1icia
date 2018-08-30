@@ -21,12 +21,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 
 import redis.clients.jedis.Jedis;
 
@@ -41,22 +42,22 @@ public final class PennTreebank {
 	private static JebusPool jebusPool = null;
 	
 	public static String getTagDefinition(String tag) {
-		String result = null;
+		String result;
 		String hashKey;
 		
 		SharedUtils.checkNotNull(tag);
 		if (jebusPool == null) {
-			jebusPool = JebusHub.getJebusLocal();
+			jebusPool = JebusHub.getJebusCentral();
 		}
     	try (Jedis jebus = jebusPool.getResource()){
     		hashKey = JebusBible.getPennTreebankHashKey(jebusPool, tag);
-    		result = jebus.hget(hashKey, JebusBible.getPTTagDescField(jebusPool));
+    		result = jebus.hget(hashKey, JebusBible.getStringKey(JebusKey.PTTAGDESCRIPTION, jebusPool));
 		}
 		return result;
 	}
 	
 	public static String getCUPSymbol(String tag) {
-		String result = null;
+		String result;
 		String hashKey;
 		
 		SharedUtils.checkNotNull(tag);
@@ -65,7 +66,7 @@ public final class PennTreebank {
 		}
     	try (Jedis jebus = jebusPool.getResource()){
     		hashKey = JebusBible.getPennTreebankHashKey(jebusPool, tag);
-    		result = jebus.hget(hashKey, JebusBible.getPTCupSymbolField(jebusPool));
+     		result = jebus.hget(hashKey, JebusBible.getStringKey(JebusKey.PTCUPSYMBOL, jebusPool));
 		}
 		return result;
 	}
@@ -92,9 +93,9 @@ public final class PennTreebank {
     	String descFld;
     	String cupFld;
     	
-    	setKey = JebusBible.getPennTreebankSetKey(jebusPool);
-    	descFld = JebusBible.getPTTagDescField(jebusPool);
-    	cupFld = JebusBible.getPTCupSymbolField(jebusPool);
+    	setKey = JebusBible.getStringKey(JebusKey.PENNTREEBANKSETKEY, jebusPool);
+    	descFld = JebusBible.getStringKey(JebusKey.PTTAGDESCRIPTION, jebusPool);
+    	cupFld = JebusBible.getStringKey(JebusKey.PTCUPSYMBOL, jebusPool);
 		if (jebusPool == null) {
 			jebusPool = JebusHub.getJebusLocal();
 		}

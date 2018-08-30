@@ -37,8 +37,8 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SerialMiniPerson;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.cayenne.Person;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * 
@@ -126,7 +126,7 @@ final public class PersonUtils {
 			user = buildSerialMiniPerson(dbPerson);
 			sysPeople.add(user);
 		}
-		LOGGER.log(LOGLEVEL, "getPeople: Count is " + sysPeople.size());
+		LOGGER.log(LOGLEVEL, "getPeople: Count is {0}", sysPeople.size());
 		return sysPeople;
 	}
 

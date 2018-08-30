@@ -69,7 +69,7 @@ public interface A1iciaRemoteDisplay {
 	 * if the remote display handles the object and doesn't need more processing,
 	 * false otherwise.
 	 * 
-	 * @param sememe
+	 * @param object
 	 */
 	boolean receiveObject(A1iciaClientObject object);
 }

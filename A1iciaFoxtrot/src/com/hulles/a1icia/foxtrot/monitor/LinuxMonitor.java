@@ -46,8 +46,8 @@ import javax.sql.DataSource;
 import org.mariadb.jdbc.MariaDbDataSource;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.foxtrot.dummy.DummyDataSource;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.NetworkDevice;
@@ -175,10 +175,10 @@ final public class LinuxMonitor {
 		List<String> lines;
 		List<Processor> cpus;
 		String[] tokens;
-		Processor cpu = null;
-		String model = null;
-		String freq = null;
-		String cpuNumber = null;
+		Processor cpu;
+		String model;
+		String freq;
+		String cpuNumber;
 		String token;
 		
 		cpus = new ArrayList<>();
@@ -205,9 +205,6 @@ final public class LinuxMonitor {
 					freq = tokens[1].trim();
 					cpu.setCpuMhz(Float.parseFloat(freq));
 					cpus.add(cpu);
-					cpuNumber = null;
-					model = null;
-					freq = null;
 					cpu = foxtrotState.new Processor();
 				}
 			}
@@ -220,8 +217,8 @@ final public class LinuxMonitor {
 		NetworkDevice device;
 		List<String> lines;
 		String[] tokens;
-		String valueStr = null;
-		String[] valueStrs = null;
+		String valueStr;
+		String[] valueStrs;
 		Long value;
 		int pingResult;
 		
@@ -261,8 +258,8 @@ final public class LinuxMonitor {
 	private void updateMemory() {
 		List<String> lines;
 		String[] tokens;
-		String valueStr = null;
-		String[] valueStrs = null;
+		String valueStr;
+		String[] valueStrs;
 		String token;
 		
 		lines = FoxtrotUtils.getLinesFromFile("/proc/meminfo");
@@ -295,7 +292,6 @@ final public class LinuxMonitor {
 					valueStrs = tokens[1].trim().split(" ");
 					valueStr = valueStrs[0].trim();
 					foxtrotState.setFreeSwapKb(Long.parseLong(valueStr));
-					continue;
 				}
 			}
 		}
@@ -394,12 +390,10 @@ final public class LinuxMonitor {
 						floatVal = Float.parseFloat(tokens[1].trim());
 						sensorValue.setAlarm(floatVal > 0);
 					}
-					continue;
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't read sensors stream");
+			throw new A1iciaException("Can't read sensors stream", e);
 		}
 		foxtrotState.setSensorValues(sensorValues);
 	}
@@ -448,14 +442,13 @@ final public class LinuxMonitor {
 				fileSystems.add(fileSystem);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new A1iciaException("Can't read df stream");
+			throw new A1iciaException("Can't read df stream", e);
 		}
 		foxtrotState.setFileSystems(fileSystems);
 	}
 	
 	private void updateDatabase() {
-        DatabaseMetaData metaData = null;
+        DatabaseMetaData metaData;
         DataSource source;
 		
 		try {
@@ -488,6 +481,9 @@ final public class LinuxMonitor {
 		} catch (SQLException e) {
 			throw new A1iciaException("Can't get non-pooling data source", e);
 		}
+        if (source == null) {
+           	throw new A1iciaException("Can't get data source");
+        }
 		if (source instanceof DummyDataSource) {
 			return false;
 		}
@@ -585,31 +581,31 @@ final public class LinuxMonitor {
 				// ...we don't currently do anything with these stats
 			} else {
 				counts = line.split("\\s+");
-				LOGGER.log(LOGLEVEL, "line = [" + line + "]");
-				LOGGER.log(LOGLEVEL, "counts.length = " + counts.length);
+				LOGGER.log(LOGLEVEL, "line = [{0}]", line);
+				LOGGER.log(LOGLEVEL, "counts.length = {0}", counts.length);
 				for (String count : counts) {
-					LOGGER.log(LOGLEVEL, "counts value = [" + count + "]");
+					LOGGER.log(LOGLEVEL, "counts value = [{0}]", count);
 				}
 				// with split there is an initial space element in the array at pos 0
 				if (counts.length == 4) {
 					try {
 						// accepts
 						value = Long.parseLong(counts[1]);
-						LOGGER.log(LOGLEVEL, "value 1 = " + value);
+						LOGGER.log(LOGLEVEL, "value 1 = {0}", value);
 					} catch (NumberFormatException e) {
 						continue;
 					}
 					try {
 						// handled
 						value = Long.parseLong(counts[2]);
-						LOGGER.log(LOGLEVEL, "value 2 = " + value);
+						LOGGER.log(LOGLEVEL, "value 2 = {0}", value);
 					} catch (NumberFormatException e) {
 						continue;
 					}
 					try {
 						// requests
 						value = Long.parseLong(counts[3]);
-						LOGGER.log(LOGLEVEL, "value 3 = " + value);
+						LOGGER.log(LOGLEVEL, "value 3 = {0}", value);
 						foxtrotState.setServerAccesses(value);
 					} catch (NumberFormatException e) {
 						continue;
@@ -622,7 +618,7 @@ final public class LinuxMonitor {
 	
 	private static List<String> getWebServerStatus(String urlStr) {
 		URL url;
-		String line = null;
+		String line;
 	    List<String> statusLines;
 	    
 	    

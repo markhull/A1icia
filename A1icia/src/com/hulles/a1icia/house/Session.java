@@ -30,14 +30,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.media.Language;
 
 import redis.clients.jedis.Jedis;
@@ -65,7 +66,7 @@ public class Session {
 		this.a1icianID = a1icianID;
 		jebusPool = JebusHub.getJebusCentral();
 		hashKey = JebusBible.getA1iciaSessionHashKey(jebusPool, a1icianID);
-		timelineKey = JebusBible.getSessionTimelineKey(jebusPool);
+		timelineKey = JebusBible.getStringKey(JebusKey.SESSION_TIMELINE, jebusPool);
 	}
 	
 	/**
@@ -89,7 +90,6 @@ public class Session {
 	 * Whether it's a new session or we're updating an existing session
 	 * with a new timestamp, the process is the same.
 	 * 
-	 * @param session The session to update
 	 */
 	public void update() {
 		String tsField;
@@ -101,7 +101,7 @@ public class Session {
 		timestampStr = timestamp.toString();
 		// we use millis for sorting purposes
 		timeScore = Double.valueOf(System.currentTimeMillis());
-		tsField = JebusBible.getSessionTimestampField(jebusPool);
+		tsField = JebusBible.getStringKey(JebusKey.SESSION_TIMESTAMP, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			// set hash timestamp field
 			jebus.hset(hashKey, tsField, timestampStr);
@@ -124,7 +124,7 @@ public class Session {
 		String field;
 		String timestampStr;
 		
-		field = JebusBible.getSessionTimestampField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_TIMESTAMP, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			timestampStr = jebus.hget(hashKey, field);
 		}
@@ -144,7 +144,7 @@ public class Session {
 		String personStr;
 		String field;
 		
-		field = JebusBible.getSessionPersonIdField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_PERSONUUID, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			personStr = jebus.hget(hashKey, field);
 			if (personStr != null) {
@@ -163,7 +163,7 @@ public class Session {
 		String field;
 		
 		SharedUtils.nullsOkay(personUUID);
-		field = JebusBible.getSessionPersonIdField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_PERSONUUID, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			if (personUUID == null) {
 				jebus.hdel(hashKey, field);
@@ -182,7 +182,7 @@ public class Session {
 		String uuid;
 		String field;
 		
-		field = JebusBible.getSessionStationIdField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_STATIONID, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			uuid = jebus.hget(hashKey, field);
 		}
@@ -198,7 +198,7 @@ public class Session {
 		String field;
 		
 		SharedUtils.checkNotNull(uuid);
-		field = JebusBible.getSessionStationIdField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_STATIONID, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.hset(hashKey, field, uuid.getUUIDString());
 		}
@@ -213,7 +213,7 @@ public class Session {
 		String language;
 		String field;
 		
-		field = JebusBible.getSessionLanguageField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_LANGUAGE, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			language = jebus.hget(hashKey, field);
 		}
@@ -228,7 +228,7 @@ public class Session {
 		String field;
 		
 		SharedUtils.checkNotNull(language);
-		field = JebusBible.getSessionLanguageField(jebusPool);
+		field = JebusBible.getStringKey(JebusKey.SESSION_LANGUAGE, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.hset(hashKey, field, language.name());
 		}
@@ -242,7 +242,8 @@ public class Session {
 	/**
 	 * Get a list of currently-active sessions for the person.
 	 *
-	 * 
+     * @param uuid The ID of the person
+	 * @return The active sessions
 	 */
 	public static List<Session> getPersonSessions(SerialUUID<SerialPerson> uuid) {
 		List<Session>  sessions;
@@ -280,7 +281,7 @@ public class Session {
 		A1icianID a1icianID;
 		
 		jebusPool = JebusHub.getJebusCentral();
-		timelineKey = JebusBible.getSessionTimelineKey(jebusPool);
+		timelineKey = JebusBible.getStringKey(JebusKey.SESSION_TIMELINE, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			a1icianIDStrs = jebus.zrange(timelineKey, 0, -1);
 		}

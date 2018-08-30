@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.google.common.io.CharStreams;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 public class TinyPages {
@@ -47,13 +47,13 @@ public class TinyPages {
 		try (InputStream in = cl.getResourceAsStream(resourcePath)) {
 			if (in == null) {
 				System.out.println(resourcePath);
-		    	throw new A1iciaAPIException("A1iciaUtils: resource input stream is null");
+		    	throw new A1iciaException("A1iciaUtils: resource input stream is null");
 			}
 			try (InputStreamReader inr = new InputStreamReader(in)) {
 				text = CharStreams.toString(inr);
 			}
 		} catch (IOException e) {
-	    	throw new A1iciaAPIException("A1iciaUtils: can't read resource");
+	    	throw new A1iciaException("A1iciaUtils: can't read resource");
 		}
         return text;
 	}

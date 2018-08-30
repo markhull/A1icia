@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.jebus;
+package com.hulles.a1icia.api.jebus;
 
 import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -67,7 +68,7 @@ final class JebusMonitor implements Closeable {
 		
 		SharedUtils.checkNotNull(channel);
 		SharedUtils.checkNotNull(msgBytes);
-		if (channel.equals(JebusBible.getA1iciaFromChannelBytes(jebusPool))) {
+		if (channel.equals(JebusBible.getBytesKey(JebusKey.FROMCHANNEL, jebusPool))) {
 			doohickey = " => ";
 		} else {
 			doohickey = " <= ";
@@ -86,7 +87,7 @@ final class JebusMonitor implements Closeable {
 		
 		SharedUtils.checkNotNull(channel);
 		SharedUtils.checkNotNull(text);
-		if (channel.equals(JebusBible.getA1iciaFromChannelBytes(jebusPool))) {
+		if (channel.equals(JebusBible.getBytesKey(JebusKey.FROMCHANNEL, jebusPool))) {
 			doohickey = " => ";
 		} else {
 			doohickey = " <= ";
@@ -128,8 +129,8 @@ final class JebusMonitor implements Closeable {
 					listener = new JebusListener();
 					// the following line blocks while waiting for responses...
 					jebus.subscribe(listener,
-							JebusBible.getA1iciaFromChannelBytes(jebusPool),
-							JebusBible.getA1iciaToChannelBytes(jebusPool));
+							JebusBible.getBytesKey(JebusKey.FROMCHANNEL, jebusPool),
+							JebusBible.getBytesKey(JebusKey.TOCHANNEL, jebusPool));
 				}
 			}
 		});

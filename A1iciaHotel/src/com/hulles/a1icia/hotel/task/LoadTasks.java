@@ -29,14 +29,12 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Person;
 import com.hulles.a1icia.cayenne.Task;
 import com.hulles.a1icia.cayenne.TaskPriority;
 import com.hulles.a1icia.cayenne.TaskStatus;
 import com.hulles.a1icia.cayenne.TaskType;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
@@ -46,6 +44,8 @@ import biweekly.property.Created;
 import biweekly.property.DateDue;
 import biweekly.property.Status;
 import biweekly.property.Uid;
+import com.hulles.a1icia.api.shared.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 public class LoadTasks {
 	
@@ -112,15 +112,18 @@ public class LoadTasks {
 					System.out.print(vt.getStatus());
 					Status status = vt.getStatus();
 					System.out.println("(Status)" + status.getValue());
-					if (status.getValue().equals("COMPLETED")) {
-						taskStatus = TaskStatus.findTaskStatus(2);
-						task.setTaskStatus(taskStatus);
-					} else if (status.getValue().equals("IN-PROCESS")) {
-						taskStatus = TaskStatus.findTaskStatus(1);
-						task.setTaskStatus(taskStatus);
-					} else {
-						throw new A1iciaException();
-					}
+                    switch (status.getValue()) {
+                        case "COMPLETED":
+                            taskStatus = TaskStatus.findTaskStatus(2);
+                            task.setTaskStatus(taskStatus);
+                            break;
+                        case "IN-PROCESS":
+                            taskStatus = TaskStatus.findTaskStatus(1);
+                            task.setTaskStatus(taskStatus);
+                            break;
+                        default:
+                            throw new A1iciaException();
+                    }
 				}
 				if (vt.getUid() != null) {
 					System.out.print("Uid: ");

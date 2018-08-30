@@ -21,18 +21,19 @@
  *******************************************************************************/
 package com.hulles.a1icia.ticket;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 /**
@@ -293,10 +294,12 @@ public final class ActionPackage {
 	
 	private static long getNewActionPackageID() {
 		JebusPool jebusPool;
+        String key;
 		
 		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusBible.getA1iciaActionCounterKey(jebusPool));
+			key = JebusBible.getStringKey(JebusKey.ALICIAACTIONCOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 

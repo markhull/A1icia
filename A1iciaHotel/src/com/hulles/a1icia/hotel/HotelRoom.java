@@ -30,9 +30,10 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.cayenne.NamedTimer;
 import com.hulles.a1icia.cayenne.Task;
 import com.hulles.a1icia.hotel.task.LoadTasks;
@@ -48,7 +49,6 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Hotel Room has risen from the ashes and become our calendar room.
@@ -73,10 +73,12 @@ public final class HotelRoom extends UrRoom {
 	}
 
 	/**
-	 * While this looks like a lot of nonsense, and on one level that's true of course, it also
-	 * tests the complex machinery that generates responses to requests. That's my story and I'm
-	 * sticking to it.
+     * This method is executed when we receive a list of responses from our timer request. We
+     * don't really care about the responses -- we just send an uber-request to
+     * A1icia to forward the timer alert, and this is what she sends back.
 	 * 
+     * @param request The room request
+     * @param responses The responses to the request
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
@@ -98,8 +100,8 @@ public final class HotelRoom extends UrRoom {
 					obj = pkg.getActionObject();
 					if (obj instanceof MessageAction) {
 						msgAction = (MessageAction) obj;
-							LOGGER.log(LOGLEVEL, "We got some learning => " + msgAction.getMessage() +
-									" : " + msgAction.getExplanation());
+							LOGGER.log(LOGLEVEL, "We got some learning => {0} : {1}", 
+                                    new String[]{msgAction.getMessage(), msgAction.getExplanation()});
 					} else if (obj instanceof ClientObjectWrapper) {
 						cow = (ClientObjectWrapper) obj;
 						timerHandler.setMediaFile(cow);
@@ -141,7 +143,7 @@ public final class HotelRoom extends UrRoom {
 	}
 
 	private ActionPackage createTimerActionPackage(SememePackage sememePkg, RoomRequest request) {
-		String result = null;
+		String result;
 		MessageAction response;
 		ActionPackage pkg;
 		NamedTimer dbTimer;
@@ -174,22 +176,13 @@ public final class HotelRoom extends UrRoom {
 		pkg.setActionObject(response);
 		return pkg;
 	}
-	
-	public void postRequest(ClientDialogResponse response) {
-		Ticket ticket;
-		RoomRequest roomRequest;
 
-		SharedUtils.checkNotNull(response);
-		ticket = Ticket.createNewTicket(getHall(), getThisRoom());
-		ticket.setFromA1icianID(A1iciaConstants.getA1iciaA1icianID());
-		roomRequest = new RoomRequest(ticket);
-		roomRequest.setFromRoom(getThisRoom());
-		roomRequest.setSememePackages(SememePackage.getSingletonDefault("indie_response"));
-		roomRequest.setMessage("Indie client response");
-		roomRequest.setRoomObject(response);
-		sendRoomRequest(roomRequest);
-	}
-	
+    void postRequest(ClientDialogResponse response) {
+    
+        SharedUtils.checkNotNull(response);
+        super.postPushRequest(response);
+    }
+    
 	public void getMedia(Long timerID, String notificationTitle) {
 		RoomRequest mediaRequest;
 		Ticket ticket;

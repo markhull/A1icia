@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.remote.A1icianID;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.A1icianAction;
@@ -125,7 +125,7 @@ public final class DeltaRoom extends UrRoom {
 			System.err.println("Delta Room: a1ician ID sememeObject is null");
 			return null;
 		}
-		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianStr = " + a1icianStr);
+		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianStr = {0}", a1icianStr);
 		if (a1icianStr.equals("{consoleID}")) {
 			a1icianID = null;
 		} else {
@@ -134,7 +134,7 @@ public final class DeltaRoom extends UrRoom {
 				a1icianID = null;
 			}
 		}
-		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianID = " + a1icianID);
+		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianID = {0}", a1icianID);
 		sememe = sememePkg.getSememe();
 		pkg = new ActionPackage(sememePkg);
 		action = new A1icianAction();

@@ -28,9 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.MessageAction;
@@ -42,7 +42,7 @@ import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.tools.ExternalAperture;
 
 /**
- * Sierra Room is where we interact with the so-called Internet of Things, and let A1icia 
+ * Sierra Room is where we interact with the so-called Internet of Things (IoT), and let A1icia 
  * turn our stereo on and blast Rick Astley at concert volume while we're on vacation.
  * 
  * @author hulles
@@ -62,6 +62,9 @@ public final class SierraRoom extends UrRoom {
 	/**
 	 * Here we create an ActionPackage from Sierra for an IoT function and return it to UrRoom.
 	 * 
+     * @param sememePkg The query sememe
+     * @param request The room's request
+     * @return The ActionPackage
 	 */
 	@Override
 	protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
@@ -115,8 +118,8 @@ public final class SierraRoom extends UrRoom {
 				messageStr = "invalid";
 			}
 		}
-		LOGGER.log(LOGLEVEL, "messageStr = " +  messageStr);
-		LOGGER.log(LOGLEVEL, "temperatureStr = " +  temperatureStr);
+		LOGGER.log(LOGLEVEL, "messageStr = {0}", messageStr);
+		LOGGER.log(LOGLEVEL, "temperatureStr = {0}", temperatureStr);
 		action.setMessage("The room temperature is " + messageStr);
 		action.setExplanation("The room temperature was reported as " + temperatureStr);
 		pkg.setActionObject(action);
@@ -162,8 +165,8 @@ public final class SierraRoom extends UrRoom {
 				messageStr = "invalid";
 			}
 		}
-		LOGGER.log(LOGLEVEL, "humidityStr = " + humidityStr);
-		LOGGER.log(LOGLEVEL, "messageStr = " + messageStr);
+		LOGGER.log(LOGLEVEL, "humidityStr = {0}", humidityStr);
+		LOGGER.log(LOGLEVEL, "messageStr = {0}", messageStr);
 		action.setMessage("The room humidity is " + messageStr);
 		action.setExplanation("The room relative humidity was reported as " + humidityStr);
 		pkg.setActionObject(action);
@@ -173,6 +176,8 @@ public final class SierraRoom extends UrRoom {
 	/**
 	 * Return this room name.
 	 * 
+     * @return This room
+     * 
 	 */
 	@Override
 	public Room getThisRoom() {
@@ -183,6 +188,8 @@ public final class SierraRoom extends UrRoom {
 	/**
 	 * We don't get responses for anything, so if there is one it's an error.
 	 * 
+     * @param request The request
+     * @param responses The list of responses we receive
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
@@ -201,6 +208,7 @@ public final class SierraRoom extends UrRoom {
 	/**
 	 * Advertise which sememes we handle.
 	 * 
+     * @return The list of sememes we support
 	 */
 	@Override
 	protected Set<SerialSememe> loadSememes() {
@@ -216,6 +224,7 @@ public final class SierraRoom extends UrRoom {
 	 * We don't do anything with RoomAnnouncements but it is legitimate to receive them here,
 	 * so no error.
 	 * 
+     * @param announcement The announcement
 	 */
 	@Override
 	protected void processRoomAnnouncement(RoomAnnouncement announcement) {

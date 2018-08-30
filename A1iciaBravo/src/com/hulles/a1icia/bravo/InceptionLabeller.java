@@ -22,6 +22,7 @@
 
 package com.hulles.a1icia.bravo;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,7 +42,6 @@ import org.tensorflow.Tensor;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 
 /** 
  * Sample use of the TensorFlow Java API to label images using a pre-trained model.

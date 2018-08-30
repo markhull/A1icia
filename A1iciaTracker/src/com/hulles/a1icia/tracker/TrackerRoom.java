@@ -38,16 +38,17 @@ import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
 import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.graphviz.Graph;
 import com.hulles.a1icia.graphviz.GraphViz;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.RoomAnnouncement;
@@ -57,7 +58,6 @@ import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 import redis.clients.jedis.Jedis;
 
@@ -135,7 +135,7 @@ public final class TrackerRoom extends UrRoom {
 		graph = ValueGraphBuilder.directed().allowsSelfLoops(true).build();
 		ticketGraph = new TicketTrack(ticket, graph);
 		ticketMap.put(ticket, ticketGraph);
-		LOGGER.log(LOGLEVEL, "TRACKER: added ticket, ticketmap has " + ticketMap.size() + " entries.");
+		LOGGER.log(LOGLEVEL, "TRACKER: added ticket, ticketmap has {0} entries.", ticketMap.size());
 	}
 	
 	public void closeTicket(Ticket ticket) {
@@ -180,7 +180,7 @@ public final class TrackerRoom extends UrRoom {
 		}
 		// update database with graph as well
 		ticketMap.remove(ticket);
-		LOGGER.log(LOGLEVEL, "TRACKER: removed ticket, ticketmap has " + ticketMap.size() + " entries.");
+		LOGGER.log(LOGLEVEL, "TRACKER: removed ticket, ticketmap has {0} entries.", ticketMap.size());
 	}
 	
 	public Set<Room> whatsComingToMe(Ticket ticket, Room me) {
@@ -281,6 +281,8 @@ public final class TrackerRoom extends UrRoom {
 	/**
 	 * Return this room.
 	 * 
+     * @return This room
+     * 
 	 */
 	@Override
 	public Room getThisRoom() {
@@ -291,6 +293,9 @@ public final class TrackerRoom extends UrRoom {
 	/**
 	 * Tracker does not handle responses, and shouldn't receive any here.
 	 * 
+     * @param request
+     * @param response
+     * 
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> response) {
@@ -326,8 +331,11 @@ public final class TrackerRoom extends UrRoom {
 	}
 
 	/**
-	 * BusMonitor does not react to sememes, although it could someday.
+	 * Tracker does not react to sememes, although it could someday.
 	 * 
+     * @param pkg
+     * @param request
+     * @return The ActionPackage
 	 */
 	@Override
 	public ActionPackage createActionPackage(SememePackage pkg, RoomRequest request) {
@@ -337,6 +345,8 @@ public final class TrackerRoom extends UrRoom {
 
 	/**
 	 * Return the set of sememes which we handle here, i.e. none (empty set).
+     * 
+     * @return The empty set
 	 */
 	@Override
 	protected Set<SerialSememe> loadSememes() {
@@ -347,6 +357,8 @@ public final class TrackerRoom extends UrRoom {
 	/**
 	 * BusMonitor does not handle room announcements, at least as called by UrRoom.
 	 * 
+     * @param announcement
+     * 
 	 */
 	@Override
 	protected void processRoomAnnouncement(RoomAnnouncement announcement) {

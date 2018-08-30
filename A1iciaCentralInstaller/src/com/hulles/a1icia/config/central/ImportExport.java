@@ -35,10 +35,10 @@ import java.util.Map.Entry;
 
 import javax.crypto.SecretKey;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -64,24 +64,24 @@ public class ImportExport {
 		PurdahKeys purdahKeys;
 		JebusPool jebusPool;
 		
-		jebusPool = JebusApiHub.getJebusCentral();
+		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
 			try {
 				aesKey = A1iciaCrypto.getA1iciaFileAESKey();
 			} catch (Exception e) {
-				throw new A1iciaAPIException("ImportExport: can't recover AES key", e);
+				throw new A1iciaException("ImportExport: can't recover AES key", e);
 			}
-			purdahKeyBytes = JebusApiBible.getA1iciaPurdahKey(jebusPool).getBytes();
+			purdahKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAPURDAHKEY, jebusPool);
 			purdah = jebus.get(purdahKeyBytes);
 			try {
 				purdahBytes = A1iciaCrypto.decrypt(aesKey, purdah);
 			} catch (Exception e) {
-				throw new A1iciaAPIException("ImportExport: can't decrypt purdah", e);
+				throw new A1iciaException("ImportExport: can't decrypt purdah", e);
 			}
 			try {
 				purdahKeys = (PurdahKeys) Serialization.deSerialize(purdahBytes);
 			} catch (ClassNotFoundException | IOException e) {
-				throw new A1iciaAPIException("ImportExport: can't deserialize purdah", e);
+				throw new A1iciaException("ImportExport: can't deserialize purdah", e);
 			}
 		}
 		PurdahKeys.setInstance(purdahKeys);
@@ -110,7 +110,7 @@ public class ImportExport {
 			aesKey = A1iciaCrypto.generateAESKey();
 			A1iciaCrypto.setA1iciaFileAESKey(aesKey);
 		} catch (Exception e) {
-			throw new A1iciaAPIException("ImportExport: can't create AES key", e);
+			throw new A1iciaException("ImportExport: can't create AES key", e);
 		}
 		System.out.println("Created a new AES key");
 	}
@@ -149,6 +149,13 @@ public class ImportExport {
 		stringMap = new HashMap<>();
 		try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
 		    while ((line = reader.readLine()) != null) {
+		    	if (line.isEmpty()) {
+		    		continue;
+		    	}
+		    	if (line.startsWith("#")) {
+		    		// it's a comment
+		    		continue;
+		    	}
 		    	keyValue = line.split("=", 2);
 		        stringMap.put(keyValue[0], keyValue[1]);
 		    }
@@ -172,22 +179,22 @@ public class ImportExport {
 		byte[] purdahKeyBytes;
 
 		SharedUtils.checkNotNull(purdahKeys);
-		jebusPool = JebusApiHub.getJebusCentral();
-		purdahKeyBytes = JebusApiBible.getA1iciaPurdahKey(jebusPool).getBytes();
+		jebusPool = JebusHub.getJebusCentral();
+		purdahKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAPURDAHKEY, jebusPool);
 		try {
 			aesKey = A1iciaCrypto.getA1iciaFileAESKey();
 		} catch (Exception e) {
-			throw new A1iciaAPIException("ImportExport: can't recover AES key", e);
+			throw new A1iciaException("ImportExport: can't recover AES key", e);
 		}
 		try {
 			purdahBytes = Serialization.serialize(purdahKeys);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("ImportExport: can't serialize purdah", e);
+			throw new A1iciaException("ImportExport: can't serialize purdah", e);
 		}
 		try {
 			purdah = A1iciaCrypto.encrypt(aesKey, purdahBytes);
 		} catch (Exception e) {
-			throw new A1iciaAPIException("ImportExport: can't encrypt purdah", e);
+			throw new A1iciaException("ImportExport: can't encrypt purdah", e);
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.set(purdahKeyBytes, purdah);
@@ -255,12 +262,12 @@ public class ImportExport {
 		byte[] appKeyBytes;
 
 		SharedUtils.checkNotNull(appKeys);
-		jebusPool = JebusApiHub.getJebusCentral();
-		appKeyBytes = JebusApiBible.getA1iciaAppsKey(jebusPool).getBytes();
+		jebusPool = JebusHub.getJebusCentral();
+		appKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAAPPSKEY, jebusPool);
 		try {
 			appBytes = Serialization.serialize(appKeys);
 		} catch (IOException e) {
-			throw new A1iciaAPIException("ImportExport: can't serialize app keys", e);
+			throw new A1iciaException("ImportExport: can't serialize app keys", e);
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
 			jebus.set(appKeyBytes, appBytes);		

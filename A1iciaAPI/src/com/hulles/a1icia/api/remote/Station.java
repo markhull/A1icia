@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.Serialization;
@@ -184,7 +184,7 @@ public final class Station implements Serializable {
 	public void ensureStationExists() {
 	
 		if (keyMap == null) {
-			throw new A1iciaAPIException("A1iciaStation: station does not exist");
+			throw new A1iciaException("A1iciaStation: station does not exist");
 		}
 	}
 	
@@ -298,15 +298,14 @@ public final class Station implements Serializable {
 		byte[] stationKeyBytes;
 		JebusPool jebusPool;
 	
-		jebusPool = JebusApiHub.getJebusLocal();
+		jebusPool = JebusHub.getJebusLocal();
 		try (Jedis jebus = jebusPool.getResource()) {
-			stationKeyBytes = JebusApiBible.getA1iciaStationKey(jebusPool).getBytes();
+			stationKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIASTATIONKEY, jebusPool);
 			stationBytes = jebus.get(stationKeyBytes);
 			try {
 				station = (Station) Serialization.deSerialize(stationBytes);
 			} catch (ClassNotFoundException | IOException e1) {
-				e1.printStackTrace();
-				throw new RuntimeException("ApplicationKeys: can't deserialize station");
+				throw new A1iciaException("ApplicationKeys: can't deserialize station", e1);
 			}
 		}
 		return station;
@@ -318,15 +317,14 @@ public final class Station implements Serializable {
 		byte[] stationKeyBytes;
 		JebusPool jebusPool;
 	
-		jebusPool = JebusApiHub.getJebusLocal(host, port);
+		jebusPool = JebusHub.getJebusLocal(host, port);
 		try (Jedis jebus = jebusPool.getResource()) {
-			stationKeyBytes = JebusApiBible.getA1iciaStationKey(jebusPool).getBytes();
+			stationKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIASTATIONKEY, jebusPool);
 			stationBytes = jebus.get(stationKeyBytes);
 			try {
 				station = (Station) Serialization.deSerialize(stationBytes);
 			} catch (ClassNotFoundException | IOException e1) {
-				e1.printStackTrace();
-				throw new RuntimeException("ApplicationKeys: can't deserialize station");
+				throw new A1iciaException("ApplicationKeys: can't deserialize station");
 			}
 		}
 		return station;

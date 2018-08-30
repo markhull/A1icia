@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.jebus;
 
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
 import redis.clients.jedis.JedisPool;
@@ -50,8 +50,7 @@ public final class JebusPool extends JedisPool {
 		SharedUtils.checkNotNull(type);
 		this.poolType = type;
 	}
-	JebusPool(JebusPoolType type, JedisPoolConfig jedisPoolConfig, String host, Integer port, 
-			int readTimeout) {
+	JebusPool(JebusPoolType type, JedisPoolConfig jedisPoolConfig, String host, Integer port, int readTimeout) {
 		super(jedisPoolConfig, host, port, readTimeout);
 		
 		SharedUtils.checkNotNull(type);
@@ -80,9 +79,13 @@ public final class JebusPool extends JedisPool {
 	public final void close() {
 		
 		realClose();
-		throw new A1iciaAPIException("JebusAPIPool: attempting to close pool remotely");
+		throw new A1iciaException("JebusAPIPool: attempting to close pool remotely");
 	}
 	
+	/**
+	 * Really close the pool. Note that this is package-visible, not public.
+	 * 
+	 */
 	void realClose() {
 		super.close();
 	}
@@ -102,7 +105,7 @@ public final class JebusPool extends JedisPool {
 	public final void destroy() {
 		
 		realDestroy();
-		throw new A1iciaAPIException("JebusAPIPool: attempting to destroy pool remotely");
+		throw new A1iciaException("JebusAPIPool: attempting to destroy pool remotely");
 	}
 	
 	/**

@@ -13,6 +13,7 @@ module com.hulles.a1icia.api {
 	exports com.hulles.a1icia.api.remote;
 	exports com.hulles.a1icia.api.dialog;
 	exports com.hulles.a1icia.api.shared;
+    exports com.hulles.a1icia.api.tools;
 
 	requires transitive com.hulles.a1icia.media;
 	requires guava;

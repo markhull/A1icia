@@ -21,7 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.object;
 
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
@@ -40,7 +40,7 @@ import com.hulles.a1icia.media.MediaUtils;
  */
 public class MediaObject implements A1iciaClientObject {
 	private static final long serialVersionUID = -2305398153211376016L;
-	private static final int MAXHEADROOM = JebusApiHub.getMaxHardOutputBufferLimit();
+	private static final int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 	private byte[][] mediaBytes;
 	private MediaFormat format;
 	private ClientObjectType type;

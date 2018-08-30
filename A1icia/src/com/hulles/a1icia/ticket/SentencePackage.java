@@ -21,12 +21,13 @@
  *******************************************************************************/
 package com.hulles.a1icia.ticket;
 
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
+import com.hulles.a1icia.api.jebus.JebusPool;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.jebus.JebusBible;
-import com.hulles.a1icia.jebus.JebusHub;
-import com.hulles.a1icia.jebus.JebusPool;
 import com.hulles.a1icia.room.document.SentenceAnalysis;
 
 import redis.clients.jedis.Jedis;
@@ -156,10 +157,12 @@ public class SentencePackage {
 	
 	private static long getNewSentencePackageID() {
 		JebusPool jebusPool;
+        String key;
 		
 		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusBible.getA1iciaSentenceCounterKey(jebusPool));
+			key = JebusBible.getStringKey(JebusKey.ALICIASENTENCECOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 	

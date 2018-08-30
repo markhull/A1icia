@@ -32,11 +32,11 @@ module com.hulles.a1icia.central {
 	requires com.hulles.a1icia.overmind;
 	requires com.hulles.a1icia.tracker;
     // to here
-	requires guava;
-    requires org.apache.opennlp.tools;
-    requires libtensorflow;
-    requires javax.json;
-    requires mp3agic;
-    requires com.hulles.fortuna;
-    requires biweekly;
+//	requires guava;
+//    requires opennlp.tools;
+//    requires libtensorflow;
+//    requires javax.json;
+//    requires mp3agic;
+//    requires com.hulles.fortuna;
+//    requires biweekly;
 }

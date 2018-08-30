@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.kilo;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +31,7 @@ import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.cayenne.OwmCity;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
@@ -40,7 +41,6 @@ import com.hulles.a1icia.room.document.RoomRequest;
 import com.hulles.a1icia.room.document.RoomResponse;
 import com.hulles.a1icia.ticket.ActionPackage;
 import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
 
 /**
  * Kilo Room is our weather room. I'm currently using Open Weather Room for the data, and I'm
@@ -109,8 +109,8 @@ public final class KiloRoom extends UrRoom {
 		action = new KiloTimeAction();
 		action.setLocation(locationAction.getCity());
 		now = LocalDateTime.now();
-		pkg = new ActionPackage(sememePkg);
 		action.setLocalDateTime(now);
+		pkg = new ActionPackage(sememePkg);
 		pkg.setActionObject(action);
 		return pkg;
 	}

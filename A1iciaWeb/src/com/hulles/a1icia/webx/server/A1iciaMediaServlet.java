@@ -34,8 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.webx.shared.SharedUtils;
@@ -70,7 +71,9 @@ final public class A1iciaMediaServlet extends HttpServlet {
 	    qStr = req.getQueryString();
 	    imgParam = req.getParameter("img");
 	    if (imgParam != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: image query = " + qStr + ", hits = " + ++imageHits);
+            imageHits++;
+			LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: image query = {0}, hits = {1}", 
+                    new Object[]{qStr, imageHits});
 			image = parseQuery(imgParam);
 			if (image == null) {
 		    	resp.setStatus(204); // no content available
@@ -85,7 +88,9 @@ final public class A1iciaMediaServlet extends HttpServlet {
 	    }
 	    mmdParam = req.getParameter("mmd");
 	    if (mmdParam != null) {
-			LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: multimedia query = " + qStr + ", hits = " + ++mediaHits);
+            mediaHits++;
+			LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: multimedia query = {0}, hits = {1}", 
+                    new Object[]{qStr, mediaHits});
 		    mediaKey = SafeHtmlUtils.fromString(mmdParam).asString();
 	    	mediaBytes = getAudioBytes(mediaKey);
 	    	format = getMediaFormat(mediaKey);
@@ -102,7 +107,6 @@ final public class A1iciaMediaServlet extends HttpServlet {
 	    }
 	    // unknown request
 	    resp.setStatus(415); // unsupported media type
-	    return;
 	  }
 
 	private static boolean writeAudio(HttpServletResponse response, MediaFormat format, byte[] audioBytes) {
@@ -131,8 +135,7 @@ final public class A1iciaMediaServlet extends HttpServlet {
 
 	private static boolean writeAudio(OutputStream stream, byte[] audioBytes) {
 		
-		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: writing audio into response, bytes len = " +
-				audioBytes.length);
+		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: writing audio into response, bytes len = {0}", audioBytes.length);
 	    try {
 	        stream.write(audioBytes);
 	        stream.close();
@@ -224,15 +227,15 @@ final public class A1iciaMediaServlet extends HttpServlet {
 		String mediaFormatKey;
 		
 		SharedUtils.checkNotNull(audioBytes);
-		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: in saveAudioBytes, bytes len = " + audioBytes.length);
-		jebusPool = JebusApiHub.getJebusLocal();
+		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: in saveAudioBytes, bytes len = {0}", audioBytes.length);
+		jebusPool = JebusHub.getJebusLocal();
 		try (Jedis jebus = jebusPool.getResource()) {
-			counterKey = JebusApiBible.getA1iciaMediaCacheCounterKey(jebusPool);
+			counterKey = JebusBible.getStringKey(JebusKey.ALICIAMEDIACACHECOUNTERKEY, jebusPool);
 			val = jebus.incr(counterKey);
-			hashKey = JebusApiBible.getA1iciaMediaCacheHashKey(val, jebusPool);
+			hashKey = JebusBible.getA1iciaMediaCacheHashKey(val, jebusPool);
 			keyBytes = hashKey.getBytes();
-			mediaBytesKey = JebusApiBible.getMediaBytesField(jebusPool);
-			mediaFormatKey = JebusApiBible.getMediaFormatField(jebusPool);
+			mediaBytesKey = JebusBible.getStringKey(JebusKey.MEDIABYTESFIELD, jebusPool);
+			mediaFormatKey = JebusBible.getStringKey(JebusKey.MEDIAFORMATFIELD, jebusPool);
 			jebus.hset(keyBytes, mediaBytesKey.getBytes(), audioBytes);
 			jebus.hset(hashKey, mediaFormatKey, format.name());
 			jebus.expire(hashKey, MEDIA_CACHE_TTL);
@@ -251,15 +254,15 @@ final public class A1iciaMediaServlet extends HttpServlet {
 		
 		SharedUtils.checkNotNull(key);
 		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: in getAudioBytes");
-		jebusPool = JebusApiHub.getJebusLocal();
+		jebusPool = JebusHub.getJebusLocal();
 		val = Long.parseLong(key);
 		try (Jedis jebus = jebusPool.getResource()) {
-			hashKey = JebusApiBible.getA1iciaMediaCacheHashKey(val, jebusPool);
+			hashKey = JebusBible.getA1iciaMediaCacheHashKey(val, jebusPool);
 			keyBytes = hashKey.getBytes();
-			mediaBytesKey = JebusApiBible.getMediaBytesField(jebusPool);
+			mediaBytesKey = JebusBible.getStringKey(JebusKey.MEDIABYTESFIELD, jebusPool);
 			audioBytes = jebus.hget(keyBytes, mediaBytesKey.getBytes());
 		}
-		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: leaving getAudioBytes, bytes len = " + audioBytes.length);
+		LOGGER.log(LOGLEVEL, "A1iciaMediaServlet: leaving getAudioBytes, bytes len = {0}", audioBytes.length);
 		return audioBytes;
 	}
 	
@@ -272,11 +275,11 @@ final public class A1iciaMediaServlet extends HttpServlet {
 		String mediaFormatKey;
 		
 		SharedUtils.checkNotNull(key);
-		jebusPool = JebusApiHub.getJebusLocal();
+		jebusPool = JebusHub.getJebusLocal();
 		val = Long.parseLong(key);
 		try (Jedis jebus = jebusPool.getResource()) {
-			hashKey = JebusApiBible.getA1iciaMediaCacheHashKey(val, jebusPool);
-			mediaFormatKey = JebusApiBible.getMediaFormatField(jebusPool);
+			hashKey = JebusBible.getA1iciaMediaCacheHashKey(val, jebusPool);
+			mediaFormatKey = JebusBible.getStringKey(JebusKey.MEDIAFORMATFIELD, jebusPool);
 			formatStr = jebus.hget(hashKey, mediaFormatKey);
 		}
 		return MediaFormat.valueOf(formatStr);

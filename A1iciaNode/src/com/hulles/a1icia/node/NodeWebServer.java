@@ -31,7 +31,7 @@ import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8;
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.A1iciaAPIException;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.SharedUtils.PortCheck;
 
@@ -60,7 +60,7 @@ public final class NodeWebServer {
 		cl = this.getClass().getClassLoader();
 	    try (InputStream in = cl.getResourceAsStream(resourcePath)) {
 	        if (in == null) {
-		    	throw new A1iciaAPIException("A1iciaWebServer: can't create stream for JS file");
+		    	throw new A1iciaException("A1iciaWebServer: can't create stream for JS file");
 	        }
 	        tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
 	        tempFile.deleteOnExit();
@@ -72,7 +72,7 @@ public final class NodeWebServer {
 	            }
 	        }
 	    } catch (IOException e) {
-	    	throw new A1iciaAPIException("A1iciaWebServer: IO exception creating JS file", e);
+	    	throw new A1iciaException("A1iciaWebServer: IO exception creating JS file", e);
 	    }
         return tempFile;
 	}

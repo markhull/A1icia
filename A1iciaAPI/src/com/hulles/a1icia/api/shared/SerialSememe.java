@@ -64,7 +64,7 @@ public class SerialSememe implements Serializable, Comparable<SerialSememe> {
     	
     	SharedUtils.checkNotNull(name);
     	if (sememeSet == null) {
-    		throw new A1iciaAPIException("SerialSememe: sememe set not loaded");
+    		throw new A1iciaException("SerialSememe: sememe set not loaded");
     	}
     	for (SerialSememe spk : sememeSet) {
     		if (spk.is(name)) {
@@ -77,7 +77,7 @@ public class SerialSememe implements Serializable, Comparable<SerialSememe> {
     
 
     /**
-     * Find a sememe in the set of all sememes. If the name is not found, throw an {@link A1iciaAPIException}.
+     * Find a sememe in the set of all sememes. If the name is not found, throw an {@link A1iciaException}.
      * @param name The name of the sememe to find
      * @return The sememe
      */
@@ -87,7 +87,7 @@ public class SerialSememe implements Serializable, Comparable<SerialSememe> {
     	SharedUtils.checkNotNull(name);
     	sememe = possiblyFind(name);
     	if (sememe == null) {
-    		throw new A1iciaAPIException("Unable to find sememe named " + name);
+    		throw new A1iciaException("Unable to find sememe named " + name);
     	}
     	return sememe;
     }

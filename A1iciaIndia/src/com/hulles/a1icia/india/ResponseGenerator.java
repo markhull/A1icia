@@ -21,6 +21,8 @@
  *******************************************************************************/
 package com.hulles.a1icia.india;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,13 +30,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.ticket.SememePackage;
 
 final public class ResponseGenerator {
-	private final static Logger logger = Logger.getLogger("A1iciaIndia.ResponseGenerator");
-	private final static Level LOGLEVEL = Level.FINE;
-	private Random random;
+	private final static Logger LOGGER = Logger.getLogger("A1iciaIndia.ResponseGenerator");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final Random random;
 	private List<String> greetings;
 	private List<String> prompts;
 	private List<String> youreWelcomes;
@@ -59,7 +60,7 @@ final public class ResponseGenerator {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.nullsOkay(toName);
-		logger.log(LOGLEVEL, "ResponseGenerator generateResponse sememe is "+ sememePkg.getName());
+		LOGGER.log(LOGLEVEL, "ResponseGenerator generateResponse sememe is {0}", sememePkg.getName());
 		switch (sememePkg.getName()) {
 			case "are_you_still_there":
 			case "greet":
@@ -88,7 +89,7 @@ final public class ResponseGenerator {
 				throw new A1iciaException("Unexpected sememe in generateResponse = " +
 						sememePkg.getName());
 		}
-		logger.log(LOGLEVEL, "ResponseGenerator generateResponse response is "+ response);
+		LOGGER.log(LOGLEVEL, "ResponseGenerator generateResponse response is {0}", response);
 		return response;
 	}
 	

@@ -27,13 +27,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
-import com.hulles.a1icia.base.A1iciaException;
-
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VAlarm;
 import biweekly.component.VTodo;
 import biweekly.property.Categories;
+import com.hulles.a1icia.api.shared.A1iciaException;
 
 public class DumpTasks {
 	
@@ -91,8 +90,12 @@ public class DumpTasks {
 						System.out.println();
 					}
 				}
-				if (vt.getClassification() != null) System.out.println("Classification");
-				if (vt.getColor() != null) System.out.println("Color");
+				if (vt.getClassification() != null) {
+                    System.out.println("Classification");
+                }
+				if (vt.getColor() != null) {
+                    System.out.println("Color");
+                }
 				if (vt.getComments() != null) {
 					System.out.print("Comments: ");
 					if (vt.getComments().isEmpty()) {
@@ -161,7 +164,9 @@ public class DumpTasks {
 						System.out.println("NONempty");
 					}
 				}
-				if (vt.getGeo() != null) System.out.println("Geo");
+				if (vt.getGeo() != null) {
+                    System.out.println("Geo");
+                }
 				if (vt.getImages() != null) {
 					System.out.print("Images: ");
 					if (vt.getImages().isEmpty()) {
@@ -174,8 +179,12 @@ public class DumpTasks {
 					System.out.print("LastMod: ");
 					System.out.println(vt.getLastModified());
 				}
-				if (vt.getLocation() != null) System.out.println("Location");
-				if (vt.getOrganizer() != null) System.out.println("Organizer");
+				if (vt.getLocation() != null) {
+                    System.out.println("Location");
+                }
+				if (vt.getOrganizer() != null) {
+                    System.out.println("Organizer");
+                }
 				if (vt.getPercentComplete() != null) {
 					System.out.print("PctComplete: ");
 					System.out.println(vt.getPercentComplete());
@@ -192,8 +201,12 @@ public class DumpTasks {
 						System.out.println("NONempty");
 					}
 				}
-				if (vt.getRecurrenceRule() != null) System.out.println("RecurrenceRule");
-				if (vt.getRequestStatus() != null) System.out.println("RequestStatus");
+				if (vt.getRecurrenceRule() != null) {
+                    System.out.println("RecurrenceRule");
+                }
+				if (vt.getRequestStatus() != null) {
+                    System.out.println("RequestStatus");
+                }
 				if (vt.getResources() != null) {
 					System.out.print("Resources: ");
 					if (vt.getResources().isEmpty()) {

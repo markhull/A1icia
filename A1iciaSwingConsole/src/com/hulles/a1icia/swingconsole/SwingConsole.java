@@ -42,13 +42,15 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
 import com.hulles.a1icia.api.remote.A1iciaRemoteDisplay;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
 
@@ -79,8 +81,8 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 		this.port = port;
 		station = Station.getInstance();
 		station.ensureStationExists();
-		jebusPool = JebusApiHub.getJebusLocal();
-		historyKey = JebusApiBible.getA1iciaSwingHistoryKey(jebusPool);
+		jebusPool = JebusHub.getJebusLocal();
+		historyKey = JebusBible.getStringKey(JebusKey.ALICIASWINGHISTORYKEY, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			// start fresh
 			jebus.del(historyKey);
@@ -278,9 +280,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 	@Override
 	public void receiveText(String text) {
 
-		if (!remote.useTTS()) {
-			window.displayTextln("A1icia: " + text);
-		}
+        window.displayTextln("A1icia: " + text);
 	}
 	
 	// The usual Swing startup stuff
@@ -290,15 +290,13 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
             //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (UnsupportedLookAndFeelException | IllegalAccessException | 
+                InstantiationException | ClassNotFoundException ex) {
+            throw new A1iciaException("SwingConsole: can't set LAF",ex);
         }
+        // Turn off metal's use of bold fonts
+        //UIManager.put("swing.boldMetal", Boolean.FALSE);
+        
         // Turn off metal's use of bold fonts 
         //UIManager.put("swing.boldMetal", Boolean.FALSE);
         
@@ -511,7 +509,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements A1i
 	
 	private class WindowCloser extends WindowAdapter {
 
-		public WindowCloser() {
+		WindowCloser() {
 		}
 
 		@Override

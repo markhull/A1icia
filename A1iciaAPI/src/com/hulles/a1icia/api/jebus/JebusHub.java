@@ -28,14 +28,13 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
- * This is the API version of the A1icia Jebus hub. It exists to provide a JebusPool 
- * (aka a JedisPool) to anyone who asks, and to eventually destroy the pool during 
- * cleanup. Note to self: make sure we actually do the cleanup.
+ * Jebus hub exists to provide a JebusPool (aka a JedisPool) to anyone who asks, and to eventually
+ * destroy the pool during cleanup. Note to self: make sure we actually do the cleanup.
  * 
  * @author hulles
  *
  */
-public final class JebusApiHub {
+public final class JebusHub {
 	private final static int JEBUS_READ_TIMEOUT = 5 * 1000; // 5 secondds
 //	private final static int JEBUS_WRITE_TIMEOUT = 5 * 1000; // 5 seconds
 	private static final int MAX_HARD_OUTPUT_BUFFER_LIMIT = 64 * 1024 * 1024;
@@ -44,29 +43,64 @@ public final class JebusApiHub {
 	private static final int LOCAL_SERVER_PORT = 6379;
 	private static JebusPool jebusCentral = null;
 	private static JebusPool jebusLocal = null;
+	private static JebusMonitor jebusCentralMonitor = null;
+	private static JebusMonitor jebusLocalMonitor = null;
 
-	private JebusApiHub() {
+	private JebusHub() {
 		// this only contains static methods; you can't instantiate it
 		
 	}
 	
+	public static String getCentralServerName() {
+		Station station;
+		String serverName;
+		
+		station = Station.getInstance();
+		station.ensureStationExists();
+		serverName = station.getCentralHost() + " port " + station.getCentralPort();
+		return serverName;
+	}
+	
 	/**
-	 * Get the official A1icia JebusPool (API Edition), creating one if it doesn't exist.
+	 * Get the official A1icia III JebusPool, creating one if it doesn't exist. Optionally
+	 * create a new JebusMonitor as well. Because we're the server, jebusCentral and jebusLocal
+	 * can have the same host and port number. So far I have no opinion on whether they *should*
+	 * or not. TODO evaluate performance with both the same.
 	 * 
 	 * @return The JebusPool
 	 */
 	public static JebusPool getJebusCentral() {
+		
+		return getJebusCentral(false);
+	}
+	public static JebusPool getJebusCentral(Boolean alsoStartMonitor) {
 		Station station;
 		
+		SharedUtils.checkNotNull(alsoStartMonitor);
 		station = Station.getInstance();
 		station.ensureStationExists();
-		return getJebusCentral(station.getCentralHost(), station.getCentralPort(), JEBUS_READ_TIMEOUT);
+		return getJebusCentral(station.getCentralHost(), station.getCentralPort(), alsoStartMonitor, JEBUS_READ_TIMEOUT);
 	}
-	public static JebusPool getJebusCentral(String host, Integer port) {
+	public synchronized static JebusPool getJebusCentral(String host, Integer port) {
 		
-		return getJebusCentral(host, port, JEBUS_READ_TIMEOUT);
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
+        return getJebusCentral(host, port, false);
 	}
-	public synchronized static JebusPool getJebusCentral(String host, Integer port, int readTimeout) {
+	public synchronized static JebusPool getJebusCentral(String host, Integer port, Boolean alsoStartMonitor) {
+		
+		SharedUtils.checkNotNull(alsoStartMonitor);
+		SharedUtils.checkNotNull(host);
+		SharedUtils.checkNotNull(port);
+		if (jebusCentral == null) {
+			jebusCentral = new JebusPool(JebusPoolType.CENTRAL, new JedisPoolConfig(), host, port, JEBUS_READ_TIMEOUT);
+			if (alsoStartMonitor) {
+				jebusCentralMonitor = new JebusMonitor(jebusCentral);
+			}
+		}
+		return jebusCentral;
+	}
+	public synchronized static JebusPool getJebusCentral(String host, Integer port, Boolean alsoStartMonitor, int readTimeout) {
 		
 		SharedUtils.checkNotNull(readTimeout);
 		SharedUtils.checkNotNull(host);
@@ -78,20 +112,38 @@ public final class JebusApiHub {
 	}
 	
 	/**
-	 * Get the local A1icia JebusPool, creating one if it doesn't exist.
+	 * Get the local A1icia III JebusPool, creating one if it doesn't exist. Optionally
+	 * create a new local JebusMonitor as well.
+	 * 
+	 * @see getJebusCentral
 	 * 
 	 * @return The JebusPool
 	 */
 	public static JebusPool getJebusLocal() {
 		
-		return getJebusLocal(LOCAL_SERVER, LOCAL_SERVER_PORT);
+		return getJebusLocal(false);
 	}
-	public synchronized static JebusPool getJebusLocal(String host, Integer port) {
+	public static JebusPool getJebusLocal(Boolean alsoStartMonitor) {
 		
+		SharedUtils.checkNotNull(alsoStartMonitor);
+		return getJebusLocal(LOCAL_SERVER, LOCAL_SERVER_PORT, alsoStartMonitor);
+	}
+	public static JebusPool getJebusLocal(String host, Integer port) {
+		
+		SharedUtils.checkNotNull(host);
+        SharedUtils.checkNotNull(port);
+		return getJebusLocal(host, port, false);
+	}
+	public synchronized static JebusPool getJebusLocal(String host, Integer port, Boolean alsoStartMonitor) {
+		
+		SharedUtils.checkNotNull(alsoStartMonitor);
 		SharedUtils.checkNotNull(host);
 		SharedUtils.checkNotNull(port);
 		if (jebusLocal == null) {
 			jebusLocal = new JebusPool(JebusPoolType.LOCAL, new JedisPoolConfig(), host, port);
+			if (alsoStartMonitor) {
+				jebusLocalMonitor = new JebusMonitor(jebusLocal);
+			}
 		}
 		return jebusLocal;
 	}
@@ -123,16 +175,24 @@ public final class JebusApiHub {
 	}
 	
 	/**
-	 * Destroy the JebusPools.
+	 * Close any monitors and destroy the JebusPools.
 	 * 
 	 */
 	public static void destroyJebusPools() {
 		
 		if (jebusCentral != null) {
+			if (jebusCentralMonitor != null) {
+				jebusCentralMonitor.close();
+				jebusCentralMonitor = null;
+			}
 			jebusCentral.realDestroy();
 			jebusCentral = null;
 		}
 		if (jebusLocal != null) {
+			if (jebusLocalMonitor != null) {
+				jebusLocalMonitor.close();
+				jebusLocalMonitor = null;
+			}
 			jebusLocal.realDestroy();
 			jebusLocal = null;
 		}

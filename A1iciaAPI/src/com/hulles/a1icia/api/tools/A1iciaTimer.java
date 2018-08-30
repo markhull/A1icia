@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.tools;
+package com.hulles.a1icia.api.tools;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,14 +39,14 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 public final class A1iciaTimer {
 	final static Logger LOGGER = Logger.getLogger("A1icia.A1iciaTimer");
 	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	private final static Map<String, Long> timerMap;
+	private final static Map<String, Long> TIMERMAP;
 	
 	private A1iciaTimer() {
 		// only static methods, no need to instantiate it
 	}
 	
 	static {
-		timerMap = new HashMap<>();
+		TIMERMAP = new HashMap<>();
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public final class A1iciaTimer {
 	public static void startTimer(String timerName) {
 		
 		SharedUtils.checkNotNull(timerName);
-		timerMap.put(timerName, System.currentTimeMillis());
+		TIMERMAP.put(timerName, System.currentTimeMillis());
 	}
 	
 	/**
@@ -73,13 +73,14 @@ public final class A1iciaTimer {
 		
 		SharedUtils.checkNotNull(timerName);
 		endTime = System.currentTimeMillis();
-		startTime = timerMap.remove(timerName);
+		startTime = TIMERMAP.remove(timerName);
 		if (startTime == null) {
-			System.err.println("Bad map start time in MindTimer");
+			System.err.println("Bad map start time in A1iciaTimer");
 			return null;
 		}
 		elapsedMillis = endTime - startTime;
-		LOGGER.log(LOGLEVEL, "Timer " + timerName + ": " + A1iciaUtils.formatElapsedMillis(elapsedMillis));
+		LOGGER.log(LOGLEVEL, "Timer {0}: {1}", 
+                new String[]{timerName, A1iciaUtils.formatElapsedMillis(elapsedMillis)});
 		return elapsedMillis;
 	}
 

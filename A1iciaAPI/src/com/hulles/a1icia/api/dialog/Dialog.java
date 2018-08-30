@@ -23,8 +23,9 @@ package com.hulles.a1icia.api.dialog;
 
 import java.io.Serializable;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.remote.A1icianID;
@@ -64,10 +65,12 @@ public abstract class Dialog implements Serializable {
 	 */
 	private static long getNewDocumentID() {
 		JebusPool jebusPool;
-		
-		jebusPool = JebusApiHub.getJebusCentral();
+		String key;
+        
+		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			return jebus.incr(JebusApiBible.getA1iciaDocumentCounterKey(jebusPool));
+			 key = JebusBible.getStringKey(JebusKey.ALICIADOCUMENTCOUNTERKEY, jebusPool);
+			return jebus.incr(key);
 		}		
 	}
 

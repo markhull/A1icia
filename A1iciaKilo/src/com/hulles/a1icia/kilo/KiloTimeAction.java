@@ -74,7 +74,7 @@ public class KiloTimeAction extends RoomActionObject {
 
 	public void setLocation(String location) {
 		
-		SharedUtils.checkNotNull(location);
+		SharedUtils.nullsOkay(location);
 		this.location = location;
 	}
 	

@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.a1icia.charlie.pos;
 
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,7 +30,6 @@ import java.util.List;
 import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.base.A1iciaException;
 import com.hulles.a1icia.cayenne.A1iciaApplication;
 import com.hulles.a1icia.cayenne.Lemma;
 import com.hulles.a1icia.charlie.CharlieThimk;

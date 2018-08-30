@@ -27,8 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.hulles.a1icia.api.jebus.JebusApiBible;
-import com.hulles.a1icia.api.jebus.JebusApiHub;
+import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
+import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 
 import redis.clients.jedis.Jedis;
@@ -81,7 +82,7 @@ public class ApplicationKeys implements Serializable {
 		SharedUtils.checkNotNull(key);
         result = keyMap.get(key);
         if (result == null) {
-        	throw new A1iciaAPIException("ApplicationKeys: there is no value for key = " + key);
+        	throw new A1iciaException("ApplicationKeys: there is no value for key = " + key);
         }
         return result;
     }
@@ -100,15 +101,14 @@ public class ApplicationKeys implements Serializable {
 		byte[] appKeyBytes;
 		JebusPool jebusPool;
 	
-		jebusPool = JebusApiHub.getJebusCentral();
+		jebusPool = JebusHub.getJebusCentral();
 		try (Jedis jebus = jebusPool.getResource()) {
-			appKeyBytes = JebusApiBible.getA1iciaAppsKey(jebusPool).getBytes();
+			appKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIAAPPSKEY, jebusPool);
 			appBytes = jebus.get(appKeyBytes);
 			try {
 				appKeys = (ApplicationKeys) Serialization.deSerialize(appBytes);
 			} catch (ClassNotFoundException | IOException e1) {
-				e1.printStackTrace();
-				throw new RuntimeException("ApplicationKeys: can't deserialize app keys");
+				throw new A1iciaException("ApplicationKeys: can't deserialize app keys", e1);
 			}
 		}
 		return appKeys;
@@ -120,15 +120,14 @@ public class ApplicationKeys implements Serializable {
 		byte[] appKeyBytes;
 		JebusPool jebusPool;
 	
-		jebusPool = JebusApiHub.getJebusCentral(host, port);
+		jebusPool = JebusHub.getJebusCentral(host, port);
 		try (Jedis jebus = jebusPool.getResource()) {
-			appKeyBytes = JebusApiBible.getA1iciaAppsKey(jebusPool).getBytes();
+			appKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIAAPPSKEY, jebusPool);
 			appBytes = jebus.get(appKeyBytes);
 			try {
 				appKeys = (ApplicationKeys) Serialization.deSerialize(appBytes);
 			} catch (ClassNotFoundException | IOException e1) {
-				e1.printStackTrace();
-				throw new RuntimeException("ApplicationKeys: can't deserialize app keys");
+				throw new A1iciaException("ApplicationKeys: can't deserialize app keys", e1);
 			}
 		}
 		return appKeys;
@@ -208,6 +207,8 @@ public class ApplicationKeys implements Serializable {
 		WOLFRAMSIMPLE,
 		WOLFRAMSHORT,
 		DEEPSPEECH,
-		TEMPHUMIDITY
+		TEMPHUMIDITY,
+        GOOGLEXLATE,
+        TIKA
 	}
 }
