@@ -76,7 +76,7 @@ public class PapaReader {
 //		} catch (SAXException se) {
 //			System.out.println(se.getMessage());
 //		} catch (IOException ioe) {
-//			System.err.println(ioe.getMessage());
+//			A1iciaUtils.error(ioe.getMessage());
 //		}
 
 		return false;

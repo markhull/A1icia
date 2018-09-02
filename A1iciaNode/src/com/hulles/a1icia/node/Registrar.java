@@ -30,6 +30,7 @@ import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.prong.server.Prongz;
 import com.hulles.a1icia.prong.shared.ProngException;
 import com.hulles.a1icia.prong.shared.SerialProng;
@@ -72,7 +73,7 @@ public final class Registrar implements JavaCallback {
 			prongz.matchProng(prong);
 		} catch (ProngException e) {
 			// this can possibly be an attack...
-			System.err.println("Registrar: prong not found");
+			A1iciaUtils.error("Registrar: prong not found");
 		}
 		clean();
 		return consoleMap.get(prong.getProngString());

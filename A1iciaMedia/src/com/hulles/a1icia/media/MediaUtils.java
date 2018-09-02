@@ -165,7 +165,7 @@ public class MediaUtils {
 			throw new A1iciaMediaException("MediaUtils: audio format not supported", e);
 		}
 		if (audioFormat == null) {
-			System.err.println("Can't find format for audio file " + audioFile);
+			LOGGER.log(Level.SEVERE, "Can't find format for audio file " + audioFile);
 			return null;
 		}
 		sb = new StringBuilder("Audio format for ");

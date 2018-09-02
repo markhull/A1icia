@@ -38,6 +38,7 @@ import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SessionType;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
@@ -72,14 +73,14 @@ public class Session {
 	/**
 	 * Get a new instance of a session for the named A1ician.
 	 * 
-	 * @param a1icianID
+	 * @param a1icianID The ID of the A1ician
 	 * @return The session
 	 */
 	public static Session getSession(A1icianID a1icianID) {
 		Session session;
 		
 		SharedUtils.checkNotNull(a1icianID);
-		LOGGER.log(LOGLEVEL, "A1iciaSession: getSession");
+ 		LOGGER.log(LOGLEVEL, "A1iciaSession: getSession");
 		session = new Session(a1icianID);
 		session.update();
 		LOGGER.log(LOGLEVEL, "A1iciaSession: getSession after update");
@@ -113,6 +114,71 @@ public class Session {
 			jebus.zremrangeByScore(timelineKey, 0, timeScore);
 		}
 	}
+
+    /**
+     * Get the session type so we know if it's a text console or not.
+     * 
+     * @return The session type
+     */
+    public SessionType getSessionType() {
+		String typeStr;
+		String field;
+		SessionType type;
+        
+		field = JebusBible.getStringKey(JebusKey.SESSION_SESSIONTYPE, jebusPool);
+		try (Jedis jebus = jebusPool.getResource()) {
+			typeStr = jebus.hget(hashKey, field);
+		}
+        type = SessionType.valueOf(typeStr);
+		return type;
+    }
+
+    /**
+     * Set the session type.
+     * 
+     * @param type The session type
+     */
+    public void setSessionType(SessionType type) {
+		String field;
+       
+		field = JebusBible.getStringKey(JebusKey.SESSION_SESSIONTYPE, jebusPool);
+		try (Jedis jebus = jebusPool.getResource()) {
+			jebus.hset(hashKey, field, type.name());
+		}
+    }
+
+    /**
+     * Get whether it's "quiet time" or not.
+     * 
+     * @return True if it's "quiet time"
+     * 
+     */
+    public Boolean isQuiet() {
+		String typeStr;
+		String field;
+		Boolean quiet;
+        
+		field = JebusBible.getStringKey(JebusKey.SESSION_ISQUIET, jebusPool);
+		try (Jedis jebus = jebusPool.getResource()) {
+			typeStr = jebus.hget(hashKey, field);
+		}
+        quiet = Boolean.parseBoolean(typeStr);
+		return quiet;
+    }
+
+    /**
+     * Set whether it's "quiet time" or not.
+     * 
+     * @param quiet True if it's "quiet time"
+     */
+    public void setIsQuiet(Boolean quiet) {
+		String field;
+       
+		field = JebusBible.getStringKey(JebusKey.SESSION_SESSIONTYPE, jebusPool);
+		try (Jedis jebus = jebusPool.getResource()) {
+			jebus.hset(hashKey, field, quiet.toString());
+		}
+    }
 	
 	/**
 	 * Get the timestamp of the last session access.

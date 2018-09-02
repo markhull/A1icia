@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.object.A1iciaClientObject;
 import com.hulles.a1icia.api.object.LoginObject;
 import com.hulles.a1icia.api.remote.A1iciaRemote;
@@ -35,8 +36,12 @@ import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class A1iciaCLIConsole extends AbstractExecutionThreadService implements A1iciaRemoteDisplay {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaCLI.A1iciaCLIConsole");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private A1iciaRemote remote;
 	private final Console javaConsole;
 	private ConsoleType whichConsole;
@@ -71,7 +76,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 			case JAVACONSOLE:
 				javaConsole = System.console();
 				if (javaConsole == null) {
-					System.err.println("Unable to allocate java console, aborting");
+					LOGGER.log(Level.SEVERE, "Unable to allocate java console, aborting");
 					System.exit(1);
 				}
 				break;
@@ -135,7 +140,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				runDaemon();
 				break;
 			default:
-				System.err.println("System error: bad console type, exiting");
+				LOGGER.log(Level.SEVERE, "System error: bad console type, exiting");
 				this.stopAsync();
 		}
 	}
@@ -170,7 +175,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				continue;
 			}
 			if (!remote.sendText(input)) {
-				System.err.println("Can't communicate with A1icia Central");
+				LOGGER.log(Level.SEVERE, "Can't communicate with A1icia Central");
 			}
 		}
 	}
@@ -191,11 +196,11 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 					continue;
 				}
 				if (!remote.sendText(input)) {
-					System.err.println("Can't communicate with A1icia Central");
+					LOGGER.log(Level.SEVERE, "Can't communicate with A1icia Central");
 				}
 			}
 		} catch (IOException e) {
-			System.err.println("System error: IO error, exiting");
+			LOGGER.log(Level.SEVERE, "System error: IO error, exiting");
 			this.stopAsync();
 		}
 	}
@@ -341,17 +346,17 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 				break;
 			case STANDARDIO:
 			case DAEMON:
-				System.err.println("System error: login is not supported for " + whichConsole);
+				LOGGER.log(Level.SEVERE, "System error: login is not supported for " + whichConsole);
 				break;
 			default:
-				System.err.println("System error: bad console type, exiting");
+				LOGGER.log(Level.SEVERE, "System error: bad console type, exiting");
 				System.exit(2);
 		}
 		obj = new LoginObject();
 		obj.setUserName(userName);
 		obj.setPassword(password);
 		if (!remote.sendLogin(obj)) {
-			System.err.println("Can't communicate with A1icia Central");
+			LOGGER.log(Level.SEVERE, "Can't communicate with A1icia Central");
 		}
 	}
 	
@@ -362,7 +367,7 @@ public class A1iciaCLIConsole extends AbstractExecutionThreadService implements 
 		obj.setUserName(null);
 		obj.setPassword(null);
 		if (!remote.sendLogin(obj)) {
-			System.err.println("Can't communicate with A1icia Central");
+			LOGGER.log(Level.SEVERE, "Can't communicate with A1icia Central");
 		}
 	}
 	

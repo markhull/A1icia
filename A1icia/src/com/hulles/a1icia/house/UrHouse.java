@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.google.common.util.concurrent.AbstractService;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.Dialog;
 import com.hulles.a1icia.api.dialog.DialogRequest;
@@ -43,7 +43,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  * @author hulles
  *
  */
-public abstract class UrHouse extends AbstractExecutionThreadService {
+public abstract class UrHouse extends AbstractService {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.UrHouse");
 	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private EventBus street;
@@ -64,17 +64,19 @@ public abstract class UrHouse extends AbstractExecutionThreadService {
     }
 	
 	@Override
-	protected final void startUp() {
+	protected final void doStart() {
 		
 		street.register(this);
 		houseStartup();
+        notifyStarted();
 	}
 	
 	@Override
-	protected final void shutDown() {
+	protected final void doStop() {
 
 		houseShutdown();
 		street.unregister(this);
+        notifyStopped();
 	}
 	
     public final void setStreet(EventBus streetBus) {

@@ -46,7 +46,6 @@ public class TinyPages {
 		cl = TinyPages.class.getClassLoader();
 		try (InputStream in = cl.getResourceAsStream(resourcePath)) {
 			if (in == null) {
-				System.out.println(resourcePath);
 		    	throw new A1iciaException("A1iciaUtils: resource input stream is null");
 			}
 			try (InputStreamReader inr = new InputStreamReader(in)) {

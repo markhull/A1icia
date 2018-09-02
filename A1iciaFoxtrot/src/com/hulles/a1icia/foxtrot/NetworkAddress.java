@@ -21,6 +21,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.foxtrot;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -28,12 +31,16 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NetworkAddress {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaFoxtrot.NetworkAddress");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 
 	public static void getAddresses() {
-		String prettyMac = null;
-		InetAddress lanIp = null;
+		String prettyMac;
+		InetAddress lanIp;
 		String ipAddress;
 		Enumeration<NetworkInterface> net;
 		NetworkInterface element;
@@ -45,39 +52,39 @@ public class NetworkAddress {
 			net = NetworkInterface.getNetworkInterfaces();
 			while (net.hasMoreElements()) {
 				element = net.nextElement();
-				System.out.println("Element: " + element);
+				LOGGER.log(LOGLEVEL, "Element: {0}", element);
 				hardwareAddress = element.getHardwareAddress();
 				// hardwareAddress is null for loopback, AFAIK
 				if (hardwareAddress != null && !isVMMac(hardwareAddress)) {
 					addresses = element.getInetAddresses();
 					while (addresses.hasMoreElements()) {
 						ip = addresses.nextElement();
-						System.out.println("IP: " + ip);
-						if (ip instanceof Inet4Address) {
-							System.out.println("Is IPV4");
-						} else if (ip instanceof Inet6Address){
-							System.out.println("Is IPV6");
-							continue;
-						}
-						if (ip.isSiteLocalAddress()) {
-							System.out.println("Site-Local");
-							ipAddress = ip.getHostAddress();
-							System.out.println("IP host address: " + ipAddress);
-							lanIp = InetAddress.getByName(ipAddress);
-							prettyMac = getMacAddress(lanIp);
-							System.out.println("MAC: " + prettyMac);
-						}
-						System.out.println();
+                        if (ip == null) {
+                            A1iciaUtils.error("NetworkAddress: Null IP");
+                        } else {
+                            LOGGER.log(LOGLEVEL, "IP: {0}", ip);
+                            if (ip instanceof Inet4Address) {
+                                LOGGER.log(LOGLEVEL, "Is IPV4");
+                            } else if (ip instanceof Inet6Address){
+                                LOGGER.log(LOGLEVEL, "Is IPV6");
+                                continue;
+                            }
+                            if (ip.isSiteLocalAddress()) {
+                                LOGGER.log(LOGLEVEL, "Site-Local");
+                                ipAddress = ip.getHostAddress();
+                                LOGGER.log(LOGLEVEL, "IP host address: {0}", ipAddress);
+                                lanIp = InetAddress.getByName(ipAddress);
+                                prettyMac = getMacAddress(lanIp);
+                                LOGGER.log(LOGLEVEL, "MAC: {0}", prettyMac);
+                            }
+                        }
 					}
 				}
-				System.out.println();
 			}
 		} catch (UnknownHostException ex) {
-			ex.printStackTrace();
+            throw new A1iciaException("NetworkAddress: Unknown host", ex);
 		} catch (SocketException ex) {
-			ex.printStackTrace();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+            throw new A1iciaException("NetworkAddress: Socket exception", ex);
 		}
 	}
 
@@ -99,13 +106,15 @@ public class NetworkAddress {
 			}
 			address = sb.toString();
 		} catch (SocketException ex) {
-			ex.printStackTrace();
+            throw new A1iciaException("NetworkAddress: Socket exception", ex);
 		}
 		return address;
 	}
 
 	private static boolean isVMMac(byte[] mac) {
-		if(null == mac) return false;
+		if(null == mac) {
+            return false;
+        }
 		byte invalidMacs[][] = {
 				{0x00, 0x05, 0x69},             //VMWare
 				{0x00, 0x1C, 0x14},             //VMWare
@@ -117,7 +126,9 @@ public class NetworkAddress {
 				{0x00, 0x15, 0x5D}              //Hyper-V
 		};
 		for (byte[] invalid: invalidMacs){
-			if (invalid[0] == mac[0] && invalid[1] == mac[1] && invalid[2] == mac[2]) return true;
+			if (invalid[0] == mac[0] && invalid[1] == mac[1] && invalid[2] == mac[2]) {
+                return true;
+            }
 		}
 		return false;
 	}

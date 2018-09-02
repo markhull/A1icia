@@ -40,6 +40,7 @@ import com.hulles.a1icia.api.object.MediaObject;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.document.ClientObjectWrapper;
@@ -208,7 +209,7 @@ final class TimerHandler implements Closeable {
 				pool.shutdownNow(); // Cancel currently executing tasks
 				// Wait a while for tasks to respond to being cancelled
 				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    System.err.println("TimerHandler -- executor did not terminate");
+                    A1iciaUtils.error("TimerHandler -- executor did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {

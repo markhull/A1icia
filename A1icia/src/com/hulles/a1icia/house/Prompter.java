@@ -32,9 +32,11 @@ import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.dialog.DialogRequest;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.remote.Station;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialStation;
 import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SessionType;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.media.Language;
 
@@ -55,11 +57,14 @@ final class Prompter extends TimerTask {
 	private final EventBus bus;
 	private final SerialUUID<SerialStation> stationID;
 	private final Language language;
-	
-	Prompter(A1icianID a1icianID, Language language, EventBus houseBus) {
+    private final SessionType sessionType;
+	private final Boolean isQuiet;
+    
+	Prompter(A1icianID a1icianID, SessionType sessionType, Language language, Boolean isQuiet, EventBus houseBus) {
 		Station station;
 		
 		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(sessionType);
 		SharedUtils.checkNotNull(language);
 		SharedUtils.checkNotNull(houseBus);
 		station = Station.getInstance();
@@ -68,6 +73,8 @@ final class Prompter extends TimerTask {
 		this.nagCounter = 0;
 		this.bus = houseBus;
 		this.language = language;
+        this.sessionType = sessionType;
+        this.isQuiet = isQuiet;
 		this.promptSememe = SerialSememe.find("prompt");
 	}
 
@@ -92,7 +99,12 @@ final class Prompter extends TimerTask {
 		dialogRequest.setFromA1icianID(a1icianID);
 		dialogRequest.setStationUUID(stationID);
 		dialogRequest.setLanguage(language);
+        dialogRequest.setSessionType(sessionType);
+        dialogRequest.setIsQuiet(isQuiet);
 		dialogRequest.setToA1icianID(A1iciaConstants.getA1iciaA1icianID());
+        if (!dialogRequest.isValid()) {
+            throw new A1iciaException("Prompter: created invalid DialogRequest");
+        }
 		bus.post(dialogRequest);
 		nagCounter++;
 	}

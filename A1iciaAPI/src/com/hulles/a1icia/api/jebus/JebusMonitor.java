@@ -181,19 +181,19 @@ final class JebusMonitor implements Closeable {
 		stopMonitor();
 		if (executor != null) {
 			try {
-			    System.out.println("JebusMonitor: attempting to shutdown executor");
+			    LOGGER.log(Level.INFO, "JebusMonitor: attempting to shutdown executor");
 			    executor.shutdown();
 			    executor.awaitTermination(5, TimeUnit.SECONDS);
 			}
 			catch (InterruptedException e) {
-			    System.err.println("JebusMonitor: tasks interrupted");
+			    LOGGER.log(Level.SEVERE, "JebusMonitor: tasks interrupted");
 			}
 			finally {
 			    if (!executor.isTerminated()) {
-			        System.err.println("JebusMonitor: cancelling non-finished tasks");
+			        LOGGER.log(Level.SEVERE, "JebusMonitor: cancelling non-finished tasks");
 			    }
 			    executor.shutdownNow();
-			    System.out.println("JebusMonitor: shutdown finished");
+			    LOGGER.log(Level.INFO, "JebusMonitor: shutdown finished");
 			}
 		}
 		executor = null;

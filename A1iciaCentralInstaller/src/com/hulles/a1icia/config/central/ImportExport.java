@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import javax.crypto.SecretKey;
 
 import com.hulles.a1icia.api.jebus.JebusBible;
+import com.hulles.a1icia.api.jebus.JebusBible.JebusKey;
 import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.shared.A1iciaException;
@@ -45,6 +46,12 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.a1icia.crypto.A1iciaCrypto;
 import com.hulles.a1icia.crypto.PurdahKeys;
+import java.io.StringWriter;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonWriter;
 
 import redis.clients.jedis.Jedis;
 
@@ -71,7 +78,7 @@ public class ImportExport {
 			} catch (Exception e) {
 				throw new A1iciaException("ImportExport: can't recover AES key", e);
 			}
-			purdahKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAPURDAHKEY, jebusPool);
+			purdahKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIAPURDAHKEY, jebusPool);
 			purdah = jebus.get(purdahKeyBytes);
 			try {
 				purdahBytes = A1iciaCrypto.decrypt(aesKey, purdah);
@@ -180,7 +187,7 @@ public class ImportExport {
 
 		SharedUtils.checkNotNull(purdahKeys);
 		jebusPool = JebusHub.getJebusCentral();
-		purdahKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAPURDAHKEY, jebusPool);
+		purdahKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIAPURDAHKEY, jebusPool);
 		try {
 			aesKey = A1iciaCrypto.getA1iciaFileAESKey();
 		} catch (Exception e) {
@@ -260,19 +267,49 @@ public class ImportExport {
 		JebusPool jebusPool;
 		byte[] appBytes;
 		byte[] appKeyBytes;
-
+        String jsonAppKeys;
+        String jsonKey;
+        
 		SharedUtils.checkNotNull(appKeys);
 		jebusPool = JebusHub.getJebusCentral();
-		appKeyBytes = JebusBible.getBytesKey(JebusBible.JebusKey.ALICIAAPPSKEY, jebusPool);
+        // we also store a JSON version of the ApplicationKeys values
+		appKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIAAPPSKEY, jebusPool);
+        jsonAppKeys = createJSONKeys(appKeys);
+		jsonKey = JebusBible.getStringKey(JebusKey.ALICIAJSONAPPSKEY, jebusPool);
 		try {
 			appBytes = Serialization.serialize(appKeys);
 		} catch (IOException e) {
 			throw new A1iciaException("ImportExport: can't serialize app keys", e);
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
-			jebus.set(appKeyBytes, appBytes);		
+			jebus.set(appKeyBytes, appBytes);
+            jebus.set(jsonKey, jsonAppKeys);
 		}
 	}
+    
+    private static String createJSONKeys(ApplicationKeys appKeys) {
+        JsonArrayBuilder builder;
+        JsonBuilderFactory factory;
+        Map<String, String> keyMap;
+        JsonArray jsonKeys;
+        JsonWriter jsonWriter;
+        StringWriter writer;
+        
+        keyMap = appKeys.getKeyMap();
+        factory = Json.createBuilderFactory(null);
+        builder = factory.createArrayBuilder();
+		for (Entry<String, String> entry : keyMap.entrySet()) {
+            builder.add(factory.createObjectBuilder()
+                .add("Name", entry.getKey())
+                .add("Value", entry.getValue()));
+		}
+        jsonKeys = builder.build();
+        writer = new StringWriter();
+        jsonWriter = Json.createWriter(writer);
+        jsonWriter.writeArray(jsonKeys);
+        jsonWriter.close();
+        return writer.toString();
+   }
 	
 	static void importExport() {
 		InputStreamReader stdIn;

@@ -48,6 +48,7 @@ import org.mariadb.jdbc.MariaDbDataSource;
 import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.foxtrot.dummy.DummyDataSource;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
 import com.hulles.a1icia.foxtrot.monitor.FoxtrotPhysicalState.NetworkDevice;
@@ -360,17 +361,6 @@ final public class LinuxMonitor {
 					chip = label;
 					continue;
 				}
-//				System.out.println("DEBUG TOKEN: " + label);
-//				switch (label) {
-//					case "it8721-isa-0290":
-//					case "k10temp-pci-00c3":
-//					case "fam15h_power-pci-00c4":
-//					case "asus-isa-0000":
-//						chip = label;
-//						continue;
-//					default:
-//						break;
-//				}
 				if (tokens.length == 1) {
 					key = tokens[0].trim();
 				}
@@ -658,7 +648,7 @@ final public class LinuxMonitor {
         		databasePassword == null || 
         		databaseServer == null || 
         		databasePort == null) {
-			System.err.println("Warning: database parameters not set in LinuxMonitor");
+			A1iciaUtils.error("Warning: database parameters not set in LinuxMonitor");
         }
         source.setUser(databaseUser);
         source.setPassword(databasePassword);

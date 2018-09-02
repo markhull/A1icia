@@ -22,40 +22,24 @@
 package com.hulles.a1icia.webx.client;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.NotificationMole;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 final public class A1iciaClientUtils {
 	private final static String PRONGERROR = "Bad Prong";
 	private final static String COMMERROR = "500 The Bees They're In My Eyes";
-	@SuppressWarnings("unused")
-	private static RegExp uuidPattern;
 	private static A1iciaImageResources imageResources;
-    
-	static {
-		uuidPattern = RegExp.compile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}");
-	}
-    
-	public static void error(String errMsg) {
-		
-		System.out.println("CLIENT ERROR: " + errMsg);
-	}
-	public static void error(String errMsg, Throwable ex) {
-		
-		System.out.println("CLIENT ERROR: " + errMsg);
-		ex.printStackTrace();
-	}
 	
 	public static void prongError(Throwable ex) {
 		
-		error(PRONGERROR, ex);
+		A1iciaUtils.error(PRONGERROR, ex);
 	}
 	
 	
 	public static void commError(Throwable ex) {
 		
-		error(COMMERROR, ex);
+		A1iciaUtils.error(COMMERROR, ex);
 	}
 
     /**
@@ -73,7 +57,7 @@ final public class A1iciaClientUtils {
         return loadingImage;
     }    
    
-    public static NotificationMole showNotification(String title, String message) {
+    private static NotificationMole showNotification(String title, String message) {
     	NotificationMole nm;
     	
     	nm = new NotificationMole();

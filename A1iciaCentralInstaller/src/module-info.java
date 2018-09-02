@@ -10,5 +10,6 @@ module com.hulles.a1icia.config.central {
 	requires com.hulles.a1icia.api;
 	requires com.hulles.a1icia.crypto;
 	requires jedis;
+    requires javax.json;
     // to here
 }

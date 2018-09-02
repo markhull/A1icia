@@ -21,11 +21,14 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.shared;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * SharedUtils is a class that contains various A1icia utility functions. It
@@ -35,6 +38,8 @@ import java.net.UnknownHostException;
  * @author hulles
  */
 public class SharedUtils implements Serializable {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaApi.SharedUtils");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final long serialVersionUID = 8123983689858668155L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;
@@ -101,7 +106,7 @@ public class SharedUtils implements Serializable {
 		
 		checkNotNull(portCheck);
 		if (alreadyRunning(PortCheck.A1ICIA)) {
-			System.err.println("A1icia is already running");
+			LOGGER.log(Level.SEVERE, "A1icia is already running");
 			System.exit(EXIT_ALREADY_RUNNING);
 		}
 	}

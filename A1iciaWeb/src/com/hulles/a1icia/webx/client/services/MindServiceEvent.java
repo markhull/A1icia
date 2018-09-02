@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.prong.shared.SerialProng;
-import com.hulles.a1icia.webx.client.A1iciaClientUtils;
 import com.hulles.a1icia.webx.client.services.ServiceHandler.MindServices;
 import com.hulles.a1icia.webx.shared.SharedUtils;
 
@@ -46,7 +46,7 @@ final public class MindServiceEvent<T> {
 	public static SerialProng getProng() {
 		
 		if (prong == null) {
-			A1iciaClientUtils.error("No prong value in MindServiceEvent");
+			A1iciaUtils.error("No prong value in MindServiceEvent");
 			return null;
 		}
 		return prong;
@@ -94,7 +94,7 @@ final public class MindServiceEvent<T> {
 		try {
 			param = params.get(ix);
 		} catch (IndexOutOfBoundsException ex) {
-			A1iciaClientUtils.error("Not enough service params", ex);
+			A1iciaUtils.error("Not enough service params", ex);
 			return null;
 		}		
 		return param;

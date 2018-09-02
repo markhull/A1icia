@@ -721,8 +721,8 @@ public final class MikeRoom extends UrRoom {
 					return null;
 				}
 				mediaArrays = new byte[][]{introBytes, mediaBytes};
-				System.out.println("MIKE: intro length = " + introBytes.length);
-				System.out.println("MIKE: media length = " + mediaBytes.length);
+				LOGGER.log(LOGLEVEL, "MIKE: intro length = " + introBytes.length);
+				LOGGER.log(LOGLEVEL, "MIKE: media length = " + mediaBytes.length);
 				mediaObject.setMediaBytes(mediaArrays);
 			}
 			if (!mediaObject.isValid()) {
@@ -891,7 +891,7 @@ public final class MikeRoom extends UrRoom {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                    System.err.println("Pool did not terminate");
+                    A1iciaUtils.error("Pool did not terminate");
                 }
             }
         } catch (InterruptedException ie) {

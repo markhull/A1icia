@@ -31,8 +31,11 @@ import java.util.Date;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.CharStreams;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An olio class for various useful functions in A1icia. These methods are <b>NOT</b> GWT-safe.
@@ -43,6 +46,8 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  *
  */
 public final class A1iciaUtils {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaApi.A1iciaUtils");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final static ZoneId DEFAULTZONE = ZoneId.systemDefault();
 	private static final long MILLIS_IN_SECOND = 1000;
 	private static final long MILLIS_IN_MINUTE = 60 * MILLIS_IN_SECOND;
@@ -222,8 +227,7 @@ public final class A1iciaUtils {
             dialogMsg.append(msg);
             dialogMsg.append("\n");
         }
-        System.err.println();
-        System.err.println(dialogMsg.toString());
+        LOGGER.log(Level.WARNING, dialogMsg.toString());
         jebusError = new A1iciaError();
         jebusError.setMessage(dialogMsg.toString());       
     }
@@ -244,8 +248,7 @@ public final class A1iciaUtils {
             dialogMsg.append(msg);
             dialogMsg.append("\n");
         }
-        System.err.println();
-        System.err.println(dialogMsg.toString());
+        LOGGER.log(Level.SEVERE, dialogMsg.toString());
         jebusError = new A1iciaError();
         jebusError.setMessage(dialogMsg.toString());       
    }
@@ -260,8 +263,7 @@ public final class A1iciaUtils {
         A1iciaError jebusError;
 
         SharedUtils.checkNotNull(errmsg);
-        System.err.println();
-        System.err.println(errmsg);
+        LOGGER.log(Level.SEVERE, errmsg);
         jebusError = new A1iciaError();
         jebusError.setMessage(errmsg);       
     }

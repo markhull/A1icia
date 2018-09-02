@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
@@ -48,8 +49,8 @@ import com.hulles.a1icia.ticket.SememePackage;
  */
 public final class BusMonitor extends UrRoom {
 	private final static Logger LOGGER = Logger.getLogger("A1icia.BusMonitor");
-//	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
-	private final static Level LOGLEVEL = Level.INFO;
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	private final static Level LOGLEVEL = Level.INFO;
 	private final static boolean VERBOSE = false;
 	private final static boolean SHOWWHATSPARKS = false;
 	
@@ -71,12 +72,17 @@ public final class BusMonitor extends UrRoom {
 		StringBuffer sb;
 		RoomActionObject actionObj;
 		SerialSememe sememe;
+        String docID;
+        String room;
 		
 		SharedUtils.checkNotNull(document);
 		if (document instanceof RoomAnnouncement) {
 			announcement = (RoomAnnouncement) document;
 			msg = announcement.getDocumentType().name();
-			LOGGER.log(LOGLEVEL, "Mind Bus ANNOUNCEMENT: " + (msg == null ? "(no msg)" : msg));
+            if (msg == null) {
+                msg = "(no msg)";
+            }
+			LOGGER.log(LOGLEVEL, "Mind Bus ANNOUNCEMENT: {0}", msg);
 		} else	if (document instanceof RoomRequest) {
 			request = (RoomRequest) document;
 			sb = new StringBuffer();
@@ -86,8 +92,9 @@ public final class BusMonitor extends UrRoom {
 				sb.append(" ");
 			}
 			msg = sb.toString();
-			LOGGER.log(LOGLEVEL, "Mind Bus REQUEST " + request.getDocumentID() + ": " + request.getFromRoom().getDisplayName() + 
-					" " + msg);
+            docID = request.getDocumentID().toString();
+            room = request.getFromRoom().getDisplayName();
+			LOGGER.log(LOGLEVEL, "Mind Bus REQUEST {0}: {1} {2}", new String[]{docID, room, msg});
 		} else if (document instanceof RoomResponse) {
 			response = (RoomResponse) document;
 			if (!VERBOSE) {
@@ -112,17 +119,23 @@ public final class BusMonitor extends UrRoom {
 					sb.append(actionObj.getExplanation());
 				}
 				msg = sb.toString();
-				LOGGER.log(LOGLEVEL, "Mind Bus RESPONSE: " + response.getFromRoom().getDisplayName() +
-						" " + msg);
+                room = response.getFromRoom().getDisplayName();
+				LOGGER.log(LOGLEVEL, "Mind Bus RESPONSE: {0} {1}", new String[]{room, msg});
 			}
 		} else {
-			LOGGER.log(LOGLEVEL, "Mind Bus UNKNOWN DOCUMENT: " + document.getClass().getName());
+            if (document == null) {
+                LOGGER.log(LOGLEVEL, "Mind Bus NULL DOCUMENT");
+            } else {
+                LOGGER.log(LOGLEVEL, "Mind Bus UNKNOWN DOCUMENT: {0}", document.getClass().getName());
+            }
 		}
 	}
 
 	/**
 	 * Return this room.
 	 * 
+     * @return The name of our room
+     * 
 	 */
 	@Override
 	public Room getThisRoom() {
@@ -133,9 +146,12 @@ public final class BusMonitor extends UrRoom {
 	/**
 	 * BusMonitor does not handle responses, and shouldn't receive any here.
 	 * 
+     * @param request
+     * @param responses
+     * 
 	 */
 	@Override
-	public void processRoomResponses(RoomRequest request, List<RoomResponse> response) {
+	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
 		throw new A1iciaException("Response not implemented in " + 
 				getThisRoom().getDisplayName());
 	}
@@ -151,6 +167,9 @@ public final class BusMonitor extends UrRoom {
 	/**
 	 * BusMonitor does not react to sememes, although it could someday.
 	 * 
+     * @param pkg The sememe package
+     * @param request The room request
+     * @return The ActionPackage
 	 */
 	@Override
 	public ActionPackage createActionPackage(SememePackage pkg, RoomRequest request) {
@@ -160,6 +179,9 @@ public final class BusMonitor extends UrRoom {
 
 	/**
 	 * Return the set of sememes which we handle here, i.e. none (empty set).
+     * 
+     * @return The sememes we handle, i.e. the empty set
+     * 
 	 */
 	@Override
 	protected Set<SerialSememe> loadSememes() {
@@ -169,6 +191,8 @@ public final class BusMonitor extends UrRoom {
 
 	/**
 	 * BusMonitor does not handle room announcements, at least as called by UrRoom.
+     * 
+     * @param announcement The room announcement
 	 * 
 	 */
 	@Override

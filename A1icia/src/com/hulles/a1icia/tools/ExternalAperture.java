@@ -295,7 +295,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSPOKEN);
 		urlString = String.format(urlTemplate, query, wolframID);
-		System.out.println("***** url = " + urlString);
+		LOGGER.log(LOGLEVEL, "WolframSpokenQuery url = {0}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -317,7 +317,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSIMPLE);
 		urlString = String.format(urlTemplate, query, wolframID);
-		System.out.println("***** url = " + urlString);
+		LOGGER.log(LOGLEVEL, "WolframSimpleQuery url = {0}", urlString);
 		return getURLImageResult(urlString);
 	}
 
@@ -339,7 +339,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSHORT);
 		urlString = String.format(urlTemplate, query, wolframID);
-		System.out.println("***** url = " + urlString);
+		LOGGER.log(LOGLEVEL, "WolframShortQuery url = {0}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -360,7 +360,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMQUERY);
 		urlString = String.format(urlTemplate, query, wolframID);  // pi, 3.141592653589793
-		System.out.println("***** url = " + urlString);
+		LOGGER.log(LOGLEVEL, "WolframQuery url = {0}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -649,8 +649,6 @@ final public class ExternalAperture {
 		} catch (IOException ex) {
 			A1iciaUtils.error("I/O Exception creating input stream in putURLStringResult\nURL string: " + 
                     urlString, ex);
-            ex.printStackTrace();
-            
 			return null;
 		}
 		return sb.toString();

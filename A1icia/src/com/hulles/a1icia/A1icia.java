@@ -208,7 +208,7 @@ final public class A1icia implements Closeable {
 		startupTimes = serviceManager.startupTimes().entrySet();
 		for (Entry<Service,Long> entry : startupTimes) {
 			millis = A1iciaUtils.formatElapsedMillis(entry.getValue());
-			LOGGER.log(Level.INFO, "{0} started in {1}", new Object[]{entry.getKey(), millis});
+			LOGGER.log(LOGLEVEL, "{0} started in {1}", new Object[]{entry.getKey(), millis});
 		}
 	}
 	
@@ -224,7 +224,7 @@ final public class A1icia implements Closeable {
 		ClientDialogRequest clientRequest;
 
         SharedUtils.checkNotNull(request);
-        LOGGER.log(Level.INFO, "A1icia: in forwardRequestToRoom");
+        LOGGER.log(LOGLEVEL, "A1icia: in forwardRequestToRoom");
 		if (!request.isValid()) {
 			A1iciaUtils.error("A1icia: DialogRequest is not valid, refusing it",
 					request.toString());
@@ -246,7 +246,7 @@ final public class A1icia implements Closeable {
 	void forwardResponseToHouse(DialogResponse response) {
 
         SharedUtils.checkNotNull(response);
-        LOGGER.log(Level.INFO, "A1icia: in forwardResponseToHouse");
+        LOGGER.log(LOGLEVEL, "A1icia: in forwardResponseToHouse");
 		a1iciaHouse.receiveResponse(response);
 	}
 	
@@ -274,13 +274,13 @@ final public class A1icia implements Closeable {
 	static void shutdownAndAwaitTermination(ExecutorService pool) {
 		
         SharedUtils.checkNotNull(pool);
-		System.out.println("ALICIA -- Shutting down A1icia");
+		LOGGER.log(Level.INFO, "ALICIA -- Shutting down A1icia");
 		pool.shutdown();
 		try {
 			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
 				pool.shutdownNow();
 				if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
-                    System.err.println("ALICIA -- Pool did not terminate");
+                    A1iciaUtils.error("ALICIA -- Pool did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {
@@ -321,9 +321,9 @@ final public class A1icia implements Closeable {
 		public void run() {
 	    	
 	    	if (shuttingDownOnClose) {
-	    		System.out.println("ALICIA -- Orderly shutdown, hook not engaged");
+	    		LOGGER.log(Level.INFO, "ALICIA -- Orderly shutdown, hook not engaged");
 	    	} else {
-		    	System.out.println("ALICIA -- Exceptional shutdown, hook engaged");
+		    	LOGGER.log(Level.INFO, "ALICIA -- Exceptional shutdown, hook engaged");
 				shutdownAndAwaitTermination(pool);
 	    	}
 	    }
@@ -354,7 +354,7 @@ final public class A1icia implements Closeable {
 		 */
 		void receiveResponse(DialogResponse response) {
 			
-            LOGGER.log(Level.INFO, "A1iciaHouse: in receiveResponse");
+            LOGGER.log(LOGLEVEL, "A1iciaHouse: in receiveResponse");
 			SharedUtils.checkNotNull(response);
 			getStreet().post(response);
 		}
@@ -422,20 +422,6 @@ final public class A1icia implements Closeable {
 		public House getThisHouse() {
 
 			return House.ALICIA;
-		}
-
-		/**
-		 * For A1icia's house, currently the run() method doesn't do anything except loop
-		 * until the service is stopped.
-		 * 
-         * @throws Exception
-		 */
-		@Override
-		protected void run() throws Exception {
-			
-			while (isRunning()) {
-				
-			}
 		}
 	}
 	
@@ -621,8 +607,7 @@ final public class A1icia implements Closeable {
 						clientResponse.getDialogResponse().toString());
 				return null;
 			}
-			System.out.print("RESPONSE: ");
-			System.out.println(clientResponse.getMessage());
+			LOGGER.log(LOGLEVEL, "RESPONSE: {0}", clientResponse.getMessage());
 			dialogResponse = clientResponse.getDialogResponse();
 			dialogResponse.setFromA1icianID(a1icianID);
 			forwardResponseToHouse(dialogResponse);

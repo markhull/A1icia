@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.tools.A1iciaTimer;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 /**
  * WordToVecSearch is the class that uses the loaded word2vec BIN file for word matches 
@@ -83,7 +84,7 @@ final public class WordToVecSearch {
 	public Map<String, float[]> getVectorMap() {
 		
 		if (wordVectors == null) {
-			System.err.println("You need to call the loadFile method before accessing the map");
+			A1iciaUtils.error("You need to call the loadFile method before accessing the map");
 			return null;
 		}
 		return wordVectors;

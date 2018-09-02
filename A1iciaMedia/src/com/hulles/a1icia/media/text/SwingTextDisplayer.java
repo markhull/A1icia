@@ -38,8 +38,12 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import com.hulles.a1icia.media.MediaUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SwingTextDisplayer {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaMedia.SwingTextDisplayer");
+	private final static Level LOGLEVEL = Level.FINE;
 	TextScroller textScroller= null;
 	private JFrame frame;
     AbstractDocument doc;
@@ -121,7 +125,7 @@ public class SwingTextDisplayer {
 
     private class TextScroller extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private JTextPane textPane;
+		private final JTextPane textPane;
 
 		TextScroller(String text) {
     		super(new BorderLayout());
@@ -140,7 +144,7 @@ public class SwingTextDisplayer {
             if (styledDoc instanceof AbstractDocument) {
                 doc = (AbstractDocument)styledDoc;
             } else {
-                System.err.println("Text pane's document isn't an AbstractDocument!");
+                LOGGER.log(Level.SEVERE, "Text pane's document isn't an AbstractDocument!");
                 System.exit(-1);
             }
             scrollPane = new JScrollPane(textPane);
@@ -156,7 +160,7 @@ public class SwingTextDisplayer {
 	        try {
 	        	doc.insertString(doc.getLength(), txt, attrs);
 	        } catch (BadLocationException ble) {
-	            System.err.println("Couldn't insert text.");
+	            LOGGER.log(Level.SEVERE, "Couldn't insert text.");
 	        }
 	    	
 	        //Make sure the new text is visible, even if there

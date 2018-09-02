@@ -38,16 +38,23 @@ import com.hulles.a1icia.cayenne.TaskType;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
+import biweekly.component.VEvent;
 import biweekly.component.VTodo;
 import biweekly.property.Completed;
 import biweekly.property.Created;
 import biweekly.property.DateDue;
 import biweekly.property.Status;
+import biweekly.property.Summary;
 import biweekly.property.Uid;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.tools.A1iciaUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LoadTasks {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaHotel.LoadTasks");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	
 	public static void loadTasks() {
 		String fileName;
@@ -63,7 +70,13 @@ public class LoadTasks {
 		Person person;
 		TaskPriority taskPriority;
 		TaskType taskType;
-		
+		Summary summary;
+        Status status;
+        String statusValue;
+        Uid uid;
+        List<VEvent> events;
+        String eventSummary;
+        
 		person = Person.findPerson("hulles");
 		taskPriority = TaskPriority.findTaskPriority(2);
 		taskType = TaskType.findTaskType(1);
@@ -71,48 +84,42 @@ public class LoadTasks {
 		A1iciaApplication.setErrorOnUncommittedObjects(false);
 		try (Reader reader = new FileReader(fileName)) {
 			ical = Biweekly.parse(reader).first();
-			System.out.println("ToDo's:");
+			LOGGER.log(LOGLEVEL, "ToDo's:");
 			todos = ical.getTodos();
 			for (VTodo vt : todos) {
-				System.out.println("To Do: " + vt.getSummary().getValue());
+                summary = vt.getSummary();
+				LOGGER.log(LOGLEVEL, "To Do: {0}", summary.getValue());
 				task = Task.createNew();
-				task.setDescription(vt.getSummary().getValue());
+				task.setDescription(summary.getValue());
 				task.setPerson(person);
 				task.setTaskPriority(taskPriority);
 				task.setTaskType(taskType);
 				if (vt.getCompleted() != null) {
-					System.out.print("Completed Date: ");
-					System.out.print(vt.getCompleted());
 					completed = vt.getCompleted();
-					System.out.println("(Date)" + completed.getValue());
 					date = completed.getValue();
+					LOGGER.log(LOGLEVEL, "Completed Date: {0}", date);
 					ldt = A1iciaUtils.ldtFromUtilDate(date);
 					task.setDateCompleted(ldt);
 				}
 				if (vt.getCreated() != null) {
-					System.out.print("Created Date: ");
-					System.out.print(vt.getCreated());
 					created = vt.getCreated();
-					System.out.println("(Date)" + created.getValue());
 					date = created.getValue();
+					LOGGER.log(LOGLEVEL, "Created Date: {0}", date);
 					ldt = A1iciaUtils.ldtFromUtilDate(date);
 					task.setDateCreated(ldt);
 				}
 				if (vt.getDateDue() != null) {
-					System.out.print("Date Due: ");
-					System.out.print(vt.getDateDue());
 					dateDue = vt.getDateDue();
-					System.out.println("(Date)" + dateDue.getValue());
 					date = dateDue.getValue();
+					LOGGER.log(LOGLEVEL, "Date Due: {0}", date);
 					ldt = A1iciaUtils.ldtFromUtilDate(date);
 					task.setDateDue(ldt);
 				}
 				if (vt.getStatus() != null) {
-					System.out.print("Status: ");
-					System.out.print(vt.getStatus());
-					Status status = vt.getStatus();
-					System.out.println("(Status)" + status.getValue());
-                    switch (status.getValue()) {
+					status = vt.getStatus();
+                    statusValue = status.getValue();
+					LOGGER.log(LOGLEVEL, "Status: {0}", statusValue);
+                    switch (statusValue) {
                         case "COMPLETED":
                             taskStatus = TaskStatus.findTaskStatus(2);
                             task.setTaskStatus(taskStatus);
@@ -126,26 +133,22 @@ public class LoadTasks {
                     }
 				}
 				if (vt.getUid() != null) {
-					System.out.print("Uid: ");
-					System.out.print(vt.getUid());
-					Uid uuid = vt.getUid();
-					System.out.println("(UUID)" + uuid.getValue());
-					task.setTaskUuid(uuid.getValue());
+					uid = vt.getUid();
+					LOGGER.log(LOGLEVEL, "Uid: {0}", uid);
+					task.setTaskUuid(uid.getValue());
 				}
-				System.out.println();
 				task.commit();
 			}
-
-//			System.out.println("Events:");
-//			events = ical.getEvents();
-//			for (VEvent event : events) {
-//				summary = event.getSummary().getValue();
-//				System.out.println("Event: " + summary);
-//			}
+			LOGGER.log(LOGLEVEL, "Events:");
+			events = ical.getEvents();
+			for (VEvent event : events) {
+				eventSummary = event.getSummary().getValue();
+				LOGGER.log(LOGLEVEL, "Event: {0}", eventSummary);
+			}
 		} catch (FileNotFoundException e) {
-			throw new A1iciaException("HotelNeo: can't find calendar file", e);
+			throw new A1iciaException("LoadTasks: can't find calendar file", e);
 		} catch (IOException e1) {
-			throw new A1iciaException("HotelNeo: can't close calendar file", e1);
+			throw new A1iciaException("LoadTasks: can't close calendar file", e1);
 		}
 		A1iciaApplication.setErrorOnUncommittedObjects(false);
 	}

@@ -264,7 +264,11 @@ public abstract class UrRoom extends AbstractIdleService {
 				});
 			}
 		} else {
-			A1iciaUtils.error("Unknown document type in documentArrival = " + document.getDocumentType());
+            if (document == null) {
+                A1iciaUtils.error("Null document in documentArrival");
+            } else {
+    			A1iciaUtils.error("Unknown document type in documentArrival = " + document.getDocumentType());
+            }
 		}
 	}
 	
@@ -360,13 +364,13 @@ public abstract class UrRoom extends AbstractIdleService {
 
 	static void shutdownAndAwaitTermination(ExecutorService pool) {
 		
-		System.out.println("URROOM -- Shutting down room");
+		LOGGER.log(LOGLEVEL, "URROOM -- Shutting down room");
 		pool.shutdown();
 		try {
 			if (!pool.awaitTermination(3, TimeUnit.SECONDS)) {
 				pool.shutdownNow();
 				if (!pool.awaitTermination(3, TimeUnit.SECONDS)) {
-                    System.err.println("URROOM -- Pool did not terminate");
+                    A1iciaUtils.error("URROOM -- Pool did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {
@@ -395,9 +399,9 @@ public abstract class UrRoom extends AbstractIdleService {
 		public void run() {
 	    	
 	    	if (shuttingDownOnClose) {
-	    		System.out.println("URROOM -- Orderly shutdown, hook not engaged");
+	    		LOGGER.log(LOGLEVEL, "URROOM -- Orderly shutdown, hook not engaged");
 	    	} else {
-		    	System.out.println("URROOM -- Exceptional shutdown, hook engaged");
+		    	LOGGER.log(LOGLEVEL, "URROOM -- Exceptional shutdown, hook engaged");
 				shutdownAndAwaitTermination(pool);
 	    	}
 	    }

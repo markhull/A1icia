@@ -21,6 +21,10 @@
  *******************************************************************************/
 package com.hulles.a1icia.api.shared;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * The A1icia API version of the RuntimeException, for possible expanded use later. This <b>should</b>
  * be GWT-safe.
@@ -29,23 +33,25 @@ package com.hulles.a1icia.api.shared;
  *
  */
 public final class A1iciaException extends RuntimeException {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaApi.A1iciaException");
+	private final static Level LOGLEVEL = Level.SEVERE;
 	private static final long serialVersionUID = -4744550566143714488L;
 	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public A1iciaException() {
 		super(BEES);
 		
-		System.err.println(BEES);
+		LOGGER.log(LOGLEVEL, BEES);
 	}
 	public A1iciaException(String desc) {
 		super(desc);
 		
-		System.err.println(desc);
+		LOGGER.log(LOGLEVEL, desc);
 	}
     public A1iciaException(String desc, Throwable ex) {
         super(desc, ex);
         
-        System.err.println(desc);
+        LOGGER.log(LOGLEVEL, desc);
         ex.printStackTrace();
     }
 }

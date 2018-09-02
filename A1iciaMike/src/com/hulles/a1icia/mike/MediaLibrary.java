@@ -198,7 +198,7 @@ public class MediaLibrary {
             return null;
         }
         tikaResult = new TikaResult(artist, title);
-        System.out.println(tikaResult);
+        LOGGER.log(Level.INFO, "TIKA: {0}", tikaResult.toString());
         return tikaResult;
     }
     

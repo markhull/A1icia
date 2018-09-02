@@ -71,7 +71,7 @@ public class FortunaApplication {
 	    	if (entityContext.hasChanges()) {
 	    		objects = entityContext.uncommittedObjects();
 	    		for (Object object : objects) {
-	    			java.lang.System.err.println("***** Uncommitted Object " + object.toString());
+	    			java.lang.System.err.println("Uncommitted Object " + object.toString());
 	    		}
 	    		throw new RuntimeException("Cayenne entity context has changes pending");
 	    	}

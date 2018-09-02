@@ -21,9 +21,12 @@
  *******************************************************************************/
 package com.hulles.a1icia.echo.w2v;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import java.util.Map;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * WordToVecAnalyze loads the word2vec file and performs a simple analysis of the words contained in it. 
@@ -37,7 +40,9 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  *
  */
 final public class WordToVecAnalyze {
-	private Map<String, float[]> words;
+	private final static Logger LOGGER = Logger.getLogger("A1iciaEcho.WordToVecAnalyze");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final Map<String, float[]> words;
 	
 	/**
 	 * Load the map and analyze the word keys in it.
@@ -76,14 +81,24 @@ final public class WordToVecAnalyze {
 		
 		for (String word : words.keySet()) {
 			len = word.length();
-			if (len < minLen) minLen = len;
-			if (len > maxLen) maxLen = len;
-			if (len == 0) zeroSize++;
+			if (len < minLen) {
+                minLen = len;
+            }
+			if (len > maxLen) {
+                maxLen = len;
+            }
+			if (len == 0) {
+                zeroSize++;
+            }
 			if (len == 1) {
 				oneSize++;
 				c = word.charAt(0);
-				if (!Character.isLetterOrDigit(c)) punctuationSize++;
-				if (Character.isDigit(c)) digitSize++;
+				if (!Character.isLetterOrDigit(c)) {
+                    punctuationSize++;
+                }
+				if (Character.isDigit(c)) {
+                    digitSize++;
+                }
 				System.out.println("1char word " + word);
 			}
 			sum += len;

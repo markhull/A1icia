@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import java.nio.file.FileVisitOption;
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 import java.util.EnumSet;
@@ -90,8 +91,6 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 		filePath = file.getFileName();
 		if (filePath != null && matcher.matches(filePath)) {
             LOGGER.log(LOGLEVEL, "LibraryLister: find matches {0}", filePath);
-//			numMatches++;
-//			System.out.println("Found file " + filePath);
 			try {
 				filePath = file.toRealPath();
 			} catch (IOException e) {
@@ -104,7 +103,6 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 	}
 
 	private void done() {
-//		System.out.println("LibraryLister matches: " + numMatches);
 	}
 
 	@Override
@@ -120,7 +118,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFileFailed(Path file, IOException exc) {
 
-		System.err.println(exc);
+		A1iciaUtils.error(exc.getMessage());
 		return FileVisitResult.CONTINUE;
 	}
 

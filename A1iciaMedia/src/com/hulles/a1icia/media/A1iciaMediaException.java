@@ -21,6 +21,9 @@
  *******************************************************************************/
 package com.hulles.a1icia.media;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * The A1icia API version of the RuntimeException, for possible expanded use later.
  * 
@@ -29,22 +32,24 @@ package com.hulles.a1icia.media;
  */
 public final class A1iciaMediaException extends RuntimeException {
 	private static final long serialVersionUID = -4744550566143714488L;
+	private final static Logger LOGGER = Logger.getLogger("A1iciaMedia.A1iciaMediaException");
+	private final static Level LOGLEVEL = Level.SEVERE;
 	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public A1iciaMediaException() {
 		super(BEES);
 		
-		System.err.println(BEES);
+		LOGGER.log(LOGLEVEL, BEES);
 	}
 	public A1iciaMediaException(String desc) {
 		super(desc);
 		
-		System.err.println(desc);
+		LOGGER.log(LOGLEVEL, desc);
 	}
     public A1iciaMediaException(String desc, Throwable ex) {
         super(desc, ex);
         
-        System.err.println(desc);
+        LOGGER.log(LOGLEVEL, desc);
         ex.printStackTrace();
     }
 }

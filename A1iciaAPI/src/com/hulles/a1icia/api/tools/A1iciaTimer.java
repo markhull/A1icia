@@ -75,7 +75,7 @@ public final class A1iciaTimer {
 		endTime = System.currentTimeMillis();
 		startTime = TIMERMAP.remove(timerName);
 		if (startTime == null) {
-			System.err.println("Bad map start time in A1iciaTimer");
+			LOGGER.log(Level.SEVERE, "Bad map start time in A1iciaTimer");
 			return null;
 		}
 		elapsedMillis = endTime - startTime;

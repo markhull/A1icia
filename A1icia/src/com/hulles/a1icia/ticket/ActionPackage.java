@@ -36,6 +36,7 @@ import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.document.RoomActionObject;
 
 import redis.clients.jedis.Jedis;
+
 /**
  * An ActionPackage is a bundle consisting of a sememe (in a SememePackage) and a corresponding
  * RoomActionObject that is the result of the sememe.
@@ -47,6 +48,7 @@ public final class ActionPackage {
 	private final SememePackage sememePackage;
 	private RoomActionObject actionObject;
 	private final String idString;
+    private boolean isMultiMedia = false; // this is a hint to Thimk to possibly winnow it for quiet times or text sessions
 	
 	public ActionPackage(SememePackage pkg) {
 		long idValue;
@@ -56,6 +58,17 @@ public final class ActionPackage {
 		idValue = getNewActionPackageID();
 		this.idString = "AP" + idValue;
 	}
+
+    public boolean isMultiMedia() {
+        
+        return isMultiMedia;
+    }
+
+    public void setIsMultiMedia(boolean isMultiMedia) {
+        
+        SharedUtils.checkNotNull(isMultiMedia);
+        this.isMultiMedia = isMultiMedia;
+    }
 
 	public String getActionPackageID() {
 		
@@ -109,10 +122,10 @@ public final class ActionPackage {
 		}
 		ActionPackage other = (ActionPackage) obj;
 		if (idString == null) {
-			if (other.idString != null) {
+			if (other.getActionPackageID() != null) {
 				return false;
 			}
-		} else if (!idString.equals(other.idString)) {
+		} else if (!idString.equals(other.getActionPackageID())) {
 			return false;
 		}
 		return true;

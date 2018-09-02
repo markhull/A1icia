@@ -33,7 +33,7 @@ import com.hulles.a1icia.api.shared.SharedUtils;
 public final class ClientObjectWrapper extends RoomActionObject {
 	private String message;
 	private String explanation;
-	private A1iciaClientObject clientObject;
+	private final A1iciaClientObject clientObject;
 	
 	public ClientObjectWrapper(A1iciaClientObject object) {
 		

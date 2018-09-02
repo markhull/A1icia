@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.house.ClientDialogResponse;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.room.Room;
@@ -48,9 +49,8 @@ import com.hulles.a1icia.ticket.SememePackage;
 import com.hulles.a1icia.ticket.SentencePackage;
 import com.hulles.a1icia.ticket.Ticket;
 import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.ExternalAperture;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -66,6 +66,8 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public final class AlphaRoom extends UrRoom {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaAlpha.AlphaRoom");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private final ScheduledExecutorService executor;
 	private volatile boolean alreadySentNotification = false;
     
@@ -231,7 +233,7 @@ public final class AlphaRoom extends UrRoom {
 				pool.shutdownNow(); // Cancel currently executing tasks
 				// Wait a while for tasks to respond to being cancelled
 				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    System.err.println("TimerHandler -- executor did not terminate");
+                    A1iciaUtils.error("TimerHandler -- executor did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {
@@ -308,8 +310,8 @@ public final class AlphaRoom extends UrRoom {
 					obj = pkg.getActionObject();
 					if (obj instanceof MessageAction) {
 						msgAction = (MessageAction) obj;
-                        System.out.println("We got us some learning => " + msgAction.getMessage() +
-                                ", " + msgAction.getExplanation());
+                        LOGGER.log(Level.INFO, "We got us some learning => {0}, {1}", 
+                                new String[]{msgAction.getMessage(), msgAction.getExplanation()});
 					}
 				}
 			}
@@ -320,16 +322,8 @@ public final class AlphaRoom extends UrRoom {
 
 	@Override
 	protected void roomStartup() {
-//        String result;
-//        Path path;
-//        
-//        path = Paths.get("/home/hulles/Music/MP3s/Jonny Lang/Wander This World/Jonny Lang - Walking Away.mp3");
-//        result = ExternalAperture.queryTika(path);
-//        System.out.println("Tika result:\n" + result);
-//        path = Paths.get("/home/hulles/Media/Music Videos/Sorry For It All _ Dead Sara _ Official Video.mp4");
-//        result = ExternalAperture.queryTika(path);
-//        System.out.println("Tika result:\n" + result);
-	}
+
+    }
 
 	@Override
 	protected void roomShutdown() {

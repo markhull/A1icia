@@ -21,7 +21,11 @@
  *******************************************************************************/
 package com.hulles.a1icia.cayenne;
 
+import com.hulles.a1icia.api.A1iciaConstants;
+import com.hulles.a1icia.api.shared.A1iciaException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
@@ -30,6 +34,8 @@ import org.apache.cayenne.log.NoopJdbcEventLogger;
 import org.apache.cayenne.resource.ResourceLocator;
 
 public final class A1iciaApplication {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaCayenne.A1iciaApplication");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
     private static ObjectContext entityContext = null;
 	private static ServerRuntime cayenneRuntime = null;
     private static boolean uncommittedObjectsError = true;
@@ -48,23 +54,6 @@ public final class A1iciaApplication {
     public synchronized static ServerRuntime getServerRuntime() {
     	
     	if (cayenneRuntime == null) {
-//    		@SuppressWarnings("rawtypes")
-//			Class clazz = A1iciaApplication.class;
-//    		System.out.println("Class " + clazz.getName());
-//    		System.out.println("Canonical name " + clazz.getCanonicalName());
-//    		System.out.println("Package name " + clazz.getPackageName());
-//    		System.out.println("Simple name " + clazz.getSimpleName());
-//    		System.out.println("Type name " + clazz.getTypeName());
-//    		System.out.println("Generic string " + clazz.toGenericString());
-//    		System.out.println("Class resource URL " + clazz.getResource("cayenne-a1icia.xml"));
-//    		ClassLoader cl = clazz.getClassLoader();
-//			System.out.println("CAYENNE");
-//    		System.out.println("Module name " + clazz.getModule().getName());
-//    		System.out.println("Module descriptor " + clazz.getModule().getDescriptor());
-//    		System.out.println("Module layer " + clazz.getModule().getLayer());
-//    		System.out.println();
-//    		System.out.println("ClassLoader resource URL " + cl.getResource("cayenne-a1icia.xml"));
-//    		System.out.println("ClassLoader name " + cl.getName());
     		
     		if (!logging) {
 //    			showURLs("com/hulles/a1icia/cayenne/cayenne-a1icia.xml");
@@ -163,9 +152,9 @@ public final class A1iciaApplication {
 	    	if (entityContext.hasChanges()) {
 	    		objects = entityContext.uncommittedObjects();
 	    		for (Object object : objects) {
-	    			java.lang.System.err.println("***** Uncommitted Object " + object.toString());
+	    			LOGGER.log(Level.SEVERE, "Uncommitted Object {0}", object.toString());
 	    		}
-	    		throw new RuntimeException("Cayenne entity context has changes pending");
+	    		throw new A1iciaException("Cayenne entity context has changes pending");
 	    	}
     	}
     	return entityContext;

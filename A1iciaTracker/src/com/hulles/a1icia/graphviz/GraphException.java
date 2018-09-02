@@ -27,4 +27,7 @@ public class GraphException extends RuntimeException {
 	public GraphException(String message) {
         super(message);
     }
+    public GraphException(String message, Exception ex) {
+        super(message, ex);
+    }
 }

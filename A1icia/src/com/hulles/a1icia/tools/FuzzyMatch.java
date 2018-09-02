@@ -35,7 +35,10 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
+import com.hulles.a1icia.api.A1iciaConstants;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * FuzzyMatch returns a quantified match between one string and another using the 
@@ -46,6 +49,8 @@ import com.hulles.a1icia.api.shared.SharedUtils;
  *
  */
 public class FuzzyMatch {
+	private final static Logger LOGGER = Logger.getLogger("A1icia.FuzzyMatch");
+	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
 	private static final LevenshteinDistance LEVDISTANCE;
 
 	static {
@@ -75,6 +80,9 @@ public class FuzzyMatch {
 		Set<String> setT1;
 		Set<String> setT2;
 		int finalScore;
+		String t0 = "";
+		String t1 = "";
+		String t2 = "";
 		
 		if (s1.length() >= s2.length()) {		
 			// We need to swap s1 and s2		
@@ -110,11 +118,9 @@ public class FuzzyMatch {
 		
 		sortedIntersection = Sets.newTreeSet(intersection);
 
-		if (debug) {
-		    System.out.print("Sorted intersection --> ");
-		for (String s:sortedIntersection) {
-            System.out.print(s + " ");
-            }
+	    LOGGER.log(LOGLEVEL, "Sorted intersection --> ");
+		for (String s : sortedIntersection) {
+            LOGGER.log(LOGLEVEL, s);
 		}
 		
 		// Find out difference of sets set1 and intersection of set1,set2
@@ -123,23 +129,16 @@ public class FuzzyMatch {
 		restOfSet2 = Sets.symmetricDifference(set2, intersection);
 		sortedRestOfSet2 = Sets.newTreeSet(restOfSet2);
 		
-		if (debug) {
-			System.out.print("\nSorted rest of 1 --> ");
-			for (String s:sortedRestOfSet1) {
-                System.out.print(s + " ");
-            }
-			
-			System.out.print("\nSorted rest of 2 -->");
-			for (String s:sortedRestOfSet2) {
-                System.out.print(s + " ");
-            }
+	    LOGGER.log(LOGLEVEL, "Sorted rest of 1 --> ");
+		for (String s : sortedRestOfSet1) {
+            LOGGER.log(LOGLEVEL, s);
 		}
-		
-		String t0 = "";
-		String t1 = "";
-		String t2 = "";
-		
-		for (String s:sortedIntersection) {
+	    LOGGER.log(LOGLEVEL, "Sorted rest of 2 --> ");
+		for (String s : sortedRestOfSet2) {
+            LOGGER.log(LOGLEVEL, s);
+		}
+
+        for (String s:sortedIntersection) {
 			t0 = t0 + " " + s;			
 		}
 		t0 = t0.trim();
@@ -160,13 +159,9 @@ public class FuzzyMatch {
 		int amt2 = calculateLevensteinDistance(t0, t2);
 		int amt3 = calculateLevensteinDistance(t1, t2);
 		
-		if (debug) {
-			System.out.println();
-			System.out.println("t0 = " + t0 + " --> " + amt1);
-			System.out.println("t1 = " + t1 + " --> " + amt2);
-			System.out.println("t2 = " + t2 + " --> " + amt3);
-			System.out.println();
-		}
+        LOGGER.log(LOGLEVEL, "t0 = {0} --> {1}", new Object[]{t0, amt1});
+        LOGGER.log(LOGLEVEL, "t1 = {0} --> {1}", new Object[]{t1, amt2});
+        LOGGER.log(LOGLEVEL, "t2 = {0} --> {1}", new Object[]{t2, amt3});
 		
 		finalScore = Math.max(Math.max(amt1, amt2), amt3);
 		return finalScore;	
@@ -266,12 +261,12 @@ public class FuzzyMatch {
 		private Integer ratio;
 		private String string;
 		
-		public int getRatio() {
+		public Integer getRatio() {
 			
 			return ratio;
 		}
 		
-		public void setRatio(int ratio) {
+		public void setRatio(Integer ratio) {
 			
 			this.ratio = ratio;
 		}
@@ -296,7 +291,7 @@ public class FuzzyMatch {
 		@Override
 		public int compareTo(Match other) {
 			
-			return other.ratio.compareTo(ratio);
+			return other.getRatio().compareTo(getRatio());
 		}
 		
 	}

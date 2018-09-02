@@ -32,8 +32,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GraphViz {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaTracker.GraphViz");
+	private final static Level LOGLEVEL = Level.INFO;
     private final static String DOT = "dot";
     private final static String TMP_PATH = "/tmp";
     private final String dotExec;
@@ -61,8 +65,8 @@ public class GraphViz {
     
     public byte[] getGraphBytes(Graph graph, String type, String dpi) {
         String dotSource;
-        File dot = null;
-        byte[] dotBytes = null;
+        File dot;
+        byte[] dotBytes;
 
         SharedUtils.checkNotNull(graph);
         SharedUtils.checkNotNull(type);
@@ -83,7 +87,7 @@ public class GraphViz {
     	try {
 			Files.write(path, bytes);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new GraphException("GraphViz: IO exception writing graph file", e);
 		}
     }
 
@@ -97,8 +101,8 @@ public class GraphViz {
                 writer.write(str);
             }
         }
-        catch (Exception e) {
-            return null;
+        catch (IOException e) {
+			throw new GraphException("GraphViz: IO exception writing source file", e);
         }
         return temp;
     }
@@ -126,7 +130,7 @@ public class GraphViz {
             line = null;
             while ((line = reader.readLine()) != null) {
                 line = reader.readLine();
-                System.out.println(line);
+                LOGGER.log(LOGLEVEL, line);
             }
             
             try (FileInputStream finput = new FileInputStream(imageFile.getAbsolutePath())) {
@@ -135,18 +139,15 @@ public class GraphViz {
             }
             imageFile.delete();
         }
-        catch (java.io.IOException ioe) {
+        catch (java.io.IOException | InterruptedException ioe) {
             throw new GraphException(ioe.toString());
-        }
-        catch (InterruptedException ie) {
-            throw new GraphException(ie.toString());
         } finally {
             try {
                 if (imageFile != null) {
                     imageFile.delete();
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                throw new GraphException("Can't delete file");
             }
         }
         return imageBytes;

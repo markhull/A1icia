@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.tools.A1iciaTimer;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 
 final class WordToVecLoader {
 	final static Logger LOGGER = Logger.getLogger("A1iciaEcho.WordToVecLoader");
@@ -58,7 +59,7 @@ final class WordToVecLoader {
 	 */
 	Map<String, float[]> getMap() {
 		if (wordVectors == null) {
-			System.err.println("You need to call the load method before accessing the map");
+			A1iciaUtils.error("You need to call the load method before accessing the map");
 			return null;
 		}
 		return wordVectors;
@@ -70,7 +71,7 @@ final class WordToVecLoader {
 	 */
 	Integer getVectorSize() {
 		if (wordVectors == null) {
-			System.err.println("You need to call the load method before requesting the vector size");
+			A1iciaUtils.error("You need to call the load method before requesting the vector size");
 			return null;
 		}
 		return vectorSize;
@@ -221,11 +222,7 @@ final class WordToVecLoader {
 			
 			// if the word is valid, put the word and associated vector into the map
 			if (goodWord(word)) {
-//				System.out.println("BEFORE:");
-//				dumpArray(vector);
 				newVector = normalize(vector);
-//				System.out.println("AFTER:");
-//				dumpArray(newVector);
 				oldVector =  wordVectors.put(word, newVector);
 				if (oldVector != null) {
 					dupeCount++;

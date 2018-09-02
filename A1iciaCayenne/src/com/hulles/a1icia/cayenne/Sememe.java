@@ -30,6 +30,7 @@ import org.apache.cayenne.query.ObjectSelect;
 
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.cayenne.auto._Sememe;
 
 public class Sememe extends _Sememe implements Comparable<Sememe> {
@@ -152,7 +153,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	public static SerialSememe getProxySememe() {
 		Sememe sememe;
 		
-		System.err.println("Getting proxy sememe");
+		A1iciaUtils.error("Getting proxy sememe");
 		sememe = Sememe.findRaw("exclamation");
 		if (sememe == null) {
 			return null;
@@ -163,6 +164,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	/**
 	 * Override the toString method in Object to print the Sememe name and canonical form.
 	 * 
+     * @return The formatted string
 	 */
 	@Override
 	public String toString() {
@@ -204,6 +206,8 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	 * This compareTo compares Sememes on their names.
 	 * It is case-insensitive.
 	 * 
+     * @param otherSememe
+     * @return A negative integer, zero, or a positive integer as the other sememe is greater than, equal to, or less than this sememe
 	 */
 	@Override
 	public int compareTo(Sememe otherSememe) {

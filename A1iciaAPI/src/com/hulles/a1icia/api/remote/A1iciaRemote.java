@@ -61,7 +61,6 @@ import com.hulles.a1icia.api.shared.SerialPerson;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SerialUUID;
 import com.hulles.a1icia.api.shared.SharedUtils;
-import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.media.Language;
 import com.hulles.a1icia.media.MediaFormat;
 import com.hulles.a1icia.media.MediaUtils;
@@ -626,7 +625,7 @@ public final class A1iciaRemote extends AbstractExecutionThreadService {
 				}
 				break;
 			default:
-				System.err.println("Unknown client object type = " + objectType);
+				LOGGER.log(Level.SEVERE, "Unknown client object type = " + objectType);
 				break;
 		}
 	}

@@ -27,6 +27,7 @@ import com.eclipsesource.v8.V8Object;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.prong.shared.SerialProng;
 
 public final class PlainResponder implements JavaCallback {
@@ -54,7 +55,7 @@ public final class PlainResponder implements JavaCallback {
 		SharedUtils.checkNotNull(parameters);
 		prongStr = parameters.getString(0);
 		if (parameters.length() < 2) {
-			System.err.println("PlainResponder: paramenters error");
+			A1iciaUtils.error("PlainResponder: paramenters error");
 			return "Parameters error";
 		}
 		prong = new SerialProng(prongStr);

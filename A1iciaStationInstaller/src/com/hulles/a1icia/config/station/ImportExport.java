@@ -43,9 +43,16 @@ import com.hulles.a1icia.api.jebus.JebusHub;
 import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.Station;
 import com.hulles.a1icia.api.shared.A1iciaException;
+import com.hulles.a1icia.api.shared.ApplicationKeys;
 import com.hulles.a1icia.api.shared.Serialization;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.tools.A1iciaUtils;
+import java.io.StringWriter;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonWriter;
 
 import redis.clients.jedis.Jedis;
 
@@ -126,19 +133,48 @@ public class ImportExport {
 		JebusPool jebusPool;
 		byte[] stationBytes;
 		byte[] stationKeyBytes;
+        String jsonStationKeys;
+        String jsonKey;
 
 		SharedUtils.checkNotNull(station);
 		jebusPool = JebusHub.getJebusLocal();
 		stationKeyBytes = JebusBible.getBytesKey(JebusKey.ALICIASTATIONKEY, jebusPool);
+        jsonStationKeys = createJSONKeys(station);
+		jsonKey = JebusBible.getStringKey(JebusKey.ALICIAJSONSTATIONKEY, jebusPool);
 		try {
 			stationBytes = Serialization.serialize(station);
 		} catch (IOException e) {
 			throw new A1iciaException("ImportExport: can't serialize station", e);
 		}
 		try (Jedis jebus = jebusPool.getResource()) {
-			jebus.set(stationKeyBytes, stationBytes);		
+			jebus.set(stationKeyBytes, stationBytes);
+            jebus.set(jsonKey, jsonStationKeys);
 		}
 	}
+    
+    private static String createJSONKeys(Station station) {
+        JsonArrayBuilder builder;
+        JsonBuilderFactory factory;
+        Map<String, String> keyMap;
+        JsonArray jsonKeys;
+        JsonWriter jsonWriter;
+        StringWriter writer;
+        
+        keyMap = station.getKeyMap();
+        factory = Json.createBuilderFactory(null);
+        builder = factory.createArrayBuilder();
+		for (Entry<String, String> entry : keyMap.entrySet()) {
+            builder.add(factory.createObjectBuilder()
+                .add("Name", entry.getKey())
+                .add("Value", entry.getValue()));
+		}
+        jsonKeys = builder.build();
+        writer = new StringWriter();
+        jsonWriter = Json.createWriter(writer);
+        jsonWriter.writeArray(jsonKeys);
+        jsonWriter.close();
+        return writer.toString();
+   }
 	
 	static void importExportStation() {
 		InputStreamReader stdIn;

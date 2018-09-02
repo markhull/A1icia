@@ -138,7 +138,7 @@ public class DialogSerialization {
 		if (dialog instanceof DialogRequest) {
 			request = (DialogRequest) dialog;
 			if (!request.isValid()) {
-				System.err.println(request.toString());
+				LOGGER.log(Level.SEVERE, request.toString());
 				throw new A1iciaException("DialogSerialization:serialize: invalid dialog request");
 			}
 			LOGGER.log(LOGLEVEL, "DEBUG DIALOGREQUEST");
@@ -146,7 +146,7 @@ public class DialogSerialization {
 		} else {
 			response = (DialogResponse) dialog;
 			if (!response.isValid()) {
-				System.err.println(response.toString());
+				LOGGER.log(Level.SEVERE, response.toString());
 				throw new A1iciaException("DialogSerialization:serialize: invalid dialog response");
 			}
 			LOGGER.log(LOGLEVEL, "DEBUG DIALOGRESPONSE");

@@ -48,6 +48,10 @@ import com.hulles.a1icia.api.jebus.JebusPool;
 import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
+import com.hulles.a1icia.api.shared.SerialStation;
+import com.hulles.a1icia.api.shared.SerialUUID;
+import com.hulles.a1icia.api.shared.SerialUUID.UUIDException;
+import com.hulles.a1icia.api.shared.SessionType;
 import com.hulles.a1icia.api.shared.SharedUtils;
 import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.crypto.PurdahKeys;
@@ -56,6 +60,7 @@ import com.hulles.a1icia.tools.ExternalAperture;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -63,6 +68,7 @@ import javax.json.JsonReader;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 
 /**
  * StationServer is responsible for communication with the outside world, notably with
@@ -75,9 +81,10 @@ import redis.clients.jedis.Jedis;
  */
 public final class StationServer extends UrHouse {
 	final static Logger LOGGER = Logger.getLogger("A1icia.StationServer");
-	final static Level LOGLEVEL1 = A1iciaConstants.getA1iciaLogLevel();
-//	final static Level LOGLEVEL1 = Level.INFO;
+	final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+//	final static Level LOGLEVEL = Level.INFO;
     JebusListener listener = null;
+    JebusTextListener textListener = null;
 	ExecutorService executor;
 	Timer promptTimer;
 	private List<Prompter> prompters;
@@ -94,7 +101,7 @@ public final class StationServer extends UrHouse {
 		SharedUtils.checkNotNull(noPrompts);
 		this.noPrompts = noPrompts;
 		jebusPool = JebusHub.getJebusCentral(true);
-		System.out.println("Station Server Jebus is " + JebusHub.getCentralServerName());
+		LOGGER.log(Level.INFO, "Station Server Jebus is {0}", JebusHub.getCentralServerName());
 		a1iciaA1icianID = A1iciaConstants.getA1iciaA1icianID();
 		broadcastID = A1iciaConstants.getBroadcastA1icianID();
 	}
@@ -132,11 +139,26 @@ public final class StationServer extends UrHouse {
 	@Override
 	protected void newDialogResponse(DialogResponse response) {
 		A1icianID a1icianID;
-		
+		Session session;
+        
 		SharedUtils.checkNotNull(response);
-        LOGGER.log(LOGLEVEL1, "StationServer: got response from A1icia");
+        LOGGER.log(LOGLEVEL, "StationServer: got response from A1icia");
         a1icianID = response.getToA1icianID();
-        stationSend(a1icianID, response);
+        session = Session.getSession(a1icianID);
+        if (session == null) {
+            throw new A1iciaException("Can't get session");
+        }
+        switch (session.getSessionType()) {
+            case SERIALIZED:
+                stationSend(a1icianID, response);
+                break;
+            case TEXT:
+                stationSendText(a1icianID, response.getMessage());
+                break;
+            default:
+                throw new A1iciaException("Bad choice in get session type = " + session.getSessionType());
+                
+        }
 	}
 
 	/**
@@ -146,12 +168,39 @@ public final class StationServer extends UrHouse {
 	@Override
 	protected void houseStartup() {
 		SerialSememe openSememe;
+		byte[] channel;
+        String channelStr;
 		
 		executor = Executors.newCachedThreadPool();
 		if (!noPrompts) {
 			promptTimer = new Timer();
 			prompters = new ArrayList<>();
 		}
+        
+        listener = new JebusListener();
+        channel = JebusBible.getBytesKey(JebusKey.TOCHANNEL, jebusPool);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try (Jedis jebus = jebusPool.getResource()) {
+                // the following line blocks while waiting for responses...
+                    jebus.subscribe(listener, channel);
+                }
+            }
+        });
+            
+        textListener = new JebusTextListener();
+        channelStr = JebusBible.getStringKey(JebusKey.TOTEXTCHANNEL, jebusPool);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try (Jedis jebus = jebusPool.getResource()) {
+                    // the following line blocks while waiting for responses...
+                    jebus.subscribe(textListener, channelStr);
+                }
+            }
+        });
+        
 		openSememe = SerialSememe.find("central_startup");
 		stationBroadcast("Alicia Central starting up....", openSememe);
         
@@ -169,20 +218,28 @@ public final class StationServer extends UrHouse {
 		
 		closeSememe = SerialSememe.find("central_shutdown");
 		stationBroadcast("Alicia Central shutting down....", closeSememe);
+		if (listener != null) {
+            listener.unsubscribe();
+            listener = null;
+		}
+		if (textListener != null) {
+            textListener.unsubscribe();
+            textListener = null;
+		}
 		if (executor != null) {
 			try {
-			    System.out.println("StationServer: attempting to shutdown executor");
+			    LOGGER.log(LOGLEVEL, "StationServer: attempting to shutdown executor");
 			    executor.shutdown();
 			    executor.awaitTermination(3, TimeUnit.SECONDS);
 			}
 			catch (InterruptedException e) {
-			    System.err.println("StationServer: executor shutdown interrupted");
+			    A1iciaUtils.error("StationServer: executor shutdown interrupted");
 			} finally {
 			    if (!executor.isTerminated()) {
-			        System.err.println("StationServer: cancelling non-finished tasks");
+			        A1iciaUtils.error("StationServer: cancelling non-finished tasks");
 			    }
 			    executor.shutdownNow();
-			    System.out.println("StationServer: shutdown finished");
+			    LOGGER.log(LOGLEVEL, "StationServer: shutdown finished");
 			}
 		}
 		executor = null;
@@ -212,7 +269,7 @@ public final class StationServer extends UrHouse {
 		Set<SerialSememe> sememesCopy;
 		
 		SharedUtils.checkNotNull(requestBytes);
-		LOGGER.log(LOGLEVEL1, "StationServer: got station input...");
+		LOGGER.log(LOGLEVEL, "StationServer: got station input...");
 		try { // TODO make me better :)
 			dialog = DialogSerialization.deSerialize(a1iciaA1icianID, requestBytes);
 		} catch (Exception e) {
@@ -231,17 +288,18 @@ public final class StationServer extends UrHouse {
 			return;
 		}
 		fromA1icianID = dialogRequest.getFromA1icianID();
-		LOGGER.log(LOGLEVEL1, "StationServer: dialog request from {0}", fromA1icianID);
+		LOGGER.log(LOGLEVEL, "StationServer: dialog request from {0}", fromA1icianID);
 		sememesCopy = new HashSet<>(dialogRequest.getRequestActions());
 		sememe = SerialSememe.consume("client_startup", sememesCopy);
-		LOGGER.log(LOGLEVEL1, "StationServer: consumed startup , sememe = {0}", sememe);
+		LOGGER.log(LOGLEVEL, "StationServer: consumed startup , sememe = {0}", sememe);
 		if (sememe != null) {
 			// it's a new session
-			LOGGER.log(LOGLEVEL1, "StationServer: starting new session for {0}", fromA1icianID);
+			LOGGER.log(LOGLEVEL, "StationServer: starting new session for {0}", fromA1icianID);
 			session = Session.getSession(fromA1icianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
 			session.setLanguage(dialogRequest.getLanguage());
+            session.setSessionType(SessionType.SERIALIZED);
 			setSession(session);
 			return; // we don't need to pass this along, at least for now
 		} else if (isOurSession(fromA1icianID)) {
@@ -249,34 +307,36 @@ public final class StationServer extends UrHouse {
 			sememe = SerialSememe.consume("client_shutdown", sememesCopy);
 			if (sememe != null) {
 				// close the session
-				LOGGER.log(LOGLEVEL1, "StationServer: closing session for {0}", fromA1icianID);
+				LOGGER.log(LOGLEVEL, "StationServer: closing session for {0}", fromA1icianID);
 				removeSession(session);
 //				return; // we don't need to pass this on, at least for now
 			} else {
 				// update the session
-				LOGGER.log(LOGLEVEL1, "StationServer: updating session for {0}", fromA1icianID);
+				LOGGER.log(LOGLEVEL, "StationServer: updating session for {0}", fromA1icianID);
 				session.update();
-				session.setPersonUUID(dialogRequest.getPersonUUID());
-				session.setStationUUID(dialogRequest.getStationUUID());
-				session.setLanguage(dialogRequest.getLanguage());
+                // is it really true that these might have changed since the session was created? TODO
+//				session.setPersonUUID(dialogRequest.getPersonUUID());
+//				session.setLanguage(dialogRequest.getLanguage());
 			}
 		} else {
-			// not startup, but session doesn't exist in our map, so station was up
-			//    prior to our starting (we presume)
-			LOGGER.log(LOGLEVEL1, "StationServer: starting (pre-existing) new session for {0}", fromA1icianID);
+			// not startup (no startup sememe), but session doesn't exist in our map, 
+            //    so station was up prior to our starting (we presume)
+			LOGGER.log(LOGLEVEL, "StationServer: starting (pre-existing) new session for {0}", fromA1icianID);
 			session = Session.getSession(fromA1icianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
 			session.setLanguage(dialogRequest.getLanguage());
-			LOGGER.log(LOGLEVEL1, "StationServer: before setSession for {0}", fromA1icianID);
+            session.setIsQuiet(dialogRequest.isQuiet());
+            session.setSessionType(SessionType.SERIALIZED);
+			LOGGER.log(LOGLEVEL, "StationServer: before setSession for {0}", fromA1icianID);
 			setSession(session);
-			LOGGER.log(LOGLEVEL1, "StationServer: after setSession for {0}", fromA1icianID);
+			LOGGER.log(LOGLEVEL, "StationServer: after setSession for {0}", fromA1icianID);
 			// be nice and send them a green server LED
 			serverLight = SerialSememe.find("set_green_LED_on");
 			stationSend(fromA1icianID, "Connecting to running server....", serverLight);
 		}
 		dialogRequest.setRequestActions(sememesCopy);
-		LOGGER.log(LOGLEVEL1, "StationServer: made it past session checks for {0}", fromA1icianID);
+		LOGGER.log(LOGLEVEL, "StationServer: made it past session checks for {0}", fromA1icianID);
 		
 		if (!noPrompts) {
 			// cancel existing prompter for this station, if any...
@@ -289,14 +349,122 @@ public final class StationServer extends UrHouse {
 				}
 			}
 			// ...and start a new one
-			prompter = new Prompter(fromA1icianID, session.getLanguage(), getStreet());
+			prompter = new Prompter(fromA1icianID, session.getSessionType(), 
+                    session.getLanguage(), session.isQuiet(), getStreet());
 	        promptTimer.schedule(prompter, PROMPTDELAY, NAGDELAY);
 	        prompters.add(prompter);
 		}
 		speechToText(dialogRequest, session.getLanguage());
         translateRequest(dialogRequest, session.getLanguage());
-		LOGGER.log(LOGLEVEL1, "StationServer: posting dialog request for {0}", fromA1icianID);
+		LOGGER.log(LOGLEVEL, "StationServer: posting dialog request for {0}", fromA1icianID);
         getStreet().post(dialogRequest);
+	}
+		
+	/**
+	 * Receive a text request as a String from an A1ician via Jebus which we then 
+	 * post onto the street bus.
+	 * 
+	 * @param text The request
+	 */
+	void stationReceiveText(String text) {
+		Prompter prompter;
+		A1icianID fromA1icianID;
+		Session session;
+        String[] messageParts;
+        DialogRequest dialogRequest;
+        String message;
+        SerialUUID<SerialStation> stationUUID;
+        
+		SharedUtils.checkNotNull(text);
+		LOGGER.log(LOGLEVEL, "StationServer: got station text input...");
+        messageParts = text.split("::", 2); // a1icianID::text
+        if (messageParts.length < 2) { // with specified limit of 2, above, array s/b at most 2 parts
+			// message not sent to us for some reason... what the heck? This is OUR channel...
+			A1iciaUtils.error("StationServer: evil not-to-us traffic on our channel!");
+			return;
+		}
+		fromA1icianID = new A1icianID(messageParts[0]);
+        message = messageParts[1];
+		LOGGER.log(LOGLEVEL, "StationServer: text request from {0}", fromA1icianID);
+		if (isOurSession(fromA1icianID)) {
+			session = getSession(fromA1icianID);
+            // update the session
+            LOGGER.log(LOGLEVEL, "StationServer: updating session for {0}", fromA1icianID);
+            session.update();
+//            session.setLanguage(Language.AMERICAN_ENGLISH);
+//            session.setSessionType(SessionType.TEXT);
+		} else {
+            // We don't have the A1ician in our map, so add it. The message should be the station ID for
+            //    the first message.
+            //
+            // TODO we should tighten this up a bit, particularly if we ever have multiple 
+            //    houses listening on the street, such that each should only respond to its own A1icians
+			LOGGER.log(LOGLEVEL, "StationServer: starting new session for {0}", fromA1icianID);
+            try {
+                stationUUID = new SerialUUID<>(message);
+            } catch (UUIDException ex) {
+                stationSendText(fromA1icianID, "*** Invalid session, try restarting the application");
+                return;
+            }
+			session = Session.getSession(fromA1icianID);
+			session.setLanguage(Language.AMERICAN_ENGLISH);
+            session.setSessionType(SessionType.TEXT);
+            session.setIsQuiet(false);
+            session.setStationUUID(stationUUID);
+			LOGGER.log(LOGLEVEL, "StationServer: before setSession for {0}", fromA1icianID);
+			setSession(session);
+			LOGGER.log(LOGLEVEL, "StationServer: after setSession for {0}", fromA1icianID);
+			// be nice and send them a green server LED
+			stationSendText(fromA1icianID, "Connecting to running server....");
+            return;
+		}
+		LOGGER.log(LOGLEVEL, "StationServer: made it past session checks for {0}", fromA1icianID);
+		
+		if (!noPrompts) {
+			// cancel existing prompter for this station, if any...
+			for (Iterator<Prompter> iter = prompters.iterator(); iter.hasNext(); ) {
+				prompter = iter.next();
+				if (prompter.getA1icianID().equals(fromA1icianID)) {
+					prompter.cancel();
+					iter.remove();
+					break;
+				}
+			}
+			// ...and start a new one
+			prompter = new Prompter(fromA1icianID, session.getSessionType(), 
+                    session.getLanguage(), session.isQuiet(), getStreet());
+	        promptTimer.schedule(prompter, PROMPTDELAY, NAGDELAY);
+	        prompters.add(prompter);
+		}
+        dialogRequest = buildRequest(session);
+        dialogRequest.setRequestMessage(message);
+		LOGGER.log(LOGLEVEL, "StationServer: posting dialog request for {0}", fromA1icianID);
+        getStreet().post(dialogRequest);
+	}
+	
+    /**
+     * Because we just get text from our text console, we have to construct our own
+     * DialogRequest to put on the street bus.
+     * 
+     * @param session The current session
+     * @return The (mostly) completed DialogRequest
+     */
+	private DialogRequest buildRequest(Session session) {
+		DialogRequest request;
+		
+        SharedUtils.checkNotNull(session);
+		request = new DialogRequest();
+		request.setFromA1icianID(session.getA1icianID());
+		request.setToA1icianID(a1iciaA1icianID);
+		request.setLanguage(session.getLanguage());
+        request.setStationUUID(session.getStationUUID());
+        request.setSessionType(session.getSessionType());
+        request.setIsQuiet(false); // we don't get that information from text consoles...
+        request.setRequestActions(Collections.emptySet());
+        if (!request.isValid()) {
+            throw new A1iciaException("StationServer: created invalid DialogRequest");
+        }
+		return request;
 	}
 	
 	/**
@@ -320,6 +488,7 @@ public final class StationServer extends UrHouse {
 			response.setResponseAction(command);
 		}
 		stationSend(broadcastID, response);
+        stationSendText(broadcastID, message);
 	}
 	
 	/**
@@ -370,17 +539,40 @@ public final class StationServer extends UrHouse {
 		}
 		header = new DialogHeader();
 		header.setToA1icianID(a1icianID);
-        LOGGER.log(LOGLEVEL1, "StationServer: in stationSend");
+        LOGGER.log(LOGLEVEL, "StationServer: in stationSend");
 		responseBytes = DialogSerialization.serialize(header, response);
         if (responseBytes != null) {
-            LOGGER.log(LOGLEVEL1, "StationServer:stationSend: bytes not null, going to jebus them");
+            LOGGER.log(LOGLEVEL, "StationServer:stationSend: bytes not null, going to jebus them");
 			try (Jedis jebus = jebusPool.getResource()) {
 				key = JebusBible.getBytesKey(JebusKey.FROMCHANNEL, jebusPool);
 				jebus.publish(key, responseBytes);
-	            LOGGER.log(LOGLEVEL1, "StationServer:stationSend: bytes were jebussed");
+	            LOGGER.log(LOGLEVEL, "StationServer:stationSend: bytes were jebussed");
 			}        	
         }
-        LOGGER.log(LOGLEVEL1, "StationServer:stationSend: done");
+        LOGGER.log(LOGLEVEL, "StationServer:stationSend: done");
+	}
+    
+	/**
+	 * Send a message to a text-only station, probably but not necessarily in response to an
+	 * earlier request from the station.
+	 * 
+	 * @param a1icianID The A1icianID of the intended recipient
+	 * @param message The message to send
+	 */
+	private void stationSendText(A1icianID a1icianID, String message) {
+		String key;
+        String text;
+        
+		SharedUtils.checkNotNull(a1icianID);
+		SharedUtils.checkNotNull(message);
+        text = String.format("%s::%s", a1icianID, message);
+        LOGGER.log(LOGLEVEL, "StationServer: in stationSendText");
+			try (Jedis jebus = jebusPool.getResource()) {
+				key = JebusBible.getStringKey(JebusKey.FROMTEXTCHANNEL, jebusPool);
+				jebus.publish(key, text);
+	            LOGGER.log(LOGLEVEL, "StationServer:stationSendText: string was jebussed");
+			}        	
+        LOGGER.log(LOGLEVEL, "StationServer:stationSendText: done");
 	}
 	
 	/**
@@ -403,7 +595,7 @@ public final class StationServer extends UrHouse {
 				A1iciaUtils.error("A1iciaStationServer: unable to transcribe audio", ex);
 				return;
 			}
-	        LOGGER.log(Level.INFO, "StationServer: audioText is \"{0}\"", audioText);
+	        LOGGER.log(LOGLEVEL, "StationServer: audioText is \"{0}\"", audioText);
 			if (audioText.length() > 0) {
 				// note that this overwrites any message text that was also sent in the DialogRequest...
 				request.setRequestMessage(audioText);
@@ -486,15 +678,15 @@ public final class StationServer extends UrHouse {
         purdah = PurdahKeys.getInstance();
         key = purdah.getPurdahKey(PurdahKeys.PurdahKey.GOOGLEXLATEKEY);
         result = ExternalAperture.getGoogleTranslation(from, to, textToTranslate, "text", key);
-        LOGGER.log(LOGLEVEL1, "Translate result: {0}", result);        
+        LOGGER.log(LOGLEVEL, "Translate result: {0}", result);        
 		try (BufferedReader reader = new BufferedReader(new StringReader(result))) {
 			try (JsonReader jsonReader = Json.createReader(reader)) {
                 resultData = jsonReader.readObject();
-                LOGGER.log(LOGLEVEL1, "ResultData: {0}", resultData);
+                LOGGER.log(LOGLEVEL, "ResultData: {0}", resultData);
                 data = resultData.getJsonObject("data");
-                LOGGER.log(LOGLEVEL1, "Data: {0}", data);
+                LOGGER.log(LOGLEVEL, "Data: {0}", data);
                 translations = data.getJsonArray("translations");
-                LOGGER.log(LOGLEVEL1, "Translations: {0}", translations);
+                LOGGER.log(LOGLEVEL, "Translations: {0}", translations);
                 if (translations.size() != 1) {
                     A1iciaUtils.error("Invalid translations size = " + translations.size());
                     translation = null;
@@ -508,39 +700,9 @@ public final class StationServer extends UrHouse {
 		}
         return translation;
     }
-    
-	/**
-	 * Start our Jebus pub/sub listener.
-	 * 
-	 */
-	@Override
-	protected void run() {
-		byte[] channel;
-        
-		try (Jedis jebus = jebusPool.getResource()) {
-			listener = new JebusListener();
-			// the following line blocks while waiting for responses...
-			channel = JebusBible.getBytesKey(JebusKey.TOCHANNEL, jebusPool);
-			jebus.subscribe(listener, channel);
-		}
-	}
 	
 	/**
-	 * Initiate a shutdown of the service.
-	 * 
-	 */
-	@Override
-	protected void triggerShutdown() {
-				
-		if (listener == null) {
-			return;
-		}
-		listener.unsubscribe();
-		listener = null;
-	}
-	
-	/**
-	 * Listen to A1icia's Jebus pub/sub channel.
+	 * Listen to A1icia's Jebus serialization pub/sub channel.
 	 * 
 	 * @author hulles
 	 *
@@ -563,13 +725,13 @@ public final class StationServer extends UrHouse {
 		@Override
 		public void onSubscribe(byte[] channel, int subscribedChannels) {
         	
-        	LOGGER.log(LOGLEVEL1, "Subscribed to {0}", channelName(channel));
+        	LOGGER.log(LOGLEVEL, "Subscribed to {0}", channelName(channel));
         }
 
 		@Override
 		public void onUnsubscribe(byte[] channel, int subscribedChannels) {
         	
-        	LOGGER.log(LOGLEVEL1, "Unsubscribed to {0}", channelName(channel));
+        	LOGGER.log(LOGLEVEL, "Unsubscribed to {0}", channelName(channel));
         }
 	}
 	
@@ -586,6 +748,40 @@ public final class StationServer extends UrHouse {
 		} catch (UnsupportedEncodingException e) {
 			throw new A1iciaException("StationServer: UnsupportedEncodingException", e);
 		}
+	}
+	
+	/**
+	 * Listen to A1icia's Jebus text-only pub/sub channel.
+	 * 
+	 * @author hulles
+	 *
+	 */
+	private class JebusTextListener extends JedisPubSub {
+		
+		JebusTextListener() {
+		}
+		
+        @Override
+		public void onMessage(String channel, String msg) {
+    		executor.submit(new Runnable() {
+    			@Override
+    			public void run() {
+    	        	stationReceiveText(msg);
+    			}
+    		});
+        }
+
+		@Override
+		public void onSubscribe(String channel, int subscribedChannels) {
+        	
+        	LOGGER.log(LOGLEVEL, "Subscribed to text channel {0}", channel);
+        }
+
+		@Override
+		public void onUnsubscribe(String channel, int subscribedChannels) {
+        	
+        	LOGGER.log(LOGLEVEL, "Unsubscribed to text channel {0}", channel);
+        }
 	}
 
 }

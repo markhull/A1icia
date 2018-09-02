@@ -32,6 +32,7 @@ import com.hulles.a1icia.api.remote.A1icianID;
 import com.hulles.a1icia.api.shared.A1iciaException;
 import com.hulles.a1icia.api.shared.SerialSememe;
 import com.hulles.a1icia.api.shared.SharedUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.room.Room;
 import com.hulles.a1icia.room.UrRoom;
 import com.hulles.a1icia.room.document.A1icianAction;
@@ -122,7 +123,7 @@ public final class DeltaRoom extends UrRoom {
 		LOGGER.log(LOGLEVEL, "DeltaRoom: in createA1icianActionPackage");
 		a1icianStr = sememePkg.getSememeObject();
 		if (a1icianStr == null) {
-			System.err.println("Delta Room: a1ician ID sememeObject is null");
+			A1iciaUtils.error("Delta Room: a1ician ID sememeObject is null");
 			return null;
 		}
 		LOGGER.log(LOGLEVEL, "DeltaRoom: a1icianStr = {0}", a1icianStr);

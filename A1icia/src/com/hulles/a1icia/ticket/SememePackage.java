@@ -226,10 +226,10 @@ public class SememePackage {
 		}
 		SememePackage other = (SememePackage) obj;
 		if (idString == null) {
-			if (other.idString != null) {
+			if (other.getSememePackageID() != null) {
 				return false;
 			}
-		} else if (!idString.equals(other.idString)) {
+		} else if (!idString.equals(other.getSememePackageID())) {
 			return false;
 		}
 		return true;

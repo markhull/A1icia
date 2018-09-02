@@ -12,5 +12,6 @@ module com.hulles.a1icia.cli {
 	requires transitive com.hulles.a1icia.api;
 	requires com.hulles.a1icia.media;
 	requires guava;
+    requires java.logging;
     // to here
 }

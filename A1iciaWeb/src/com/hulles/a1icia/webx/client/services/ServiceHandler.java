@@ -23,7 +23,7 @@ package com.hulles.a1icia.webx.client.services;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.hulles.a1icia.webx.client.A1iciaClientUtils;
+import com.hulles.a1icia.api.tools.A1iciaUtils;
 import com.hulles.a1icia.webx.shared.SerialConsoleIn;
 import com.hulles.a1icia.webx.shared.SerialConsoleOut;
 import com.hulles.a1icia.webx.shared.SerialSystemInfo;
@@ -72,10 +72,10 @@ public class ServiceHandler  {
 					mindClass.checkSystems((AsyncCallback<SerialSystemInfo>) event.getCallback());
 					break;
 				default:
-					A1iciaClientUtils.error("Unhandled service event");
+					A1iciaUtils.error("Unhandled service event");
 			}
 		} catch (ClassCastException ex) {
-			A1iciaClientUtils.error("Class cast exception");
+			A1iciaUtils.error("Class cast exception");
 		}
 	}
 

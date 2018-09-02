@@ -131,31 +131,6 @@ final class Controller extends AbstractIdleService {
         }
 		return services;
 	}
-
-//	public static void showModuleInfo(UrRoom room) {
-//		Module module;
-//		String moduleName;
-//		Set<String> packages;
-//		@SuppressWarnings("unused")
-//		ClassLoader classLoader;
-//		ModuleLayer layer;
-//		Class<? extends UrRoom> a1iciaClass;
-//		
-//		a1iciaClass = room.getClass();
-//		module = a1iciaClass.getModule();
-//		moduleName = module.getName();
-//		packages = module.getPackages();
-//		classLoader = module.getClassLoader();
-//		layer = module.getLayer();
-//		System.out.print("==================== ");
-//		System.out.println("ROOM: " + room.getThisRoom().getDisplayName());
-//		System.out.println("\tClass: " + a1iciaClass.getName());
-//		System.out.println("\tModule: " + moduleName);
-//		System.out.println("\tLayer: " + layer.toString());
-//		for (String pkg : packages) {
-//			System.out.println("\t\tPackage: " + pkg);
-//		}
-//	}
 	
 	/**
 	 * Return a set of rooms that can process the sememe.
@@ -244,7 +219,7 @@ final class Controller extends AbstractIdleService {
 		 */
 		void sendParentRequest(RoomRequest request) {
 			
-            LOGGER.log(Level.INFO, "In sendParentRequest");
+            LOGGER.log(LOGLEVEL, "In sendParentRequest");
 			sendRoomRequest(request);
 		}
 

@@ -21,9 +21,14 @@
  *******************************************************************************/
 package com.hulles.a1icia.webx.shared;
 
+import com.hulles.a1icia.api.A1iciaConstants;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SharedUtils implements Serializable {
+	private final static Logger LOGGER = Logger.getLogger("A1iciaWeb.SharedUtils");
+	private final static Level LOGLEVEL = Level.SEVERE;
 	private static final long serialVersionUID = 8123983689858668155L;
 	
 	// see guava SharedUtils, this is just adapted from there
@@ -40,12 +45,12 @@ public class SharedUtils implements Serializable {
 	
 	public static void error(String errStr) {
 		
-		System.err.println(errStr);
+		LOGGER.log(LOGLEVEL, errStr);
 	}
 	
 	public static void error(String errStr, Throwable ex) {
 		
-		System.err.println(errStr);
+		LOGGER.log(LOGLEVEL, errStr);
 		ex.printStackTrace();
 	}
 }
