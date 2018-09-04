@@ -1,11 +1,7 @@
-# A1icia Quebec
+# Alixia Quebec
 
-This is the Quebec Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Quebec Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
 The Quebec module handles semantic analysis of query input.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciaCentral.jar
-* A1iciaOvermind.jar
-* guava-23.0.jar
+Alixia Quebec is now Java 10. See `module-info.java` for module path requirements.
