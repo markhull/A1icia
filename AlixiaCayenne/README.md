@@ -1,8 +1,8 @@
-# A1icia Cayenne
+# Alixia Cayenne
 
-This is the Cayenne Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Cayenne Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-Cayenne is the module that provides RDBMS services to A1icia. A1icia currently uses MySQL as the RDBMS engine. However, this module is implemented using [Apache Cayenne](https://cayenne.apache.org/) (hence the name), which means that A1icia can be built with any of the [following RDBMS products](http://cayenne.apache.org/database-support.html):
+Cayenne is the module that provides RDBMS services to Alixia. Alixia currently uses MariaDB as the RDBMS engine. However, this module is implemented using [Apache Cayenne](https://cayenne.apache.org/) (hence the name), which means that Alixia can be built with any of the [following RDBMS products](http://cayenne.apache.org/database-support.html):
 
 * DB2
 * Derby
@@ -18,17 +18,6 @@ Cayenne is the module that provides RDBMS services to A1icia. A1icia currently u
 * SQLServer
 * Sybase
 
-This is awesome, because it means that A1icia Central can run on very small to very large platforms with no discomfiture. Go A1icia.
+This is awesome, because it means that Alixia Central can run on very small to very large platforms with no discomfiture. Go Alixia.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciaCentral.jar
-* A1iciaCrypto.jar
-* A1iciaMedia.jar
-* guava-23.0.jar
-* mysql-connector-java-5.1.40.jar
-* cayenne-client-4.1.M1.jar
-* cayenne-di-4.1.M1.jar
-* cayenne-server-4.1.M1.jar
-* slf4j-api-1.7.25.jar
-* slf4j-simple-1.7.25.jar
+Alixia Cayenne is now Java 10. See `module-info.java` for module path requirements.
