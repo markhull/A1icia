@@ -1,10 +1,7 @@
-# A1icia Foxtrot
+# Alixia Foxtrot
 
-This is the Foxtrot Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Foxtrot Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-Foxtrot functions as a system monitor for A1icia, and is able to report on the state of the hardware upon which A1icia Central is running.
+Foxtrot functions as a system monitor for Alixia, and is able to report on the state of the hardware upon which Alixia Central is running.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciaCentral.jar
-* guava-23.0.jar
+Alixia Foxtrot is now Java 10. See `module-info.java` for module path requirements.
