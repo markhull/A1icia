@@ -1,5 +1,5 @@
 
-![Alixia Logo](docs/images/Alixia_100H.png)
+![Alixia Logo](docs/images/alixia_100H.png)
 
 Alixia is a professional incarnation of a personal assistant written in Java. She is modular, extensible, and damn fast.
 

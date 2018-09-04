@@ -2,9 +2,9 @@
  * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
- * This file is part of A1icia.
+ * This file is part of Alixia.
  *  
- * A1icia is free software: you can redistribute it and/or modify
+ * Alixia is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.sierra;
+package com.hulles.alixia.sierra;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,24 +27,24 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.room.Room;
-import com.hulles.a1icia.room.UrRoom;
-import com.hulles.a1icia.room.document.MessageAction;
-import com.hulles.a1icia.room.document.RoomAnnouncement;
-import com.hulles.a1icia.room.document.RoomRequest;
-import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.room.document.SememeAnalysis;
-import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SentencePackage;
-import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.ticket.Ticket;
-import com.hulles.a1icia.ticket.TicketJournal;
-import com.hulles.a1icia.tools.A1iciaUtils;
+import com.hulles.alixia.api.shared.SerialSememe;
+import com.hulles.alixia.base.AlixiaException;
+import com.hulles.alixia.room.Room;
+import com.hulles.alixia.room.UrRoom;
+import com.hulles.alixia.room.document.MessageAction;
+import com.hulles.alixia.room.document.RoomAnnouncement;
+import com.hulles.alixia.room.document.RoomRequest;
+import com.hulles.alixia.room.document.RoomResponse;
+import com.hulles.alixia.room.document.SememeAnalysis;
+import com.hulles.alixia.ticket.ActionPackage;
+import com.hulles.alixia.ticket.SentencePackage;
+import com.hulles.alixia.ticket.SememePackage;
+import com.hulles.alixia.ticket.Ticket;
+import com.hulles.alixia.ticket.TicketJournal;
+import com.hulles.alixia.tools.AlixiaUtils;
 
 /**
- * Sierra Room is where we interact with the so-called Internet of Things, and let A1icia set 
+ * Sierra Room is where we interact with the so-called Internet of Things, and let Alixia set 
  * our stereo to turn on and blast Rick Astley at concert volume while we're on vacation.
  * 
  * @author hulles
@@ -70,7 +70,7 @@ public final class SierraRoom extends UrRoom {
 			case "bullfrog":
 				return createBullfrogActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
+				throw new AlixiaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 	
@@ -91,8 +91,8 @@ public final class SierraRoom extends UrRoom {
 		List<SentencePackage> sentencePackages;
 		SememePackage bullPkg;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		AlixiaUtils.checkNotNull(sememePkg);
+		AlixiaUtils.checkNotNull(request);
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		actionPkg = new ActionPackage(sememePkg);
@@ -104,7 +104,7 @@ public final class SierraRoom extends UrRoom {
 			bullPkg.setSentencePackage(sentencePackage);
 			bullPkg.setConfidence(10);
 			if (!bullPkg.isValid()) {
-				throw new A1iciaException("SierraRoom: created invalid sememe package");
+				throw new AlixiaException("SierraRoom: created invalid sememe package");
 			}
 			sememePackages.add(bullPkg);
 		}
@@ -124,8 +124,8 @@ public final class SierraRoom extends UrRoom {
 		ActionPackage pkg;
 		MessageAction action;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		AlixiaUtils.checkNotNull(sememePkg);
+		AlixiaUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		action.setMessage("Bullfrog.");
@@ -150,7 +150,7 @@ public final class SierraRoom extends UrRoom {
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
-		throw new A1iciaException("Response not implemented in " + 
+		throw new AlixiaException("Response not implemented in " + 
 				getThisRoom().getDisplayName());
 	}
 
