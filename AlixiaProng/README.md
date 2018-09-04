@@ -1,9 +1,7 @@
-# A1icia Prong
+# Alixia Prong
 
-This is the Prong Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Prong Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-Prong is a small utility module that attempts to verify that communications between A1icia Central and her Stations is trustworthy. The reason it's a module by itself is that it normalized out that way based on where and how it is used.
+Prong is a small utility module that attempts to verify that communications between Alixia Central and her Stations is trustworthy. The reason it's a module by itself is that it normalized out that way based on where and how it is used.
 
-## Build Class Path
-* commons-pool2-2.0.jar
-* jedis-2.9.0.jar
+Alixia Prong is now Java 10. See `module-info.java` for module path requirements.
