@@ -1,8 +1,7 @@
-# A1icia Media
+# Alicia Media
 
-This is the Media Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Media Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-The Media module is the library used by A1icia Central to create media files and by remote clients to play them.
+The Media module is the library used by Alixia Central to create media files and by remote clients to play them.
 
-## Build Class Path
-* A1iciaMedia has no dependencies
+Alixia Media is now Java 10. See `module-info.java` for module path requirements.
