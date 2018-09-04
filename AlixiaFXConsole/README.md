@@ -1,10 +1,7 @@
-# A1icia FX Console
+# Alixia FX Console
 
-This is the FX Console Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the FX Console Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-As you might guess, FX Console is a JavaFX implementation of a Command Line Interface (CLI) remote console. It communicates as a Station with A1icia Central. Besides acting as a terminal console, FX Console can play/display multimedia files.
+As you might guess, FX Console is a JavaFX implementation of a Command Line Interface (CLI) remote console. It communicates as a Station with Alixia Central. Besides acting as a terminal console, FX Console can play/display multimedia files.
 
-## Build Class Path
-* A1iciaAPI.jar
-* commons-pool2-2.0.jar
-* jedis-2.9.0.jar
+Alixia FX Console is now Java 10. See `module-info.java` for module path requirements.
