@@ -1,15 +1,7 @@
-# A1icia November
+# Alixia November
 
-This is the November Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the November Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-November handles user interaction with A1icia, such as logging in and out, security, and accessing private content. Private content just means data in the application that belongs to just one A1ician among all the users served by A1icia Central.
+November handles user interaction with Alixia, such as logging in and out, security, and accessing private content. Private content just means data in the application that belongs to just one Alixian among all the users served by Alixia Central.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciaCayenne.jar
-* A1iciaCentral.jar
-* A1iciaCrypto.jar
-* A1iciaMedia.jar
-* commons-pool2-2.0.jar
-* guava-23.0.jar
-* jedis-2.9.0.jar
+Alixia November is now Java 10. See `module-info.java` for module path requirements.
