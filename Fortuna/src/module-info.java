@@ -15,4 +15,6 @@ module com.hulles.fortuna {
 	requires java.logging;
 	requires javax.json;
 	// to here
+    requires cayenne.client;
+    requires cayenne.di;
 }
