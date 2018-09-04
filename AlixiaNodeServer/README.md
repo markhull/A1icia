@@ -1,14 +1,7 @@
-# A1icia Node
+# Alixia Node Server
 
-This is the Node Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Node.js Server Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-The Node module implements a tiny web server in **[Node.js](https://nodejs.org)** for A1icia ‒ with Java! As written it isn't suitable for serving to the public at large but it certainly works for home or private LAN use. It utilizes the interesting [j2v8](https://github.com/eclipsesource/J2V8) library of Java bindings to the V8 J/S engine.
+The Node Server module implements a tiny web server in **[Node.js](https://nodejs.org)** for Alixia ‒ with Java! As written it isn't suitable for serving to the public at large but it certainly works for home or private LAN use. It utilizes the interesting [j2v8](https://github.com/eclipsesource/J2V8) library of Java bindings to the V8 J/S engine.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciaMedia.jar
-* A1iciaProng.jar
-* commons-pool2-2.0.jar
-* guava-23.0.jar
-* j2v8-linux_x86_64-4.8.0.jar
-* jedis-1.9.0.jar
+Alixia Node Server is now Java 10. See `module-info.java` for module path requirements.
