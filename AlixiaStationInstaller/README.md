@@ -1,12 +1,8 @@
-# A1icia Station Installer
+# Alixia Station Installer
 
-This is the Station Installer Module for the [A1icia Project](https://github.com/markhull/A1icia).
+This is the Station Installer Module for the [Alixia Project](https://github.com/markhull/Alixia).
 
-The Station Installer, as you might expect, installs A1icia Stations.
+The Station Installer, as you might expect, installs Alixia Stations.
 
-## Build Class Path
-* A1iciaAPI.jar
-* A1iciarypto.jar
-* A1iciaMedia.jar
-* commons-pool2-2.0.jar
-* jedis-2.9.0.jar
+Alixia Station Installer is now Java 10. See `module-info.java` for module path requirements.
+
