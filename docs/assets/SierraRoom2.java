@@ -2,9 +2,9 @@
  * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
- * This file is part of A1icia.
+ * This file is part of Alixia.
  *  
- * A1icia is free software: you can redistribute it and/or modify
+ * Alixia is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -19,7 +19,7 @@
  *
  * SPDX-License-Identifer: GPL-3.0-or-later
  *******************************************************************************/
-package com.hulles.a1icia.sierra;
+package com.hulles.alixia.sierra;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,30 +28,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
-import com.hulles.a1icia.api.A1iciaConstants;
-import com.hulles.a1icia.api.shared.SerialSememe;
-import com.hulles.a1icia.base.A1iciaException;
-import com.hulles.a1icia.room.Room;
-import com.hulles.a1icia.room.UrRoom;
-import com.hulles.a1icia.room.document.MessageAction;
-import com.hulles.a1icia.room.document.RoomAnnouncement;
-import com.hulles.a1icia.room.document.RoomRequest;
-import com.hulles.a1icia.room.document.RoomResponse;
-import com.hulles.a1icia.ticket.ActionPackage;
-import com.hulles.a1icia.ticket.SememePackage;
-import com.hulles.a1icia.tools.A1iciaUtils;
-import com.hulles.a1icia.tools.ExternalAperture;
+import com.hulles.alixia.api.AlixiaConstants;
+import com.hulles.alixia.api.shared.SerialSememe;
+import com.hulles.alixia.base.AlixiaException;
+import com.hulles.alixia.room.Room;
+import com.hulles.alixia.room.UrRoom;
+import com.hulles.alixia.room.document.MessageAction;
+import com.hulles.alixia.room.document.RoomAnnouncement;
+import com.hulles.alixia.room.document.RoomRequest;
+import com.hulles.alixia.room.document.RoomResponse;
+import com.hulles.alixia.ticket.ActionPackage;
+import com.hulles.alixia.ticket.SememePackage;
+import com.hulles.alixia.tools.AlixiaUtils;
+import com.hulles.alixia.tools.ExternalAperture;
 
 /**
- * Sierra Room is where we interact with the so-called Internet of Things, and let A1icia 
+ * Sierra Room is where we interact with the so-called Internet of Things, and let Alixia 
  * turn our stereo on and blast Rick Astley at concert volume while we're on vacation.
  * 
  * @author hulles
  *
  */
 public final class SierraRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("A1iciaSierra.SierraRoom");
-	private final static Level LOGLEVEL = A1iciaConstants.getA1iciaLogLevel();
+	private final static Logger LOGGER = Logger.getLogger("AlixiaSierra.SierraRoom");
+	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
 //	private final static Level LOGLEVEL = Level.INFO;
 	private static Float saveTemp = null;
 	private static Float saveHumidity = null;
@@ -73,7 +73,7 @@ public final class SierraRoom extends UrRoom {
 			case "room_humidity":
 				return createRoomHumidityActionPackage(sememePkg, request);
 			default:
-				throw new A1iciaException("Received unknown sememe in " + getThisRoom());
+				throw new AlixiaException("Received unknown sememe in " + getThisRoom());
 		}
 	}
 
@@ -91,8 +91,8 @@ public final class SierraRoom extends UrRoom {
 		String messageStr;
 		Float temperature;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		AlixiaUtils.checkNotNull(sememePkg);
+		AlixiaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "In createRoomTemperature");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
@@ -138,8 +138,8 @@ public final class SierraRoom extends UrRoom {
 		String messageStr;
 		Float humidity;
 		
-		A1iciaUtils.checkNotNull(sememePkg);
-		A1iciaUtils.checkNotNull(request);
+		AlixiaUtils.checkNotNull(sememePkg);
+		AlixiaUtils.checkNotNull(request);
 		LOGGER.log(LOGLEVEL, "In createRoomHumidityActionPackage");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
@@ -187,7 +187,7 @@ public final class SierraRoom extends UrRoom {
 	 */
 	@Override
 	public void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
-		throw new A1iciaException("Response not implemented in " + 
+		throw new AlixiaException("Response not implemented in " + 
 				getThisRoom().getDisplayName());
 	}
 
