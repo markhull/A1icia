@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<graphs xmlns="http://cayenne.apache.org/schema/10/graph">
-	<graph type="ER" scale="1.0">
-		<entity name="fortune" x="23.0" y="20.0" width="67.0" height="77.0"/>
-	</graph>
-</graphs>

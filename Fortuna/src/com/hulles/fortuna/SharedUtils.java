@@ -2,9 +2,9 @@
  * Copyright © 2017 Hulles Industries LLC
  * All rights reserved
  *  
- * This file is part of A1icia.
+ * This file is part of Alixia.
  *  
- * A1icia is free software: you can redistribute it and/or modify
+ * Alixia is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -22,7 +22,7 @@ package com.hulles.fortuna;
 import java.io.Serializable;
 import java.net.ServerSocket;
 
-public class SharedUtils implements Serializable {
+final public class SharedUtils implements Serializable {
 	private static final long serialVersionUID = 3869704244983332875L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;
