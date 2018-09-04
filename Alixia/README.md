@@ -4,4 +4,4 @@ This is the Alixia Module for the [Alixia Project](https://github.com/markhull/A
 
 Alixia is the main module for the Alixia project.
 
-Alixia is now Java 10. See [module-info.java](Alixia/Alixia/src/module-info.java) for module path requirements.
+Alixia is now Java 10. See [module-info.java](https://github.com/markhull/Alixia/Alixia/src/module-info.java) for module path requirements.
