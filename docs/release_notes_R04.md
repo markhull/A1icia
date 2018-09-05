@@ -3,8 +3,6 @@ layout: page
 title: Release Notes for Reykjavik Version 4
 ---
 
-## What's New in Reykjavik Version 4
-
 * Well, a pretty big change is **changing the project name** (and all the accompanying programs and documents) from A1icia to Alixia. I just got really tired of trying to type the number in the middle of Alixia's name. Besides, she's l33t enough without the l4me 1 in her n4me.
 
 * We **migrated from MySQL to MariaDB** in keeping with our move toward free-and-open-source-software. And Oracle is becoming a little scary lately.
