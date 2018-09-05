@@ -15,6 +15,10 @@ Welcome to the documentation home of the [Alixia project](https://github.com/mar
 
 [Installing Alixia Central](centralinstallation.md)
 
+## Release Notes
+
+[Reykjavik Version 4 Release Notes](release_notes_R04.md)
+
 ## Miscellaneous Information
 
 [Design Goals](designgoals.md)     
