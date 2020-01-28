@@ -41,7 +41,7 @@ public class DiffUtils {
 
 
     private static EditOp[] getEditOps(int len1, String s1, int len2, String s2) {
-
+        int len1x, len2x;
         int len1o, len2o;
         int i;
 
@@ -55,9 +55,11 @@ public class DiffUtils {
 
         len1o = 0;
 
-        while (len1 > 0 && len2 > 0 && c1[p1] == c2[p2]) {
-            len1--;
-            len2--;
+        len1x = len1;
+        len2x = len2;
+        while (len1x > 0 && len2x > 0 && c1[p1] == c2[p2]) {
+            len1x--;
+            len2x--;
 
             p1++;
             p2++;
@@ -68,26 +70,26 @@ public class DiffUtils {
         len2o = len1o;
 
         /* strip common suffix */
-        while (len1 > 0 && len2 > 0 && c1[p1 + len1 - 1] == c2[p2 + len2 - 1]) {
-            len1--;
-            len2--;
+        while (len1x > 0 && len2x > 0 && c1[p1 + len1x - 1] == c2[p2 + len2x - 1]) {
+            len1x--;
+            len2x--;
         }
 
-        len1++;
-        len2++;
+        len1x++;
+        len2x++;
 
-        matrix = new int[len2 * len1];
+        matrix = new int[len2x * len1x];
 
-        for (i = 0; i < len2; i++)
+        for (i = 0; i < len2x; i++)
             matrix[i] = i;
-        for (i = 1; i < len1; i++)
-            matrix[len2 * i] = i;
+        for (i = 1; i < len1x; i++)
+            matrix[len2x * i] = i;
 
-        for (i = 1; i < len1; i++) {
+        for (i = 1; i < len1x; i++) {
 
-            int ptrPrev = (i - 1) * len2;
-            int ptrC = i * len2;
-            int ptrEnd = ptrC + len2 - 1;
+            int ptrPrev = (i - 1) * len2x;
+            int ptrC = i * len2x;
+            int ptrEnd = ptrC + len2x - 1;
 
             char char1 = c1[p1 + i - 1];
             int ptrChar2 = p2;
@@ -118,7 +120,7 @@ public class DiffUtils {
         }
 
 
-        return editOpsFromCostMatrix(len1, c1, p1, len1o, len2, c2, p2, len2o, matrix);
+        return editOpsFromCostMatrix(len1x, c1, p1, len1o, len2x, c2, p2, len2o, matrix);
     }
 
 
@@ -823,10 +825,12 @@ public class DiffUtils {
     }
 
     private static int memchr(char[] haystack, int offset, char needle, int num){
-
+        int p;
+        int decr;
+        
         if (num != 0) {
-            int p = 0;
-
+            p = 0;
+            decr = num;
             do {
 
                 if (haystack[offset + p] == needle)
@@ -834,7 +838,7 @@ public class DiffUtils {
 
                 p++;
 
-            } while (--num != 0);
+            } while (--decr != 0);
 
         }
         return 0;

@@ -23,13 +23,15 @@ package com.hulles.alixia.foxtrot.dummy;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
 public class DummyDataSource implements DataSource {
+    
+    public DummyDataSource() {
+        // needs no-arg constructor
+    }
 
 	public void setUser(String user) {		
 	}
@@ -50,49 +52,49 @@ public class DummyDataSource implements DataSource {
 	}
 
 	@Override
-	public PrintWriter getLogWriter() throws SQLException {
+	public PrintWriter getLogWriter() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
+	public void setLogWriter(PrintWriter out) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
+	public void setLoginTimeout(int seconds) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int getLoginTimeout() throws SQLException {
+	public int getLoginTimeout() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+	public Logger getParentLogger() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public <T> T unwrap(Class<T> iface) throws SQLException {
+	public <T> T unwrap(Class<T> iface) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+	public boolean isWrapperFor(Class<?> iface) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Connection getConnection(String username, String password) throws SQLException {
+	public Connection getConnection(String username, String password) {
 		// TODO Auto-generated method stub
 		return null;
 	}

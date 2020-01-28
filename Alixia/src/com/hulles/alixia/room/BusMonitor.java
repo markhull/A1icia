@@ -21,15 +21,15 @@
  *******************************************************************************/
 package com.hulles.alixia.room;
 
-import com.google.common.eventbus.EventBus;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
@@ -48,9 +48,7 @@ import com.hulles.alixia.ticket.SememePackage;
  *
  */
 public final class BusMonitor extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("Alixia.BusMonitor");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = LoggerFactory.getLogger(BusMonitor.class);
 	private final static boolean VERBOSE = false;
 	private final static boolean SHOWWHATSPARKS = false;
 	
@@ -82,7 +80,7 @@ public final class BusMonitor extends UrRoom {
             if (msg == null) {
                 msg = "(no msg)";
             }
-			LOGGER.log(LOGLEVEL, "Mind Bus ANNOUNCEMENT: {0}", msg);
+			LOGGER.debug("Hall Bus ANNOUNCEMENT: {}", msg);
 		} else	if (document instanceof RoomRequest) {
 			request = (RoomRequest) document;
 			sb = new StringBuffer();
@@ -94,7 +92,7 @@ public final class BusMonitor extends UrRoom {
 			msg = sb.toString();
             docID = request.getDocumentID().toString();
             room = request.getFromRoom().getDisplayName();
-			LOGGER.log(LOGLEVEL, "Mind Bus REQUEST {0}: {1} {2}", new String[]{docID, room, msg});
+			LOGGER.debug("Hall Bus REQUEST {}: {} {}", docID, room, msg);
 		} else if (document instanceof RoomResponse) {
 			response = (RoomResponse) document;
 			if (!VERBOSE) {
@@ -120,13 +118,13 @@ public final class BusMonitor extends UrRoom {
 				}
 				msg = sb.toString();
                 room = response.getFromRoom().getDisplayName();
-				LOGGER.log(LOGLEVEL, "Mind Bus RESPONSE: {0} {1}", new String[]{room, msg});
+				LOGGER.debug("Hall Bus RESPONSE: {} {}", room, msg);
 			}
 		} else {
             if (document == null) {
-                LOGGER.log(LOGLEVEL, "Mind Bus NULL DOCUMENT");
+                LOGGER.debug("Hall Bus NULL DOCUMENT");
             } else {
-                LOGGER.log(LOGLEVEL, "Mind Bus UNKNOWN DOCUMENT: {0}", document.getClass().getName());
+                LOGGER.debug("Hall Bus UNKNOWN DOCUMENT: {}", document.getClass().getName());
             }
 		}
 	}

@@ -34,12 +34,14 @@ public class TokenSet extends RatioAlgorithm {
 
     @Override
     public int apply(String s1, String s2, Ratio ratio, StringProcessor stringProcessor) {
+        String p1;
+        String p2;
+        
+        p1 = stringProcessor.process(s1);
+        p2 = stringProcessor.process(s2);
 
-        s1 = stringProcessor.process(s1);
-        s2 = stringProcessor.process(s2);
-
-        Set<String> tokens1 = Utils.tokenizeSet(s1);
-        Set<String> tokens2 = Utils.tokenizeSet(s2);
+        Set<String> tokens1 = Utils.tokenizeSet(p1);
+        Set<String> tokens2 = Utils.tokenizeSet(p2);
 
         Set<String> intersection = SetUtils.intersection(tokens1, tokens2);
         Set<String> diff1to2 = SetUtils.difference(tokens1, tokens2);

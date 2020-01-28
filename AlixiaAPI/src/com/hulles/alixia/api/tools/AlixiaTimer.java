@@ -23,22 +23,23 @@ package com.hulles.alixia.api.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.SharedUtils;
 
 /**
  * AlixiaTimer is a simple little timer class, written so no external library is needed to perform
- * this function. It keeps track of simultaneous timers in a map.
+ * this function. It keeps track of simultaneous timers in a map. Notice that it does not create
+ * a java.util.Timer, it just stores a start time in the map, then when stopTimer is called 
+ * it does the arithmetic to calculate elapsed time.
  * 
  * @author hulles
  *
  */
 public final class AlixiaTimer {
-	final static Logger LOGGER = Logger.getLogger("Alixia.AlixiaTimer");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger(AlixiaTimer.class);
 	private final static Map<String, Long> TIMERMAP;
 	
 	private AlixiaTimer() {
@@ -75,12 +76,11 @@ public final class AlixiaTimer {
 		endTime = System.currentTimeMillis();
 		startTime = TIMERMAP.remove(timerName);
 		if (startTime == null) {
-			LOGGER.log(Level.SEVERE, "Bad map start time in AlixiaTimer");
+			LOGGER.error("Bad map start time in AlixiaTimer");
 			return null;
 		}
 		elapsedMillis = endTime - startTime;
-		LOGGER.log(LOGLEVEL, "Timer {0}: {1}", 
-                new String[]{timerName, AlixiaUtils.formatElapsedMillis(elapsedMillis)});
+		LOGGER.debug("Timer {}: {}", timerName, AlixiaUtils.formatElapsedMillis(elapsedMillis));
 		return elapsedMillis;
 	}
 

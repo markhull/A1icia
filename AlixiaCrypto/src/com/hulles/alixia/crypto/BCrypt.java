@@ -84,7 +84,9 @@ import java.security.SecureRandom;
  */
 final class BCrypt {
 	// BCrypt parameters
-	private static final int GENSALT_DEFAULT_LOG2_ROUNDS = 10;
+    
+    // Define the BCrypt workload to use when generating password hashes. 10-31 is a valid value.
+	private static final int GENSALT_DEFAULT_LOG2_ROUNDS = 12;
 	private static final int BCRYPT_SALT_LEN = 16;
 
 	// Blowfish parameters
@@ -663,7 +665,7 @@ final class BCrypt {
 	 * @param cdata         the plaintext to encrypt
 	 * @return	an array containing the binary hashed password
 	 */
-	public byte[] crypt_raw(byte password[], byte salt[], int log_rounds,
+	private byte[] crypt_raw(byte password[], byte salt[], int log_rounds,
 	    int cdata[]) {
 		int rounds;
         int i;
@@ -783,7 +785,7 @@ final class BCrypt {
 	 * @param random		an instance of SecureRandom to use
 	 * @return	an encoded salt value
 	 */
-	public static String gensalt(int log_rounds, SecureRandom random) {
+	private static String gensalt(int log_rounds, SecureRandom random) {
 		StringBuilder rs;
 		byte rnd[] = new byte[BCRYPT_SALT_LEN];
 
@@ -811,7 +813,7 @@ final class BCrypt {
 	 * 2**log_rounds.
 	 * @return	an encoded salt value
 	 */
-	public static String gensalt(int log_rounds) {
+	private static String gensalt(int log_rounds) {
         
 		return gensalt(log_rounds, new SecureRandom());
 	}
@@ -831,16 +833,17 @@ final class BCrypt {
 	 * Check that a plaintext password matches a previously hashed
 	 * one
 	 * @param plaintext	the plaintext password to verify
-	 * @param hashed	the previously-hashed password
-	 * @return	true if the passwords match, false otherwise
+	 * @param hashed the previously-hashed password
+	 * @param salt the salt used to hash the previous password
+	 * @return true if the passwords match, false otherwise
 	 */
-	public static boolean checkpw(String plaintext, String hashed) {
+	public static boolean checkpw(String plaintext, String hashed, String salt) {
 		byte hashed_bytes[];
 		byte try_bytes[];
 		String try_pw;
         
 		try {
-			try_pw = hashpw(plaintext, hashed);
+			try_pw = hashpw(plaintext, salt);
 			hashed_bytes = hashed.getBytes("UTF-8");
 			try_bytes = try_pw.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException uee) {
@@ -855,4 +858,16 @@ final class BCrypt {
         }
 		return ret == 0;
 	}
+	
+    /*
+     * // generate a 24 byte string public static void main(String[] args) { byte[]
+     * rand; String salt;
+     * 
+     * salt = gensalt(16); System.out.println(salt); rand = new byte[24]; new
+     * SecureRandom().nextBytes(rand);
+     * System.out.println(Base64.getEncoder().encodeToString(rand) + " : " +
+     * rand.length);
+     * 
+     * }
+     */
 }

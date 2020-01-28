@@ -24,10 +24,10 @@ package com.hulles.alixia.echo;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
@@ -51,8 +51,7 @@ import com.hulles.alixia.ticket.SememePackage;
  *
  */
 public final class EchoRoom extends UrRoom {
-	final static Logger LOGGER = Logger.getLogger("AlixiaEcho.EchoRoom");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger(EchoRoom.class);
 	private final static String DISTANCE_FORMAT = "(%.4f)";
 	final static VectorLoad WHICHLOAD = VectorLoad.LITTLEGINA;
 	final WordToVecSearch searcher;
@@ -96,7 +95,7 @@ public final class EchoRoom extends UrRoom {
 		return formatResult(matches);
 	}
 	
-	public static String formatResult(List<WordDistance> matches) {
+	private static String formatResult(List<WordDistance> matches) {
 		StringBuilder sb;
 		
 		sb = new StringBuilder();
@@ -140,30 +139,30 @@ public final class EchoRoom extends UrRoom {
 				
 				switch (WHICHLOAD) {
 					case LITTLEGINA:
-						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Little Gina");
+						LOGGER.debug("Starting w2v load <-- Little Gina");
 						w2vPath = appKeys.getKey(ApplicationKey.LITTLEGINA);
 						break;
 					case GOOGLENEWS:
-						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Google News");
+						LOGGER.debug("Starting w2v load <-- Google News");
 						w2vPath = appKeys.getKey(ApplicationKey.GOOGLENEWS);
 						break;
 					case FREEBASE:
-						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Freebase");
+						LOGGER.debug("Starting w2v load <-- Freebase");
 						w2vPath = appKeys.getKey(ApplicationKey.FREEBASE);
 						break;
 					case BIGJOAN:
-						LOGGER.log(LOGLEVEL, "Starting w2v load <-- Big Joan");
+						LOGGER.debug("Starting w2v load <-- Big Joan");
 						w2vPath = appKeys.getKey(ApplicationKey.BIGJOAN);
 						break;
 					default:
 						throw new AlixiaException("Bad word2vec path");
 				}
 				searcher.loadFile(w2vPath);
-				LOGGER.log(LOGLEVEL, "Finished w2v load");
+				LOGGER.debug("Finished w2v load");
 				ready = true;
 			}
 		};
-		LOGGER.log(LOGLEVEL, "Spawning w2v load");
+		LOGGER.debug("Spawning w2v load");
 		loader.start();
 	}
 

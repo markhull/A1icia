@@ -165,7 +165,7 @@ public class CharlieLemmatizer {
 				}
 			}
 		}
-		AlixiaApplication.commit();
+		AlixiaApplication.commitAll();
 		AlixiaApplication.setErrorOnUncommittedObjects(true);
 	}
 }

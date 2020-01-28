@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.alixia.media;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Alixia API version of the RuntimeException, for possible expanded use later.
@@ -32,24 +32,23 @@ import java.util.logging.Logger;
  */
 public final class AlixiaMediaException extends RuntimeException {
 	private static final long serialVersionUID = -4744550566143714488L;
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMedia.AlixiaMediaException");
-	private final static Level LOGLEVEL = Level.SEVERE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaMediaException.class);
 	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public AlixiaMediaException() {
 		super(BEES);
 		
-		LOGGER.log(LOGLEVEL, BEES);
+		LOGGER.error(BEES);
 	}
 	public AlixiaMediaException(String desc) {
 		super(desc);
 		
-		LOGGER.log(LOGLEVEL, desc);
+		LOGGER.error(desc);
 	}
     public AlixiaMediaException(String desc, Throwable ex) {
         super(desc, ex);
         
-        LOGGER.log(LOGLEVEL, desc);
+        LOGGER.error(desc);
         ex.printStackTrace();
     }
 }

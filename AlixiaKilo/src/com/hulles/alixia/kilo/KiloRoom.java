@@ -21,17 +21,19 @@
  *******************************************************************************/
 package com.hulles.alixia.kilo;
 
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.cayenne.OwmCity;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.room.UrRoom;
@@ -50,6 +52,7 @@ import com.hulles.alixia.ticket.SememePackage;
  *
  */
 public final class KiloRoom extends UrRoom {
+    private final static Logger LOGGER = LoggerFactory.getLogger(KiloRoom.class);
 	private final ApplicationKeys appKeys;
 
 	public KiloRoom() {
@@ -166,7 +169,7 @@ public final class KiloRoom extends UrRoom {
 		if (cities.isEmpty()) {
 			// whoever created the initial sememe package should have vetted
 			//    the city already, from NER e.g.
-			AlixiaUtils.error("KiloRoom:findLocation: location not found");
+			LOGGER.error("KiloRoom:findLocation: location not found");
 			return null;
 		}
 		// TODO ask client to narrow down list of cities

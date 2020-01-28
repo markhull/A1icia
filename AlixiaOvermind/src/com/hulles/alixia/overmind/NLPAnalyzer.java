@@ -23,16 +23,15 @@ package com.hulles.alixia.overmind;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.room.document.NLPAnalysis;
 import com.hulles.alixia.room.document.SentenceAnalysis;
 import com.hulles.alixia.ticket.SentencePackage;
@@ -43,8 +42,7 @@ import com.hulles.alixia.ticket.TicketJournal;
 import redis.clients.jedis.Jedis;
 
 public final class NLPAnalyzer {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaOvermind.NLPAnalyzer");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(NLPAnalyzer.class);
 	private final static long MAXNLPITEMS = 20L;
 	
 	@SuppressWarnings("resource")
@@ -58,7 +56,7 @@ public final class NLPAnalyzer {
 		JebusPool jebusPool;
 		
 		SharedUtils.checkNotNull(analysis);
-		LOGGER.log(LOGLEVEL, "In NLPAnalyzer processAnalysis");
+		LOGGER.debug("In NLPAnalyzer processAnalysis");
 		jebusPool = JebusHub.getJebusCentral();
 		
 		// First, we save the analysis explanation to Jebus so we can pore over it 
@@ -147,7 +145,7 @@ public final class NLPAnalyzer {
 		chunkIx = 0;
 		for (String chunk : chunks) {
 			if (tagIx >= chunkTags.size()) {
-				AlixiaUtils.error("NLPAnalyzer: tags don't correspond to chunks");
+				LOGGER.error("NLPAnalyzer: tags don't correspond to chunks");
 				break;
 			}
 			chunkSb = new StringBuilder();
@@ -166,13 +164,13 @@ public final class NLPAnalyzer {
 			} while (tag.startsWith("I-"));
 			tagString = chunkSb.toString();
 			sentenceChunk.setPosTagString(tagString);
-			LOGGER.log(LOGLEVEL, "NLPAnalyzer: chunk = {0}, tags = {1}", new String[]{chunk, tagString});
+			LOGGER.debug("NLPAnalyzer: chunk = {}, tags = {}", chunk, tagString);
 			sentenceChunks.add(chunkIx, sentenceChunk);
 			chunkIx++;
 		}
 		sentencePackage.setChunks(sentenceChunks);
 		
-		LOGGER.log(LOGLEVEL, "NLPAnalyzer: lemmatizedSentence = {0}", lemmatizedSentence);
+		LOGGER.debug("NLPAnalyzer: lemmatizedSentence = {}", lemmatizedSentence);
 		return sentencePackage;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Alixia Overmind
+ * AlixiaOvermind
  * 
  * thimk
  * 
@@ -9,13 +9,12 @@
 module com.hulles.alixia.overmind {
 	exports com.hulles.alixia.overmind to com.hulles.alixia.central;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
 	requires com.hulles.alixia.media;
-	requires guava;
-	requires java.logging;
 	requires jedis;
+	requires com.hulles.alixia.cayenne;
+    requires org.slf4j;
 	// to here
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.overmind.OvermindRoom;
 }

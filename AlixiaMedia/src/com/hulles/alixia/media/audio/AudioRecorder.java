@@ -27,8 +27,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.media.AlixiaMediaException;
 import com.hulles.alixia.media.MediaUtils;
@@ -41,8 +42,7 @@ import com.hulles.alixia.media.MediaUtils;
  *
  */
 public class AudioRecorder {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaPi.AudioRecorder");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(AudioRecorder.class);
 	private final static String RECORDEXEC = "arecord";
 	private final static boolean DELETEFILE = false;
 //	private final static float CHUNKFACTOR = 0.1f;
@@ -210,7 +210,7 @@ public class AudioRecorder {
 			throw new AlixiaMediaException("Can't read stderr", e);
 		}
 		if (stdErr.length() > 0) {
-			LOGGER.log(LOGLEVEL, "statCommand Error: " + stdErr.toString());
+			LOGGER.error("statCommand Error: {}", stdErr.toString());
 			throw new AlixiaMediaException("AudioRecorder: standard error not empty: " + stdErr.toString());
 		}
 

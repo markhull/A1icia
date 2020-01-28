@@ -24,10 +24,10 @@ package com.hulles.alixia.charlie.parse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
@@ -39,8 +39,7 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
 final public class CharlieParser {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCharlie.CharlieParser");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(CharlieParser.class);
 	private final SentenceDetectorME sentenceParser;
 	private final TokenizerME tokenizer;
 
@@ -77,9 +76,9 @@ final public class CharlieParser {
 		
 		SharedUtils.checkNotNull(input);
 		sentences = sentenceParser.sentDetect(input);
-		LOGGER.log(LOGLEVEL, "AFTER SENTENCE DETECT:");
+		LOGGER.debug("AFTER SENTENCE DETECT:");
 		for (String s : sentences) {
-			LOGGER.log(LOGLEVEL, "SENTENCE: {0}", s);
+			LOGGER.debug("SENTENCE: {}", s);
 		}
 		return sentences;
 	}
@@ -90,7 +89,7 @@ final public class CharlieParser {
 		SharedUtils.checkNotNull(input);
 		tokens = tokenizer.tokenize(input);
 		for (String s : tokens) {
-			LOGGER.log(LOGLEVEL, "TOKEN: {0}", s);
+			LOGGER.debug("TOKEN: {}", s);
 		}
 		return tokens;
 	}

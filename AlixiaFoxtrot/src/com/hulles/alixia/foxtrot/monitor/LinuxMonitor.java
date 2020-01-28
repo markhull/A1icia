@@ -37,18 +37,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
 import org.mariadb.jdbc.MariaDbDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.foxtrot.dummy.DummyDataSource;
 import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
 import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.NetworkDevice;
@@ -56,9 +54,7 @@ import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.Processor;
 import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.SensorValue;
 
 final public class LinuxMonitor {
-	final static Logger LOGGER = Logger.getLogger("AlixiaFoxtrot.LinuxMonitor");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
+	final static Logger LOGGER = LoggerFactory.getLogger(LinuxMonitor.class);
 	private static final int KB = 1024;
 	private final FoxtrotPhysicalState foxtrotState;
     private static final Pattern DISTRIBUTION =
@@ -571,31 +567,31 @@ final public class LinuxMonitor {
 				// ...we don't currently do anything with these stats
 			} else {
 				counts = line.split("\\s+");
-				LOGGER.log(LOGLEVEL, "line = [{0}]", line);
-				LOGGER.log(LOGLEVEL, "counts.length = {0}", counts.length);
+				LOGGER.debug("line = [{}]", line);
+				LOGGER.debug("counts.length = {}", counts.length);
 				for (String count : counts) {
-					LOGGER.log(LOGLEVEL, "counts value = [{0}]", count);
+					LOGGER.debug("counts value = [{}]", count);
 				}
 				// with split there is an initial space element in the array at pos 0
 				if (counts.length == 4) {
 					try {
 						// accepts
 						value = Long.parseLong(counts[1]);
-						LOGGER.log(LOGLEVEL, "value 1 = {0}", value);
+						LOGGER.debug("value 1 = {}", value);
 					} catch (NumberFormatException e) {
 						continue;
 					}
 					try {
 						// handled
 						value = Long.parseLong(counts[2]);
-						LOGGER.log(LOGLEVEL, "value 2 = {0}", value);
+						LOGGER.debug("value 2 = {}", value);
 					} catch (NumberFormatException e) {
 						continue;
 					}
 					try {
 						// requests
 						value = Long.parseLong(counts[3]);
-						LOGGER.log(LOGLEVEL, "value 3 = {0}", value);
+						LOGGER.debug("value 3 = {}", value);
 						foxtrotState.setServerAccesses(value);
 					} catch (NumberFormatException e) {
 						continue;
@@ -648,7 +644,7 @@ final public class LinuxMonitor {
         		databasePassword == null || 
         		databaseServer == null || 
         		databasePort == null) {
-			AlixiaUtils.error("Warning: database parameters not set in LinuxMonitor");
+			LOGGER.error("Warning: database parameters not set in LinuxMonitor");
         }
         source.setUser(databaseUser);
         source.setPassword(databasePassword);

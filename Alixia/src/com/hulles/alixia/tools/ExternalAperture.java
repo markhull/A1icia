@@ -28,26 +28,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.ApplicationKeys;
-import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
-import com.hulles.alixia.media.Language;
-import java.io.UnsupportedEncodingException;
-import java.net.ProtocolException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.ApplicationKeys;
+import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
+import com.hulles.alixia.api.shared.SharedUtils;
+import com.hulles.alixia.media.Language;
 
 /**
  * ExternalAperture is where ALL external access in Alixia occurs, except for AlixiaGoogleTranslate,
@@ -60,9 +59,7 @@ import java.nio.file.Path;
  *
  */
 final public class ExternalAperture {
-	private final static Logger LOGGER = Logger.getLogger("Alixia.ExternalAperture");
-	@SuppressWarnings("unused")
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(ExternalAperture.class);
     
 	private ExternalAperture() {
 	}
@@ -81,7 +78,7 @@ final public class ExternalAperture {
 		try {
 			url = new URL(link);
 		} catch (MalformedURLException e) {
-			LOGGER.log(Level.WARNING, "Bad URL in linkIsOK", e);
+			LOGGER.warn("Bad URL in linkIsOK", e);
 			return false;
 		}
 		try {
@@ -113,7 +110,7 @@ final public class ExternalAperture {
         try {
             encodedText = URLEncoder.encode(textToTranslate, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            AlixiaUtils.error("ExternalAperture: can't encode url = " + textToTranslate, ex);
+            LOGGER.error("ExternalAperture: can't encode url = {}", textToTranslate, ex);
             return null;
         }
         urlString = String.format(urlTemplate, from.getGoogleName(), to.getGoogleName(), 
@@ -295,7 +292,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSPOKEN);
 		urlString = String.format(urlTemplate, query, wolframID);
-		LOGGER.log(LOGLEVEL, "WolframSpokenQuery url = {0}", urlString);
+		LOGGER.debug("WolframSpokenQuery url = {}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -317,7 +314,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSIMPLE);
 		urlString = String.format(urlTemplate, query, wolframID);
-		LOGGER.log(LOGLEVEL, "WolframSimpleQuery url = {0}", urlString);
+		LOGGER.debug("WolframSimpleQuery url = {}", urlString);
 		return getURLImageResult(urlString);
 	}
 
@@ -339,7 +336,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMSHORT);
 		urlString = String.format(urlTemplate, query, wolframID);
-		LOGGER.log(LOGLEVEL, "WolframShortQuery url = {0}", urlString);
+		LOGGER.debug("WolframShortQuery url = {}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -360,7 +357,7 @@ final public class ExternalAperture {
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.WOLFRAMQUERY);
 		urlString = String.format(urlTemplate, query, wolframID);  // pi, 3.141592653589793
-		LOGGER.log(LOGLEVEL, "WolframQuery url = {0}", urlString);
+		LOGGER.debug("WolframQuery url = {}", urlString);
 		return getURLStringResult(urlString);
 	}
 
@@ -405,9 +402,11 @@ final public class ExternalAperture {
 	 * @return
 	 */
 	public static String postTestQueryToAlixiaNode(String query) {
-	
+        String result;
+        
 		SharedUtils.checkNotNull(query);
-		return postURLStringResult("http://localhost:1337/alixia/text", query, "text/plain");
+		result = postURLStringResult("http://localhost:1337/alixia/text", query, "text/plain");
+        return result;
 	}
 	
 	/**
@@ -432,15 +431,14 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			AlixiaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
-					", query: " + query + ", content type: " + contentType, ex);
+			LOGGER.error("Bad URL in postURLStringResult\nURL string: {}, query: {}, content type: {}" + urlString, query, contentType, ex);
 			return null;
 		}
 		try {
 			conn = url.openConnection();			
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
-					", query: " + query + ", content type: " + contentType, ex);
+			LOGGER.error("I/O Exception opening connection in postURLStringResult\nURL string: {}, query: {}, content type: {}", urlString, query, contentType, ex);
+            ex.printStackTrace();
 			return null;
 		}
 		
@@ -452,8 +450,7 @@ final public class ExternalAperture {
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
-					", query: " + query + ", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception connecting connection in postURLStringResult\nURL string: {}, query: {}, content type: {}", urlString, query, contentType, ex);
 			return null;
 		}
 		
@@ -463,8 +460,7 @@ final public class ExternalAperture {
 				out.flush();
 			}
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
-					", query: " + query + ", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception writing output stream in postURLStringResult\nURL string: {}, query: {}, content type: {}", urlString, query, contentType, ex);
 			return null;
 		}
 			  
@@ -478,14 +474,12 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						AlixiaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
-								", query: " + query + ", content type: " + contentType, ex);
+                        LOGGER.error("I/O Exception reading input stream in postURLStringResult\nURL string: {}, query: {}, content type: {}", urlString, query, contentType, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
-					", query: " + query + ", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception creating input stream in postURLStringResult\nURL string: {}, query: {}, content type: {}", urlString, query, contentType, ex);
 			return null;
 		}
 		return sb.toString();
@@ -514,15 +508,13 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			AlixiaUtils.error("Bad URL in postURLStringResult\nURL string: " + urlString +
-					", content type: " + contentType, ex);
+            LOGGER.error("Bad URL in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 			return null;
 		}
 		try {
 			conn = url.openConnection();			
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception opening connection in postURLStringResult\nURL string: " + urlString +
-					", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception opening connection in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 			return null;
 		}
 		
@@ -533,8 +525,7 @@ final public class ExternalAperture {
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception connecting connection in postURLStringResult\nURL string: " + urlString +
-					", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception connecting connection in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 			return null;
 		}
 		
@@ -542,8 +533,7 @@ final public class ExternalAperture {
 			outStream.write(bytes);
 			outStream.flush();
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception writing output stream in postURLStringResult\nURL string: " + urlString +
-					", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception writing output stream in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 			return null;
 		}
 			  
@@ -557,14 +547,12 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						AlixiaUtils.error("I/O Exception reading input stream in postURLStringResult\nURL string: " + urlString +
-								", content type: " + contentType, ex);
+			            LOGGER.error("I/O Exception reading input stream in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception creating input stream in postURLStringResult\nURL string: " + urlString +
-					", content type: " + contentType, ex);
+            LOGGER.error("I/O Exception creating input stream in postURLStringResult\nURL string: {}, content type: {}", urlString, contentType, ex);
 			return null;
 		}
 		return sb.toString();
@@ -592,14 +580,13 @@ final public class ExternalAperture {
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException ex) {
-			AlixiaUtils.error("Bad URL in putURLStringResult\nURL string: " + urlString, ex);
+			LOGGER.error("Bad URL in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
 		}
 		try {
 			conn = (HttpURLConnection) url.openConnection();			
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception opening connection in putURLStringResult\nURL string: " + 
-                    urlString, ex);
+			LOGGER.error("I/O Exception opening connection in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
 		}
 		
@@ -609,15 +596,13 @@ final public class ExternalAperture {
         try {
             conn.setRequestMethod("PUT");
         } catch (ProtocolException ex) {
-			AlixiaUtils.error("Protocol Exception with connection in putURLStringResult\nURL string: " + 
-                    urlString, ex);
+			LOGGER.error("Protocol Exception with connection in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
         }
 		try {
 			conn.connect();
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception connecting connection in putURLStringResult\nURL string: " + 
-                    urlString, ex);
+			LOGGER.error("I/O Exception connecting connection in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
 		}
 		
@@ -625,8 +610,7 @@ final public class ExternalAperture {
             Files.copy(path, outStream);
 			outStream.flush();
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception writing output stream in putURLStringResult\nURL string: " + 
-                    urlString, ex);
+			LOGGER.error("I/O Exception writing output stream in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
 		}
 			  
@@ -641,14 +625,12 @@ final public class ExternalAperture {
 						sb.append(line);
                         sb.append("\n");
 					} catch (IOException ex) {
-						AlixiaUtils.error("I/O Exception reading input stream in putURLStringResult\nURL string: " + 
-                                urlString, ex);
+						LOGGER.error("I/O Exception reading input stream in putURLStringResult\nURL string: {}", urlString, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception creating input stream in putURLStringResult\nURL string: " + 
-                    urlString, ex);
+			LOGGER.error("I/O Exception creating input stream in putURLStringResult\nURL string: {}", urlString, ex);
 			return null;
 		}
 		return sb.toString();
@@ -671,7 +653,7 @@ final public class ExternalAperture {
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			AlixiaUtils.error("Bad URL in getURLStringResult\nquery: " + query, ex);
+			LOGGER.error("Bad URL in getURLStringResult\nquery: {}", query, ex);
 			return null;
 		}
 		try (InputStream inStream = url.openStream()) { 
@@ -684,12 +666,12 @@ final public class ExternalAperture {
 						}
 						sb.append(line);
 					} catch (IOException ex) {
-						AlixiaUtils.error("I/O Exception reading input stream in getURLStringResult\nquery: " + query, ex);
+						LOGGER.error("I/O Exception reading input stream in getURLStringResult\nquery: {}", query, ex);
 					}
 				}
 			}
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception creating input stream in getURLStringResult\nquery: " + query, ex);
+			LOGGER.error("I/O Exception creating input stream in getURLStringResult\nquery: {}", query, ex);
 			return null;
 		}
 		return sb.toString();
@@ -711,13 +693,13 @@ final public class ExternalAperture {
 		try {
 			url = new URL(query);
 		} catch (MalformedURLException ex) {
-			AlixiaUtils.error("Bad URL in getURLImageResult\nquery: " + query, ex);
+			LOGGER.error("Bad URL in getURLImageResult\nquery: {}", query, ex);
 			return null;
 		}
 		try {
 			image = ImageIO.read(url);
 		} catch (IOException ex) {
-			AlixiaUtils.error("I/O Exception reading input stream in getURLImageResult\nquery: " + query, ex);
+			LOGGER.error("I/O Exception reading input stream in getURLImageResult\nquery: {}", query, ex);
 			return null;
 		}
 		return image;

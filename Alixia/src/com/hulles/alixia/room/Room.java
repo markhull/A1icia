@@ -38,6 +38,7 @@ import com.hulles.alixia.api.shared.SharedUtils;
  *
  */
 public enum Room {
+	QA(33, "QA"),
 	TRACKER(32, "Tracker"),
     BUSMONITOR(0, "Bus Monitor"),    
 	CONTROLLER(31, "Controller"),
@@ -69,7 +70,7 @@ public enum Room {
     XRAY(25, "X-Ray Room"),
     YANKEE(26, "Yankee Room"),
     ZULU(27, "Zulu Room");
-	// last-used storeID = 31
+	// last-used storeID = 33
     private final Integer storeID;
     private final String displayName;
 

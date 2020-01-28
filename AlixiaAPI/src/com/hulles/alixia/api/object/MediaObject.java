@@ -46,6 +46,7 @@ public class MediaObject implements AlixiaClientObject {
 	private ClientObjectType type;
 	private String mediaTitle;
 	private Integer lengthSeconds;
+    private String mediaArtist;
 	
 	public MediaObject() {
 		// needs no-arg constructor
@@ -94,6 +95,17 @@ public class MediaObject implements AlixiaClientObject {
 		MediaUtils.nullsOkay(title);
 		this.mediaTitle = title;
 	}
+
+	public String getMediaArtist() {
+		
+		return mediaArtist;
+	}
+
+	public void setMediaArtist(String artist) {
+		
+		MediaUtils.nullsOkay(artist);
+		this.mediaArtist = artist;
+	}
 	
 	@Override
 	public ClientObjectType getClientObjectType() {
@@ -122,6 +134,7 @@ public class MediaObject implements AlixiaClientObject {
 			return false;
 		}
 		// title can be null
+        // artist can be null
 		return true;
 	}
 }

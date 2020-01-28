@@ -342,21 +342,6 @@ public class Person extends _Person {
         p = Period.between(birthLD, today);
         return p.getYears();
     }
-    
-    public void delete() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-		context.deleteObjects(this);
-    	context.commitChanges();
-    }
-    
-    public void commit() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.commitChanges();
-    }
 
     public boolean iAmTheCentralScrutinizer() {
     	

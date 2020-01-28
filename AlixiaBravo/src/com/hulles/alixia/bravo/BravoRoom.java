@@ -28,13 +28,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.dialog.DialogRequest;
 import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.object.AlixiaClientObject.ClientObjectType;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.house.ClientDialogRequest;
 import com.hulles.alixia.media.MediaUtils;
 import com.hulles.alixia.room.Room;
@@ -56,8 +58,10 @@ import com.hulles.alixia.ticket.TicketJournal;
  * Bravo Room is an initial implementation of TensorFlow. Right now, it "just" accepts a JPEG
  *     image and tries to classify it with the Inception Engine. If there is no image payload, we
  *     return a null response.
+ * 
+ *     See https://www.tensorflow.org/api_docs/java/reference/org/tensorflow/package-summary
  *     
- *     By the way, this is the first vision-based room.
+ *     By the way, this is the first image/vision-based room.
  * 
  * 	   P.S. The caller must have -Djava.library.path="/home/hulles/DATA/Repository/Jars/jni" in its
  *         runtime configuration. TODO standardize location or at least put it into ApplicationKeys
@@ -72,6 +76,7 @@ import com.hulles.alixia.ticket.TicketJournal;
  *
  */
 public final class BravoRoom extends UrRoom {
+    private final static Logger LOGGER = LoggerFactory.getLogger(BravoRoom.class);
 	private static final int LIKELIHOOD_CUTOFF = 75;
 	
 	public BravoRoom() {
@@ -167,7 +172,7 @@ public final class BravoRoom extends UrRoom {
 		pkg = new ActionPackage(sememePkg);
 		object = request.getRoomObject();
 		if (object.getRoomObjectType() != RoomObjectType.IMAGEINPUT) {
-			AlixiaUtils.error("Bad object in BravoRoom");
+			LOGGER.error("Bad object in BravoRoom");
 			return null;
 		}
 		image = (Image) object;

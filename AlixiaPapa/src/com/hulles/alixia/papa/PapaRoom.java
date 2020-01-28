@@ -21,7 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.papa;
 
-import com.hulles.alixia.api.jebus.JebusHub;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,12 +30,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.object.AlixiaClientObject.ClientObjectType;
 import com.hulles.alixia.api.object.MediaObject;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.crypto.PurdahKeys;
 import com.hulles.alixia.crypto.PurdahKeys.PurdahKey;
 import com.hulles.alixia.media.MediaFormat;
@@ -62,6 +64,7 @@ import com.hulles.alixia.tools.ExternalAperture;
  *
  */
 public final class PapaRoom extends UrRoom {
+    private final static Logger LOGGER = LoggerFactory.getLogger(PapaRoom.class);
 	private final static int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 //	final static Logger LOGGER = Logger.getLogger("AlixiaPapa.PapaRoom");
 //	private static final Level LOGLEVEL = Level.INFO;
@@ -165,15 +168,14 @@ public final class PapaRoom extends UrRoom {
 		pkg = new ActionPackage(sememePkg);
 		sentencePkg = sememePkg.getSentencePackage();
 		if (sentencePkg == null) {
-			AlixiaUtils.error("PapaRoom: null sentence package, should not be true",
-					"SerialSememe is "  + sememePkg.getName());
+			LOGGER.error("PapaRoom: null sentence package, should not be true, SerialSememe is {}", sememePkg.getName());
 			return null;
 		}
 		// we look up the (fixed) original sentence instead of the sememeObject because
 		//    we are a manly heroic room, unlike some others I could name (*golf*).
 		lookupString = sentencePkg.getStrippedSentence();
 		if (lookupString == null) {
-			AlixiaUtils.error("PapaRoom: sentence package has null original sentence");
+			LOGGER.error("PapaRoom: sentence package has null original sentence");
 			return null;
 		}
 		encodedQuery = encodeQuery(lookupString);
@@ -182,7 +184,7 @@ public final class PapaRoom extends UrRoom {
 		responseText = ExternalAperture.getWolframSpokenQuery(encodedQuery, wolframKey);
 		responseImage = ExternalAperture.getWolframSimpleQuery(encodedQuery, wolframKey);
 		if (responseImage == null) {
-			AlixiaUtils.error("PapaRoom: Wolfram|Alpha returned null image");
+			LOGGER.error("PapaRoom: Wolfram|Alpha returned null image");
 			return null;
 		}
 		try {
@@ -192,7 +194,7 @@ public final class PapaRoom extends UrRoom {
 		}
 		message = responseText;
 		if (imageBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("PapaRoom: image file too big for Redis");
+			LOGGER.error("PapaRoom: image file too big for Redis");
 			return null;
 		}
 		imageArrays = new byte[][] {imageBytes};
@@ -203,7 +205,7 @@ public final class PapaRoom extends UrRoom {
 		mediaObject.setClientObjectType(ClientObjectType.IMAGEBYTES);
 		mediaObject.setMediaFormat(MediaFormat.GIF);
 		if (!mediaObject.isValid()) {
-			AlixiaUtils.error("PapaRoom: invalid media object");
+			LOGGER.error("PapaRoom: invalid media object");
 			return null;
 		}
 		action = new ClientObjectWrapper(mediaObject);
@@ -241,7 +243,7 @@ public final class PapaRoom extends UrRoom {
 		PurdahKeys pKeys;
 		
 		// TODO here November has to load PurdahKeys before this executes. We're doing
-		//   that in November's contructor, but just note that the comes-first relationship
+		//   that in November's constructor, but just note that the comes-first relationship
 		//   is there
 		pKeys = PurdahKeys.getInstance();
 		wolframKey = pKeys.getPurdahKey(PurdahKey.WOLFRAMALPHAKEY);

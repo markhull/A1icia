@@ -80,7 +80,6 @@ public class PurdahKeys implements Serializable {
 		instance = keys;
 	}
 	
-	@SuppressWarnings("resource")
 	private static PurdahKeys getPurdahKeys() {
 		SecretKey aesKey = null;
 		byte[] purdahKeyBytes;
@@ -108,8 +107,8 @@ public class PurdahKeys implements Serializable {
 			} catch (ClassNotFoundException | IOException e) {
 				throw new AlixiaException("PurdahKeys: can't deserialize purdah", e);
 			}
+	        return purdahKeys;
 		}
-		return purdahKeys;
 	}
 	
 	/**

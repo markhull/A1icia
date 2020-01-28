@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.cayenne.AlixiaApplication;
@@ -43,9 +44,7 @@ import com.hulles.alixia.ticket.TicketJournal;
 import com.hulles.alixia.tools.FuzzyMatch;
 
 public class LimaHistory {
-	private final static Logger logger = Logger.getLogger("AlixiaLima.LimaHistory");
-	private final static Level LOGLEVEL_A = Level.FINE;
-	private final static Level LOGLEVEL_B = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(LimaHistory.class);
 	private final static int CUTOFFSCORE = 95;
 	private List<AnswerHistory> history;
 	
@@ -74,7 +73,7 @@ public class LimaHistory {
 		for (AnswerHistory item : history) {
 			exactMatch = item.getOriginalQuestion().equals(fixedSentence);
 			if (exactMatch) {
-				logger.log(LOGLEVEL_A, "\n\nSERIALHISTORY: exact match for " + fixedSentence);
+				LOGGER.debug("\n\nSERIALHISTORY: exact match for {}", fixedSentence);
 				serialItem = new ScratchAnswerHistory();
 				serialItem.setHistory(item);
 				serialItem.setScore(100);
@@ -104,7 +103,7 @@ public class LimaHistory {
 				String q1;
 				String q2;
 
-				if (o1.getScore() == o2.getScore()) {
+				if (o1.getScore().equals(o2.getScore())) {
 					// if the scores are equal, return the longest match
 					q1 = o1.getHistory().getLemmatizedQuestion();
 					q2 = o2.getHistory().getLemmatizedQuestion();
@@ -113,10 +112,10 @@ public class LimaHistory {
 				return o2.getScore().compareTo(o1.getScore());
 			}
 		});
-		logger.log(LOGLEVEL_A, "\n\nSERIALHISTORY:\n");
+		LOGGER.debug("\n\nSERIALHISTORY:\n");
 		for (ScratchAnswerHistory sah : serialHistory) {
-			logger.log(LOGLEVEL_A, sah.getHistory().getLemmatizedQuestion());
-			logger.log(LOGLEVEL_A, " :: " + sah.getScore());
+			LOGGER.debug(sah.getHistory().getLemmatizedQuestion());
+			LOGGER.debug(" :: {}", sah.getScore());
 		}
 		return serialHistory;
 	}
@@ -140,17 +139,16 @@ public class LimaHistory {
 		//    ratings based on result action e.g.
 		// ... 
 		//    Okay fine, it is that simple for now. TODO make me better
-		logger.log(LOGLEVEL_B, "LimaHistory: in addHistory");
+		LOGGER.debug("LimaHistory: in addHistory");
 		for (SentencePackage sp : sentencePackages) {
 			for (ActionPackage ap : actionPackages) {
-				logger.log(LOGLEVEL_B, "LimaHistory: got action package " + ap.getName());
+				LOGGER.debug("LimaHistory: got action package {}", ap.getName());
 				sememePkg = ap.getSememePackage();
-				logger.log(LOGLEVEL_B, "LimaHistory: got sememe package " + sememePkg.getName());
+				LOGGER.debug("LimaHistory: got sememe package {}", sememePkg.getName());
 				spPkg = sememePkg.getSentencePackage();
 				if (spPkg != null) {
 					if (spPkg.getSentencePackageID().equals(sp.getSentencePackageID())) {
-						logger.log(LOGLEVEL_B, "LimaHistory: got matching sentence package " +
-								sememePkg.getName());
+						LOGGER.debug("LimaHistory: got matching sentence package {}", sememePkg.getName());
 						update(sp, ap);
 						// we could do a break, but let's let it run in case we ever have more
 						//    than one action per sentence
@@ -171,13 +169,13 @@ public class LimaHistory {
 		SharedUtils.checkNotNull(ap);
 		sememePkg = ap.getSememePackage();
 		fixedSentence = sp.getStrippedSentence();
-		logger.log(LOGLEVEL_B, "LimaHistory: updating");
+		LOGGER.debug("LimaHistory: updating");
 		answerHistory = AnswerHistory.findAnswerHistory(fixedSentence);
 		if (answerHistory != null) {
 			// we already have it
 			return;
 		}
-		logger.log(LOGLEVEL_B, "LimaHistory: should be updating database with " + sememePkg);
+		LOGGER.debug("LimaHistory: should be updating database with {}", sememePkg);
 		AlixiaApplication.setErrorOnUncommittedObjects(false);
 		answerHistory = AnswerHistory.createNew();
 		answerHistory.setSememe(Sememe.fromSerial(sememePkg.getSememe()));
@@ -187,7 +185,7 @@ public class LimaHistory {
 		answerHistory.setPosTags(sp.getPosTagString());
 		answerHistory.setOriginalQuestion(fixedSentence);
 		answerHistory.setSatisfaction(0); // FIXME how do we get this?
-		logger.log(LOGLEVEL_B, "LimaHistory: should have updated database with " + sememePkg);
+		LOGGER.debug("LimaHistory: should have updated database with {}", sememePkg);
 		
 		chunks = sp.getChunks();
 		if (chunks != null) {
@@ -199,7 +197,7 @@ public class LimaHistory {
 				answerChunk.setChunkTags(chunk.getPosTagString());
 			}
 		}
-		answerHistory.commit();
+		AlixiaApplication.commitAll();
 		AlixiaApplication.setErrorOnUncommittedObjects(true);
 		// add this to our list copy of database AnswerHistory tuples that
 		//    we use in our analysis lookup, since we have it here

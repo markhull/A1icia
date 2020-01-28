@@ -1,5 +1,5 @@
 /**
- * Alixia Kilo
+ * AlixiaKilo
  * 
  * weather
  * 
@@ -9,18 +9,12 @@
 module com.hulles.alixia.kilo {
 	exports com.hulles.alixia.kilo to com.hulles.alixia.central;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
 	requires com.hulles.alixia.cayenne;
 	requires com.hulles.alixia.crypto;
-	requires guava;
-	requires java.logging;
-	requires javax.json;
+	requires java.json;
+    requires org.slf4j;
 	// to here
-    requires com.hulles.alixia.media;
-    requires cayenne.client;
-    requires cayenne.di;
-    requires cayenne.server;
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.kilo.KiloRoom;
 }

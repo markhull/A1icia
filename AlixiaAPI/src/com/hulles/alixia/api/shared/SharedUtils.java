@@ -21,14 +21,14 @@
  *******************************************************************************/
 package com.hulles.alixia.api.shared;
 
-import com.hulles.alixia.api.AlixiaConstants;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SharedUtils is a class that contains various Alixia utility functions. It
@@ -38,8 +38,7 @@ import java.util.logging.Logger;
  * @author hulles
  */
 public class SharedUtils implements Serializable {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaApi.SharedUtils");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(SharedUtils.class);
 	private static final long serialVersionUID = 8123983689858668155L;
 	@SuppressWarnings("unused")
 	private static ServerSocket canary = null;
@@ -106,7 +105,7 @@ public class SharedUtils implements Serializable {
 		
 		checkNotNull(portCheck);
 		if (alreadyRunning(PortCheck.ALIXIA)) {
-			LOGGER.log(Level.SEVERE, "Alixia is already running");
+			LOGGER.error("Alixia is already running");
 			System.exit(EXIT_ALREADY_RUNNING);
 		}
 	}

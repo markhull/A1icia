@@ -21,7 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.echo.w2v;
 
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,17 +31,16 @@ import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.api.tools.AlixiaTimer;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 
 final class WordToVecLoader {
-	final static Logger LOGGER = Logger.getLogger("AlixiaEcho.WordToVecLoader");
-	private final static Level LOGLEVEL1 = Level.FINE;
-	private final static Level LOGLEVEL2 = Level.INFO;
+	final static Logger LOGGER = LoggerFactory.getLogger(WordToVecLoader.class);
 	private final static String DUMPVALUE = "%.8f";
 	private long channelStart;
 	private int vocabSize = 0;
@@ -59,7 +57,7 @@ final class WordToVecLoader {
 	 */
 	Map<String, float[]> getMap() {
 		if (wordVectors == null) {
-			AlixiaUtils.error("You need to call the load method before accessing the map");
+			LOGGER.error("You need to call the load method before accessing the map");
 			return null;
 		}
 		return wordVectors;
@@ -71,7 +69,7 @@ final class WordToVecLoader {
 	 */
 	Integer getVectorSize() {
 		if (wordVectors == null) {
-			AlixiaUtils.error("You need to call the load method before requesting the vector size");
+			LOGGER.error("You need to call the load method before requesting the vector size");
 			return null;
 		}
 		return vectorSize;
@@ -195,8 +193,7 @@ final class WordToVecLoader {
 		// we use a LinkedHashMap to get decent performance from sequential access
 		wordVectors = new LinkedHashMap<>(vocabSize);
 		dupeCount = 0;
-		LOGGER.log(LOGLEVEL2, "Loading map for {0} word vectors, dimension {1}", 
-                new Object[]{vocabSize, vectorSize});
+		LOGGER.info("Loading map for {} word vectors, dimension {}", vocabSize, vectorSize);
 		
 		// we already know the number of words from reading the first line
 		// we use the convenience of nio buffer.mark and buffer.reset to make sure that we don't split 
@@ -230,7 +227,7 @@ final class WordToVecLoader {
 			}
 		}
 		closeResources(fileStream, channel);
-		LOGGER.log(LOGLEVEL2, "Loaded map with {0} duplicates ignored", dupeCount);
+		LOGGER.info("Loaded map with {} duplicates ignored", dupeCount);
 	}
 	
 	/**
@@ -259,18 +256,18 @@ final class WordToVecLoader {
 		SharedUtils.checkNotNull(channel);
 		SharedUtils.checkNotNull(buffer);
 		buffer.reset();
-		LOGGER.log(LOGLEVEL1, "WordToVecLoader: refilling");
-		LOGGER.log(LOGLEVEL1, "WordToVecLoader: channelStart = {0}", channelStart);
+		LOGGER.debug("WordToVecLoader: refilling");
+		LOGGER.debug("WordToVecLoader: channelStart = {}", channelStart);
 		channelStart = channelStart + buffer.position();
-		LOGGER.log(LOGLEVEL1, "WordToVecLoader: buffer position = {0}", buffer.position());
-		LOGGER.log(LOGLEVEL1, "WordToVecLoader: new channelStart = {0}", channelStart);
+		LOGGER.debug("WordToVecLoader: buffer position = {}", buffer.position());
+		LOGGER.debug("WordToVecLoader: new channelStart = {}", channelStart);
 		try {
 			buffer.clear();
 			channel.position(channelStart);
 			bytes = channel.read(buffer);
 			buffer.rewind();
-			LOGGER.log(LOGLEVEL1, "WordToVecLoader: after read, bytes read = {0}", bytes);
-			LOGGER.log(LOGLEVEL2, "WordToVecLoader: after read, channel position = {0}", channel.position());
+			LOGGER.debug("WordToVecLoader: after read, bytes read = {}", bytes);
+			LOGGER.debug("WordToVecLoader: after read, channel position = {}", channel.position());
 		} catch (IOException e) {
 			closeResources(fileStream, channel);
 			throw new AlixiaException("Error refilling file", e);

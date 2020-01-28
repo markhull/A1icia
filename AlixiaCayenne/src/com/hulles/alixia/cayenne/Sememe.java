@@ -27,13 +27,15 @@ import java.util.Set;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.cayenne.auto._Sememe;
 
 public class Sememe extends _Sememe implements Comparable<Sememe> {
+    private final static Logger LOGGER = LoggerFactory.getLogger(Sememe.class);
     private static final long serialVersionUID = 1L; 
     
 //    public static SerialSememe findSememe(Integer sememeID) {
@@ -153,7 +155,7 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 	public static SerialSememe getProxySememe() {
 		Sememe sememe;
 		
-		AlixiaUtils.error("Getting proxy sememe");
+		LOGGER.error("Getting proxy sememe");
 		sememe = Sememe.findRaw("exclamation");
 		if (sememe == null) {
 			return null;
@@ -214,28 +216,6 @@ public class Sememe extends _Sememe implements Comparable<Sememe> {
 		
 		SharedUtils.checkNotNull(otherSememe);
         return this.getName().compareToIgnoreCase(otherSememe.getName());
-	}
-	
-    public void commit() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.commitChanges();
-    }
-    
-    public void rollback() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.rollbackChanges();
-    }
-
-	public void delete() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-     	context.deleteObjects(this);
-    	context.commitChanges();
 	}
 
 	public static Sememe createNew(String sememeName) {

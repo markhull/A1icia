@@ -24,10 +24,10 @@ package com.hulles.alixia.charlie.parse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
@@ -39,8 +39,7 @@ import opennlp.tools.util.Sequence;
 import opennlp.tools.util.Span;
 
 final public class CharlieChunker {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCharlie.CharlieChunker");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(CharlieChunker.class);
 	private final ChunkerME chunker;
 
 	public CharlieChunker() {
@@ -73,7 +72,7 @@ final public class CharlieChunker {
 		SharedUtils.checkNotNull(posTags);
 		chunkTags = chunker.chunk(tokenizedInput, posTags);
 		for (String s : chunkTags) {
-			LOGGER.log(LOGLEVEL, "CHUNK: {0}", s);
+			LOGGER.debug("CHUNK: {}", s);
 		}
 		return chunkTags;
 	}
@@ -87,7 +86,7 @@ final public class CharlieChunker {
 		chunkSpans = chunker.chunkAsSpans(tokenizedInput, posTags);
 		spanStrings = Span.spansToStrings(chunkSpans, tokenizedInput);
 		for (String s : spanStrings) {
-			LOGGER.log(LOGLEVEL, "CHUNK SPAN: {0}", s);
+			LOGGER.debug("CHUNK SPAN: {}", s);
 		}
 		return spanStrings;
 	}

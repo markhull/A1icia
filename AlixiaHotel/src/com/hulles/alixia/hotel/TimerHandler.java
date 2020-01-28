@@ -30,6 +30,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.dialog.DialogResponse;
 import com.hulles.alixia.api.jebus.JebusBible;
@@ -40,7 +43,6 @@ import com.hulles.alixia.api.object.MediaObject;
 import com.hulles.alixia.api.remote.AlixianID;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.house.ClientDialogResponse;
 import com.hulles.alixia.media.Language;
 import com.hulles.alixia.room.document.ClientObjectWrapper;
@@ -48,6 +50,7 @@ import com.hulles.alixia.room.document.ClientObjectWrapper;
 import redis.clients.jedis.Jedis;
 
 final class TimerHandler implements Closeable {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TimerHandler.class);
 	private final static int LED_ON_MINUTES = 2;
 	final Queue<HotelTimer> timerQueue;
 	private final ScheduledExecutorService executor;
@@ -83,6 +86,7 @@ final class TimerHandler implements Closeable {
 */	
 	public void setNewTimer(AlixianID alixianID, String timerName, Long millis) {
 		HotelTimer timer;
+		Long expires;
 		
 		SharedUtils.checkNotNull(alixianID);
 		SharedUtils.checkNotNull(timerName);
@@ -91,8 +95,8 @@ final class TimerHandler implements Closeable {
 //		timer.setPersonUUID(personUUID);
 		timer.setAlixianID(alixianID);
 		timer.setName(timerName);
-		millis += System.currentTimeMillis();
-		timer.setExpires(millis);
+        expires = millis + System.currentTimeMillis();
+		timer.setExpires(expires);
 		timerQueue.add(timer);
 		hotelRoom.getMedia(timer.getTimerID(), "bootsandsaddles.wav");
 	}
@@ -209,7 +213,7 @@ final class TimerHandler implements Closeable {
 				pool.shutdownNow(); // Cancel currently executing tasks
 				// Wait a while for tasks to respond to being cancelled
 				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    AlixiaUtils.error("TimerHandler -- executor did not terminate");
+                    LOGGER.error("TimerHandler -- executor did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {

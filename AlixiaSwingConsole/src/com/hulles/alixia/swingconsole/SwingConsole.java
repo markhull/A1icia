@@ -23,17 +23,15 @@ package com.hulles.alixia.swingconsole;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.jebus.JebusBible;
-import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
-import com.hulles.alixia.api.jebus.JebusHub;
-import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.remote.AlixiaRemote;
 import com.hulles.alixia.api.remote.AlixiaRemoteDisplay;
@@ -41,10 +39,6 @@ import com.hulles.alixia.api.remote.Station;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import redis.clients.jedis.Jedis;
 
 /**
  * SwingConsole uses good old Java Swing to display a console that has some smarts,
@@ -53,16 +47,14 @@ import redis.clients.jedis.Jedis;
  * @author hulles
  */
 public class SwingConsole  extends AbstractExecutionThreadService implements AlixiaRemoteDisplay {
-	final static Logger LOGGER = Logger.getLogger("AlixiaSwingConsole.SwingConsole");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
+	final static Logger LOGGER = LoggerFactory.getLogger(SwingConsole.class);
     private final static String CONSOLENAME = "the Alixia Swing Console command-line interface";
 	AlixiaRemote remote;
 	private final String host;
 	private final Integer port;
 	private final Station station;
     static final String NEWLINE = System.getProperty("line.separator");
-   	private ConsoleWindow window;
+   	ConsoleWindow window;
 	@SuppressWarnings("unused")
 	private volatile boolean serverUp;
 //	JebusPool jebusPool;
@@ -252,7 +244,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements Ali
      * This is not yet implemented
      * 
      */
-	private void login() {
+	private static void login() {
         
 		throw new UnsupportedOperationException("Login/Logout is not yet supported");
 	}
@@ -261,7 +253,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements Ali
      * This is not yet implemented
      * 
      */
-	private void logout() {
+	private static void logout() {
         
 		throw new UnsupportedOperationException("Login/Logout is not yet supported");
 	}
@@ -372,7 +364,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements Ali
         //Create and set up the window.
         window = new ConsoleWindow("Alixia Swing Console", this);
         window.addWindowListener(new WindowCloser());
-        window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         
         //Set up the content pane.
         window.addComponentsToPane();
@@ -435,7 +427,7 @@ public class SwingConsole  extends AbstractExecutionThreadService implements Ali
 		@Override
 		public void windowClosing(WindowEvent e) {
 
-			LOGGER.log(LOGLEVEL, "Window is closing");
+			LOGGER.debug("Window is closing");
 			window.dispose();
             remote.shutdownRemote();
 			SwingConsole.this.stopAsync();

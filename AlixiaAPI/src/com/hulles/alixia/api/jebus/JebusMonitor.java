@@ -25,10 +25,9 @@ import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.shared.SharedUtils;
 
@@ -42,8 +41,7 @@ import redis.clients.jedis.Jedis;
  *
  */
 final class JebusMonitor implements Closeable {
-	private final static Logger LOGGER = Logger.getLogger("Alixia.JebusMonitor");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(JebusMonitor.class);
 	final JebusPool jebusPool;
 	JebusListener listener = null;
 	private ExecutorService executor;
@@ -74,7 +72,7 @@ final class JebusMonitor implements Closeable {
 			doohickey = " <= ";
 		}
 		// TODO actually log the DialogHeader and Dialog after deserializing them
-		LOGGER.log(LOGLEVEL, getChannelString(channel, doohickey, "byte[]"));
+		LOGGER.info(getChannelString(channel, doohickey, "byte[]"));
 	}
 	/**
 	 * Log traffic on a Jebus channel.
@@ -92,7 +90,7 @@ final class JebusMonitor implements Closeable {
 		} else {
 			doohickey = " <= ";
 		}
-		LOGGER.log(LOGLEVEL, getChannelString(channel, doohickey, text));
+		LOGGER.info(getChannelString(channel, doohickey, text));
 	}
 
 	/**
@@ -181,19 +179,19 @@ final class JebusMonitor implements Closeable {
 		stopMonitor();
 		if (executor != null) {
 			try {
-			    LOGGER.log(Level.INFO, "JebusMonitor: attempting to shutdown executor");
+			    LOGGER.info("JebusMonitor: attempting to shutdown executor");
 			    executor.shutdown();
 			    executor.awaitTermination(5, TimeUnit.SECONDS);
 			}
 			catch (InterruptedException e) {
-			    LOGGER.log(Level.SEVERE, "JebusMonitor: tasks interrupted");
+			    LOGGER.error("JebusMonitor: tasks interrupted");
 			}
 			finally {
 			    if (!executor.isTerminated()) {
-			        LOGGER.log(Level.SEVERE, "JebusMonitor: cancelling non-finished tasks");
+			        LOGGER.error("JebusMonitor: cancelling non-finished tasks");
 			    }
 			    executor.shutdownNow();
-			    LOGGER.log(Level.INFO, "JebusMonitor: shutdown finished");
+			    LOGGER.info("JebusMonitor: shutdown finished");
 			}
 		}
 		executor = null;

@@ -33,8 +33,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFormat;
@@ -43,11 +41,13 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.media.audio.SerialAudioFormat;
 
 public class MediaUtils {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMedia.MediaUtils");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(MediaUtils.class);
     private final static String IMAGE_TYPE = "png";
     private final static String MPVEXEC = "mpv";
     private final static String MPVOPT1 = "--title=AlixiaVision";
@@ -165,7 +165,7 @@ public class MediaUtils {
 			throw new AlixiaMediaException("MediaUtils: audio format not supported", e);
 		}
 		if (audioFormat == null) {
-			LOGGER.log(Level.SEVERE, "Can't find format for audio file " + audioFile);
+			LOGGER.error("Can''t find format for audio file {}", audioFile);
 			return null;
 		}
 		sb = new StringBuilder("Audio format for ");
@@ -313,7 +313,7 @@ public class MediaUtils {
 		} catch (IOException e) {
 			throw new AlixiaMediaException("MediaUtils: can't read runCommand stream", e);
 		}
-		LOGGER.log(LOGLEVEL, "statCommand: {0}", stdOut);
+		LOGGER.debug("statCommand: {}", stdOut);
 		
 		stdErr = new StringBuilder();
 		charBuffer = new char[1024];
@@ -326,7 +326,7 @@ public class MediaUtils {
 			throw new AlixiaMediaException("Can't read stderr", e);
 		}
 		if (stdErr.length() > 0) {
-			LOGGER.log(LOGLEVEL, "statCommand Error: {0}", stdErr.toString());
+			LOGGER.error("statCommand Error: {}", stdErr.toString());
 			throw new AlixiaMediaException("MediaUtils: standard error not empty: " + stdErr.toString());
 		}
 

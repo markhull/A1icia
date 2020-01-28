@@ -1,6 +1,6 @@
 const repl = require('repl');
 const redis = require('redis');
-const host = "10.0.0.18";
+const host = "localhost";
 const port = 6379;
 const pubChannel = "alixia:channel:text:to";
 const subChannel = "alixia:channel:text:from";

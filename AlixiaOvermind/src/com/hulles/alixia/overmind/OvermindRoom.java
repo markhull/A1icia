@@ -26,8 +26,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.dialog.DialogRequest;
@@ -37,7 +38,6 @@ import com.hulles.alixia.api.remote.AlixianID;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.house.ClientDialogRequest;
 import com.hulles.alixia.house.ClientDialogResponse;
 import com.hulles.alixia.media.Language;
@@ -59,15 +59,20 @@ import com.hulles.alixia.ticket.Ticket;
 import com.hulles.alixia.ticket.TicketJournal;
 
 public class OvermindRoom extends UrRoom {
-	final static Logger LOGGER = Logger.getLogger("AlixiaOvermind.OvermindRoom");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
+	final static Logger LOGGER = LoggerFactory.getLogger(OvermindRoom.class);
 	private final Thimk thimk;
 //	private final ConcurrentMap<Ticket, Thread> threadMap;
+	private static boolean alreadyRunning = false;
 	
 	public OvermindRoom() {
 		super();
-	
+	        
+        // we only do the alreadyRunning check for a couple key houses and rooms for a reality check
+        if (alreadyRunning) {
+        	throw new AlixiaException("Overmind is already running");
+        }
+        alreadyRunning = true;
+        
 //		threadMap = new ConcurrentHashMap<>();
 		thimk = new Thimk(this);
 	}
@@ -102,23 +107,22 @@ public class OvermindRoom extends UrRoom {
 		DialogRequest dialogRequest;
 		
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "Overmind: in receiveRequest");
+		LOGGER.debug("Overmind: in receiveRequest");
 		if (request.getFromRoom() != Room.ALIXIA) {
-			AlixiaUtils.warning("Overmind: got room request from a stranger, room is " +
-					request.getFromRoom().getDisplayName());
+			LOGGER.warn("Overmind: got room request from a stranger, room is {}", request.getFromRoom().getDisplayName());
 		}
 		if (!(request.getRoomObject() instanceof ClientDialogRequest)) {
-			AlixiaUtils.error("Overmind: MindObject was not a ClientRequestObject");
+			LOGGER.error("Overmind: MindObject was not a ClientRequestObject");
 			return null;
 		}
-		LOGGER.log(LOGLEVEL, "Overmind: fromRoom is Alixia, object is ClientDialogRequest");
+		LOGGER.debug("Overmind: fromRoom is Alixia, object is ClientDialogRequest");
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		clientRequest = (ClientDialogRequest) request.getRoomObject();
 		journal.setClientRequest(clientRequest);
 		
 		// sememePackage is "respond_to_client"
-		LOGGER.log(LOGLEVEL, "Overmind: going to consume sememe package");
+		LOGGER.debug("Overmind: going to consume sememe package");
 		sememePackages = request.getSememePackages();
 		SememePackage.consumeFinal(sememePackage.getName(), sememePackages);
 		
@@ -126,10 +130,10 @@ public class OvermindRoom extends UrRoom {
 		clientSememes = dialogRequest.getRequestActions();
 		if (clientSememes != null && !clientSememes.isEmpty()) {
 			// we got sememe(s) up front, so bypass the analysis phase entirely
-			LOGGER.log(LOGLEVEL, "Overmind: got client sememe(s), bypassing analysis");
+			LOGGER.debug("Overmind: got client sememe(s), bypassing analysis");
 			sememePackages = new ArrayList<>();
 			for (SerialSememe s : clientSememes) {
-				LOGGER.log(LOGLEVEL, "Client SerialSememe: {0}", s.getName());
+				LOGGER.debug("Client SerialSememe: {}", s.getName());
 				newSememePackage = SememePackage.getDefaultPackage(s);
 				if (!newSememePackage.isValid()) {
 					throw new AlixiaException("Overmind: created invalid sememe package 1");
@@ -138,7 +142,7 @@ public class OvermindRoom extends UrRoom {
 			}
 			terminatePipeline(ticket, sememePackages);
 		} else {
-			LOGGER.log(LOGLEVEL, "Overmind: no client sememes, on to Thimk");
+			LOGGER.debug("Overmind: no client sememes, on to Thimk");
 			thimk.decideClientRequestNextAction(ticket, clientRequest);
 		}
 		
@@ -167,6 +171,7 @@ public class OvermindRoom extends UrRoom {
 		List<ActionPackage> actionPackages;
 		List<SememePackage> sememePackages;
 		
+		SharedUtils.checkNotNull(request);
 		SharedUtils.checkNotNull(responses);
 		uberTicket = request.getTicket();
 		if (uberTicket == null) {
@@ -188,7 +193,7 @@ public class OvermindRoom extends UrRoom {
 		// at this point we're done with the list of RoomResponses, BTW
 		if (packageBag.isEmpty()) {
 			// no room matched the sememe(s)
-			AlixiaUtils.error("Empty packageBag -- unhandled sememe(s)");
+			LOGGER.error("Empty packageBag -- unhandled sememe(s): {}", request.toString());			
 			packageBag = Collections.singletonList(ActionPackage.getProxyActionPackage());
 		}
 		
@@ -236,12 +241,12 @@ public class OvermindRoom extends UrRoom {
 			return;
 		}
 		
-		LOGGER.log(LOGLEVEL, "Overmind: checking packages after analyses, packageBag empty? {0}", 
+		LOGGER.debug("Overmind: checking packages after analyses, packageBag empty? {}", 
                 packageBag.isEmpty());
 		if (!packageBag.isEmpty()) {
-			LOGGER.log(LOGLEVEL, "Overmind: advancing to processRoomActions with packages:");
+			LOGGER.debug("Overmind: advancing to processRoomActions with packages:");
 			for (ActionPackage p : packageBag) {
-				LOGGER.log(LOGLEVEL, "Package: {0}", p.getSememe().getName());
+				LOGGER.debug("Package: {}", p.getSememe().getName());
 			}
 			processRoomActions(uberTicket, packageBag);
 		}
@@ -258,7 +263,7 @@ public class OvermindRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(uberTicket);
 		SharedUtils.checkNotNull(packageBag);
-		LOGGER.log(LOGLEVEL, "Overmind: in processRoomActions prior to Thimk");
+		LOGGER.debug("Overmind: in processRoomActions prior to Thimk");
 		clientAction = determineClientAction(uberTicket, packageBag);
 		postRequest(uberTicket, clientAction);		
 		
@@ -320,7 +325,7 @@ public class OvermindRoom extends UrRoom {
 		sememes = new HashSet<>();
 		packageBag.stream().forEach(p -> sememes.add(p.getSememe()));
 		
-		LOGGER.log(LOGLEVEL, "Overmind: determineClientAction");
+		LOGGER.debug("Overmind: determineClientAction");
 		messageSb = new StringBuilder();
 		explanationSb = new StringBuilder();
 		obj = null;
@@ -331,7 +336,7 @@ public class OvermindRoom extends UrRoom {
 			}
 			pkgs = ActionPackage.hasActions(sememe, packageBag);
 			if (pkgs.isEmpty()) {
-				AlixiaUtils.error("Unhandled sememe in Overmind.determineClientAction = " +
+				LOGGER.error("Unhandled sememe in Overmind.determineClientAction = " +
 						sememe.getName());
 				msg = "Ich bin ein Ausländer. Und ich bin die eigentliche Alixia.";
 				expl = "Something went awry in the Overmind.";
@@ -345,15 +350,15 @@ public class OvermindRoom extends UrRoom {
                     if (action instanceof ClientObjectWrapper) {
                         objectWrapper = (ClientObjectWrapper) action;
                         obj = objectWrapper.getClientObject();
-    					LOGGER.log(LOGLEVEL, "Overmind: using wrapped object for {0}", pkg);
+    					LOGGER.debug("Overmind: using wrapped object for {}", pkg);
                     }
 				}
 				if (action instanceof AlixianAction) {
-					LOGGER.log(LOGLEVEL, "Overmind: at AlixianAction statement");
+					LOGGER.debug("Overmind: at AlixianAction statement");
 					remoteObject = (AlixianAction) action;
 					clientSememe = remoteObject.getClientAction();
 					overrideAlixianID = remoteObject.getToAlixianID();
-					LOGGER.log(LOGLEVEL, "Overmind: overrideAlixianID = {0}", overrideAlixianID);
+					LOGGER.debug("Overmind: overrideAlixianID = {}", overrideAlixianID);
 				}
 				journal.addActionPackage(pkg);
 			}
@@ -374,7 +379,7 @@ public class OvermindRoom extends UrRoom {
 		if (overrideAlixianID == null) {
 			response.setToAlixianID(ticket.getFromAlixianID());
 		} else {
-			LOGGER.log(LOGLEVEL, "Overmind: overriding ToAlixianID, overrideAlixianID = {0}", 
+			LOGGER.debug("Overmind: overriding ToAlixianID, overrideAlixianID = {}", 
                     overrideAlixianID);
 			response.setToAlixianID(overrideAlixianID);
 		}
@@ -409,8 +414,7 @@ public class OvermindRoom extends UrRoom {
 		//    completed with a sememe for each one, and a set of sememes upon which to act (the
 		//    journal sememes).
 		if (sememePackages.isEmpty()) {
-			AlixiaUtils.error("OvermindRoom: terminatePipeline -- no sememe packages for ticket " + 
-					ticket, "Using aardvark sememe package");
+			LOGGER.error("OvermindRoom: terminatePipeline -- no sememe packages for ticket {}, using aardvark sememe package", ticket);
 			aardPkg = SememePackage.getDefaultPackage("aardvark");
 			if (!aardPkg.isValid()) {
 				throw new AlixiaException("Overmind: created invalid sememe package 3");

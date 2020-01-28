@@ -1,5 +1,5 @@
 /**
- * Alixia Crypto
+ * AlixiaCrypto
  * 
  * cryptographic utilities
  * 
@@ -11,5 +11,5 @@ module com.hulles.alixia.crypto {
 
 	requires com.hulles.alixia.api;
 	requires jedis;
-    // to here
+	// to here
 }

@@ -24,6 +24,8 @@ package com.hulles.alixia.media.text;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,11 +39,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.media.MediaUtils;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Use a Java Swing window to display the info that Alixia returns with a little
@@ -50,15 +51,14 @@ import java.util.logging.Logger;
  * @author hulles
  */
 public class SwingTextDisplayer {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMedia.SwingTextDisplayer");
-	private final static Level LOGLEVEL = Level.FINE;
+	final static Logger LOGGER = LoggerFactory.getLogger(SwingTextDisplayer.class);
 	TextScroller textScroller= null;
 	private JFrame frame;
     AbstractDocument doc;
     SimpleAttributeSet defaultAttrs;
     final String text;
     final String title;
-    private final TextDisplayer caller;
+    final TextDisplayer caller;
     
 	public SwingTextDisplayer(String text, String title, TextDisplayer caller) {
 		
@@ -156,7 +156,7 @@ public class SwingTextDisplayer {
             if (styledDoc instanceof AbstractDocument) {
                 doc = (AbstractDocument)styledDoc;
             } else {
-                LOGGER.log(Level.SEVERE, "Text pane's document isn't an AbstractDocument!");
+                LOGGER.error("Text pane's document isn't an AbstractDocument!");
                 System.exit(-1);
             }
             scrollPane = new JScrollPane(textPane);
@@ -172,7 +172,7 @@ public class SwingTextDisplayer {
 	        try {
 	        	doc.insertString(doc.getLength(), txt, attrs);
 	        } catch (BadLocationException ble) {
-	            LOGGER.log(Level.SEVERE, "Couldn't insert text.");
+	            LOGGER.error( "Couldn't insert text.");
 	        }
 	    	
 	        //Make sure the new text is visible, even if there
@@ -189,7 +189,7 @@ public class SwingTextDisplayer {
 		@Override
 		public void windowClosing(WindowEvent e) {
 
-			LOGGER.log(LOGLEVEL, "Window is closing");
+			LOGGER.debug("Window is closing");
             shutdown();
             caller.textWindowIsClosing();
 		}

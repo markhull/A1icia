@@ -59,10 +59,11 @@ public class DefaultStringProcessor implements StringProcessor {
      */
     @Override
     public String process(String in) {
-
-        in = subNonAlphaNumeric(in, " ");
-        in = in.toLowerCase();
-        in = in.trim();
+        String out;
+        
+        out = subNonAlphaNumeric(in, " ");
+        out = out.toLowerCase();
+        out = out.trim();
 
         return in;
 

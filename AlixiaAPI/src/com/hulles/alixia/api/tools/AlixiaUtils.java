@@ -24,6 +24,7 @@ package com.hulles.alixia.api.tools;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,11 +32,8 @@ import java.util.Date;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.io.CharStreams;
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An olio class for various useful functions in Alixia. These methods are <b>NOT</b> GWT-safe.
@@ -46,8 +44,7 @@ import java.util.logging.Logger;
  *
  */
 public final class AlixiaUtils {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaApi.AlixiaUtils");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+//	private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaUtils.class);
 	private final static ZoneId DEFAULTZONE = ZoneId.systemDefault();
 	private static final long MILLIS_IN_SECOND = 1000;
 	private static final long MILLIS_IN_MINUTE = 60 * MILLIS_IN_SECOND;
@@ -210,63 +207,153 @@ public final class AlixiaUtils {
 		chars[0] = Character.toUpperCase(chars[0]);
 		return new String(chars);
 	}
-    	
-    /**
-     * Create a warning message from argument strings.
-     * 
-     * @param warnmsgs A series of warning message strings separated by commas. Each
-     * string appears on a separate line in the output dialog.
-     */
-    public static void warning(String... warnmsgs) {
-        StringBuilder dialogMsg;
-        AlixiaError jebusError;
-
-        dialogMsg = new StringBuilder();
-        // warnmsgs can never be null
-        for (String msg : warnmsgs) {
-            dialogMsg.append(msg);
-            dialogMsg.append("\n");
-        }
-        LOGGER.log(Level.WARNING, dialogMsg.toString());
-        jebusError = new AlixiaError();
-        jebusError.setMessage(dialogMsg.toString());       
-    }
+//    	
+//    /**
+//     * Create an informational message from argument strings. We don't create AlixiaError instances for info messages.
+//     * 
+//     * @param infomsgs A series of message strings separated by commas. Each
+//     * string appears on a separate line in the output dialog.
+//     * 
+//     */
+//    public static void info(String... infomsgs) {
+//        StringBuilder dialogMsg;
+//
+//        dialogMsg = new StringBuilder();
+//        // infomsgs can never be null
+//        for (String msg : infomsgs) {
+//            dialogMsg.append(msg);
+//            dialogMsg.append("\n");
+//        }
+//        LOGGER.info(dialogMsg.toString());
+//    }
+//    
+//    /**
+//     * Create an informational message from a template plus argument strings. 
+//     * We don't create AlixiaError instances for info messages.
+//     * <br />
+//     * Example: infoTemplate("This {} is {}!", "method", "awesome") yields "This method is awesome!"
+//     * 
+//     * @param template The template to pass as a pattern to MessageFormat, e.g. "This {} is {}."
+//     * @param infomsgs A series of message strings separated by commas (as varargs)
+//     * 
+//     */
+//    public static void infoTemplate(String template, String... infomsgs) {
+//        String message;
+//  
+//        SharedUtils.checkNotNull(template);
+//        message = MessageFormat.format(template, (Object[])infomsgs);
+//        LOGGER.info(message);
+//    }
+//    
+//    /**
+//     * Create a warning message from argument strings.
+//     * 
+//     * @param warnmsgs A series of warning message strings separated by commas. Each
+//     * string appears on a separate line in the output dialog.
+//     */
+//    public static void warning(String... warnmsgs) {
+//        StringBuilder dialogMsg;
+//        AlixiaError jebusError;
+//
+//        dialogMsg = new StringBuilder();
+//        // warnmsgs can never be null
+//        for (String msg : warnmsgs) {
+//            dialogMsg.append(msg);
+//            dialogMsg.append("\n");
+//        }
+//        LOGGER.warn(dialogMsg.toString());
+//        jebusError = new AlixiaError();
+//        jebusError.setMessage(dialogMsg.toString());       
+//    }
+//    
+//    /**
+//     * Create a warning message from a template plus argument strings.
+//     * <br />
+//     * Example: warningTemplate("This {} is {}!", "method", "awesome") yields "This method is awesome!"
+//     * 
+//     * @param template The template to pass as a pattern to MessageFormat, e.g. "This {} is {}."
+//     * @param warnmsgs A series of warning message strings separated by commas (as varargs)
+//     */
+//    public static void warningTemplate(String template, String... warnmsgs) {
+//        String message;
+//        AlixiaError jebusError;
+//        
+//        SharedUtils.checkNotNull(template);
+//        message = MessageFormat.format(template, (Object[])warnmsgs);
+//        LOGGER.warn(message);
+//        jebusError = new AlixiaError();
+//        jebusError.setMessage(message);       
+//    }
+//	
+//    /**
+//     * Create an error message from argument strings.
+//     * 
+//     * @param errmsgs A series of error message strings separated by commas. Each
+//     * string appears on a separate line in the output dialog.
+//     */
+//    public static void error(String... errmsgs) {
+//        StringBuilder dialogMsg;
+//        AlixiaError jebusError;
+//
+//        dialogMsg = new StringBuilder();
+//        // errmsgs can never be null
+//        for (String msg : errmsgs) {
+//            dialogMsg.append(msg);
+//            dialogMsg.append("\n");
+//        }
+//        LOGGER.error(dialogMsg.toString());
+//        jebusError = new AlixiaError();
+//        jebusError.setMessage(dialogMsg.toString());       
+//   }
+//
+//    
+//    /**
+//     * Create an error message from a template plus argument strings.
+//     * <br />
+//     * Example: errorTemplate("This {} is {}!", "method", "awesome") yields "This method is awesome!"
+//     * 
+//     * @param template The template to pass as a pattern to MessageFormat, e.g. "This {} is {}."
+//     * @param errmsgs A series of error message strings separated by commas (as varargs)
+//     */
+//    public static void errorTemplate(String template, String... errmsgs) {
+//        String message;
+//        AlixiaError jebusError;
+//        
+//        SharedUtils.checkNotNull(template);
+//        message = MessageFormat.format(template, (Object[])errmsgs);
+//        LOGGER.error(message);
+//        jebusError = new AlixiaError();
+//        jebusError.setMessage(message);       
+//    }
+//
+//    /**
+//     * Create an error message from its argument string and the exception.
+//     * 
+//     * @param errmsg The error message to log.
+//     * @param ex The exception to log.
+//     */
+//    public static void error(String errmsg, Throwable ex) {
+//        AlixiaError jebusError;
+//
+//        SharedUtils.checkNotNull(errmsg);
+//        LOGGER.error(errmsg);
+//        jebusError = new AlixiaError();
+//        jebusError.setMessage(errmsg);       
+//    }
 	
     /**
-     * Create an error message from argument strings.
+     * Given a java.time.Instant, convert it to a java.time.LocalDateTime.
      * 
-     * @param errmsgs A series of error message strings separated by commas. Each
-     * string appears on a separate line in the output dialog.
+     * @param instant The date to convert
+     * @return The equivalent LocalDateTime 
      */
-    public static void error(String... errmsgs) {
-        StringBuilder dialogMsg;
-        AlixiaError jebusError;
-
-        dialogMsg = new StringBuilder();
-        // errmsgs can never be null
-        for (String msg : errmsgs) {
-            dialogMsg.append(msg);
-            dialogMsg.append("\n");
-        }
-        LOGGER.log(Level.SEVERE, dialogMsg.toString());
-        jebusError = new AlixiaError();
-        jebusError.setMessage(dialogMsg.toString());       
-   }
-
-    /**
-     * Create an error message from its argument string and the exception.
-     * 
-     * @param errmsg The error message to log.
-     * @param ex The exception to log.
-     */
-    public static void error(String errmsg, Throwable ex) {
-        AlixiaError jebusError;
-
-        SharedUtils.checkNotNull(errmsg);
-        LOGGER.log(Level.SEVERE, errmsg);
-        jebusError = new AlixiaError();
-        jebusError.setMessage(errmsg);       
-    }
+	public static LocalDateTime ldtFromInstant(Instant instant) {
+		LocalDateTime ldt;
+		
+		SharedUtils.checkNotNull(instant);
+		ldt = LocalDateTime.ofInstant(instant, DEFAULTZONE);
+		return ldt;
+	}
 	
     /**
      * Given a java.util.Date, convert it to a java.time.LocalDateTime.

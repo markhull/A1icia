@@ -21,9 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.foxtrot;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -31,12 +28,14 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 
 public class NetworkAddress {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaFoxtrot.NetworkAddress");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(NetworkAddress.class);
 
 	public static void getAddresses() {
 		String prettyMac;
@@ -52,7 +51,7 @@ public class NetworkAddress {
 			net = NetworkInterface.getNetworkInterfaces();
 			while (net.hasMoreElements()) {
 				element = net.nextElement();
-				LOGGER.log(LOGLEVEL, "Element: {0}", element);
+				LOGGER.debug("Element: {}", element);
 				hardwareAddress = element.getHardwareAddress();
 				// hardwareAddress is null for loopback, AFAIK
 				if (hardwareAddress != null && !isVMMac(hardwareAddress)) {
@@ -60,22 +59,22 @@ public class NetworkAddress {
 					while (addresses.hasMoreElements()) {
 						ip = addresses.nextElement();
                         if (ip == null) {
-                            AlixiaUtils.error("NetworkAddress: Null IP");
+                            LOGGER.error("NetworkAddress: Null IP");
                         } else {
-                            LOGGER.log(LOGLEVEL, "IP: {0}", ip);
+                            LOGGER.debug("IP: {}", ip);
                             if (ip instanceof Inet4Address) {
-                                LOGGER.log(LOGLEVEL, "Is IPV4");
+                                LOGGER.debug("Is IPV4");
                             } else if (ip instanceof Inet6Address){
-                                LOGGER.log(LOGLEVEL, "Is IPV6");
+                                LOGGER.debug("Is IPV6");
                                 continue;
                             }
                             if (ip.isSiteLocalAddress()) {
-                                LOGGER.log(LOGLEVEL, "Site-Local");
+                                LOGGER.debug("Site-Local");
                                 ipAddress = ip.getHostAddress();
-                                LOGGER.log(LOGLEVEL, "IP host address: {0}", ipAddress);
+                                LOGGER.debug("IP host address: {}", ipAddress);
                                 lanIp = InetAddress.getByName(ipAddress);
                                 prettyMac = getMacAddress(lanIp);
-                                LOGGER.log(LOGLEVEL, "MAC: {0}", prettyMac);
+                                LOGGER.debug("MAC: {}", prettyMac);
                             }
                         }
 					}

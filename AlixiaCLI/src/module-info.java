@@ -1,5 +1,5 @@
 /**
- * Alixia CLI
+ * AlixiaCLI
  * 
  * command line interface
  * 
@@ -9,11 +9,9 @@
 module com.hulles.alixia.cli {
 	exports com.hulles.alixia.cli;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia.api;
 	requires com.hulles.alixia.media;
-	requires guava;
-    requires java.logging;
-    // to here
-    requires jedis;
-    requires commons.pool;
+	requires commons.cli;
+    requires org.slf4j;
 }

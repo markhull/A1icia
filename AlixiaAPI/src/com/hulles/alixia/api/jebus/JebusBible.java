@@ -21,9 +21,9 @@
  *******************************************************************************/
 package com.hulles.alixia.api.jebus;
 
-import com.hulles.alixia.api.jebus.JebusPool.JebusPoolType;
 import java.io.UnsupportedEncodingException;
 
+import com.hulles.alixia.api.jebus.JebusPool.JebusPoolType;
 import com.hulles.alixia.api.remote.AlixianID;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
@@ -220,6 +220,7 @@ public final class JebusBible {
         ALIXIAMEDIAFILEUPDATEKEY("alixia:mediaupdate", JebusPoolType.LOCAL),
         ALIXIANCOUNTERKEY("alixia:alixian:next_alixian", JebusPoolType.CENTRAL),
         ALIXIANLPKEY("alixia:nlplist", JebusPoolType.CENTRAL),
+        ALIXIAPRONGKEY("alixia:prong", JebusPoolType.LOCAL),
         ALIXIAPURDAHKEY("alixia:purdah", JebusPoolType.CENTRAL),
         ALIXIASEMEMECOUNTERKEY("alixia:sememe:nextSememeKey", JebusPoolType.CENTRAL),
         ALIXIASENTENCECOUNTERKEY("alixia:sentence:nextSentenceKey", JebusPoolType.CENTRAL),

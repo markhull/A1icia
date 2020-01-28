@@ -51,10 +51,10 @@ import redis.clients.jedis.Jedis;
  *
  */
 public class AlixiaCrypto {
-  	// Define the BCrypt workload to use when generating password hashes. 10-31 is a valid value.
-	private static final int BCRYPTWORKLOAD = 12;
 	private static final String AESALGORITHM = "AES/ECB/PKCS5Padding";
 	private static ApplicationKeys appKeys = null;
+	// Storing the salt here is not a perfect solution but it works for now
+	private static final String ALIXIA_SALT = "$2a$16$j68pu2D/uqqZn2YtF/TtmO";
 	
 	public AlixiaCrypto() {
 		
@@ -72,12 +72,9 @@ public class AlixiaCrypto {
 	 * @return String - a string of length 60 that is the bcrypt hashed password in crypt(3) format.
 	 */
 	public static String hashPassword(String passwordPlaintext) {
-		String salt;
 		String hashed_password;
 		
-		salt = BCrypt.gensalt(BCRYPTWORKLOAD);
-		hashed_password = BCrypt.hashpw(passwordPlaintext, salt);
-
+		hashed_password = BCrypt.hashpw(passwordPlaintext, ALIXIA_SALT);
 		return(hashed_password);
 	}
 	
@@ -89,13 +86,13 @@ public class AlixiaCrypto {
 	 * @param stored_hash The account's stored password hash, retrieved from the authorization database
 	 * @return boolean True if the password matches the password of the stored hash, false otherwise
 	 */
-	public static boolean checkPassword(String passwordPlaintext, String stored_hash) {
+	public static boolean checkPassword(String passwordPlaintext, String stored_password) {
 		boolean password_verified;
 
-		if (null == stored_hash || !stored_hash.startsWith("$2a$")) {
+		if (null == stored_password || !stored_password.startsWith("$2a$")) {
 			throw new AlixiaException("Invalid hash provided for comparison in AlixiaCrypto.checkPassword()");
 		}
-		password_verified = BCrypt.checkpw(passwordPlaintext, stored_hash);
+		password_verified = BCrypt.checkpw(passwordPlaintext, stored_password, ALIXIA_SALT);
 		return(password_verified);
 	}
     
@@ -120,7 +117,6 @@ public class AlixiaCrypto {
 	 * @return The key
 	 * @throws Exception
 	 */
-    @SuppressWarnings("resource")
 	public static SecretKey getAlixiaJebusAESKey() throws Exception {
     	JebusPool jebusPool;
 	    SecretKey key = null;
@@ -134,8 +130,8 @@ public class AlixiaCrypto {
     		if (aesBytes != null) {
     			key = (SecretKey) Serialization.deSerialize(aesBytes);
     		}
+            return key;
     	}
-    	return key;
     }
     
 	/**
@@ -169,13 +165,13 @@ public class AlixiaCrypto {
      * 
      */
 	@SuppressWarnings("resource")
-	public static void setAlixiaJebusAESKey(SecretKey key) throws Exception {
+    public static void setAlixiaJebusAESKey(SecretKey key) throws Exception {
     	JebusPool jebusPool;
 	    byte[] aesKey;
 	    byte[] aesBytes;
 	    
     	jebusPool = JebusHub.getJebusCentral();
-   	aesKey = JebusBible.getBytesKey(JebusKey.ALIXIAAESKEY, jebusPool);
+    	aesKey = JebusBible.getBytesKey(JebusKey.ALIXIAAESKEY, jebusPool);
 	    aesBytes = Serialization.serialize(key);
     	try (Jedis jebus = jebusPool.getResource()) {
     	    jebus.set(aesKey, aesBytes);

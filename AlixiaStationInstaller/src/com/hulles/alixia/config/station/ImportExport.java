@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,33 +34,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.jebus.JebusBible;
-import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
-import com.hulles.alixia.api.jebus.JebusHub;
-import com.hulles.alixia.api.jebus.JebusPool;
-import com.hulles.alixia.api.remote.Station;
-import com.hulles.alixia.api.shared.AlixiaException;
-import com.hulles.alixia.api.shared.ApplicationKeys;
-import com.hulles.alixia.api.shared.Serialization;
-import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
-import java.io.StringWriter;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.jebus.JebusBible;
+import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
+import com.hulles.alixia.api.jebus.JebusHub;
+import com.hulles.alixia.api.jebus.JebusPool;
+import com.hulles.alixia.api.remote.Station;
+import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.Serialization;
+import com.hulles.alixia.api.shared.SharedUtils;
+
 import redis.clients.jedis.Jedis;
 
 public class ImportExport {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaStationInstaller.ImportExport");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = LoggerFactory.getLogger(ImportExport.class);
 	private final static Charset CHARSET = Charset.forName("UTF-8");
 	
 	public ImportExport() {
@@ -107,10 +104,10 @@ public class ImportExport {
 		    		continue;
 		    	}
 		    	keyValue = line.split("=", 2);
-		    	LOGGER.log(LOGLEVEL, "IMPORT: Line is {0}, values = {1}", new Object[]{line, keyValue.length});
-		    	LOGGER.log(LOGLEVEL, "IMPORT: Key is {0}, Value is {1}", new Object[]{keyValue[0], keyValue[1]});
+		    	LOGGER.debug("IMPORT: Line is {}, values = {}", line, keyValue.length);
+		    	LOGGER.debug("IMPORT: Key is {}, Value is {}", keyValue[0], keyValue[1]);
 		    	if (keyValue[0].equals("STATIONID") && (keyValue.length == 1 || keyValue[1].isEmpty())) {
-		    		LOGGER.log(LOGLEVEL, "Generating UUID");
+		    		LOGGER.debug("Generating UUID");
 		    		// for "STATIONID=", we can help out by generating our own UUID
 		    		stringMap.put(keyValue[0], UUID.randomUUID().toString());
 		    	} else {
@@ -157,7 +154,6 @@ public class ImportExport {
         JsonBuilderFactory factory;
         Map<String, String> keyMap;
         JsonArray jsonKeys;
-        JsonWriter jsonWriter;
         StringWriter writer;
         
         keyMap = station.getKeyMap();
@@ -170,9 +166,9 @@ public class ImportExport {
 		}
         jsonKeys = builder.build();
         writer = new StringWriter();
-        jsonWriter = Json.createWriter(writer);
-        jsonWriter.writeArray(jsonKeys);
-        jsonWriter.close();
+        try (JsonWriter jsonWriter = Json.createWriter(writer)) {
+        	jsonWriter.writeArray(jsonKeys);
+        }
         return writer.toString();
    }
 	
@@ -196,7 +192,7 @@ public class ImportExport {
 				importStation(path);
 			}
 		} catch (IOException e) {
-			AlixiaUtils.error("System error: I/O error, exiting");
+			LOGGER.error("System error: I/O error, exiting");
 			System.exit(1);
 		}
 		

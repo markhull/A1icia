@@ -22,7 +22,6 @@
 package com.hulles.alixia.api;
 
 import com.hulles.alixia.api.remote.AlixianID;
-import java.util.logging.Level;
 
 /**
  * Constants for Alixia. I expect this class to grow as more constants are migrated to here,
@@ -36,7 +35,6 @@ public class AlixiaConstants {
 	private final static AlixianID ALIXIA_ALIXIAN_ID = new AlixianID("ALIXIA");
 	private final static AlixianID BROADCAST_ALIXIAN_ID = new AlixianID("ALL");
 	private final static String ALIXIAS_WELCOME = "Daily greater with all horizon users!";
-    private final static Level ALIXIA_LEVEL = Level.FINE;
 		
 	/**
 	 * Get the Alixian ID representing Alixia herself.
@@ -67,14 +65,5 @@ public class AlixiaConstants {
 		
 		return ALIXIAS_WELCOME;
 	}
-	
-    /**
-     * Get Alixia's current default logging level.
-     * 
-     * @return The Level
-     */
-    public static Level getAlixiaLogLevel() {
-        
-        return ALIXIA_LEVEL;
-    }
+
 }

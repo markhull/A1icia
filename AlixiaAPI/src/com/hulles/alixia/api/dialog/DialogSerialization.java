@@ -31,8 +31,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.jebus.JebusHub;
@@ -48,8 +49,7 @@ import com.hulles.alixia.api.shared.SharedUtils;
  *
  */
 public class DialogSerialization {
-	final static Logger LOGGER = Logger.getLogger("AlixiaApi.DialogSerialization");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger(DialogSerialization.class);
 	private static final int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
 	
 	/**
@@ -75,8 +75,8 @@ public class DialogSerialization {
 		
 		SharedUtils.checkNotNull(alixianID);
 		SharedUtils.checkNotNull(bytes);
-		debugging = LOGGER.isLoggable(LOGLEVEL);
-		LOGGER.log(LOGLEVEL, "DESERIALIZING");
+		debugging = LOGGER.isDebugEnabled();
+		LOGGER.debug("DESERIALIZING");
 		byteInputStream = new ByteArrayInputStream(bytes);
 		try (ObjectInputStream objectInputStream = new ObjectInputStream(byteInputStream)) {
 			object = objectInputStream.readObject();
@@ -91,7 +91,7 @@ public class DialogSerialization {
 					} else {
 						debugString = ((DialogResponse)dialog).toString();
 					}
-					LOGGER.log(LOGLEVEL, debugString);
+					LOGGER.debug(debugString);
 				}
 			} else if (debugging) {
 				object = objectInputStream.readObject();
@@ -102,7 +102,7 @@ public class DialogSerialization {
 				} else {
 					debugString += ((DialogResponse)notOurDialog).toString();
 				}
-				LOGGER.log(LOGLEVEL, debugString);
+				LOGGER.debug(debugString);
 			}
 		} catch (InvalidClassException e) {
 			throw new AlixiaException("DialogSerialization:deSerialize: invalid class", e);
@@ -115,7 +115,7 @@ public class DialogSerialization {
 		} catch (IOException e) {
 			throw new AlixiaException("DialogSerialization:deSerialize: IO exception", e);
 		}
-		LOGGER.log(LOGLEVEL, "FINISHED DESERIALIZING");
+		LOGGER.debug("FINISHED DESERIALIZING");
 		return dialog;
 	}
 
@@ -132,28 +132,28 @@ public class DialogSerialization {
 		DialogRequest request;
 		DialogResponse response;
 		
-		LOGGER.log(LOGLEVEL, "IN SERIALIZE");
+		LOGGER.debug("IN SERIALIZE");
 		SharedUtils.checkNotNull(header);
 		SharedUtils.checkNotNull(dialog);
 		if (dialog instanceof DialogRequest) {
 			request = (DialogRequest) dialog;
 			if (!request.isValid()) {
-				LOGGER.log(Level.SEVERE, request.toString());
+				LOGGER.error(request.toString());
 				throw new AlixiaException("DialogSerialization:serialize: invalid dialog request");
 			}
-			LOGGER.log(LOGLEVEL, "DEBUG DIALOGREQUEST");
+			LOGGER.debug("DEBUG DIALOGREQUEST");
 			debugString = request.toString();
 		} else {
 			response = (DialogResponse) dialog;
 			if (!response.isValid()) {
-				LOGGER.log(Level.SEVERE, response.toString());
+			    LOGGER.error(response.toString());
 				throw new AlixiaException("DialogSerialization:serialize: invalid dialog response");
 			}
-			LOGGER.log(LOGLEVEL, "DEBUG DIALOGRESPONSE");
+			LOGGER.debug("DEBUG DIALOGRESPONSE");
 			debugString = response.toString();
 		}
-		LOGGER.log(LOGLEVEL, debugString);
-		LOGGER.log(LOGLEVEL, "READY TO WRITE OBJECTS");
+		LOGGER.debug(debugString);
+		LOGGER.debug("READY TO WRITE OBJECTS");
 		byteOutputStream = new ByteArrayOutputStream();
 		try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream)) {
 			objectOutputStream.writeObject(header);
@@ -167,7 +167,7 @@ public class DialogSerialization {
 		} catch (IOException e) {
 			throw new AlixiaException("DialogSerialization:serialize: IO exception");
 		}
-		LOGGER.log(LOGLEVEL, "WROTE OBJECTS");
+		LOGGER.debug("WROTE OBJECTS");
 		if (byteOutputStream.size() > MAXHEADROOM) {
 			throw new AlixiaException("DialogSerialization: serialized size exceeds Redis max");
 		}

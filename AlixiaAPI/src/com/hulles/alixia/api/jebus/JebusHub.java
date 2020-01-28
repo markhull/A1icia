@@ -62,7 +62,7 @@ public final class JebusHub {
 	}
 	
 	/**
-	 * Get the official Alixia III JebusPool, creating one if it doesn't exist. Optionally
+	 * Get the official Alixia JebusPool, creating one if it doesn't exist. Optionally
 	 * create a new JebusMonitor as well. Because we're the server, jebusCentral and jebusLocal
 	 * can have the same host and port number. So far I have no opinion on whether they *should*
 	 * or not. TODO evaluate performance with both the same.

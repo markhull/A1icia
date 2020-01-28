@@ -29,8 +29,6 @@ package com.hulles.alixia.raspi.aiy;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.media.audio.AudioRecorder;
@@ -51,8 +49,7 @@ import com.pi4j.io.gpio.trigger.GpioPulseStateTrigger;
  * @author hulles
  */
 public final class HardwareLayer implements Closeable {
-	final static Logger LOGGER = Logger.getLogger("AlixiaPiAIY.HardwareLayer");
-	final static Level LOGLEVEL = Level.FINE;
+//	private final static Logger LOGGER = LoggerFactory.getLogger(HardwareLayer.class);
 	private final static int BLINK_RATE = 1000;
 	private final static int LED_PULSE = 2000;
 	private final static int SWITCH_DEBOUNCE = 800; // ms

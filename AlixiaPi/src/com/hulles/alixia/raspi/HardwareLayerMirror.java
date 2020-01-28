@@ -30,8 +30,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.pi4j.io.gpio.GpioController;
@@ -53,8 +54,7 @@ import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
  * @author hulles
  */
 public final class HardwareLayerMirror implements Closeable {
-	final static Logger LOGGER = Logger.getLogger("AlixiaPi.HardwareLayerMirror");
-	final static Level LOGLEVEL = Level.FINE;
+	final static Logger LOGGER = LoggerFactory.getLogger(HardwareLayerMirror.class);
     public static final int PRETTY_LIGHTS = 0x04;
 	private final static int DEBOUNCE_WAIT = 0;
 	private final static int WAKEUP_LED_PULSE = 3000;
@@ -132,7 +132,7 @@ public final class HardwareLayerMirror implements Closeable {
 		GpioCallbackTrigger callbackTrigger;
 		
 		SharedUtils.checkNotNull(caller);
-		LOGGER.log(LOGLEVEL, "HardwareLayer: set wakeup call");
+		LOGGER.debug("HardwareLayer: set wakeup call");
 //		pinPIR.setDebounce(WakeUpCall.getRetriggerDelay());
 		callbackTrigger = new GpioCallbackTrigger(PinState.HIGH, caller);
 		pinPIR.addTrigger(callbackTrigger);
@@ -202,7 +202,7 @@ public final class HardwareLayerMirror implements Closeable {
         I2CDevice device = null;
         
 		SharedUtils.checkNotNull(command);
-		LOGGER.log(LOGLEVEL, "HardwareLayer: Pretty Lights command = " + command);
+		LOGGER.debug("HardwareLayer: Pretty Lights command = " + command);
 		try {
 			i2c = I2CFactory.getInstance(I2CBus.BUS_1);
 			device = i2c.getDevice(PRETTY_LIGHTS);

@@ -26,15 +26,19 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.cayenne.Cayenne;
+import org.apache.cayenne.DeleteDenyException;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.query.ObjectSelect;
 import org.apache.cayenne.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.cayenne.auto._MediaFile;
 import com.hulles.alixia.media.MediaFormat;
 
 public class MediaFile extends _MediaFile {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaFile.class);
     private static final long serialVersionUID = 1L; 
 	private static final Random RANDOM = new Random();
     
@@ -199,36 +203,24 @@ public class MediaFile extends _MediaFile {
     }
     
     public MediaFormat getFormat() {
-    	
-    	return MediaFormat.valueOf(getFormatCode());
+    	String fmt;
+        
+        fmt = getFormatCode();
+        if (fmt == null) {
+            return null;
+        }
+    	return MediaFormat.valueOf(fmt);
     }
     
     public void setFormat(MediaFormat format) {
     	
-    	this.setFormatCode(format.name());
+        SharedUtils.checkNotNull(format);
+        if (format == null) {
+            this.setFormatCode(null);
+        } else {
+            this.setFormatCode(format.name());
+        }
     }
-    
-    public void commit() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.commitChanges();
-    }
-    
-    public void rollback() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.rollbackChanges();
-    }
-
-	public void delete() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-     	context.deleteObjects(this);
-    	context.commitChanges();
-	}
 
 	public static MediaFile createNew() {
     	ObjectContext context;
@@ -239,4 +231,16 @@ public class MediaFile extends _MediaFile {
     	// NOT committed yet
     	return dbMediaFile;
 	}
+
+	public void delete() {
+        ObjectContext context;
+        
+        context = this.getObjectContext();
+        try {
+            context.deleteObject(this);
+        } catch (DeleteDenyException e) {
+            LOGGER.error("Delete error", e);
+        }
+    }
+	
 }

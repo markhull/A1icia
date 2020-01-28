@@ -63,7 +63,8 @@ public class AlixiaResourceLocator implements ResourceLocator {
             }
 			rootDirectories.add(root);
 		}
-*/    }
+*/
+	}
     
     @Override
 	public Collection<Resource> findResources(String name) {

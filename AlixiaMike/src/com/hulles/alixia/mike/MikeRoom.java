@@ -21,20 +21,28 @@
  *******************************************************************************/
 package com.hulles.alixia.mike;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.dialog.DialogResponse;
-import com.hulles.alixia.api.jebus.JebusHub;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.AlixiaConstants;
+import com.hulles.alixia.api.dialog.DialogResponse;
+import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.object.AlixiaClientObject.ClientObjectType;
 import com.hulles.alixia.api.object.AudioObject;
 import com.hulles.alixia.api.object.MediaObject;
@@ -44,7 +52,6 @@ import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.cayenne.MediaFile;
 import com.hulles.alixia.house.ClientDialogResponse;
 import com.hulles.alixia.media.Language;
@@ -67,13 +74,6 @@ import com.hulles.alixia.ticket.SememePackage;
 import com.hulles.alixia.ticket.Ticket;
 import com.hulles.alixia.tools.FuzzyMatch;
 import com.hulles.alixia.tools.FuzzyMatch.Match;
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Mike Room is our media room. Mike has a library of .wav files that he can broadcast to pretty 
@@ -88,11 +88,9 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public final class MikeRoom extends UrRoom {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MikeRoom.class);
 	private final static int MAXHEADROOM = JebusHub.getMaxHardOutputBufferLimit();
-    private final static int POOLSIZE = 2;
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMike.MikeRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	private final static Level LOGLEVEL = Level.INFO;
+//    private final static int POOLSIZE = 2;
 	@SuppressWarnings("unused")
 	private List<Path> acknowledgments;
 	private List<Path> exclamations;
@@ -107,7 +105,7 @@ public final class MikeRoom extends UrRoom {
 	private final List<String> titles;
 	private final ApplicationKeys appKeys;
 	private byte[] introBytes = null;
-    private final MediaLibrary mediaLibrary;
+    final MediaLibrary mediaLibrary;
     private ExecutorService updateExecutor;
 
     
@@ -156,7 +154,7 @@ public final class MikeRoom extends UrRoom {
 	public static void logAudioFormat(String fileName) {
 		
 		try {
-			LOGGER.log(LOGLEVEL, MediaUtils.getAudioFormatString(fileName));
+			LOGGER.debug(MediaUtils.getAudioFormatString(fileName));
 		} catch (Exception e) {
 			throw new AlixiaException("Can't log audio format", e);
 		}
@@ -175,7 +173,6 @@ public final class MikeRoom extends UrRoom {
 		RoomActionObject obj;
 		MessageAction msgAction;
 		Ticket ticket;
-		ClientObjectWrapper cow;
 		
 		SharedUtils.checkNotNull(request);
 		SharedUtils.checkNotNull(responses);
@@ -188,8 +185,7 @@ public final class MikeRoom extends UrRoom {
 					obj = pkg.getActionObject();
 					if (obj instanceof MessageAction) {
 						msgAction = (MessageAction) obj;
-							LOGGER.log(LOGLEVEL, "We got some learning => {0} : {1}", 
-                                    new String[]{msgAction.getMessage(), msgAction.getExplanation()});
+							LOGGER.debug("We got some learning => {} : {}", msgAction.getMessage(), msgAction.getExplanation());
 					}
 				}
 			}
@@ -204,8 +200,9 @@ public final class MikeRoom extends UrRoom {
 		String lib;
 		Path path;
 		
-		updateExecutor = Executors.newFixedThreadPool(POOLSIZE);
-		lib = appKeys.getKey(ApplicationKey.MIKELIBRARY);
+//		updateExecutor = Executors.newFixedThreadPool(POOLSIZE);
+        updateExecutor = Executors.newCachedThreadPool();
+		lib = appKeys.getKey(ApplicationKey.MIKELIBRARY) + "/";
 		acknowledgments = LibraryLister.listFiles(lib + "acknowledgment");
 		exclamations = LibraryLister.listFiles(lib + "exclamation");
 		musicClips = LibraryLister.listFiles(lib + "music_clips");
@@ -220,9 +217,9 @@ public final class MikeRoom extends UrRoom {
 		media.stream().forEach(e -> addMediaToLists(e));
         
         // load custom Alixia video intro
-		path = findMediaFile("AV.mov", specialMedia);
+		path = findMediaFile("AlixiaVision.mov", specialMedia);
 		if (path == null) {
-			AlixiaUtils.error("MikeRoom: null intro file name");
+			LOGGER.error("MikeRoom: null intro file");
 			return;
 		}
 		introBytes = MediaUtils.pathToByteArray(path);
@@ -276,6 +273,7 @@ public final class MikeRoom extends UrRoom {
 			case "dead_sara":
 			case "pronounce_hulles":
             case "i_fink_u_freeky":
+            case "WAVE_file":
 				return createSpecialActionPackage(sememePkg, request);
 			case "match_artists_and_titles":
 				return createAnalysisActionPackage(sememePkg, request);
@@ -289,12 +287,12 @@ public final class MikeRoom extends UrRoom {
     private ActionPackage reloadMediaLibrary(SememePackage sememePkg, RoomRequest request) {
         ActionPackage pkg;
         MessageAction action;
-        Future<MediaUpdateStats> updateNotification;
+        Future<MediaUpdateStats> updateNotificationFuture;
         AlixianID alixianID;
         
         alixianID = request.getTicket().getFromAlixianID();
         // construct an ExecutorService that returns a Future of MediaUpdateStats
-        updateNotification = updateMediaLibrary(alixianID, true);
+        updateNotificationFuture = updateMediaLibrary(alixianID, true);
         updateExecutor.execute(new Runnable() {
             
             @Override
@@ -302,20 +300,20 @@ public final class MikeRoom extends UrRoom {
                 MediaUpdateStats stats;
                 String message;
                 String explanation;
-                AlixianID alixianID;
+                AlixianID userID;
                 StringBuilder sb;
                
                 try {
                     // future.get() blocks until the result is ready
-                    stats = updateNotification.get();
+                    stats = updateNotificationFuture.get();
                 } catch (InterruptedException ex) {
-        			AlixiaUtils.error("Mike library update interrupted", ex);
+        			LOGGER.error("Mike library update interrupted", ex);
                     return;
                 } catch (ExecutionException ex) {
-        			AlixiaUtils.error("Mike library update execution exception", ex);
+        			LOGGER.error("Mike library update execution exception", ex);
                     return;
                 }
-                alixianID = stats.getAlixianID();
+                userID = stats.getAlixianID();
                 message = "I updated the media library.";
                 sb = new StringBuilder();
                 sb.append("Media files updated: ");
@@ -324,7 +322,7 @@ public final class MikeRoom extends UrRoom {
                 sb.append(stats.getMediaFilesDeleted());
                 sb.append("\n");
                 explanation = sb.toString();
-                pushNotification(alixianID, message, explanation);
+                pushNotification(userID, message, explanation);
            }
         });
         pkg = new ActionPackage(sememePkg);
@@ -363,41 +361,48 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
+        String artist;
+        String title;
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			AlixiaUtils.error("MikeRoom:createArtistActionPackage: no sememe object");
+			LOGGER.error("MikeRoom:createArtistActionPackage: no sememe object");
 		}
 		mediaFiles = MediaFile.getMediaFiles(matchTarget);
 		if (mediaFiles != null) {
 			mediaFile = getRandomMediaFile(mediaFiles);
 			fileName = mediaFile.getFileName();
 			if (fileName == null) {
-				AlixiaUtils.error("MikeRoom: file name is null");
+				LOGGER.error("MikeRoom: file name is null");
 				return null;
 			}
 			audioFormat = MediaUtils.getAudioFormat(fileName);
 			audioObject = new AudioObject();
 			audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
-			audioObject.setMediaTitle(fileName);
+            artist = mediaFile.getArtist();
+            title = mediaFile.getTitle();
+			audioObject.setMediaTitle(title);
+            audioObject.setMediaArtist(artist);
 			serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 			audioObject.setAudioFormat(serialFormat);
 			mediaBytes = MediaUtils.fileToByteArray(fileName);
 			if (mediaBytes.length > MAXHEADROOM) {
-				AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+				LOGGER.error("MikeRoom: file exceeds Redis limit");
 				return null;
 			}
 			mediaArrays = new byte[][]{mediaBytes};
 			audioObject.setMediaBytes(mediaArrays);
-			audioObject.setMediaFormat(MediaFormat.MP3);
+            mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+			audioObject.setMediaFormat(mediaFormat);
 			if (!audioObject.isValid()) {
-				AlixiaUtils.error("MikeRoom: invalid media object");
+				LOGGER.error("MikeRoom: invalid media object");
 				return null;
 			}
-			action = new ClientObjectWrapper(audioObject);
+			action = wrapMediaObject(audioObject);
 		}
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
@@ -415,43 +420,50 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
+        String artist;
+        String title;
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			AlixiaUtils.error("MikeRoom:createTitleActionPackage: no sememe object");
+			LOGGER.error("MikeRoom:createTitleActionPackage: no sememe object");
 		}
 		mediaFile = MediaFile.getMediaFile(matchTarget);
 		if (mediaFile == null) {
-			AlixiaUtils.error("Media file is null in Mike room");
+			LOGGER.error("Media file is null in Mike room");
 			return null;
 		}
 		fileName = mediaFile.getFileName();
 		if (fileName == null) {
-			AlixiaUtils.error("File name is null in Mike room");
+			LOGGER.error("File name is null in Mike room");
 			return null;
 		}
 		audioFormat = MediaUtils.getAudioFormat(fileName);
 		audioObject = new AudioObject();
 		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
-		audioObject.setMediaTitle(fileName);
+        artist = mediaFile.getArtist();
+        title = mediaFile.getTitle();
+        audioObject.setMediaTitle(title);
+        audioObject.setMediaArtist(artist);
 		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 		audioObject.setAudioFormat(serialFormat);
 		mediaBytes = MediaUtils.fileToByteArray(fileName);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		mediaArrays = new byte[][]{mediaBytes};
 		audioObject.setMediaBytes(mediaArrays);
-		audioObject.setMediaFormat(MediaFormat.MP3);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+		audioObject.setMediaFormat(mediaFormat);
 		if (!audioObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 		}
-		action = new ClientObjectWrapper(audioObject);
+		action = wrapMediaObject(audioObject);
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -467,39 +479,46 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
-		
+		String artist;
+        String title;
+        MediaFormat mediaFormat;
+        
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		mediaFile = MediaFile.getRandomMediaFile();
 		if (mediaFile == null) {
-			AlixiaUtils.error("Media file is null in Mike room");
+			LOGGER.error("Media file is null in Mike room");
 			return null;
 		}
 		fileName = mediaFile.getFileName();
 		if (fileName == null) {
-			AlixiaUtils.error("File name is null in Mike room");
+			LOGGER.error("File name is null in Mike room");
 			return null;
 		}
 		audioFormat = MediaUtils.getAudioFormat(fileName);
 		audioObject = new AudioObject();
 		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
-		audioObject.setMediaTitle(fileName);
+        artist = mediaFile.getArtist();
+        title = mediaFile.getTitle();
+        audioObject.setMediaTitle(title);
+        audioObject.setMediaArtist(artist);
 		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 		audioObject.setAudioFormat(serialFormat);
 		mediaBytes = MediaUtils.fileToByteArray(fileName);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		mediaArrays = new byte[][]{mediaBytes};
 		audioObject.setMediaBytes(mediaArrays);
-		audioObject.setMediaFormat(MediaFormat.MP3);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+		audioObject.setMediaFormat(mediaFormat);
 		if (!audioObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 		}
-		action = new ClientObjectWrapper(audioObject);
+		action = wrapMediaObject(audioObject);
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -514,38 +533,38 @@ public final class MikeRoom extends UrRoom {
 		String matchTarget;
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
+        String artist;
+        String title;
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			AlixiaUtils.error("MikeRoom:createVideoActionPackage: no sememe object");
+			LOGGER.error("MikeRoom:createVideoActionPackage: no sememe object");
 		}
 		mediaFile = MediaFile.getMediaFile(matchTarget);
 		if (mediaFile == null) {
-			AlixiaUtils.error("Media file is null in Mike room");
+			LOGGER.error("Media file is null in Mike room");
 			return null;
 		}
 		fileName = mediaFile.getFileName();
 		if (fileName == null) {
-			AlixiaUtils.error("File name is null in Mike room");
+			LOGGER.error("File name is null in Mike room");
 			return null;
 		}
 		mediaObject = new MediaObject();
 		mediaObject.setClientObjectType(ClientObjectType.VIDEOBYTES);
-		mediaObject.setMediaTitle(fileName);
-		if (fileName.endsWith("MP4")) {
-			mediaObject.setMediaFormat(MediaFormat.MP4);
-		} else if (fileName.endsWith("FLV")) {
-			mediaObject.setMediaFormat(MediaFormat.MP4);
-		} else {
-			AlixiaUtils.error("MikeRoom: unknown video media type");
-			return null;
-		}
+        artist = mediaFile.getArtist();
+        title = mediaFile.getTitle();
+        mediaObject.setMediaTitle(title);
+        mediaObject.setMediaArtist(artist);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+        mediaObject.setMediaFormat(mediaFormat);
 		mediaBytes = MediaUtils.fileToByteArray(fileName);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		if (introBytes == null) {
@@ -554,17 +573,17 @@ public final class MikeRoom extends UrRoom {
 			// TODO need to allow for multiple media formats; here we're combining
 			//  a .MOV and a .FLV or a .MP4....
 			if ((mediaBytes.length + introBytes.length) > MAXHEADROOM) {
-				AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+				LOGGER.error("MikeRoom: file exceeds Redis limit");
 				return null;
 			}
 			mediaArrays = new byte[][] {introBytes, mediaBytes};
 		}
 		mediaObject.setMediaBytes(mediaArrays);
 		if (!mediaObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 		}
-		action = new ClientObjectWrapper(mediaObject);
+		action = wrapMediaObject(mediaObject);
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -581,6 +600,7 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
@@ -591,22 +611,23 @@ public final class MikeRoom extends UrRoom {
 		audioObject = new AudioObject();
 		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
 		audioFormat = MediaUtils.getAudioFormat(fileName);
-		audioObject.setMediaTitle(fileName);
-		audioObject.setMediaFormat(MediaFormat.WAV);
+		audioObject.setMediaTitle(speech);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+		audioObject.setMediaFormat(mediaFormat);
 		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 		audioObject.setAudioFormat(serialFormat);
 		mediaBytes = MediaUtils.fileToByteArray(fileName);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		mediaArrays = new byte[][]{mediaBytes};
 		audioObject.setMediaBytes(mediaArrays);
 		if (!audioObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 		}
-		action = new ClientObjectWrapper(audioObject);
+		action = wrapMediaObject(audioObject);
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -624,7 +645,11 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
-		
+		String title = "";
+        String artist = "";
+		MediaFile mediaFile;
+        MediaFormat mediaFormat;
+        
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
@@ -644,104 +669,124 @@ public final class MikeRoom extends UrRoom {
 			if (random.nextBoolean()) {
 				target = "Sv-Alicia_Vikander.wav";
 			} else {
-				target = "pronounce_alicia.mov";
+				target = "pronounce_alicia.mp4";
 			}
-		}
+		} else if (sememePkg.is("WAVE_file")) {
+            target = "WAVEFILE.mp4";
+        }
 		if (target == null) {
 			throw new AlixiaException();
 		}
 		path = findMediaFile(target, specialMedia);
 		if (path == null) {
-			AlixiaUtils.error("MikeRoom: null file name");
+			LOGGER.error("MikeRoom: null file name");
 			return null;
 		}
 		mediaBytes = MediaUtils.pathToByteArray(path);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
         fileName = path.toString();
-		if (fileName.endsWith("wav")) {
-			audioObject = new AudioObject();
-			audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
-			audioFormat = MediaUtils.getAudioFormat(path);
-			audioObject.setMediaTitle(fileName);
-			audioObject.setMediaFormat(MediaFormat.WAV);
-			serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
-			audioObject.setAudioFormat(serialFormat);
-			mediaArrays = new byte[][]{mediaBytes};
-			audioObject.setMediaBytes(mediaArrays);
-			if (!audioObject.isValid()) {
-				AlixiaUtils.error("MikeRoom: invalid media object");
-				return null;
-			}
-			action = new ClientObjectWrapper(audioObject);
-		} else if (fileName.endsWith("jpg")) {
-			mediaObject = new MediaObject();
-			mediaObject.setClientObjectType(ClientObjectType.IMAGEBYTES);
-			mediaObject.setMediaFormat(MediaFormat.JPG);
-			mediaArrays = new byte[][]{mediaBytes};
-			mediaObject.setMediaBytes(mediaArrays);
-			mediaObject.setMediaTitle("Dead Sara Poster");
-			if (!mediaObject.isValid()) {
-				AlixiaUtils.error("MikeRoom: invalid media object");
-				return null;
-			}
-			action = new ClientObjectWrapper(mediaObject);
-			if (sememePkg.is("dead_sara")) {
-				action.setMessage("Dead Sara is super bueno.");
-			}
-		} else if (fileName.endsWith("mov")) {
-			mediaObject = new MediaObject();
-			mediaObject.setClientObjectType(ClientObjectType.VIDEOBYTES);
-			mediaObject.setMediaTitle(fileName);
-			mediaObject.setMediaFormat(MediaFormat.MOV);
-			if (introBytes == null) {
-				mediaArrays = new byte[][]{mediaBytes};
-				mediaObject.setMediaBytes(mediaArrays);
-			} else {
-				if ((mediaBytes.length + introBytes.length) > MAXHEADROOM) {
-					AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
-					return null;
-				}
-				mediaArrays = new byte[][]{introBytes, mediaBytes};
-				mediaObject.setMediaBytes(mediaArrays);
-			}
-			if (!mediaObject.isValid()) {
-				AlixiaUtils.error("MikeRoom: invalid media object");
-				return null;
-			}
-			action = new ClientObjectWrapper(mediaObject);
-		} else if (fileName.endsWith("mp4")) {
-			mediaObject = new MediaObject();
-			mediaObject.setClientObjectType(ClientObjectType.VIDEOBYTES);
-			mediaObject.setMediaTitle(fileName);
-			mediaObject.setMediaFormat(MediaFormat.MP4);
-			if (introBytes == null) {
-				mediaArrays = new byte[][]{mediaBytes};
-				mediaObject.setMediaBytes(mediaArrays);
-			} else {
-				if ((mediaBytes.length + introBytes.length) > MAXHEADROOM) {
-					AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
-					return null;
-				}
-				mediaArrays = new byte[][]{introBytes, mediaBytes};
-				LOGGER.log(LOGLEVEL, "MIKE: intro length = " + introBytes.length);
-				LOGGER.log(LOGLEVEL, "MIKE: media length = " + mediaBytes.length);
-				mediaObject.setMediaBytes(mediaArrays);
-			}
-			if (!mediaObject.isValid()) {
-				AlixiaUtils.error("MikeRoom: invalid media object");
-				return null;
-			}
-			action = new ClientObjectWrapper(mediaObject);
-			if (sememePkg.is("sorry_for_it_all")) {
-				action.setMessage("Dead Sara kicks my ass.");
-			}
-		} else {
-			AlixiaUtils.error("MikeRoom: unsupported media file -- support it");
-			return null;
-		}
+		mediaFile = MediaFile.findMediaFile(fileName);
+        if (mediaFile != null) {
+            artist = mediaFile.getArtist();
+            title = mediaFile.getTitle();
+        }
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+        if (mediaFormat == null) {
+            LOGGER.error("MikeRoom: invalid media format");
+            return null;
+        }
+        switch (mediaFormat) {
+            case WAV:
+                audioObject = new AudioObject();
+                audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
+                audioFormat = MediaUtils.getAudioFormat(path);
+                audioObject.setMediaTitle(title);
+                audioObject.setMediaArtist(artist);
+                audioObject.setMediaFormat(MediaFormat.WAV);
+                serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
+                audioObject.setAudioFormat(serialFormat);
+                mediaArrays = new byte[][]{mediaBytes};
+                audioObject.setMediaBytes(mediaArrays);
+                if (!audioObject.isValid()) {
+                    LOGGER.error("MikeRoom: invalid media object");
+                    return null;
+                }
+                action = wrapMediaObject(audioObject);
+                break;
+            case JPG:
+                mediaObject = new MediaObject();
+                mediaObject.setClientObjectType(ClientObjectType.IMAGEBYTES);
+                mediaObject.setMediaFormat(MediaFormat.JPG);
+                mediaArrays = new byte[][]{mediaBytes};
+                mediaObject.setMediaBytes(mediaArrays);
+                mediaObject.setMediaTitle("Dead Sara Poster");
+                if (!mediaObject.isValid()) {
+                    LOGGER.error("MikeRoom: invalid media object");
+                    return null;
+                }
+                action = wrapMediaObject(mediaObject);
+                if (sememePkg.is("dead_sara")) {
+                    action.setMessage("Dead Sara is super bueno.");
+                }
+                break;
+            case MOV:
+                mediaObject = new MediaObject();
+                mediaObject.setClientObjectType(ClientObjectType.VIDEOBYTES);
+                mediaObject.setMediaTitle(title);
+                mediaObject.setMediaArtist(artist);
+                mediaObject.setMediaFormat(MediaFormat.MOV);
+                if (introBytes == null) {
+                    mediaArrays = new byte[][]{mediaBytes};
+                    mediaObject.setMediaBytes(mediaArrays);
+                } else {
+                    if ((mediaBytes.length + introBytes.length) > MAXHEADROOM) {
+                        LOGGER.error("MikeRoom: file exceeds Redis limit");
+                        return null;
+                    }
+                    mediaArrays = new byte[][]{introBytes, mediaBytes};
+                    mediaObject.setMediaBytes(mediaArrays);
+                }
+                if (!mediaObject.isValid()) {
+                    LOGGER.error("MikeRoom: invalid media object");
+                    return null;
+                }
+                action = wrapMediaObject(mediaObject);
+                break;
+            case MP4:
+                mediaObject = new MediaObject();
+                mediaObject.setClientObjectType(ClientObjectType.VIDEOBYTES);
+                mediaObject.setMediaTitle(title);
+                mediaObject.setMediaArtist(artist);
+                mediaObject.setMediaFormat(MediaFormat.MP4);
+                if (introBytes == null) {
+                    mediaArrays = new byte[][]{mediaBytes};
+                    mediaObject.setMediaBytes(mediaArrays);
+                } else {
+                    if ((mediaBytes.length + introBytes.length) > MAXHEADROOM) {
+                        LOGGER.error("MikeRoom: file exceeds Redis limit");
+                        return null;
+                    }
+                    mediaArrays = new byte[][]{introBytes, mediaBytes};
+                    LOGGER.debug("MIKE: intro length = {}", introBytes.length);
+                    LOGGER.debug("MIKE: media length = {}", mediaBytes.length);
+                    mediaObject.setMediaBytes(mediaArrays);
+                }
+                if (!mediaObject.isValid()) {
+                    LOGGER.error("MikeRoom: invalid media object");
+                    return null;
+                }
+                action = wrapMediaObject(mediaObject);
+                if (sememePkg.is("sorry_for_it_all")) {
+                    action.setMessage("Dead Sara kicks my ass.");
+                }
+                break;
+            default:
+                LOGGER.error("MikeRoom: unsupported media file -- support it");
+                return null;
+        }
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -758,6 +803,10 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
+        MediaFile mediaFile;
+        String artist = "";
+        String title = "";
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
@@ -765,32 +814,40 @@ public final class MikeRoom extends UrRoom {
 		// SememeObjectType s/b AUDIOTITLE, btw
 		matchTarget = sememePkg.getSememeObject();
 		if (matchTarget == null) {
-			AlixiaUtils.error("MikeRoom:createNotificationActionPackage: no sememe object");
+			LOGGER.error("MikeRoom:createNotificationActionPackage: no sememe object");
 		}
 		path = findMediaFile(matchTarget, notifications);
 		if (path == null) {
-			AlixiaUtils.error("MikeRoom: null file name");
+			LOGGER.error("MikeRoom: null file name");
 			return null;
 		}
+        fileName = path.toString();
+		mediaFile = MediaFile.findMediaFile(fileName);
+        if (mediaFile != null) {
+            artist = mediaFile.getArtist();
+            title = mediaFile.getTitle();
+        }
 		mediaBytes = MediaUtils.pathToByteArray(path);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		audioObject = new AudioObject();
 		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
 		audioFormat = MediaUtils.getAudioFormat(path);
-		audioObject.setMediaTitle(path.toString());
-		audioObject.setMediaFormat(MediaFormat.WAV);
+        audioObject.setMediaTitle(title);
+        audioObject.setMediaArtist(artist);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+		audioObject.setMediaFormat(mediaFormat);
 		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 		audioObject.setAudioFormat(serialFormat);
 		mediaArrays = new byte[][]{mediaBytes};
 		audioObject.setMediaBytes(mediaArrays);
 		if (!audioObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 			}
-		action = new ClientObjectWrapper(audioObject);
+		action = wrapMediaObject(audioObject);
 		action.setMessage(request.getMessage()); // this is the kluged long timer id
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
@@ -807,6 +864,10 @@ public final class MikeRoom extends UrRoom {
 		byte[] mediaBytes;
 		byte[][] mediaArrays;
 		SerialAudioFormat serialFormat;
+        MediaFile mediaFile;
+        String artist = "";
+        String title = "";
+        MediaFormat mediaFormat;
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
@@ -818,25 +879,33 @@ public final class MikeRoom extends UrRoom {
 		} else {
 			path = getRandomPath(exclamations);
 		}
+        fileName = path.toString();
+		mediaFile = MediaFile.findMediaFile(fileName);
+        if (mediaFile != null) {
+            artist = mediaFile.getArtist();
+            title = mediaFile.getTitle();
+        }
 		audioFormat = MediaUtils.getAudioFormat(path);
 		audioObject = new AudioObject();
 		audioObject.setClientObjectType(ClientObjectType.AUDIOBYTES);
-		audioObject.setMediaTitle(path.toString());
+        audioObject.setMediaTitle(title);
+        audioObject.setMediaArtist(artist);
 		serialFormat = MediaUtils.audioFormatToSerial(audioFormat);
 		audioObject.setAudioFormat(serialFormat);
-		audioObject.setMediaFormat(MediaFormat.WAV);
+        mediaFormat = MediaFormat.getFormatFromFileName(fileName);
+		audioObject.setMediaFormat(mediaFormat);
 		mediaBytes = MediaUtils.pathToByteArray(path);
 		if (mediaBytes.length > MAXHEADROOM) {
-			AlixiaUtils.error("MikeRoom: file exceeds Redis limit");
+			LOGGER.error("MikeRoom: file exceeds Redis limit");
 			return null;
 		}
 		mediaArrays = new byte[][]{mediaBytes};
 		audioObject.setMediaBytes(mediaArrays);
 		if (!audioObject.isValid()) {
-			AlixiaUtils.error("MikeRoom: invalid media object");
+			LOGGER.error("MikeRoom: invalid media object");
 			return null;
 		}
-		action = new ClientObjectWrapper(audioObject);
+		action = wrapMediaObject(audioObject);
 		pkg.setActionObject(action);
         pkg.setIsMultiMedia(true);
 		return pkg;
@@ -863,7 +932,31 @@ public final class MikeRoom extends UrRoom {
 		return pkg;
 	}
 	
-    private void pushNotification(AlixianID alixianID, String message, String explanation) {
+    private static ClientObjectWrapper wrapMediaObject(MediaObject obj) {
+        ClientObjectWrapper wrapper;
+        String title;
+        String artist;
+        StringBuilder sb;
+        String expl;
+        
+		wrapper = new ClientObjectWrapper(obj);
+        title = obj.getMediaTitle();
+        artist = obj.getMediaArtist();
+        if (title != null && !title.isEmpty()) {
+            sb = new StringBuilder(title);
+            if (artist != null && !artist.isEmpty()) {
+                sb.append(" by ");
+                sb.append(artist);
+            }
+            expl = sb.toString();
+        } else {
+            expl = artist;
+        }
+        wrapper.setExplanation(expl);
+        return wrapper;
+    }
+    
+    void pushNotification(AlixianID alixianID, String message, String explanation) {
 		ClientDialogResponse clientResponse;
 		SerialSememe sememe;
 		DialogResponse response;
@@ -890,7 +983,7 @@ public final class MikeRoom extends UrRoom {
      * 
      * @param pool The updateExecutor
      */
-    private void shutdownAndAwaitTermination(ExecutorService pool) {
+    private static void shutdownAndAwaitTermination(ExecutorService pool) {
         
         pool.shutdown(); // Disable new tasks from being submitted
         try {
@@ -899,7 +992,7 @@ public final class MikeRoom extends UrRoom {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
                 if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                    AlixiaUtils.error("Pool did not terminate");
+                    LOGGER.error("Pool did not terminate");
                 }
             }
         } catch (InterruptedException ie) {
@@ -915,7 +1008,7 @@ public final class MikeRoom extends UrRoom {
         
 		for (Path path : mediaFiles) {
             pathStr = path.toString();
-			LOGGER.log(LOGLEVEL, "findMediaFile : {0}", pathStr);
+			LOGGER.debug("findMediaFile : {}", pathStr);
 			if (pathStr.contains(name)) {
 				return path;
 			}
@@ -947,6 +1040,7 @@ public final class MikeRoom extends UrRoom {
 		sememes.add(SerialSememe.find("random_music"));
         sememes.add(SerialSememe.find("reload_media_library"));
         sememes.add(SerialSememe.find("i_fink_u_freeky"));
+        sememes.add(SerialSememe.find("WAVE_file"));
 		return sememes;
 	}
 

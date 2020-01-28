@@ -27,6 +27,7 @@ import java.util.Set;
 
 import com.hulles.alixia.api.object.ChangeLanguageObject;
 import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.Response;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.media.Language;
@@ -96,6 +97,9 @@ public final class OscarRoom extends UrRoom {
 			case "like_gophers":
 			case "not_dave":
             case "i_fink_u_freeky":
+            case "what_is_e":
+            case "what_favorite_color":
+            case "why_collect_mnemonics":
 				return createConstantsActionPackage(sememePkg, request);
 			default:
 				throw new AlixiaException("Received unknown sememe in " + getThisRoom());
@@ -103,16 +107,17 @@ public final class OscarRoom extends UrRoom {
 	}
 
 	private ActionPackage createConstantsActionPackage(SememePackage sememePkg, RoomRequest request) {
-		String message;
 		ActionPackage pkg;
 		MessageAction action;
-		
+		Response response;
+        
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
-		message = chooser.respondTo(sememePkg);
-		action.setMessage(message);
+		response = chooser.respondTo(sememePkg);
+		action.setMessage(response.getMessage());
+        action.setExplanation(response.getExplanation());
 		pkg.setActionObject(action);
 		return pkg;
 	}
@@ -158,6 +163,9 @@ public final class OscarRoom extends UrRoom {
 		sememes.add(SerialSememe.find("like_gophers"));
 		sememes.add(SerialSememe.find("not_dave"));
         sememes.add(SerialSememe.find("i_fink_u_freeky"));
+        sememes.add(SerialSememe.find("what_is_e"));
+        sememes.add(SerialSememe.find("what_favorite_color"));
+        sememes.add(SerialSememe.find("why_collect_mnemonics"));
 		return sememes;
 	}
 

@@ -36,12 +36,14 @@ public class WeightedRatio extends BasicAlgorithm  {
 
     @Override
     public int apply(String s1, String s2, StringProcessor stringProcessor) {
+        String p1;
+        String p2;
+        
+        p1 = stringProcessor.process(s1);
+        p2 = stringProcessor.process(s2);
 
-        s1 = stringProcessor.process(s1);
-        s2 = stringProcessor.process(s2);
-
-        int len1 = s1.length();
-        int len2 = s2.length();
+        int len1 = p1.length();
+        int len2 = p2.length();
 
         if (len1 == 0 || len2 == 0) { return 0; }
 
@@ -49,7 +51,7 @@ public class WeightedRatio extends BasicAlgorithm  {
         double unbaseScale = UNBASE_SCALE;
         double partialScale = PARTIAL_SCALE;
 
-        int base = FuzzySearch.ratio(s1, s2);
+        int base = FuzzySearch.ratio(p1, p2);
         double lenRatio = ((double) Math.max(len1, len2)) / Math.min(len1, len2);
 
         // if strings are similar length don't use partials
@@ -60,15 +62,15 @@ public class WeightedRatio extends BasicAlgorithm  {
 
         if (tryPartials) {
 
-            double partial = FuzzySearch.partialRatio(s1, s2) * partialScale;
-            double partialSor = FuzzySearch.tokenSortPartialRatio(s1, s2) * unbaseScale * partialScale;
-            double partialSet = FuzzySearch.tokenSetPartialRatio(s1, s2) * unbaseScale * partialScale;
+            double partial = FuzzySearch.partialRatio(p1, p2) * partialScale;
+            double partialSor = FuzzySearch.tokenSortPartialRatio(p1, p2) * unbaseScale * partialScale;
+            double partialSet = FuzzySearch.tokenSetPartialRatio(p1, p2) * unbaseScale * partialScale;
 
             return (int) round(PrimitiveUtils.max(base, partial, partialSor, partialSet));
 
         }
-		double tokenSort = FuzzySearch.tokenSortRatio(s1, s2) * unbaseScale;
-		double tokenSet = FuzzySearch.tokenSetRatio(s1, s2) * unbaseScale;
+		double tokenSort = FuzzySearch.tokenSortRatio(p1, p2) * unbaseScale;
+		double tokenSet = FuzzySearch.tokenSetRatio(p1, p2) * unbaseScale;
 
 		return (int) round(PrimitiveUtils.max(base, tokenSort, tokenSet));
 

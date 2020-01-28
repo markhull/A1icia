@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -65,7 +44,7 @@ public abstract class _Person extends BaseDataObject {
 
     protected byte[] avatarBytes;
     protected LocalDate birthDate;
-    protected boolean checkIn;
+    protected Boolean checkIn;
     protected String email;
     protected String firstName;
     protected Character genderCode;
@@ -77,7 +56,7 @@ public abstract class _Person extends BaseDataObject {
     protected String password;
     protected LocalDateTime passwordChanged;
     protected String personUuid;
-    protected int userTypeId;
+    protected Integer userTypeId;
     protected String username;
 
     protected Object tasks;
@@ -315,7 +294,7 @@ public abstract class _Person extends BaseDataObject {
                 this.birthDate = (LocalDate)val;
                 break;
             case "checkIn":
-                this.checkIn = val == null ? false : (boolean)val;
+                this.checkIn = (Boolean)val;
                 break;
             case "email":
                 this.email = (String)val;
@@ -351,7 +330,7 @@ public abstract class _Person extends BaseDataObject {
                 this.personUuid = (String)val;
                 break;
             case "userTypeId":
-                this.userTypeId = val == null ? 0 : (int)val;
+                this.userTypeId = (Integer)val;
                 break;
             case "username":
                 this.username = (String)val;
@@ -377,7 +356,7 @@ public abstract class _Person extends BaseDataObject {
         super.writeState(out);
         out.writeObject(this.avatarBytes);
         out.writeObject(this.birthDate);
-        out.writeBoolean(this.checkIn);
+        out.writeObject(this.checkIn);
         out.writeObject(this.email);
         out.writeObject(this.firstName);
         out.writeObject(this.genderCode);
@@ -389,7 +368,7 @@ public abstract class _Person extends BaseDataObject {
         out.writeObject(this.password);
         out.writeObject(this.passwordChanged);
         out.writeObject(this.personUuid);
-        out.writeInt(this.userTypeId);
+        out.writeObject(this.userTypeId);
         out.writeObject(this.username);
         out.writeObject(this.tasks);
     }
@@ -399,7 +378,7 @@ public abstract class _Person extends BaseDataObject {
         super.readState(in);
         this.avatarBytes = (byte[])in.readObject();
         this.birthDate = (LocalDate)in.readObject();
-        this.checkIn = in.readBoolean();
+        this.checkIn = (Boolean)in.readObject();
         this.email = (String)in.readObject();
         this.firstName = (String)in.readObject();
         this.genderCode = (Character)in.readObject();
@@ -411,7 +390,7 @@ public abstract class _Person extends BaseDataObject {
         this.password = (String)in.readObject();
         this.passwordChanged = (LocalDateTime)in.readObject();
         this.personUuid = (String)in.readObject();
-        this.userTypeId = in.readInt();
+        this.userTypeId = (Integer)in.readObject();
         this.username = (String)in.readObject();
         this.tasks = in.readObject();
     }

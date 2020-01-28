@@ -1,5 +1,5 @@
 /**
- * Alixia Tracker
+ * AlixiaTracker
  * 
  * track hall activity
  * 
@@ -7,15 +7,13 @@
  *
  */
 module com.hulles.alixia.tracker {
-	exports com.hulles.alixia.tracker to guava, com.hulles.alixia.central;
+	exports com.hulles.alixia.graphviz;
+	exports com.hulles.alixia.tracker;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
-	requires guava;
-	requires java.logging;
 	requires jedis;
+    requires org.slf4j;
 	// to here
-    requires com.hulles.alixia.media;
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.tracker.TrackerRoom;
 }

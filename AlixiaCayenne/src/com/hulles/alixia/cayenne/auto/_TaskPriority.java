@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -49,7 +28,7 @@ public abstract class _TaskPriority extends BaseDataObject {
     public static final Property<List<Task>> TASKS = Property.create("tasks", List.class);
 
     protected String description;
-    protected short sequence;
+    protected Short sequence;
     protected String taskPriorityUuid;
 
     protected Object tasks;
@@ -128,7 +107,7 @@ public abstract class _TaskPriority extends BaseDataObject {
                 this.description = (String)val;
                 break;
             case "sequence":
-                this.sequence = val == null ? 0 : (short)val;
+                this.sequence = (Short)val;
                 break;
             case "taskPriorityUuid":
                 this.taskPriorityUuid = (String)val;
@@ -153,7 +132,7 @@ public abstract class _TaskPriority extends BaseDataObject {
     protected void writeState(ObjectOutputStream out) throws IOException {
         super.writeState(out);
         out.writeObject(this.description);
-        out.writeShort(this.sequence);
+        out.writeObject(this.sequence);
         out.writeObject(this.taskPriorityUuid);
         out.writeObject(this.tasks);
     }
@@ -162,7 +141,7 @@ public abstract class _TaskPriority extends BaseDataObject {
     protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
         super.readState(in);
         this.description = (String)in.readObject();
-        this.sequence = in.readShort();
+        this.sequence = (Short)in.readObject();
         this.taskPriorityUuid = (String)in.readObject();
         this.tasks = in.readObject();
     }

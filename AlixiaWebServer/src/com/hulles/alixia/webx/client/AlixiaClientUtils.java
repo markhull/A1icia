@@ -24,7 +24,7 @@ package com.hulles.alixia.webx.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.NotificationMole;
-import com.hulles.alixia.api.tools.AlixiaUtils;
+import com.hulles.alixia.webx.shared.SharedUtils;
 
 final public class AlixiaClientUtils {
 	private final static String PRONGERROR = "Bad Prong";
@@ -33,13 +33,13 @@ final public class AlixiaClientUtils {
 	
 	public static void prongError(Throwable ex) {
 		
-		AlixiaUtils.error(PRONGERROR, ex);
+		SharedUtils.error(PRONGERROR, ex);
 	}
 	
 	
 	public static void commError(Throwable ex) {
 		
-		AlixiaUtils.error(COMMERROR, ex);
+		SharedUtils.error(COMMERROR, ex);
 	}
 
     /**
@@ -57,7 +57,8 @@ final public class AlixiaClientUtils {
         return loadingImage;
     }    
    
-    private static NotificationMole showNotification(String title, String message) {
+    @SuppressWarnings("unused")
+	private static NotificationMole showNotification(String title, String message) {
     	NotificationMole nm;
     	
     	nm = new NotificationMole();

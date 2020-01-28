@@ -26,8 +26,10 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.object.LoginObject;
 import com.hulles.alixia.api.remote.AlixiaRemote;
@@ -36,8 +38,6 @@ import com.hulles.alixia.api.remote.Station;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This is a moderately sophisticated <b>C</b>ommand-<b>L</b>ine <b>I</b>nterface REPL package. 
@@ -46,8 +46,8 @@ import java.util.logging.Logger;
  * @author hulles
  */
 public class AlixiaCLIConsole extends AbstractExecutionThreadService implements AlixiaRemoteDisplay {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCLI.AlixiaCLIConsole");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaCLIConsole.class);
+//	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
     private final static String CONSOLENAME = "the Alixia command-line interface";
 	private AlixiaRemote remote;
 	private final Console javaConsole;
@@ -90,7 +90,7 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 			case JAVACONSOLE:
 				javaConsole = System.console();
 				if (javaConsole == null) {
-					LOGGER.log(Level.SEVERE, "Unable to allocate java console, aborting");
+					LOGGER.error("Unable to allocate java console, aborting");
 					System.exit(1);
 				}
 				break;
@@ -171,7 +171,7 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 				runDaemon();
 				break;
 			default:
-				LOGGER.log(Level.SEVERE, "System error: bad console type, exiting");
+				LOGGER.error("System error: bad console type, exiting");
 				this.stopAsync();
 		}
 	}
@@ -213,7 +213,7 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 				continue;
 			}
 			if (!remote.sendText(input)) {
-				LOGGER.log(Level.SEVERE, "Can't communicate with Alixia Central");
+				LOGGER.error("Can't communicate with Alixia Central");
 			}
 		}
 	}
@@ -239,11 +239,11 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 					continue;
 				}
 				if (!remote.sendText(input)) {
-					LOGGER.log(Level.SEVERE, "Can't communicate with Alixia Central");
+					LOGGER.error("Can't communicate with Alixia Central");
 				}
 			}
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "System error: IO error, exiting");
+			LOGGER.error("System error: IO error, exiting");
 			this.stopAsync();
 		}
 	}
@@ -253,7 +253,7 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
      * 
      * @param text The text to print
      */
-    private void consolePrint(String text) {
+    private static void consolePrint(String text) {
         
         System.out.print(text);
     }
@@ -263,11 +263,11 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
      * 
      * @param text The text to print
      */
-    private void consolePrintln() {
+    private static void consolePrintln() {
         
         System.out.println();
     }
-    private void consolePrintln(String text) {
+    private static void consolePrintln(String text) {
         
         System.out.println(text);
     }
@@ -456,17 +456,17 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 				break;
 			case STANDARDIO:
 			case DAEMON:
-				LOGGER.log(Level.SEVERE, "System error: login is not supported for {0}", whichConsole);
+				LOGGER.error("System error: login is not supported for {}", whichConsole);
 				break;
 			default:
-				LOGGER.log(Level.SEVERE, "System error: bad console type, exiting");
+				LOGGER.error("System error: bad console type, exiting");
 				System.exit(2);
 		}
 		obj = new LoginObject();
 		obj.setUserName(userName);
 		obj.setPassword(password);
 		if (!remote.sendLogin(obj)) {
-			LOGGER.log(Level.SEVERE, "Can't communicate with Alixia Central");
+			LOGGER.error("Can't communicate with Alixia Central");
 		}
 	}
 	
@@ -481,7 +481,7 @@ public class AlixiaCLIConsole extends AbstractExecutionThreadService implements 
 		obj.setUserName(null);
 		obj.setPassword(null);
 		if (!remote.sendLogin(obj)) {
-			LOGGER.log(Level.SEVERE, "Can't communicate with Alixia Central");
+			LOGGER.error("Can't communicate with Alixia Central");
 		}
 	}
 	

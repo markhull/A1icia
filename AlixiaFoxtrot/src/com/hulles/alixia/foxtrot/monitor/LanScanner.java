@@ -21,6 +21,7 @@
  *******************************************************************************/
 package com.hulles.alixia.foxtrot.monitor;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,14 +32,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.api.tools.AlixiaTimer;
-import java.io.IOException;
 
 /**
  * Class that scans ip local network. Any address in the range 192.168.xxx.xxx is
@@ -61,8 +61,7 @@ import java.io.IOException;
  */
 
 public final class LanScanner {
-	final static Logger LOGGER = Logger.getLogger("AlixiaFoxtrot.LanScanner");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger("AlixiaFoxtrot.LanScanner");
 //	private final static int THREADCOUNT = 8000;
 	private final String submask;
 	private final ExecutorService scanExecutor;
@@ -91,7 +90,7 @@ public final class LanScanner {
 		} else {
 			throw new AlixiaException();
 		}
-		LOGGER.log(LOGLEVEL, "Scan being performed on submask : {0}", submask);
+		LOGGER.debug("Scan being performed on submask : {}", submask);
 	}
 
 	/**
@@ -177,7 +176,7 @@ public final class LanScanner {
 		AlixiaTimer.stopTimer(ip);
 		
 		for (String host : upHosts) {
-			LOGGER.log(LOGLEVEL, "Host {0} is up", host);
+			LOGGER.info("Host {} is up", host);
 		}
 		return upHosts;
 	}

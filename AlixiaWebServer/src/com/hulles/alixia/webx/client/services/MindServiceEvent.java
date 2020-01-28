@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.hulles.alixia.api.tools.AlixiaUtils;
-import com.hulles.alixia.prong.shared.SerialProng;
 import com.hulles.alixia.webx.client.services.ServiceHandler.MindServices;
+import com.hulles.alixia.webx.shared.SerialProng;
 import com.hulles.alixia.webx.shared.SharedUtils;
 
 final public class MindServiceEvent<T> {
@@ -46,7 +45,7 @@ final public class MindServiceEvent<T> {
 	public static SerialProng getProng() {
 		
 		if (prong == null) {
-			AlixiaUtils.error("No prong value in MindServiceEvent");
+			SharedUtils.error("No prong value in MindServiceEvent");
 			return null;
 		}
 		return prong;
@@ -94,7 +93,7 @@ final public class MindServiceEvent<T> {
 		try {
 			param = params.get(ix);
 		} catch (IndexOutOfBoundsException ex) {
-			AlixiaUtils.error("Not enough service params", ex);
+			SharedUtils.error("Not enough service params", ex);
 			return null;
 		}		
 		return param;

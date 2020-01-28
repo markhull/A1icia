@@ -24,15 +24,14 @@ package com.hulles.alixia.delta;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.remote.AlixianID;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.room.UrRoom;
 import com.hulles.alixia.room.document.AlixianAction;
@@ -51,8 +50,7 @@ import com.hulles.alixia.ticket.SememePackage;
  *
  */
 public final class DeltaRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaDelta.DeltaRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(DeltaRoom.class);
 
 	public DeltaRoom() {
 		super();
@@ -120,13 +118,13 @@ public final class DeltaRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "DeltaRoom: in createAlixianActionPackage");
+		LOGGER.debug("DeltaRoom: in createAlixianActionPackage");
 		alixianStr = sememePkg.getSememeObject();
 		if (alixianStr == null) {
-			AlixiaUtils.error("Delta Room: alixian ID sememeObject is null");
+			LOGGER.error("Delta Room: alixian ID sememeObject is null");
 			return null;
 		}
-		LOGGER.log(LOGLEVEL, "DeltaRoom: alixianStr = {0}", alixianStr);
+		LOGGER.debug("DeltaRoom: alixianStr = {}", alixianStr);
 		if (alixianStr.equals("{consoleID}")) {
 			alixianID = null;
 		} else {
@@ -135,7 +133,7 @@ public final class DeltaRoom extends UrRoom {
 				alixianID = null;
 			}
 		}
-		LOGGER.log(LOGLEVEL, "DeltaRoom: alixianID = {0}", alixianID);
+		LOGGER.debug("DeltaRoom: alixianID = {}", alixianID);
 		sememe = sememePkg.getSememe();
 		pkg = new ActionPackage(sememePkg);
 		action = new AlixianAction();
@@ -143,7 +141,7 @@ public final class DeltaRoom extends UrRoom {
 		action.setClientAction(sememe);
 		action.setToAlixianID(alixianID);
 		pkg.setActionObject(action);
-		LOGGER.log(LOGLEVEL, "DeltaRoom: sending action package");
+		LOGGER.debug("DeltaRoom: sending action package");
 		return pkg;
 	}
 

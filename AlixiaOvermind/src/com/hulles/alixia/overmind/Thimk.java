@@ -24,10 +24,12 @@ package com.hulles.alixia.overmind;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
@@ -37,7 +39,6 @@ import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SessionType;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.house.ClientDialogRequest;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.room.document.RoomRequest;
@@ -46,7 +47,7 @@ import com.hulles.alixia.ticket.ActionPackage;
 import com.hulles.alixia.ticket.SememePackage;
 import com.hulles.alixia.ticket.SentencePackage;
 import com.hulles.alixia.ticket.Ticket;
-import java.util.Iterator;
+import com.hulles.alixia.ticket.TicketJournal;
 
 /**
  * Thimk handles decision points as we choose what to send on to the client. 
@@ -58,8 +59,7 @@ import java.util.Iterator;
  *
  */
 final class Thimk {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaOvermind.Thimk");
-    private final static Level LOGLEVEL = OvermindRoom.LOGLEVEL;
+	private final static Logger LOGGER = LoggerFactory.getLogger(Thimk.class);
 	private final static Random RANDOM = new Random();
 	private final OvermindRoom overmind;
 	
@@ -83,12 +83,16 @@ final class Thimk {
 		ActionPackage pkg;
 		int pkgIx;
         DialogRequest dialogRequest;
+        TicketJournal journal;
+        ClientDialogRequest clientRequest;
         
 		SharedUtils.checkNotNull(sememe);
 		SharedUtils.checkNotNull(pkgs);
         SharedUtils.checkNotNull(ticket);
-		LOGGER.log(LOGLEVEL, "Thimk: chooseAction");
-        dialogRequest = ticket.getJournal().getClientRequest().getDialogRequest();
+		LOGGER.debug("Thimk: chooseAction");
+		journal = ticket.getJournal();
+        clientRequest = journal.getClientRequest();
+        dialogRequest = clientRequest.getDialogRequest();
         winnowPackages(sememe, pkgs, dialogRequest);
 		if (pkgs.size() == 1) {
 			// easy decision
@@ -167,22 +171,20 @@ final class Thimk {
 			for (SememePackage sememePkg : sememePackages) {
 				sentencePackage = sememePkg.getSentencePackage();
 				if (sentencePackage == null) {
-					AlixiaUtils.error("Thimk: null sentence package for sememe " + sememePkg.getName(),
-							"This should not be the case at this point in the analysis.");
+					LOGGER.error("Thimk: null sentence package for sememe {}, this should not be the case at this point in the analysis.", sememePkg.getName());
 				} else {
 					sentenceSememePackages.put(sentencePackage.getSentencePackageID(), sememePkg);
 				}
 			}
 		}
 		for (String sentencePackageID : sentenceSememePackages.keySet()) {
-			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sentencePackageID = {0}", 
+			LOGGER.debug("Thimk unifySememeAnalyses: sentencePackageID = {}", 
                     sentencePackageID);
 			sememePackages = sentenceSememePackages.get(sentencePackageID);
-			LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe packages count = {0}", 
+			LOGGER.debug("Thimk unifySememeAnalyses: sememe packages count = {}", 
                     sememePackages.size());
 			for (SememePackage sp : sememePackages) {
-				LOGGER.log(LOGLEVEL, "Thimk unifySememeAnalyses: sememe package {0} score is {1}", 
-                        new Object[]{sp.getName(), sp.getConfidence()});
+				LOGGER.debug("Thimk unifySememeAnalyses: sememe package {} score is {}", sp.getName(), sp.getConfidence());
 			}
 			if (sememePackages.isEmpty()) {
 				continue;
@@ -228,13 +230,13 @@ final class Thimk {
 		
 		SharedUtils.checkNotNull(ticket);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction entry");
+		LOGGER.debug("Thimk: decideClientRequestNextAction entry");
 		dialogRequest = request.getDialogRequest();
 		msg = dialogRequest.getRequestMessage();
 		obj = dialogRequest.getClientObject();
 		if ((msg == null || msg.isEmpty()) && obj == null) {
 			// nothing to do
-			LOGGER.log(LOGLEVEL, "Thimk: nothing to do");
+			LOGGER.debug("Thimk: nothing to do");
 			sememePackages = SememePackage.getSingletonDefault("nothing_to_do");
 			overmind.terminatePipeline(ticket, sememePackages);
 			return;
@@ -242,7 +244,7 @@ final class Thimk {
 		
 		// okay, we need to figure out what's wanted, so first we start with awesome Charlie
 		//    for some NLP action
-		LOGGER.log(LOGLEVEL, "Thimk: decideClientRequestNextAction, msg = {0}", msg);
+		LOGGER.debug("Thimk: decideClientRequestNextAction, msg = {}", msg);
 		newRequest = new RoomRequest(ticket);
 		newRequest.setFromRoom(Room.OVERMIND);
 		sememePackages = SememePackage.getSingletonDefault("nlp_analysis");
@@ -262,7 +264,7 @@ final class Thimk {
 		List<SememePackage> sememePackages;
 
 		SharedUtils.checkNotNull(ticket);
-		LOGGER.log(LOGLEVEL, "Thimk: decideNlpAnalysisNextAction");
+		LOGGER.debug("Thimk: decideNlpAnalysisNextAction");
 		
 		// Next, we ask for a sememe analysis, to match up sememes with our input sentences
 		newRequest = new RoomRequest(ticket);
@@ -285,7 +287,7 @@ final class Thimk {
 	void decideSememeAnalysisNextAction(Ticket ticket, List<SememePackage> sememePackages) {
 		
 		SharedUtils.checkNotNull(ticket);
-		LOGGER.log(LOGLEVEL, "Thimk: decideSememeAnalysisNextAction");
+		LOGGER.debug("Thimk: decideSememeAnalysisNextAction");
 		overmind.terminatePipeline(ticket, sememePackages);
 	}
 

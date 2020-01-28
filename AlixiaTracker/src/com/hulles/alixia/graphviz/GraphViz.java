@@ -31,13 +31,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.SharedUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GraphViz {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaTracker.GraphViz");
-	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = LoggerFactory.getLogger(GraphViz.class);
     private final static String DOT = "dot";
     private final static String TMP_PATH = "/tmp";
     private final String dotExec;
@@ -130,7 +130,7 @@ public class GraphViz {
             line = null;
             while ((line = reader.readLine()) != null) {
                 line = reader.readLine();
-                LOGGER.log(LOGLEVEL, line);
+                LOGGER.debug(line);
             }
             
             try (FileInputStream finput = new FileInputStream(imageFile.getAbsolutePath())) {

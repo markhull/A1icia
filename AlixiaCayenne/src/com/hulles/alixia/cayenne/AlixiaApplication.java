@@ -21,25 +21,41 @@
  *******************************************************************************/
 package com.hulles.alixia.cayenne;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Enumeration;
+import java.util.List;
 
+import org.apache.cayenne.ConfigurationException;
+import org.apache.cayenne.DataRow;
+import org.apache.cayenne.DeleteDenyException;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.di.ClassLoaderManager;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
+import org.apache.cayenne.query.SQLExec;
+import org.apache.cayenne.query.SQLSelect;
 import org.apache.cayenne.resource.ResourceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.SharedUtils;
 
 public final class AlixiaApplication {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCayenne.AlixiaApplication");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaApplication.class);
     private static ObjectContext entityContext = null;
 	private static ServerRuntime cayenneRuntime = null;
     private static boolean uncommittedObjectsError = true;
     private static boolean logging = false;
+    private final static String COPYTABLE = "CREATE TABLE IF NOT EXISTS %2$s LIKE %1$s;\n" + 
+            "INSERT INTO %2$s SELECT * FROM %1$s;";
+    private final static String DROPTABLE = "DROP TABLE IF EXISTS %s;";
+    private final static String GETALLTABLES = "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `table_type` = 'BASE TABLE'" +
+            " AND `table_schema` = 'wrg';";
+    private final static String OPTIMIZETABLE = "OPTIMIZE TABLE %s;";
     
 	private AlixiaApplication() {
 		// only static methods now...
@@ -52,14 +68,17 @@ public final class AlixiaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
-    	
+    	ResourceLocator alixiaLocator;
+    
     	if (cayenneRuntime == null) {
-    		
+    		alixiaLocator = new AlixiaResourceLocator(AlixiaApplication.class, "cayenne-alixia.xml");
+            showURLs("com/hulles/alixia/cayenne/cayenne-alixia.xml");
+            showURLs("com/hulles/alixia/cayenne/alixia_datamap.map.xml");
+            
     		if (!logging) {
-//    			showURLs("com/hulles/alixia/cayenne/cayenne-alixia.xml");
 	    		cayenneRuntime = ServerRuntime.builder()
 	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
-	    	            		.toInstance(new AlixiaResourceLocator(AlixiaApplication.class, "cayenne-alixia.xml")))
+	    	            		.toInstance(alixiaLocator))
 	    				.addConfig("com/hulles/alixia/cayenne/cayenne-alixia.xml")
 	    				.addModule(binder -> binder.bind(JdbcEventLogger.class)
 	    						.to(NoopJdbcEventLogger.class))
@@ -67,7 +86,7 @@ public final class AlixiaApplication {
     		} else {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
-	    	            		.toInstance(new AlixiaResourceLocator(AlixiaApplication.class, "cayenne-alixia.xml")))
+	    	            		.toInstance(alixiaLocator))
 	    				.addConfig("com/hulles/alixia/cayenne/cayenne-alixia.xml")
 	    				.build();
     		}
@@ -75,7 +94,7 @@ public final class AlixiaApplication {
     	}
     	return cayenneRuntime;
     }
-/*
+
     private static void showURLs(String name) {
     	ClassLoaderManager classLoaderManager;
         Enumeration<URL> urls;
@@ -117,10 +136,23 @@ public final class AlixiaApplication {
         }
 
     } 
-*/    
+   
+    /**
+     * We use the check for uncommitted objects to "fail fast" if there are any dangling db objects.
+     * @param value True to check for uncommitted objects, false otherwise
+     */
     public static void setErrorOnUncommittedObjects(boolean value) {
     	
     	uncommittedObjectsError = value;
+    }
+
+    /**
+     * We use the check for uncommitted objects to "fail fast" if there are any dangling db objects.
+     * @return True if we're currently checking for uncommitted objects, false otherwise
+     */
+    public static boolean getErrorOnUncommittedObjects() {
+        
+        return uncommittedObjectsError;
     }
     
     /**
@@ -152,7 +184,7 @@ public final class AlixiaApplication {
 	    	if (entityContext.hasChanges()) {
 	    		objects = entityContext.uncommittedObjects();
 	    		for (Object object : objects) {
-	    			LOGGER.log(Level.SEVERE, "Uncommitted Object {0}", object.toString());
+	    			LOGGER.error("Uncommitted Object {}", object.toString());
 	    		}
 	    		throw new AlixiaException("Cayenne entity context has changes pending");
 	    	}
@@ -172,15 +204,146 @@ public final class AlixiaApplication {
 		// TODO fix this when we go to production
 		return false;
 	}
-	
-	public static void rollBack() {
-		
-		getEntityContext().rollbackChanges();
-	}
-	
-	public static void commit() {
-		
-		getEntityContext().commitChanges();
-	}
+    
+    public static void rollBack() {
+        boolean originalValue;
+        ObjectContext context;
+        
+        // since we're doing a commit we might have uncommitted objects outstanding...
+        originalValue = getErrorOnUncommittedObjects();
+        setErrorOnUncommittedObjects(false);        
+        context = getEntityContext();
+        context.rollbackChanges();
+        setErrorOnUncommittedObjects(originalValue);
+    }
+    
+    /**
+     * Commit all objects in the ObjectContext.
+     * 
+     * @param object The object to commit
+     */
+    public static void commitAll() {
+        boolean originalValue;
+        ObjectContext context;
+        
+        // since we're doing a commit we might have uncommitted objects outstanding...
+        originalValue = getErrorOnUncommittedObjects();
+        setErrorOnUncommittedObjects(false);        
+        context = getEntityContext();
+        context.commitChanges();
+        setErrorOnUncommittedObjects(originalValue);
+    }
+
+    /**
+     * Delete a list of Cayenne data objects; the deletions are not committed.
+     * 
+     * @param objects The list of objects to delete
+     */
+    public static void delete(List<?> objects) {
+        ObjectContext context;
+        
+        SharedUtils.checkNotNull(objects);
+        context = getEntityContext();
+        try {
+            context.deleteObjects(objects);
+//            commitAll();
+        } catch (DeleteDenyException e) {
+            LOGGER.error("Delete error", e);
+        }
+    }
+    
+    /**
+     * Drop a table from the database if it exists.
+     * 
+     * @param table The name of the table to drop
+     * 
+     */
+    static void dropTable(String table) {
+        String sql;
+        
+        SharedUtils.checkNotNull(table);
+        sql = String.format(DROPTABLE, table);
+        runSQLUpdate(sql);
+    }
+    
+    /**
+     * Copy one table to another in the same database. If the destination table exists already,
+     * the copy will not be performed.
+     * 
+     * @param fromTable The origin table to be copied
+     * @param toTable The destination table, which should not exist
+     * 
+     */
+    static void copyTable(String fromTable, String toTable) {
+        String sql;
+        
+        SharedUtils.checkNotNull(fromTable);
+        SharedUtils.checkNotNull(toTable);
+        sql = String.format(COPYTABLE, fromTable, toTable);
+        runSQLUpdate(sql);
+    }
+    /**
+     * Copy one table to another in the same database. If the destination table exists,
+     * it will be backed up prior to the copy.
+     * 
+     * @param fromTable The origin table to be copied
+     * @param toTable The destination table, which may or may not exist
+     * @param backupTable The backup table; if it exists it will be dropped
+     * 
+     */
+    static void copyTable(String fromTable, String toTable, String backupTable) {
+        String sql;
+        
+        SharedUtils.checkNotNull(fromTable);
+        SharedUtils.checkNotNull(toTable);
+        SharedUtils.checkNotNull(backupTable);
+        sql = String.format(DROPTABLE, backupTable);
+        runSQLUpdate(sql);  
+        sql = String.format(COPYTABLE, toTable, backupTable);
+        runSQLUpdate(sql);
+        sql = String.format(DROPTABLE, toTable);
+        runSQLUpdate(sql);  
+        sql = String.format(COPYTABLE, fromTable, toTable);
+        runSQLUpdate(sql);
+    }
+    
+    public static void optimizeTables() {
+        ObjectContext context;
+        List<DataRow> rows;
+        String table;
+        String stmt;
+        List<DataRow> results;
+        String type;
+        
+        context = getEntityContext();
+        rows = SQLSelect.dataRowQuery(GETALLTABLES).select(context);
+        for (DataRow row : rows) {
+            table = (String)row.get("TABLE_NAME");
+            stmt = String.format(OPTIMIZETABLE, table);
+            results = SQLSelect.dataRowQuery(stmt).select(context);
+            for (DataRow result : results) {
+                type = (String)result.get("Msg_type");
+                if (!type.equals("status")) {
+                    // discard InnoDb note "Table does not support optimize, doing recreate + analyze instead"
+                    continue;
+                }
+                LOGGER.info("Optimizing table {}: {}", result.get("Table"), result.get("Msg_text"));
+            }
+        }
+    }
+        
+    /**
+     * Run an update from provided SQL string
+     * 
+     * @param sql The SQL update statement as a String
+     * @return The number of records affected
+     * 
+     */
+    public static int runSQLUpdate(String sql) {
+        ObjectContext context;
+        
+        context = getEntityContext();
+        return SQLExec.query(sql).update(context);
+    }
 	
 }
