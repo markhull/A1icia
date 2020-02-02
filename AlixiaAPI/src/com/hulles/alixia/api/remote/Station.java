@@ -291,7 +291,6 @@ public final class Station implements Serializable {
 		return false;
 	}
 	
-	@SuppressWarnings("resource")
 	private static Station getJebusStation() {
 		Station station = null;
 		byte[] stationBytes;
@@ -307,10 +306,9 @@ public final class Station implements Serializable {
 			} catch (ClassNotFoundException | IOException e1) {
 				throw new AlixiaException("ApplicationKeys: can't deserialize station", e1);
 			}
+	        return station;
 		}
-		return station;
 	}
-	@SuppressWarnings("resource")
 	private static Station getJebusStation(String host, Integer port) {
 		Station station = null;
 		byte[] stationBytes;
@@ -326,8 +324,8 @@ public final class Station implements Serializable {
 			} catch (ClassNotFoundException | IOException e1) {
 				throw new AlixiaException("ApplicationKeys: can't deserialize station");
 			}
+	        return station;
 		}
-		return station;
 	}
 	
 	/**

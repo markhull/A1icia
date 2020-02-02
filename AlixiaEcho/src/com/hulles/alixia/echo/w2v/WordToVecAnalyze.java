@@ -21,12 +21,9 @@
  *******************************************************************************/
 package com.hulles.alixia.echo.w2v;
 
-import com.hulles.alixia.api.AlixiaConstants;
 import java.util.Map;
 
 import com.hulles.alixia.api.shared.SharedUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * WordToVecAnalyze loads the word2vec file and performs a simple analysis of the words contained in it. 
@@ -40,8 +37,8 @@ import java.util.logging.Logger;
  *
  */
 final public class WordToVecAnalyze {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaEcho.WordToVecAnalyze");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+//	private final static Logger LOGGER = Logger.getLogger("AlixiaEcho.WordToVecAnalyze");
+//	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
 	private final Map<String, float[]> words;
 	
 	/**

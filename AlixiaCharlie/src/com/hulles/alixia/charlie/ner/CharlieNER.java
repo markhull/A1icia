@@ -24,10 +24,10 @@ package com.hulles.alixia.charlie.ner;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
@@ -43,8 +43,7 @@ import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.Span;
 
 final public class CharlieNER {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCharlie.CharlieNER");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(CharlieNER.class);
 	private final DictionaryNameFinder myriaOrganizationFinder;
 	private final DictionaryNameFinder myriaLocationFinder;
 	private final DictionaryNameFinder myriaCitizenFinder;
@@ -137,7 +136,7 @@ final public class CharlieNER {
 		outputSpans = personFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "NAME: {0}", s);
+			LOGGER.debug("NAME: {}", s);
 		}
 		return outputStrings;
 	}
@@ -150,7 +149,7 @@ final public class CharlieNER {
 		outputSpans = locationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "LOCATION: {0}", s);
+			LOGGER.debug("LOCATION: {}", s);
 		}
 		return outputStrings;
 	}
@@ -163,7 +162,7 @@ final public class CharlieNER {
 		outputSpans = organizationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "ORGANIZATION: {0}", s);
+			LOGGER.debug("ORGANIZATION: {}", s);
 		}
 		return outputStrings;
 	}
@@ -176,7 +175,7 @@ final public class CharlieNER {
 		outputSpans = dateFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "DATE: {0}", s);
+			LOGGER.debug("DATE: {}", s);
 		}
 		return outputStrings;
 	}
@@ -189,7 +188,7 @@ final public class CharlieNER {
 		outputSpans = timeFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "TIME: {0}", s);
+			LOGGER.debug("TIME: {}", s);
 		}
 		return outputStrings;
 	}
@@ -202,7 +201,7 @@ final public class CharlieNER {
 		outputSpans = moneyFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "MONEY: {0}", s);
+			LOGGER.debug("MONEY: {}", s);
 		}
 		return outputStrings;
 	}
@@ -215,7 +214,7 @@ final public class CharlieNER {
 		outputSpans = percentageFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "PERCENTAGE: {0}", s);
+			LOGGER.debug("PERCENTAGE: {}", s);
 		}
 		return outputStrings;
 	}
@@ -228,7 +227,7 @@ final public class CharlieNER {
 		outputSpans = myriaCitizenFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "MYRIA CITIZEN: {0}", s);
+			LOGGER.debug("MYRIA CITIZEN: {}", s);
 		}
 		return outputStrings;
 	}
@@ -241,7 +240,7 @@ final public class CharlieNER {
 		outputSpans = myriaLocationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "MYRIA LOCATION: {0}", s);
+			LOGGER.debug("MYRIA LOCATION: {}", s);
 		}
 		return outputStrings;
 	}
@@ -254,7 +253,7 @@ final public class CharlieNER {
 		outputSpans = myriaOrganizationFinder.find(tokenizedInput);
 		outputStrings = Span.spansToStrings(outputSpans, tokenizedInput);
 		for (String s : outputStrings) {
-			LOGGER.log(LOGLEVEL, "MYRIA INSTITUTION: {0}", s);
+			LOGGER.debug("MYRIA INSTITUTION: {}", s);
 		}
 		return outputStrings;
 	}

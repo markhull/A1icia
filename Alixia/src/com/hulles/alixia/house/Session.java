@@ -26,10 +26,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.jebus.JebusHub;
@@ -52,8 +52,7 @@ import redis.clients.jedis.Jedis;
  *
  */
 public class Session {
-	final static Logger LOGGER = Logger.getLogger("Alixia.AlixiaSession");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger(Session.class);
 	private final static int SESSIONTTL = 60 * 15; // 15 minutes in seconds
 	private final AlixianID alixianID;
 	private final JebusPool jebusPool;
@@ -63,7 +62,7 @@ public class Session {
 	private Session(AlixianID alixianID) {
 		
 		SharedUtils.checkNotNull(alixianID);
-		LOGGER.log(LOGLEVEL, "AlixiaSession: constructor");
+		LOGGER.debug("AlixiaSession: constructor");
 		this.alixianID = alixianID;
 		jebusPool = JebusHub.getJebusCentral();
 		hashKey = JebusBible.getAlixiaSessionHashKey(jebusPool, alixianID);
@@ -80,10 +79,10 @@ public class Session {
 		Session session;
 		
 		SharedUtils.checkNotNull(alixianID);
- 		LOGGER.log(LOGLEVEL, "AlixiaSession: getSession");
+ 		LOGGER.debug("AlixiaSession: getSession");
 		session = new Session(alixianID);
 		session.update();
-		LOGGER.log(LOGLEVEL, "AlixiaSession: getSession after update");
+		LOGGER.debug("AlixiaSession: getSession after update");
 		return session;
 	}
 
@@ -339,7 +338,6 @@ public class Session {
 	 * 
 	 * @return The list of sessions
 	 */
-	@SuppressWarnings("resource")
 	public static List<Session> getCurrentSessions() {
 		JebusPool jebusPool;
 		Set<String> alixianIDStrs;
@@ -352,13 +350,13 @@ public class Session {
 		timelineKey = JebusBible.getStringKey(JebusKey.SESSION_TIMELINE, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
 			alixianIDStrs = jebus.zrange(timelineKey, 0, -1);
+	        sessions = new ArrayList<>(alixianIDStrs.size());
+	        for (String str : alixianIDStrs) {
+	            alixianID = new AlixianID(str);
+	            session = new Session(alixianID);
+	            sessions.add(session);
+	        }
+	        return sessions;
 		}
-		sessions = new ArrayList<>(alixianIDStrs.size());
-		for (String str : alixianIDStrs) {
-			alixianID = new AlixianID(str);
-			session = new Session(alixianID);
-			sessions.add(session);
-		}
-		return sessions;
 	}
 }

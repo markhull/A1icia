@@ -21,14 +21,15 @@
  *******************************************************************************/
 package com.hulles.alixia.lima;
 
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.cayenne.AnswerHistory;
@@ -52,7 +53,7 @@ import com.hulles.alixia.ticket.TicketJournal;
  * request is finally processed she updates the database with the fulfilled questions.
  * <p>
  * N.B. Back when rooms used to be "lobes", Lima Room was named "Lisa" instead of "Lima", because I
- * really really wanted a module named "Lisa Loeb". Sigh. But that's why Lima
+ * really really wanted a module named "Lisa Lobe". Sigh. But that's why Lima
  * is referred to as "she", above. So now I just imagine the room is named after MPB singer Marina
  * Lima. Sigh.
  *  
@@ -60,8 +61,7 @@ import com.hulles.alixia.ticket.TicketJournal;
  *
  */
 public final class LimaRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaLima.LimaRoom");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(LimaRoom.class);
 	private final static int KEEPERSCORE = 95;
 	private final LimaHistory limaHistory;
 
@@ -87,7 +87,7 @@ public final class LimaRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "LimaRoom: in createAnalysisActionPackage");
+		LOGGER.debug("LimaRoom: in createAnalysisActionPackage");
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		pkg = new ActionPackage(sememePkg);
@@ -97,13 +97,13 @@ public final class LimaRoom extends UrRoom {
 		for (SentencePackage sentencePackage : sentencePackages) {
 			
 			historyList = limaHistory.getMatchingHistory(sentencePackage);
-			LOGGER.log(LOGLEVEL, "LimaRoom: got {0} results from LimaHistory", historyList.size());
+			LOGGER.debug("LimaRoom: got {} results from LimaHistory", historyList.size());
 			
 			if (!historyList.isEmpty()) {
 				// for now we just look at the first one (they've been sorted best to worst)
 				history = historyList.get(0);
 				if (history.getScore() >= KEEPERSCORE) {
-					LOGGER.log(LOGLEVEL, "LimaRoom: have keeper");
+					LOGGER.debug("LimaRoom: have keeper");
 					answerHistory = history.getHistory();
 					sememeResult = answerHistory.getSememe().toSerial();
 					if (sememeResult != null) {
@@ -123,7 +123,7 @@ public final class LimaRoom extends UrRoom {
 		}
 		sememeAnalysis.setSememePackages(sememePackages);
 		pkg.setActionObject(sememeAnalysis);
-		LOGGER.log(LOGLEVEL, "LimaRoom: returning {0} sememe packages", sememePackages.size());
+		LOGGER.debug("LimaRoom: returning {} sememe packages", sememePackages.size());
 		return pkg;
 	}
 
@@ -134,7 +134,7 @@ public final class LimaRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "Lima Room: in createUpdatePackage");
+		LOGGER.debug("Lima Room: in createUpdatePackage");
 		historyUpdate = (HistoryUpdate) request.getRoomObject();
 		limaHistory.addHistory(historyUpdate);
 		updateResponse = new MessageAction();

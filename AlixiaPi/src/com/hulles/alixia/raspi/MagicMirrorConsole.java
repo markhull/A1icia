@@ -170,5 +170,10 @@ public class MagicMirrorConsole extends AbstractExecutionThreadService implement
 
 		receiveText(text);
 	}
+
+    @Override
+    public void textWindowIsClosing() {
+        
+    }
 	
 }

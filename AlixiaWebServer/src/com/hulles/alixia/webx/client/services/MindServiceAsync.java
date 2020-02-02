@@ -27,9 +27,9 @@
 package com.hulles.alixia.webx.client.services;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.hulles.alixia.prong.shared.SerialProng;
 import com.hulles.alixia.webx.shared.SerialConsoleIn;
 import com.hulles.alixia.webx.shared.SerialConsoleOut;
+import com.hulles.alixia.webx.shared.SerialProng;
 import com.hulles.alixia.webx.shared.SerialSystemInfo;
 
 /**

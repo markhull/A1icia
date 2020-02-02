@@ -26,10 +26,21 @@
  */
 package com.hulles.alixia.raspi.aiy;
 
+
 import java.util.ResourceBundle;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.remote.Station;
+import com.hulles.alixia.api.tools.AlixiaVersion;
 import com.hulles.alixia.cli.AlixiaCLIConsole.ConsoleType;
 
 /**
@@ -37,33 +48,45 @@ import com.hulles.alixia.cli.AlixiaCLIConsole.ConsoleType;
  * @author hulles
  */
 public final class AlixiaPiAIY  {
+    private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaPiAIY.class);
 	private static final String BUNDLE_NAME = "com.hulles.alixia.raspi.aiy.Version";
-	private final static String USAGE = "usage: java -jar AlixiaPiAIY.jar [--host=HOST] [--port=PORT] [--daemon] \n\twhere HOST = IP address and PORT = port number";
+//	private final static String USAGE = "usage: java -jar AlixiaPiAIY.jar [--host=HOST] [--port=PORT] [--daemon] \n\twhere HOST = IP address and PORT = port number";
 	private static PiConsole zero2;
+    private static Options options;
 	
-	public static String getVersionString() {
-		ResourceBundle bundle;
-		StringBuilder sb;
-		String value;
-		
-		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
-		sb = new StringBuilder();
-		value = bundle.getString("Name");
-		sb.append(value);
-		sb.append(" \"");
-		value = bundle.getString("Build-Title");
-		sb.append(value);
-		sb.append("\", Version ");
-		value = bundle.getString("Build-Version");
-		sb.append(value);
-		sb.append(", Build #");
-		value = bundle.getString("Build-Number");
-		sb.append(value);
-		sb.append(" on ");
-		value = bundle.getString("Build-Date");
-		sb.append(value);
-		return sb.toString();
-	}
+    private static void setupOptions() {
+        Option host;
+        Option port;
+        Option daemon;
+        
+        host = Option.builder()
+                .argName("H")
+                .longOpt("host")
+                .required(false)
+                .hasArg()
+                .desc("the domain name or IP of the Alixia station server")
+                .build();
+        port = Option.builder()
+                .argName("P")
+                .required(false)
+                .longOpt("port")
+                .hasArg()
+                .desc("the port number of the Alixia station server")
+                .build();
+        daemon = Option.builder()
+                .argName("d")
+                .required(false)
+                .longOpt("daemon")
+                .hasArg(false)
+                .desc("run as a daemon process without user interaction")
+                .build();
+        
+        options = new Options();
+        options.addOption(host);
+        options.addOption(port);
+        options.addOption(daemon);
+        options.addOption("h", "help", false, "show help");
+    }
    
     public static void main(String[] args) {
 		String host;
@@ -71,26 +94,52 @@ public final class AlixiaPiAIY  {
 		Integer port;
 		Station station;
 		ConsoleType whichConsole;
-		
+        String version;
+		CommandLineParser parser;
+        CommandLine commandLine;
+        HelpFormatter formatter;
+ 		ResourceBundle bundle;
+        
+        setupOptions();
+        parser = new DefaultParser();
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (org.apache.commons.cli.ParseException ex) {
+            LOGGER.error("Error parsing command line {}", ex.getMessage());
+            return;
+        }
+        if (commandLine.hasOption("h")) {
+            formatter = new HelpFormatter();
+            formatter.printHelp( "AlixiaPiAIY", options, true);
+            return;
+        }
 		station = Station.getInstance();
 		station.ensureStationExists();
-		host = station.getCentralHost();
-		port = station.getCentralPort();
+        if (commandLine.hasOption("H")) {
+            host = commandLine.getOptionValue("H");
+        } else {
+            host = station.getCentralHost();
+        }
+		if (commandLine.hasOption("P")) {
+            portStr = commandLine.getOptionValue("P");
+            try {
+                port = Integer.parseInt(portStr);
+            } catch (NumberFormatException ex) {
+                LOGGER.error("Port number must be an integer");
+                return;
+            }
+        } else {
+    		port = station.getCentralPort();
+        }
+		
 		whichConsole = ConsoleType.DEFAULT;
-		for (String arg : args) {
-			if (arg.startsWith("--host=")) {
-				host = arg.substring(7);
-			} else if (arg.startsWith("--port=")) {
-				portStr = arg.substring(7);
-				port = Integer.parseInt(portStr);
-			} else if (arg.equals("--daemon")) {
-				whichConsole = ConsoleType.DAEMON;
-			} else {
-				System.out.println(USAGE);
-				System.exit(1);
-			}
-		}
-		System.out.println(getVersionString());
+        if (commandLine.hasOption("d")) {
+            whichConsole = ConsoleType.DAEMON;
+        }
+       
+		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
+        version = AlixiaVersion.getVersionString(bundle);
+		System.out.println(version);
 		System.out.println(AlixiaConstants.getAlixiasWelcome());
 		System.out.println();
 		try (HardwareLayer hardwareLayer = new HardwareLayer()) {

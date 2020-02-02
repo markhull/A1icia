@@ -59,7 +59,7 @@ public class PapaErrorHandler implements ErrorHandler {
     }
 
     @Override
-	public void warning(SAXParseException spe) throws SAXException {
+	public void warning(SAXParseException spe) {
     	
     	SharedUtils.checkNotNull(spe);
         out.println("Warning: " + getParseExceptionInfo(spe));

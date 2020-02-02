@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -41,7 +20,7 @@ public abstract class _Sememe extends BaseDataObject {
 
     private static final long serialVersionUID = 1L; 
 
-    public static final String SPARK_ID_PK_COLUMN = "sememe_ID";
+    public static final String SEMEME_ID_PK_COLUMN = "sememe_ID";
 
     public static final Property<Boolean> ADMIN_ONLY = Property.create("adminOnly", Boolean.class);
     public static final Property<String> CANONICAL_FORM = Property.create("canonicalForm", String.class);
@@ -50,10 +29,10 @@ public abstract class _Sememe extends BaseDataObject {
     public static final Property<String> NAME = Property.create("name", String.class);
     public static final Property<List<AnswerHistory>> ANSWER_HISTORIES = Property.create("answerHistories", List.class);
 
-    protected boolean adminOnly;
+    protected Boolean adminOnly;
     protected String canonicalForm;
-    protected boolean external;
-    protected boolean loggedIn;
+    protected Boolean external;
+    protected Boolean loggedIn;
     protected String name;
 
     protected Object answerHistories;
@@ -153,16 +132,16 @@ public abstract class _Sememe extends BaseDataObject {
 
         switch (propName) {
             case "adminOnly":
-                this.adminOnly = val == null ? false : (boolean)val;
+                this.adminOnly = (Boolean)val;
                 break;
             case "canonicalForm":
                 this.canonicalForm = (String)val;
                 break;
             case "external":
-                this.external = val == null ? false : (boolean)val;
+                this.external = (Boolean)val;
                 break;
             case "loggedIn":
-                this.loggedIn = val == null ? false : (boolean)val;
+                this.loggedIn = (Boolean)val;
                 break;
             case "name":
                 this.name = (String)val;
@@ -186,10 +165,10 @@ public abstract class _Sememe extends BaseDataObject {
     @Override
     protected void writeState(ObjectOutputStream out) throws IOException {
         super.writeState(out);
-        out.writeBoolean(this.adminOnly);
+        out.writeObject(this.adminOnly);
         out.writeObject(this.canonicalForm);
-        out.writeBoolean(this.external);
-        out.writeBoolean(this.loggedIn);
+        out.writeObject(this.external);
+        out.writeObject(this.loggedIn);
         out.writeObject(this.name);
         out.writeObject(this.answerHistories);
     }
@@ -197,10 +176,10 @@ public abstract class _Sememe extends BaseDataObject {
     @Override
     protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
         super.readState(in);
-        this.adminOnly = in.readBoolean();
+        this.adminOnly = (Boolean)in.readObject();
         this.canonicalForm = (String)in.readObject();
-        this.external = in.readBoolean();
-        this.loggedIn = in.readBoolean();
+        this.external = (Boolean)in.readObject();
+        this.loggedIn = (Boolean)in.readObject();
         this.name = (String)in.readObject();
         this.answerHistories = in.readObject();
     }

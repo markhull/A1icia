@@ -22,21 +22,23 @@
 package com.hulles.alixia.media;
 
 public enum MediaFormat {
-	MP3(".mp3"),
-	WAV(".wav"),
+	MP3(".mp3", "audio/mpeg"),
+	WAV(".wav", "audio/wav"),
 	
-	PNG(".png"),
-	JPG(".jpg"),
-	GIF(".gif"),
+	PNG(".png", "image/png"),
+	JPG(".jpg", "image/jpeg"),
+	GIF(".gif", "image/gif"),
 
-	MOV(".mov"),
-	FLV(".flv"),
-	MP4(".mp4");
+	MOV(".mov", "video/quicktime"),
+	FLV(".flv", "video/x-flv"),
+	MP4(".mp4", "video/mp4");
     private final String extension;
+    private final String mime;
 
-    private MediaFormat(String extension) {
+    private MediaFormat(String extension, String mime) {
     	
         this.extension = extension;
+        this.mime = mime;
     }
     
     public String getFileExtension() {
@@ -44,6 +46,11 @@ public enum MediaFormat {
         return extension;
     }
 
+    public String getMimeType() {
+        
+        return mime;
+    }
+    
     public Boolean isAudio() {
     	
     	switch (this) {
@@ -77,5 +84,16 @@ public enum MediaFormat {
     		default:
     			return false;
     	}
+    }
+    
+    public static MediaFormat getFormatFromFileName(String fileName) {
+        
+        MediaUtils.checkNotNull(fileName);
+        for (MediaFormat mf : MediaFormat.values()) {
+            if (fileName.endsWith(mf.getFileExtension())) {
+                return mf;
+            }
+        }
+        return null;
     }
 }

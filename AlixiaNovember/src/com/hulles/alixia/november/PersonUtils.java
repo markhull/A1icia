@@ -30,14 +30,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.SerialMiniPerson;
 import com.hulles.alixia.api.shared.SerialPerson;
 import com.hulles.alixia.api.shared.SerialUUID;
 import com.hulles.alixia.api.tools.AlixiaUtils;
+import com.hulles.alixia.cayenne.AlixiaApplication;
 import com.hulles.alixia.cayenne.Person;
 
 /**
@@ -45,8 +46,7 @@ import com.hulles.alixia.cayenne.Person;
  * @author hulles
  */
 final public class PersonUtils {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaNovember.PersonUtils");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(PersonUtils.class);
 
 	public PersonUtils() {
 
@@ -69,7 +69,7 @@ final public class PersonUtils {
         }
         uuid = dbPerson.getUUID();
         dbPerson.setLastAccess();
-        dbPerson.commit();
+        AlixiaApplication.commitAll();
 		return uuid;
 	}
 
@@ -80,17 +80,17 @@ final public class PersonUtils {
 		Date date;
 		
 		if (person == null) {
-			AlixiaUtils.error("Null person in updatePerson"); //$NON-NLS-1$
+			LOGGER.error("Null person in updatePerson");
 			return null;
 		}
 		uuid = person.getUUID();
 		if (uuid == null) {
-			AlixiaUtils.error("Null UUID in updatePerson"); //$NON-NLS-1$
+			LOGGER.error("Null UUID in updatePerson");
 			return null;
 		}
 		dbPerson = Person.findPerson(uuid);
 		if (dbPerson == null) {
-			AlixiaUtils.error("Can't retrieve person in updatePerson"); //$NON-NLS-1$
+			LOGGER.error("Can't retrieve person in updatePerson");
 			return null;
 		}
 		dbPerson.setUsername(person.getUserName());
@@ -111,7 +111,7 @@ final public class PersonUtils {
 				dbPerson.setPassword(password);
 			}
 		}
-		dbPerson.commit();
+		AlixiaApplication.commitAll();
 		return uuid;
 	}
 
@@ -126,7 +126,7 @@ final public class PersonUtils {
 			user = buildSerialMiniPerson(dbPerson);
 			sysPeople.add(user);
 		}
-		LOGGER.log(LOGLEVEL, "getPeople: Count is {0}", sysPeople.size());
+		LOGGER.debug("getPeople: Count is {}", sysPeople.size());
 		return sysPeople;
 	}
 
@@ -134,12 +134,12 @@ final public class PersonUtils {
 		Person dbPerson;
 		
 		if ((personUUID == null) || (pword == null)) {
-			AlixiaUtils.error("Null argument(s) passed to updatePassword"); //$NON-NLS-1$
+			LOGGER.error("Null argument(s) passed to updatePassword");
 			return;
 		}
 		dbPerson = Person.findPerson(personUUID);
 		dbPerson.setPassword(pword);
-		dbPerson.commit();
+		AlixiaApplication.commitAll();
 	}
   
     public static SerialPerson buildSerialPerson(Person dbPerson) {
@@ -166,7 +166,7 @@ final public class PersonUtils {
         person.setCheckIn(dbPerson.getCheckIn());
         person.setHasAvatar(dbPerson.hasAvatar());
         dbPerson.setLastAccess();
-        dbPerson.commit();
+        AlixiaApplication.commitAll();
         return person;
     }
     

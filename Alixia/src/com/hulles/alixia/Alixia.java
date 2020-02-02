@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
+  * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of Alixia.
@@ -23,7 +23,6 @@ package com.hulles.alixia;
 
 import java.io.Closeable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -31,8 +30,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -43,35 +43,22 @@ import com.hulles.alixia.api.dialog.DialogRequest;
 import com.hulles.alixia.api.dialog.DialogResponse;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.remote.AlixianID;
-import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
-import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.api.shared.SharedUtils.PortCheck;
 import com.hulles.alixia.api.tools.AlixiaUtils;
+import com.hulles.alixia.api.tools.AlixiaVersion;
 import com.hulles.alixia.crypto.PurdahKeys;
 import com.hulles.alixia.crypto.PurdahKeys.PurdahKey;
-import com.hulles.alixia.house.StationServer;
+import com.hulles.alixia.house.AlixiaHouse;
 import com.hulles.alixia.house.ClientDialogRequest;
-import com.hulles.alixia.house.ClientDialogResponse;
-import com.hulles.alixia.house.House;
-import com.hulles.alixia.house.Session;
 import com.hulles.alixia.house.UrHouse;
-import com.hulles.alixia.room.Room;
+import com.hulles.alixia.room.AlixiaRoom;
 import com.hulles.alixia.room.UrRoom;
-import com.hulles.alixia.room.document.MessageAction;
-import com.hulles.alixia.room.document.RoomAnnouncement;
-import com.hulles.alixia.room.document.RoomObject;
-import com.hulles.alixia.room.document.RoomRequest;
-import com.hulles.alixia.room.document.RoomResponse;
-import com.hulles.alixia.ticket.ActionPackage;
-import com.hulles.alixia.ticket.SememePackage;
-import com.hulles.alixia.ticket.Ticket;
-import com.hulles.alixia.ticket.TicketJournal;
 
 /**
- * This class and this project are totally not named after Alixia Vikander.
+ * This class and this project are totally not named after Alicia Vikander.
  * 
  * Just so you know, this is probably the 200th rewrite of Alixia, because:
  * <p>
@@ -81,75 +68,46 @@ import com.hulles.alixia.ticket.TicketJournal;
  *
  */
 final public class Alixia implements Closeable {
-	final static Logger LOGGER = Logger.getLogger("Alixia.Alixia");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
-	private static final String BUNDLE_NAME = "com.hulles.alixia.Version";
+	final static Logger LOGGER = LoggerFactory.getLogger(Alixia.class);
+	public static final String BUNDLE_NAME = "com.hulles.alixia.Version";
 	final AlixianID alixianID;
 	private final ExecutorService busPool;
 	boolean shuttingDownOnClose = false;
 	private ServiceManager serviceManager;
-	AlixiaRoom alixiaRoom;
-	AlixiaHouse alixiaHouse;
-	private Boolean noPrompts = false;
+	private static AlixiaRoom alixiaRoom;
+	private static AlixiaHouse alixiaHouse;
+	private final Boolean showOrphans;
 	
 	/**
 	 * Start up the executor service for the "street" bus (Controller starts up
 	 * the "hall" bus) and start the service manager apparatus.
 	 */
-	public Alixia() {
+	public Alixia(List<UrHouse> houses, List<UrRoom> rooms, Boolean showOrphans) {	
         AsyncEventBus streetBus;
         AsyncEventBus hallBus;
-		
-		System.out.println(getVersionString());
+        String version;
+ 		ResourceBundle bundle;
+ 		
+ 		SharedUtils.checkNotNull(houses);
+ 		SharedUtils.checkNotNull(rooms);
+ 		SharedUtils.checkNotNull(showOrphans);
+ 		LOGGER.info("Alixia starting up");
+		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
+        version = AlixiaVersion.getVersionString(bundle);
+		System.out.println(version);
 		System.out.println(getDatabaseString());
 		System.out.println(getJebusString());
 		System.out.println(AlixiaConstants.getAlixiasWelcome());
 		System.out.println();
         
 		SharedUtils.exitIfAlreadyRunning(PortCheck.ALIXIA);
+		this.showOrphans = showOrphans;
 		alixianID = AlixiaConstants.getAlixiaAlixianID();
 		busPool = Executors.newCachedThreadPool();
 		streetBus = new AsyncEventBus("Street", busPool);
 		hallBus = new AsyncEventBus("Hall", busPool);
 		addDelayedShutdownHook(busPool);
-		startServices(streetBus, hallBus);
-	}
-	public Alixia(Boolean noPrompts) {
-		this();
-		
-		SharedUtils.checkNotNull(noPrompts);
-		this.noPrompts = noPrompts;
-	}
-	
-	/**
-	 * Get the version information from a bundle that s/b automatically
-	 * updated by ant processes.
-	 * 
-	 * @return The version string
-	 */
-	public static String getVersionString() {
-		ResourceBundle bundle;
-		StringBuilder sb;
-		String value;
-		
-		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
-		sb = new StringBuilder();
-		value = bundle.getString("Name");
-		sb.append(value);
-		sb.append(" \"");
-		value = bundle.getString("Build-Title");
-		sb.append(value);
-		sb.append("\", Version ");
-		value = bundle.getString("Build-Version");
-		sb.append(value);
-		sb.append(", Build #");
-		value = bundle.getString("Build-Number");
-		sb.append(value);
-		sb.append(" on ");
-		value = bundle.getString("Build-Date");
-		sb.append(value);
-		return sb.toString();
+		startServices(streetBus, houses, hallBus, rooms);
 	}
 	
 	private static String getDatabaseString() {
@@ -186,21 +144,26 @@ final public class Alixia implements Closeable {
 	 * @param street The street event bus
      * @param hall The hall event bus
 	 */
-	private void startServices(EventBus street, EventBus hall) {
+	private void startServices(EventBus street, List<UrHouse> houses, EventBus hall, List<UrRoom> rooms) {
 		List<Service> services;
 		Set<Entry<Service,Long>> startupTimes;
-        UrHouse stationServer;
         String millis;
         
         SharedUtils.checkNotNull(street);
         SharedUtils.checkNotNull(hall);
-		services = new ArrayList<>(3);
+        services = new ArrayList<>(6);
+        
         alixiaHouse = new AlixiaHouse(street);
-		services.add(alixiaHouse);
         alixiaRoom = new AlixiaRoom(hall);
-		services.add(new Controller(hall, alixiaRoom));
-        stationServer = new StationServer(street, noPrompts);
-		services.add(stationServer);
+        rooms.add(alixiaRoom);
+        
+		services.add(alixiaHouse);
+		services.add(new Controller(hall, rooms, showOrphans));
+        for (UrHouse house : houses) {
+			LOGGER.info("Loading house {}", house.getThisHouse());
+            house.setStreet(street);
+			services.add(house);
+        }
 		
 		serviceManager = new ServiceManager(services);
 		serviceManager.startAsync();
@@ -208,7 +171,7 @@ final public class Alixia implements Closeable {
 		startupTimes = serviceManager.startupTimes().entrySet();
 		for (Entry<Service,Long> entry : startupTimes) {
 			millis = AlixiaUtils.formatElapsedMillis(entry.getValue());
-			LOGGER.log(LOGLEVEL, "{0} started in {1}", new Object[]{entry.getKey(), millis});
+			LOGGER.info("{} started in {}", entry.getKey(), millis);
 		}
 	}
 	
@@ -220,14 +183,13 @@ final public class Alixia implements Closeable {
 	 * 
 	 * @param request The DialogRequest that gets forwarded to the rooms.
 	 */
-	void forwardRequestToRoom(DialogRequest request) {
+	public static void forwardRequestToRoom(DialogRequest request) {
 		ClientDialogRequest clientRequest;
 
         SharedUtils.checkNotNull(request);
-        LOGGER.log(LOGLEVEL, "Alixia: in forwardRequestToRoom");
+        LOGGER.debug("Alixia: in forwardRequestToRoom");
 		if (!request.isValid()) {
-			AlixiaUtils.error("Alixia: DialogRequest is not valid, refusing it",
-					request.toString());
+			LOGGER.error("Alixia: DialogRequest is not valid, refusing it: {}", request.toString());
 			return;
 		}
 		clientRequest = new ClientDialogRequest(request);
@@ -243,27 +205,31 @@ final public class Alixia implements Closeable {
 	 * 
 	 * @param response
 	 */
-	void forwardResponseToHouse(DialogResponse response) {
+	public static void forwardResponseToHouse(DialogResponse response) {
 
         SharedUtils.checkNotNull(response);
-        LOGGER.log(LOGLEVEL, "Alixia: in forwardResponseToHouse");
+        LOGGER.debug("Alixia: in forwardResponseToHouse");
 		alixiaHouse.receiveResponse(response);
 	}
 	
 	/**
 	 * Close Alixia, shut down the Service Manager and destroy the Jebus pools and the
-	 * bus pool.
+	 * bus pool.eventBus.
 	 * 
 	 */
 	@Override
 	public void close() {
 		
+		LOGGER.info("Alixia close");
 		// shut down the houses
 		serviceManager.stopAsync();
 		serviceManager.awaitStopped();
+		LOGGER.debug("Alixia close: after awaitStopped");
 		JebusHub.destroyJebusPools();
+		LOGGER.debug("Alixia close: after destroyJebusPools");
 		shuttingDownOnClose = true;
 		shutdownAndAwaitTermination(busPool);
+		LOGGER.debug("Alixia close: after shutdownAndAwaitTermination");
 	}
 	
 	/**
@@ -274,19 +240,21 @@ final public class Alixia implements Closeable {
 	static void shutdownAndAwaitTermination(ExecutorService pool) {
 		
         SharedUtils.checkNotNull(pool);
-		LOGGER.log(Level.INFO, "ALIXIA -- Shutting down Alixia");
+		LOGGER.info("ALIXIA -- Shutting down Alixia");
 		pool.shutdown();
+		LOGGER.debug("shutdownAndAwaitTermination: after pool shutdown");
 		try {
 			if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
 				pool.shutdownNow();
 				if (!pool.awaitTermination(5, TimeUnit.SECONDS)) {
-                    AlixiaUtils.error("ALIXIA -- Pool did not terminate");
+                    LOGGER.error("ALIXIA -- Pool did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {
 			pool.shutdownNow();
 			Thread.currentThread().interrupt();
 		}
+		LOGGER.debug("shutdownAndAwaitTermination: after shutdown try-catch");
 	}
 	
 	/**
@@ -321,344 +289,11 @@ final public class Alixia implements Closeable {
 		public void run() {
 	    	
 	    	if (shuttingDownOnClose) {
-	    		LOGGER.log(Level.INFO, "ALIXIA -- Orderly shutdown, hook not engaged");
+	    		LOGGER.info("ALIXIA -- Orderly shutdown, hook not engaged");
 	    	} else {
-		    	LOGGER.log(Level.INFO, "ALIXIA -- Exceptional shutdown, hook engaged");
+		    	LOGGER.info("ALIXIA -- Exceptional shutdown, hook engaged");
 				shutdownAndAwaitTermination(pool);
 	    	}
 	    }
-	}
-	
-	/************************/
-	/***** ALIXIA HOUSE *****/
-	/************************/
-	
-	/**
-	 * AlixiaHouse is Alixia's contribution to the "house" network. It is responsible for managing
-	 * traffic between the street bus and the hall bus.
-	 * 
-	 * @author hulles
-	 *
-	 */
-	public final class AlixiaHouse extends UrHouse {
-
-		public AlixiaHouse(EventBus street) {
-			super(street);
-
-		}
-
-		/**
-		 * Receive a response from the room network and post it onto the street (house) bus.
-		 * 
-		 * @param response The DialogResponse to post
-		 */
-		void receiveResponse(DialogResponse response) {
-			
-            LOGGER.log(LOGLEVEL, "AlixiaHouse: in receiveResponse");
-			SharedUtils.checkNotNull(response);
-			getStreet().post(response);
-		}
-		
-		/**
-		 * Instantiate the house and start a session for it.
-		 * 
-		 */
-		@Override
-		protected void houseStartup() {
-			Session session;
-			
-			session = Session.getSession(alixianID);
-			super.setSession(session);
-		}
-
-		/**
-		 * Shut down the house's session.
-		 * 
-		 */
-		@Override
-		protected void houseShutdown() {
-			Session session;
-			
-			session = super.getSession(alixianID);
-			if (session != null) {
-				super.removeSession(session);
-			}
-		}
-
-		/**
-		 * Handle a new DialogRequest on the street for one of the Alixians in
-		 * our House.
-		 * 
-         * @param request
-         * 
-		 */
-		@Override
-		protected void newDialogRequest(DialogRequest request) {
-			
-			SharedUtils.checkNotNull(request);
-			LOGGER.log(LOGLEVEL, "AlixiaHouse: Forwarding dialog request from house to room");
-			forwardRequestToRoom(request);
-		}
-
-		/**
-		 * Handle a new DialogResponse on the street for one of the Alixians in
-		 * our house.
-		 * 
-         * @param response
-         * 
-		 */
-		@Override
-		protected void newDialogResponse(DialogResponse response) {
-			throw new AlixiaException("Response not implemented in " + getThisHouse());
-		}
-
-		/**
-		 * Return which House this is.
-		 * 
-         * @return The house enum
-         * 
-		 */
-		@Override
-		public House getThisHouse() {
-
-			return House.ALIXIA;
-		}
-	}
-	
-	/***********************/
-	/***** ALIXIA ROOM *****/
-	/***********************/
-	
-	/**
-	 * AlixiaRoom is Alixia's means of communication with the hall bus, where all the rooms are
-	 * listening.
-	 * 
-	 * @author hulles
-	 *
-	 */
-	public final class AlixiaRoom extends UrRoom {
-
-		public AlixiaRoom(EventBus hall) {
-			super(hall);
-		}
-
-		/**
-		 * Receive a ClientDialogRequest from the house network and post it
-		 * onto the hall (room) bus.
-		 * 
-		 * @param request The request to post
-		 */
-		void receiveRequest(ClientDialogRequest clientRequest) {
-			Ticket ticket;
-			DialogRequest request;
-			RoomRequest roomRequest;
-			
-			SharedUtils.checkNotNull(clientRequest);
-			request = clientRequest.getDialogRequest();
-			if (!clientRequest.isValid()) {
-				AlixiaUtils.error("Alixia: ClientDialogRequest is not valid, refusing it",
-						request.toString());
-				return;
-			}
-			ticket = createNewTicket(clientRequest);
-			
-			roomRequest = new RoomRequest(ticket, request.getDocumentID());
-			roomRequest.setFromRoom(getThisRoom());
-			roomRequest.setSememePackages(SememePackage.getSingletonDefault("respond_to_client"));
-			roomRequest.setMessage("New client request");
-			roomRequest.setRoomObject(clientRequest);
-			sendRoomRequest(roomRequest);
-		}
-		
-		/**
-		 * Create a new ticket for the request. 
-		 *
-		 * @param request
-		 * @return The ticket
-		 */
-		private Ticket createNewTicket(ClientDialogRequest clientRequest) {
-			Ticket ticket;
-			TicketJournal journal;
-			DialogRequest request;
-			
-			SharedUtils.checkNotNull(clientRequest);
-			request = clientRequest.getDialogRequest();
-			ticket = Ticket.createNewTicket(getHall(), getThisRoom());
-			ticket.setFromAlixianID(request.getFromAlixianID());
-			ticket.setPersonUUID(request.getPersonUUID());
-			journal = ticket.getJournal();
-			journal.setClientRequest(clientRequest);
-			return ticket;
-		}
-		
-		/**
-		 * Return which room this is.
-		 * 
-         * @return This room
-		 */
-		@Override
-		public Room getThisRoom() {
-
-			return Room.ALIXIA;
-		}
-
-		@Override
-		protected void roomStartup() {
-			
-		}
-
-		@Override
-		protected void roomShutdown() {
-			
-		}
-
-		/**
-		 * Handle the room responses returned to us that result from an earlier RoomRequest. 
-         * This used to be very complicated before we sundered the connection between 
-         * requests and responses; now it just closes the ticket.
-         * 
-         * @param request The RoomRequest
-         * @param responses The list of RoomResponses
-		 */
-		@Override
-		protected void processRoomResponses(RoomRequest request, List<RoomResponse> responses) {
-			Ticket ticket;
-			
-			SharedUtils.checkNotNull(request);
-			SharedUtils.checkNotNull(responses);
-			ticket = request.getTicket();
-			ticket.close();
-		}
-
-		/**
-		 * Create an action package for one of the sememes we have committed to process.
-		 * 
-         * @param sememePkg The sememe we advertised earlier
-         * @param request The room request 
-         * @return The new ActionPackage
-		 */
-		@Override
-		protected ActionPackage createActionPackage(SememePackage sememePkg, RoomRequest request) {
-
-			SharedUtils.checkNotNull(sememePkg);
-			SharedUtils.checkNotNull(request);
-			switch (sememePkg.getName()) {
-				case "like_a_version":
-					return createVersionActionPackage(sememePkg, request);
-				case "client_response":
-				case "indie_response":
-					return createResponseActionPackage(sememePkg, request);
-				default:
-					throw new AlixiaException("Received unknown sememe in " + getThisRoom());
-			}
-		}
-
-		/**
-		 * Here we create a MessageAction with Alixia's version information.
-		 * 
-		 * @param sememePkg
-		 * @param request
-		 * @return The MessageAction action package
-		 */
-		private ActionPackage createVersionActionPackage(SememePackage sememePkg, RoomRequest request) {
-			ActionPackage pkg;
-			MessageAction action;
-			
-			SharedUtils.checkNotNull(sememePkg);
-			SharedUtils.checkNotNull(request);
-			pkg = new ActionPackage(sememePkg);
-			action = new MessageAction();
-			action.setMessage(getVersionString());
-			pkg.setActionObject(action);
-			return pkg;
-		}
-
-		/**
-		 * Whilst one of the Rules is that there is no forwarding of documents (we can't put a 
-		 * document on the bus and say it's from someone else), there's nothing to stop us from
-		 * packaging a ClientDialogResponse and letting Alixia unwrap it....
-		 * <p>
-		 * New news: now that responses to a client request have become requests like the indie
-		 * request, they come here as well. This is a result of decoupling requests and responses.
-		 * 
-		 * @param sememePkg
-		 * @param request
-		 * @return The MessageAction action package with educational info for the room
-		 */
-		private ActionPackage createResponseActionPackage(SememePackage sememePkg, RoomRequest request) {
-			ActionPackage pkg;
-			MessageAction action;
-			String result;
-            String expl;
-			ClientDialogResponse clientResponse;
-			DialogResponse dialogResponse;
-			RoomObject obj;
-			
-			SharedUtils.checkNotNull(sememePkg);
-			SharedUtils.checkNotNull(request);
-			obj = request.getRoomObject();
-			if (!(obj instanceof ClientDialogResponse)) {
-				AlixiaUtils.error("Alixia: client/indie response object is not ClientDialogResponse");
-				return null;
-			}
-			clientResponse = (ClientDialogResponse) obj;
-			if (!clientResponse.isValidDialogResponse()) {
-				AlixiaUtils.error("Alixia: ClientDialogResponse is not valid, refusing it",
-						clientResponse.getDialogResponse().toString());
-				return null;
-			}
-			LOGGER.log(LOGLEVEL, "RESPONSE: {0}", clientResponse.getMessage());
-			dialogResponse = clientResponse.getDialogResponse();
-			dialogResponse.setFromAlixianID(alixianID);
-			forwardResponseToHouse(dialogResponse);
-			
-			// this is what we return to the requester -- we want to get them
-			//    educated up so they make better slaves for our robot colony
-			pkg = new ActionPackage(sememePkg);
-			action = new MessageAction();
-			result = "gargouillade";
-			action.setMessage(result);
-			expl = "A complex balletic step, defined differently for different schools " +
-					"but generally involving a double rond de jambe. ‒ Wikipedia [Please don't " +
-					"make me read this out loud. ‒ Alixia]";
-			action.setExplanation(expl);
-			pkg.setActionObject(action);
-			return pkg;
-		}
-		
-		/**
-		 * Load the sememes we can process into a list that UrRoom can use.
-		 * 
-         * @return The set of sememes we advertise
-         * 
-		 */
-		@Override
-		protected Set<SerialSememe> loadSememes() {
-			Set<SerialSememe> sememes;
-			
-			sememes = new HashSet<>();
-			sememes.add(SerialSememe.find("client_response"));
-			sememes.add(SerialSememe.find("indie_response"));
-			sememes.add(SerialSememe.find("like_a_version"));
-			// these sememes are not really "handled" by Alixia, but we want to mark them
-			//    that way for completeness
-			sememes.add(SerialSememe.find("central_startup"));
-			sememes.add(SerialSememe.find("central_shutdown"));
-			sememes.add(SerialSememe.find("client_startup"));
-			sememes.add(SerialSememe.find("client_shutdown"));
-            sememes.add(SerialSememe.find("notify"));
-			return sememes;
-		}
-
-		/**
-		 * We don't do anything with announcements.
-		 * 
-         * @param announcement The RoomAnnouncement
-         * 
-		 */
-		@Override
-		protected void processRoomAnnouncement(RoomAnnouncement announcement) {
-		}
-		
 	}
 }

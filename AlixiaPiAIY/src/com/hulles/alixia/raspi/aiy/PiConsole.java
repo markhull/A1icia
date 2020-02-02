@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.alixia.raspi.aiy;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.remote.WakeUp;
@@ -32,8 +32,7 @@ import com.hulles.alixia.api.shared.SharedUtils.PortCheck;
 import com.hulles.alixia.cli.AlixiaCLIConsole;
 
 public class PiConsole extends AlixiaCLIConsole {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMagicMirror.Zero2Console");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(PiConsole.class);
 	private final HardwareLayer hardwareLayer;
 	
 	PiConsole(String host, Integer port, ConsoleType whichConsole, HardwareLayer layer) {
@@ -76,28 +75,28 @@ public class PiConsole extends AlixiaCLIConsole {
 	public boolean receiveCommand(SerialSememe command) {
 
 		SharedUtils.checkNotNull(command);
-		LOGGER.log(LOGLEVEL, "Zero2Console: in receiveCommand");
+		LOGGER.debug("PiConsole: in receiveCommand");
 		super.receiveCommand(command);
 		switch (command.getName()) {
 			case "central_startup":
-				LOGGER.log(LOGLEVEL, "Zero2Console: Alixia Central startup command");
+				LOGGER.debug("PiConsole: Alixia Central startup command");
 				return true;
 			case "central_shutdown":
-				LOGGER.log(LOGLEVEL, "Zero2Console: Alixia Central shutdown command");
+				LOGGER.debug("PiConsole: Alixia Central shutdown command");
 				return true;
 			case "set_blue_LED_on":
 			case "set_blue_LED_off":
 			case "blink_blue_LED":
 			case "pulse_blue_LED":
-				LOGGER.log(LOGLEVEL, "Zero2Console: LED command");
+				LOGGER.debug("PiConsole: LED command");
 				hardwareLayer.setLED(command.getName());
 				return true;
 			case "wake_up_console":
 				WakeUp.wakeUpLinux();
-				LOGGER.log(LOGLEVEL, "Zero2Console: wake up command");
+				LOGGER.debug("PiConsole: wake up command");
 				return true;
 			default:
-				System.err.println("Zero2Console: received unknown command, ignoring it");
+				System.err.println("PiConsole: received unknown command, ignoring it");
 				break;
 		}
 		return false;

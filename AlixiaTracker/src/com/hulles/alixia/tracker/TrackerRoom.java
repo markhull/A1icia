@@ -30,14 +30,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
@@ -46,7 +46,6 @@ import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.graphviz.Graph;
 import com.hulles.alixia.graphviz.GraphViz;
 import com.hulles.alixia.room.Room;
@@ -65,13 +64,14 @@ import redis.clients.jedis.Jedis;
  * Tracker listens to everything on the bus and keeps track of what's happening.
  * <p>
  * NOTE: Tracker is now turned off until we figure out a better use for it.
+ * <p>
+ * But it's WAY TOO COOL to get rid of it entirely
  * 
  * @author hulles
  *
  */
 public final class TrackerRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("Alixia.Tracker");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(TrackerRoom.class);
 	private final static int GRAPHTTL = 60 * 60 * 24; // graphs are stored in Jebus for 24 hours
 	private final static boolean SAVEIMAGE = false;
 	private final static boolean SAVEDOTGRAPH = false;
@@ -109,7 +109,7 @@ public final class TrackerRoom extends UrRoom {
 //                    closeTicket(roomAnnouncement.getTicket());
                     break;
 				default:
-					AlixiaUtils.error("Unknown announcement type in documentArrival");
+					LOGGER.error("Unknown announcement type in documentArrival");
 					break;
 			}
 		// we don't really have to recast these, might take it out later if we don't need it
@@ -120,7 +120,7 @@ public final class TrackerRoom extends UrRoom {
 			roomRequest = (RoomRequest) document;
 //			trackDocument(roomRequest);
 		} else {
-			AlixiaUtils.error("Unknown document type in Tracker = " + document.getDocumentType());
+			LOGGER.error("Unknown document type in Tracker = {}", document.getDocumentType());
 		}
 	}
 	
@@ -135,7 +135,7 @@ public final class TrackerRoom extends UrRoom {
 		graph = ValueGraphBuilder.directed().allowsSelfLoops(true).build();
 		ticketGraph = new TicketTrack(ticket, graph);
 		ticketMap.put(ticket, ticketGraph);
-		LOGGER.log(LOGLEVEL, "TRACKER: added ticket, ticketmap has {0} entries.", ticketMap.size());
+		LOGGER.debug("TRACKER: added ticket, ticketmap has {} entries.", ticketMap.size());
 	}
 	
 	public void closeTicket(Ticket ticket) {
@@ -160,7 +160,7 @@ public final class TrackerRoom extends UrRoom {
 					try (Jedis jebus = jebusPool.getResource()) {
 						jebus.set(hashKey, dotGraph.genGraphDotString());
 						jebus.expire(hashKey, GRAPHTTL);
-						LOGGER.log(LOGLEVEL, "Tracker: wrote graph dot string to {0}", hashKey);
+						LOGGER.debug("Tracker: wrote graph dot string to {}", hashKey);
 					}
 				}
 			});
@@ -180,7 +180,7 @@ public final class TrackerRoom extends UrRoom {
 		}
 		// update database with graph as well
 		ticketMap.remove(ticket);
-		LOGGER.log(LOGLEVEL, "TRACKER: removed ticket, ticketmap has {0} entries.", ticketMap.size());
+		LOGGER.debug("TRACKER: removed ticket, ticketmap has {} entries.", ticketMap.size());
 	}
 	
 	public Set<Room> whatsComingToMe(Ticket ticket, Room me) {
@@ -194,11 +194,10 @@ public final class TrackerRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(ticket);
 		SharedUtils.checkNotNull(me);
-		LOGGER.log(LOGLEVEL, "TRACKER: {0} is inquiring about what's coming for ticket {1}", 
-                new Object[]{me.getDisplayName(), ticket});
+		LOGGER.debug("TRACKER: {} is inquiring about what's coming for ticket {}",  me.getDisplayName(), ticket);
 		ticketTrack = ticketMap.get(ticket);
 		if (ticketTrack == null) {
-			AlixiaUtils.error("TRACKER: Room asked whatsComingToMe on a bad or stale ticket");
+			LOGGER.error("TRACKER: Room asked whatsComingToMe on a bad or stale ticket");
 			return null;
 		}
 		incomingRooms = EnumSet.noneOf(Room.class);
@@ -206,15 +205,15 @@ public final class TrackerRoom extends UrRoom {
 		meNode = new RoomNode(me);
 		nodes = valueGraph.nodes();
 		if (!nodes.contains(meNode)) {
-			AlixiaUtils.error("TRACKER: In whatsComingToMe, node not present in graph");
+			LOGGER.error("TRACKER: In whatsComingToMe, node not present in graph");
 			return null;
 		}
 		incoming = valueGraph.inDegree(meNode);
-		LOGGER.log(LOGLEVEL, "TRACKER: {0} documents are tracking in", incoming);
+		LOGGER.debug("TRACKER: {} documents are tracking in", incoming);
 		predecessors = valueGraph.predecessors(meNode);
 		for (RoomNode node : predecessors) {
 			incomingRooms.add(node.getRoom());
-			LOGGER.log(LOGLEVEL, "TRACKER: {0} has a document tracking in", node);
+			LOGGER.debug("TRACKER: {} has a document tracking in", node);
 		}
 		return incomingRooms;
 	}
@@ -233,26 +232,22 @@ public final class TrackerRoom extends UrRoom {
 		SharedUtils.checkNotNull(document);
 		ticket = document.getTicket();
 		if (ticket == null) {
-			AlixiaUtils.error("Tracker: trying to track null ticket for document #" + 
-					document.getDocumentID());
+			LOGGER.error("Tracker: trying to track null ticket for document #{}", document.getDocumentID());
 			return;
 		}
 		ticketTrack = ticketMap.get(ticket);
 		if (ticketTrack == null) {
-			AlixiaUtils.error("Tracker: ticket but no map key for document #" + 
-					document.getDocumentID());
+			LOGGER.error("Tracker: ticket but no map key for document #{}", document.getDocumentID());
 			return;
 		}
 		valueGraph = ticketTrack.getMutableValueGraph();
 		if (valueGraph == null) {
-			AlixiaUtils.error("Tracker: ticket but no ValueGraph for document #" + 
-					document.getDocumentID());
+			LOGGER.error("Tracker: ticket but no ValueGraph for document #{}", document.getDocumentID());
 			return;
 		}
 		dotGraph = ticketTrack.getDotGraph();
 		if (dotGraph == null) {
-			AlixiaUtils.error("Tracker: ticket but no dot graph for document #" + 
-					document.getDocumentID());
+			LOGGER.error("Tracker: ticket but no dot graph for document #{}", document.getDocumentID());
 			return;
 		}
         if (document instanceof RoomResponse) {
@@ -312,19 +307,19 @@ public final class TrackerRoom extends UrRoom {
 		
 		if (executor != null) {
 			try {
-				LOGGER.log(LOGLEVEL, "attempting to shutdown executor");
+				LOGGER.debug("attempting to shutdown executor");
 			    executor.shutdown();
 			    executor.awaitTermination(5, TimeUnit.SECONDS);
 			}
 			catch (InterruptedException e) {
-				LOGGER.log(LOGLEVEL, "tasks interrupted");
+				LOGGER.debug("tasks interrupted");
 			}
 			finally {
 			    if (!executor.isTerminated()) {
-			    	LOGGER.log(LOGLEVEL, "cancelling non-finished tasks");
+			    	LOGGER.debug("cancelling non-finished tasks");
 			    }
 			    executor.shutdownNow();
-			    LOGGER.log(LOGLEVEL, "shutdown finished");
+			    LOGGER.debug("shutdown finished");
 			}
 		}
 		executor = null;

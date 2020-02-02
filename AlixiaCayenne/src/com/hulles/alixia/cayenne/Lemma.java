@@ -95,28 +95,6 @@ public class Lemma extends _Lemma {
 				.select(context);
 		return dbLemmas;
     }
-    
-    public void commit() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.commitChanges();
-    }
-    
-    public void rollback() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.rollbackChanges();
-    }
-
-	public void delete() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-     	context.deleteObjects(this);
-    	context.commitChanges();
-	}
 
 	public static Lemma createNew() {
     	ObjectContext context;

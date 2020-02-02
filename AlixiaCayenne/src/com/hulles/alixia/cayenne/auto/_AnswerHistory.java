@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -48,9 +27,9 @@ public abstract class _AnswerHistory extends BaseDataObject {
     public static final Property<String> ORIGINAL_QUESTION = Property.create("originalQuestion", String.class);
     public static final Property<String> POS_TAGS = Property.create("posTags", String.class);
     public static final Property<Integer> SATISFACTION = Property.create("satisfaction", Integer.class);
-    public static final Property<String> SPARK_OBJECT = Property.create("sememeObject", String.class);
+    public static final Property<String> SEMEME_OBJECT = Property.create("sememeObject", String.class);
     public static final Property<List<AnswerChunk>> ANSWER_CHUNKS = Property.create("answerChunks", List.class);
-    public static final Property<Sememe> SPARK = Property.create("sememe", Sememe.class);
+    public static final Property<Sememe> SEMEME = Property.create("sememe", Sememe.class);
 
     protected String lemmatizedQuestion;
     protected String originalQuestion;

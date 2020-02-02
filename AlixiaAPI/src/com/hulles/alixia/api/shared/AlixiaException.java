@@ -21,9 +21,8 @@
  *******************************************************************************/
 package com.hulles.alixia.api.shared;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Alixia API version of the RuntimeException, for possible expanded use later. This <b>should</b>
@@ -33,25 +32,24 @@ import java.util.logging.Logger;
  *
  */
 public final class AlixiaException extends RuntimeException {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaApi.AlixiaException");
-	private final static Level LOGLEVEL = Level.SEVERE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlixiaException.class);
 	private static final long serialVersionUID = -4744550566143714488L;
 	private static final String BEES = "500 The Bees They're In My Eyes";
 	
 	public AlixiaException() {
 		super(BEES);
 		
-		LOGGER.log(LOGLEVEL, BEES);
+		LOGGER.error(BEES);
 	}
 	public AlixiaException(String desc) {
 		super(desc);
 		
-		LOGGER.log(LOGLEVEL, desc);
+		LOGGER.error(desc);
 	}
     public AlixiaException(String desc, Throwable ex) {
         super(desc, ex);
         
-        LOGGER.log(LOGLEVEL, desc);
+        LOGGER.error(desc);
         ex.printStackTrace();
     }
 }

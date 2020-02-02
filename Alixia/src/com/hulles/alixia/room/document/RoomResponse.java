@@ -24,8 +24,10 @@ package com.hulles.alixia.room.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.ticket.ActionPackage;
 import com.hulles.alixia.ticket.Ticket;
@@ -37,6 +39,7 @@ import com.hulles.alixia.ticket.Ticket;
  *
  */
 public final class RoomResponse extends RoomDocument {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoomResponse.class);
 	private final Long responseToRequestID;
 	private final Room respondToRoom;
 	private final List<ActionPackage> actionPackages;
@@ -85,7 +88,7 @@ public final class RoomResponse extends RoomDocument {
 		SharedUtils.checkNotNull(pkg);
 		// make sure the ActionPackage we're adding is kosher...
 		if (!pkg.isReady()) {
-			AlixiaUtils.error("RoomResponse: package not ready, so not added");
+			LOGGER.error("RoomResponse: package not ready, so not added");
 			return;
 		}
 		actionPackages.add(pkg);
@@ -104,7 +107,7 @@ public final class RoomResponse extends RoomDocument {
 		//    had no response for any of the sememes -- it's effectively a
 		//    null response to the request
 		if (getActionPackages() == null) {
-			AlixiaUtils.error("No action packages");
+			LOGGER.error("No action packages");
 			return false;
 		}
 		return super.documentIsReady();

@@ -94,7 +94,6 @@ public class ApplicationKeys implements Serializable {
         keyMap.put(key, value);
     }
 
-	@SuppressWarnings("resource")
 	private static ApplicationKeys getJebusAppKeys() {
 		ApplicationKeys appKeys = null;
 		byte[] appBytes;
@@ -110,10 +109,9 @@ public class ApplicationKeys implements Serializable {
 			} catch (ClassNotFoundException | IOException e1) {
 				throw new AlixiaException("ApplicationKeys: can't deserialize app keys", e1);
 			}
+	        return appKeys;
 		}
-		return appKeys;
 	}
-	@SuppressWarnings("resource")
 	private static ApplicationKeys getJebusAppKeys(String host, Integer port) {
 		ApplicationKeys appKeys = null;
 		byte[] appBytes;
@@ -129,8 +127,8 @@ public class ApplicationKeys implements Serializable {
 			} catch (ClassNotFoundException | IOException e1) {
 				throw new AlixiaException("ApplicationKeys: can't deserialize app keys", e1);
 			}
+	        return appKeys;
 		}
-		return appKeys;
 	}
 	
 	/**
@@ -206,9 +204,15 @@ public class ApplicationKeys implements Serializable {
 		WOLFRAMSPOKEN,
 		WOLFRAMSIMPLE,
 		WOLFRAMSHORT,
+		// other...
 		DEEPSPEECH,
 		TEMPHUMIDITY,
         GOOGLEXLATE,
-        TIKA
+        TIKA,
+        EXPRESSURL,
+        PARSERURL,
+        NODEHOST,
+        NODEPORT,
+        CAYENNEXMLPATH
 	}
 }

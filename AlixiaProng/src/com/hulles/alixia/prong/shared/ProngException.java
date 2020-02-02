@@ -21,18 +21,32 @@
  *******************************************************************************/
 package com.hulles.alixia.prong.shared;
 
-public class ProngException extends Exception {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.SerialProng;
+
+public class ProngException extends RuntimeException {
 	private static final long serialVersionUID = 4066588339568803803L;
-	private SerialProng badProng;
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProngException.class);
+	private final SerialProng badProng;
 
 	public ProngException() {
-		super();
+		super("Prong Exception");
+        
+		LOGGER.error("Prong Exception");
 		this.badProng = null;
 	}
-	
+	public ProngException(String prongString) {
+        super("Prong Exception: " + prongString);
+        
+        LOGGER.error("Prong Exception: {}", prongString);
+		this.badProng = null;
+    }
 	public ProngException(SerialProng badProng) {
-		
-		super(badProng.getProngString());
+		super("Prong Exception: " + badProng.getProngString());
+        
+        LOGGER.error("Prong Exception: {}", badProng.getProngString());
 		this.badProng = badProng;
 	}
 

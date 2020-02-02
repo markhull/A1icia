@@ -41,9 +41,10 @@ public class TokenSort extends RatioAlgorithm {
     }
 
     private static String processAndSort(String in, StringProcessor stringProcessor) {
-
-        in = stringProcessor.process(in);
-        String[] wordsArray = in.split("\\s+");
+        String out;
+        
+        out = stringProcessor.process(in);
+        String[] wordsArray = out.split("\\s+");
 
         List<String> words = Arrays.asList(wordsArray);
         String joined = Utils.sortAndJoin(words, " ");

@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Alixia</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <style>
+        .scroller {
+          height:30em;
+          overflow-y: scroll;
+        }
+        .mainTitle {
+            text-align: center;
+        }
+        .meAttrs {
+            color: blue;
+        }
+        .alixiaAttrs {
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<!--    <h1 class="display-4 mainTitle">Alixia</h1> -->
+    <div class="text-center">
+		<img src="data:image/png;base64,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">
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Conversation
+            </div>
+            <div class="card-body">
+                <div class="scroller">
+                    <div id="messageDisplay"></div>
+                </div>
+                <form class="form">
+                    <textarea
+                        class="form-control"
+                        id="messageBox"
+                        rows="2"
+                        placeholder="Type your message here">
+                     </textarea>
+                </form>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="sendMessage()">
+                    Send
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="clearDisplay()">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mediaTitle">Alixia Vision</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <video id="mediavideo">
+                        'Your browser does not support the HTML5 video tag.'
+                    </video>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ttsAudio = document.createElement('audio');
+        const mediaAudio = document.createElement('audio');
+        const mediaVideo = document.getElementById('mediavideo');
+        var transmitTimer = null;
+        var sessionID = getCookie("sessionid");
+        var ttsListener;
+        var audioListener;
+        var videoListener;
+        var cancelVideo = false;
+
+
+
+        function clearDisplay() {
+
+            document.getElementById("messageDisplay").innerHTML = "";
+            document.getElementById("messageBox").focus();
+        }
+
+        function getCookie(cname) {
+            var name;
+            var decodedCookie;
+            var ca;
+            var i;
+            var c;
+
+            name = cname + "=";
+            decodedCookie = decodeURIComponent(document.cookie);
+            ca = decodedCookie.split(';');
+
+            for(i = 0; i <ca.length; i++) {
+                c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function sendMessage() {
+            var msgBox;
+            var msg;
+            var textToAppend;
+
+            msgBox = document.getElementById("messageBox");
+            msg = msgBox.value;
+            if (msg == null) {
+                transmit("");
+            } else if (msg === ""){
+                transmit("");
+            } else {
+                textToAppend = "<span class=meAttrs >Me: </span>" + msg + "<br />";
+                appendMessage(textToAppend);
+                transmit(msg);
+            }
+            msgBox.value = null;
+            msgBox.focus();
+            if (transmitTimer == null) {
+                transmitTimer = setInterval(timerTransmit, 3000);
+            }
+        }
+
+        function appendMessage(msg) {
+            var msgDisplay;
+            var currentMsgs;
+            var formattedMsg;
+
+            formattedMsg = msg.replace(/\n/g, "<br />");
+            msgDisplay = document.getElementById("messageDisplay");
+            currentMsgs = msgDisplay.innerHTML;
+            currentMsgs += formattedMsg;
+            msgDisplay.innerHTML = currentMsgs;
+            msgDisplay.scrollIntoView(false);
+        }
+
+        function alixiaError(msg) {
+
+            if (transmitTimer != null) {
+                clearInterval(transmitTimer);
+                transmitTimer = null;
+            }
+            console.error(msg);
+        }
+
+        async function timerTransmit() {
+
+            if (sessionID == null) {
+                return;
+            }
+            transmit("");
+        }
+
+        async function transmit(message) {
+            const url = "alixia/json";
+            var xmitObj;
+            var response;
+            var msgObj;
+
+            if (sessionID == null) {
+                alixiaError("Transmit: no session ID");
+                return;
+            }
+            if (message == null) {
+                alixiaError("Transmit: null message");
+                return;
+            }
+            xmitObj = {'sessionid':sessionID, 'text':message};
+            response = await fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(xmitObj),
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            }).catch((err) => {
+                // response will be undefined if the promise is rejected;
+                alixiaError("Transmit fetch: " + err);
+                return;
+            });
+            if (response == null) {
+                alixiaError("Transmit: no response to AJAX request");
+                return;
+            }
+            if (!response.ok) {
+                alixiaError("Transmit: response from AJAX is " + response.status);
+                return;
+            }
+            msgObj = await response.json()
+            .catch((err) => {
+                // msgObj will be undefined if the promise is rejected;
+                alixiaError("Transmit json conversion: " + err);
+                return;
+             });
+             if (msgObj == null) {
+                 alixiaError("Transmit: can't parse AJAX JSON");
+                 return;
+            }
+            processJSON(msgObj);
+        }
+
+        // TODO reorganize
+        var urlIx;
+        var mediaIx;
+        var ttsIx;
+        var sources;
+        var urls;
+        var ttss;
+        var media;
+        ttsAudio.addEventListener("ended", ttsListener);
+        mediaAudio.addEventListener("ended", audioListener);
+        mediaVideo.addEventListener("ended", videoListener);
+
+        function processJSON(msgObj) {
+            var messages;
+            var explanations;
+            var ix;
+            var textToAppend;
+            var mediaObj;
+
+            sessionID = msgObj.sessionid;
+            messages = msgObj.messages;
+            for (ix in messages) {
+                if (messages[ix] === "") {
+                    messages[ix] = "[media response]";
+                }
+                textToAppend = `<span class=alixiaAttrs>Alixia: </span>${messages[ix]}<br />`
+                appendMessage(textToAppend);
+            }
+
+            // tts JsonArray in msgObj is optional, based on server switch
+            ttss = msgObj.tts;
+            if (ttss != undefined) {
+                ttsIx = 0;
+                if (ttsIx < ttss.length) {
+                    // Pico tts is always WAV
+                    if (ttsAudio.canPlayType('audio/wav')) {
+                        ttsAudio.setAttribute('type', 'audio/wav');
+                        playTTS(ttss);
+                    }
+                }
+            }
+
+            explanations = msgObj.explanations;
+            for (ix in explanations) {
+                textToAppend = `<span class=alixiaAttrs>Alixia: </span>${explanations[ix]}<br />`
+                appendMessage(textToAppend);
+            }
+
+            media = msgObj.media;
+            mediaIx = 0;
+            if (mediaIx < media.length) {
+                mediaObj = media[mediaIx];
+                playMedia(mediaObj);
+            }
+        }
+
+        function ttsListener() {
+
+            if (++ttsIx < ttss.length) {
+                playTTS(ttss);
+            }
+        }
+
+        function playTTS(ttss) {
+            var sourceStr;
+
+            sourceStr = `data:audio/x-wav;base64,${ttss[ttsIx]}`
+            ttsAudio.setAttribute('src', sourceStr);
+            ttsAudio.play();
+        }
+
+        function playMedia(mediaObj) {
+
+            if (mediaObj.mediatype === "audio") {
+                playAudio(mediaObj);
+            } else if (mediaObj.mediatype === "video") {
+                playVideo(mediaObj);
+            }
+        }
+
+        function playAudio(mediaObj) {
+            var fmt;
+
+            fmt = mediaObj.format;
+            urlIx = 0;
+            // if the audio object exists, assume it has at least one url
+            if (mediaAudio.canPlayType(fmt)) {
+                sources = mediaObj.urls;
+                playAudioStream(sources);
+            }
+        }
+
+        function audioListener() {
+            var newMediaObj;
+
+            if (++urlIx < sources.length) {
+                playAudioStream(sources);
+            } else if (++mediaIx < media.length) {
+                newMediaObj = media[mediaIx];
+                playMedia(newMediaObj);
+            }
+        }
+
+        function playAudioStream(urls) {
+
+            mediaAudio.setAttribute('src', urls[urlIx]);
+            mediaAudio.play();
+        }
+
+        function playVideo(mediaObj) {
+            var fmt;
+
+            cancelVideo = false;
+            fmt = mediaObj.format;
+            urlIx = 0;
+            // if the video object exists, assume it has at least one url
+            if (mediaVideo.canPlayType(fmt)) {
+                sources = mediaObj.urls;
+                $('#mediaModal').on('hidden.bs.modal', function () {
+                    cancelVideo = true;
+                    mediaVideo.removeAttribute('src');
+                    mediaVideo.load();
+                });
+                // $('#mediaModal').on('shown.bs.modal', function (e) {
+                // })
+                $('#mediaModal').modal();
+                playVideoStream(sources);
+                $('#mediaModal').modal('handleUpdate') // TODO
+            }
+        }
+
+        function videoListener() {
+            var newMediaObj;
+
+            if (++urlIx < sources.length) {
+                playVideoStream(sources);
+            } else if (++mediaIx < media.length) {
+                newMediaObj = media[mediaIx];
+                playMedia(newMediaObj);
+            }
+        }
+
+        function playVideoStream(urls) {
+
+            if (cancelVideo) {
+                return;
+            }
+            mediaVideo.setAttribute('src', urls[urlIx]);
+            mediaVideo.width = 480;
+            mediaVideo.height = 320;
+            mediaVideo.play();
+        }
+
+    </script>
+
+    <noscript>
+        <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+            Your web browser must have JavaScript enabled in order for this application to function correctly.
+        </div>
+    </noscript>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -91,7 +91,7 @@ final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
 		clientObjects.clear();
 		return listCopy;
 	}
-	
+		
 	@Override
 	public boolean receiveCommand(SerialSememe sememe) {
 		
@@ -124,4 +124,9 @@ final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
 
 		receiveText(text);
 	}
+
+    @Override
+    public void textWindowIsClosing() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

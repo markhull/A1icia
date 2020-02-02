@@ -34,12 +34,15 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.MoreFiles;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 
 public final class FoxtrotUtils {
+    private final static Logger LOGGER = LoggerFactory.getLogger(FoxtrotUtils.class);
 	private static final int RUNCOMMANDLEN = 50 * 1024;
 	
 	static String getStringFromFile(String fileName) {
@@ -169,7 +172,7 @@ public final class FoxtrotUtils {
 			throw new AlixiaException("Can't close runCommand stderr stream", e);
 		}
 		if (stdErr.length() > 0) {
-			AlixiaUtils.error("runCommand produced stderr stream, as follows:", stdErr.toString());
+			LOGGER.error("runCommand produced stderr stream, as follows: {}", stdErr.toString());
 		}
 		
 		proc.destroy();

@@ -21,8 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.echo.w2v;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,12 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.api.tools.AlixiaTimer;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 
 /**
  * WordToVecSearch is the class that uses the loaded word2vec BIN file for word matches 
@@ -46,8 +45,7 @@ import com.hulles.alixia.api.tools.AlixiaUtils;
  *
  */
 final public class WordToVecSearch {
-	final static Logger LOGGER = Logger.getLogger("AlixiaEcho.WordToVecSearch");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	final static Logger LOGGER = LoggerFactory.getLogger(WordToVecSearch.class);
 	private final static String DISTANCE_FORMAT = "(%.4f)";
 	private Map<String, float[]> wordVectors = null;
 	
@@ -70,10 +68,10 @@ final public class WordToVecSearch {
 		
 		SharedUtils.checkNotNull(fileName);
 		loader = new WordToVecLoader();
-		LOGGER.log(LOGLEVEL, "WordToVecSearch: about to load w2v file");
+		LOGGER.debug("WordToVecSearch: about to load w2v file");
 		loader.load(fileName);
 		wordVectors = loader.getMap();
-		LOGGER.log(LOGLEVEL, "WordToVecSearch: finished loading w2v file");
+		LOGGER.debug("WordToVecSearch: finished loading w2v file");
 	}
 	
 	/**
@@ -84,7 +82,7 @@ final public class WordToVecSearch {
 	public Map<String, float[]> getVectorMap() {
 		
 		if (wordVectors == null) {
-			AlixiaUtils.error("You need to call the loadFile method before accessing the map");
+			LOGGER.error("You need to call the loadFile method before accessing the map");
 			return null;
 		}
 		return wordVectors;
@@ -253,7 +251,7 @@ final public class WordToVecSearch {
 		bestMatches = new ArrayList<>(maxNumberOfMatches);
 		wDistance = new WordDistance("init", 0.0);
 		bestMatches.addAll(Collections.nCopies(maxNumberOfMatches, wDistance));
-		LOGGER.log(LOGLEVEL, "WordToVecSearch: searching entry table");
+		LOGGER.debug("WordToVecSearch: searching entry table");
 		for (Entry<String, float[]> entry : entrySet) {
 			if (ignores.contains(entry.getKey())) {
 				continue;
@@ -266,7 +264,7 @@ final public class WordToVecSearch {
 				leastBestDistance = updateBestMatches(distance, bestMatches, entry.getKey());
 			}
 		}
-		LOGGER.log(LOGLEVEL, "WordToVecSearch: built match table for search");
+		LOGGER.debug("WordToVecSearch: built match table for search");
 		return bestMatches;
 	}
 

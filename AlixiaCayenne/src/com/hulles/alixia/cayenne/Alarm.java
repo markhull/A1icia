@@ -24,7 +24,6 @@ package com.hulles.alixia.cayenne;
 import com.hulles.alixia.cayenne.auto._Alarm;
 
 public class Alarm extends _Alarm {
-
     private static final long serialVersionUID = 1L; 
 
 }

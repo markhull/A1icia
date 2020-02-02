@@ -1,5 +1,5 @@
 /**
- * Alixia Oscar
+ * AlixiaOscar
  * 
  * constants
  * 
@@ -9,16 +9,11 @@
 module com.hulles.alixia.oscar {
 	exports com.hulles.alixia.oscar to com.hulles.alixia.central;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
 	requires com.hulles.alixia.cayenne;
 	requires com.hulles.alixia.media;
-	requires guava;
-	requires java.logging;
+    requires org.slf4j;
 	// to here
-    requires cayenne.client;
-    requires cayenne.di;
-    requires cayenne.server;
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.oscar.OscarRoom;
 }

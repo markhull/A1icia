@@ -24,15 +24,15 @@ package com.hulles.alixia.raspi;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.remote.WakeUp;
 import com.hulles.alixia.api.shared.SharedUtils;
 
 public final class WakeUpCall implements Callable<Void> {
-	final static Logger LOGGER = Logger.getLogger("AlixiaPi.WakeUpCall");
-	final static Level LOGLEVEL = Level.FINE;
+	final static Logger LOGGER = LoggerFactory.getLogger(WakeUpCall.class);
 	private final static int INITIAL_DELAY = 60 * 1000; // 1 minute
 	private final static int RETRIGGER_DELAY = 4 * 60 * 1000; // 4 minutes
 	private final static boolean WAKEUP_DISPLAY = true;
@@ -59,10 +59,10 @@ public final class WakeUpCall implements Callable<Void> {
 	@Override
 	public Void call() throws Exception {
 		
-		LOGGER.log(LOGLEVEL, "WakeUpCall: knock on the door");
+		LOGGER.debug("WakeUpCall: knock on the door");
 		// "debounce" the motion signal
 		if (allowTrigger) {
-			LOGGER.log(LOGLEVEL, "WakeUpCall: triggered");
+			LOGGER.debug("WakeUpCall: triggered");
 			allowTrigger = false;
 			console.motionTriggered();
 			if (WAKEUP_DISPLAY) {
@@ -84,7 +84,7 @@ public final class WakeUpCall implements Callable<Void> {
 
 		@Override
 		public void run() {
-			LOGGER.log(LOGLEVEL, "WakeUpCall: reset");
+			LOGGER.debug("WakeUpCall: reset");
 			allowTrigger = true;
 		}
 	}

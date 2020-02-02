@@ -21,16 +21,16 @@
  *******************************************************************************/
 package com.hulles.alixia.golf;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.api.tools.AlixiaUtils;
@@ -51,8 +51,7 @@ import com.hulles.alixia.tools.ExternalAperture;
  *
  */
 public final class GolfRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaGolf.GolfRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(GolfRoom.class);
 	private static final String FOUNDPHRASE = "Here's what I found: ";
 	private static final String ISA_FORMAT = "'%s' is a %s";
 	private static final String ISAN_FORMAT = "'%s' is an %s";
@@ -106,7 +105,7 @@ public final class GolfRoom extends UrRoom {
 		response = new GolfAnalysis();
 		lookupTarget = sememePkg.getSememeObject();
 		if (lookupTarget == null || lookupTarget.isEmpty()) {
-			AlixiaUtils.error("GolfRoom: no sememe object for sememe " + sememePkg.getName());
+			LOGGER.error("GolfRoom: no sememe object for sememe {}", sememePkg.getName());
 			return null;
 		}
 		try {
@@ -114,12 +113,12 @@ public final class GolfRoom extends UrRoom {
 		} catch (UnsupportedEncodingException e) {
 			throw new AlixiaException("Error encoding query in GolfRoom", e);
 		}
-		LOGGER.log(LOGLEVEL, "Golf escaped target is [{0}]", escapedTarget);
+		LOGGER.debug("Golf escaped target is [{}]", escapedTarget);
 		searchStr = ExternalAperture.searchWikiData(escapedTarget);
 		if (searchStr != null) {
-			LOGGER.log(LOGLEVEL, "Golf search string is [{0}]", searchStr);
+			LOGGER.debug("Golf search string is [{}]", searchStr);
 			searchResults = WikiDataParser.parseSearch(searchStr);
-			LOGGER.log(LOGLEVEL, "Golf search results has {0} entries", searchResults.size());
+			LOGGER.debug("Golf search results has {} entries", searchResults.size());
 			if (!searchResults.isEmpty()) {
 				firstResult = true;
 				sb = new StringBuilder();

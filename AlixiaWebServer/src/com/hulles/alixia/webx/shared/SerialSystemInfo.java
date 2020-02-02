@@ -23,8 +23,6 @@ package com.hulles.alixia.webx.shared;
 
 import java.io.Serializable;
 
-import com.hulles.alixia.prong.shared.SerialProng;
-
 
 /**
  * This class is for serialized system info that the client needs from the server

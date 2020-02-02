@@ -23,10 +23,22 @@
 package com.hulles.alixia.central;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.Alixia;
 import com.hulles.alixia.alpha.AlphaRoom;
 import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.bravo.BravoRoom;
 import com.hulles.alixia.charlie.CharlieRoom;
 import com.hulles.alixia.delta.DeltaRoom;
@@ -34,31 +46,42 @@ import com.hulles.alixia.echo.EchoRoom;
 import com.hulles.alixia.foxtrot.FoxtrotRoom;
 import com.hulles.alixia.golf.GolfRoom;
 import com.hulles.alixia.hotel.HotelRoom;
+import com.hulles.alixia.house.UrHouse;
 import com.hulles.alixia.india.IndiaRoom;
 import com.hulles.alixia.juliet.JulietRoom;
 import com.hulles.alixia.kilo.KiloRoom;
 import com.hulles.alixia.lima.LimaRoom;
 import com.hulles.alixia.mike.MikeRoom;
+import com.hulles.alixia.nodeserver.pages.NodeWebServer;
 import com.hulles.alixia.november.NovemberRoom;
 import com.hulles.alixia.oscar.OscarRoom;
 import com.hulles.alixia.overmind.OvermindRoom;
 import com.hulles.alixia.papa.PapaRoom;
+import com.hulles.alixia.qa.QARoom;
 import com.hulles.alixia.quebec.QuebecRoom;
 import com.hulles.alixia.romeo.RomeoRoom;
+import com.hulles.alixia.room.UrRoom;
 import com.hulles.alixia.sierra.SierraRoom;
+import com.hulles.alixia.stationserver.StationServer;
 import com.hulles.alixia.tracker.TrackerRoom;
 
 /**
  * AlixiaCentral is a simple class with a main method to start up all the 
  * various rooms and run Alixia.
- * <p>
- * N.B. We do it this way because I'm just not smart enough (yet) to know how
- * to make the modules available for Alixia's ServiceLoader to find without
- * instantiating them here.
  * 
  * @author hulles
  */
 public class AlixiaCentral {   
+	private final static Logger LOGGER = LoggerFactory.getLogger("Alixia.AlixiaCentral");
+	private static Options options;
+	
+    private static void setupOptions() {
+        
+        options = new Options();
+        options.addOption("n", "noprompt", false, "do not send timed prompts to clients");
+        options.addOption("o", "orphans", false, "display unimplemented sememes");
+        options.addOption("h", "help", false, "show help");
+    }
 	
 	private static void waitForKey() {
 		
@@ -70,43 +93,82 @@ public class AlixiaCentral {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings("null")
 	public static void main(String[] args) {
  		boolean noprompt = false;
+        Boolean showOrphans = false;
+		CommandLineParser parser;
+        CommandLine commandLine;
+        HelpFormatter formatter;
+		List<UrHouse> houses;
+		List<UrRoom> rooms;
 		
-		if (args.length > 0) {
-			if (args[0].equals("--noprompt")) {
-				noprompt = true;
-			}
-		}
+ 		setupOptions();
+ 		
+        parser = new DefaultParser();
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (ParseException ex) {
+        	commandLine = null;
+            LOGGER.error("Error parsing command line", ex);
+            System.exit(1);
+        }
+        
+        if (commandLine.hasOption("h")) {
+            formatter = new HelpFormatter();
+            formatter.printHelp( "AlixiaCentral", options, true);
+            System.exit(0);
+        }
+        if (commandLine.hasOption("n")) {
+        	noprompt = true;
+        }
+        if (commandLine.hasOption("o")) {
+        	showOrphans = true;
+        }
 
-        new TrackerRoom();
-        new OvermindRoom();
-        new AlphaRoom();
-        new BravoRoom();
-        new CharlieRoom();
-        new DeltaRoom();
-        new EchoRoom();
-        new FoxtrotRoom();
-        new GolfRoom();
-        new HotelRoom();
-        new IndiaRoom();
-        new JulietRoom();
-        new KiloRoom();
-        new LimaRoom();
-        new MikeRoom();
-        new NovemberRoom();
-        new OscarRoom();
-        new PapaRoom();
-        new QuebecRoom();
-        new RomeoRoom();
-        new SierraRoom();
+		// load houses
+        houses = new ArrayList<>(2);
+        houses.add(new StationServer(noprompt));
+        System.out.println("Architecture says " + AlixiaUtils.getOsArchitecture());
+        if (AlixiaUtils.getOsArchitecture() != "arm") {
+            // j2v8 doesn't work for arm so don't include it TODO use a different method to get the NodeJS stuff working
+            houses.add(new NodeWebServer(noprompt));
+        }
+        
+		// a minimal configuration consists of Overmind, Alpha and Charlie rooms if noprompt;
+        //    add India and/or Mike if you want prompts
+		
+		// load rooms
+        rooms = new ArrayList<>(24);
+        rooms.add(new TrackerRoom());
+		rooms.add(new OvermindRoom());
+		rooms.add(new QARoom());
+		rooms.add(new AlphaRoom());
+		rooms.add(new BravoRoom());
+		rooms.add(new CharlieRoom());
+		rooms.add(new DeltaRoom());
+        rooms.add(new EchoRoom());
+        rooms.add(new FoxtrotRoom());
+        rooms.add(new GolfRoom());
+        rooms.add(new HotelRoom());
+        rooms.add(new IndiaRoom());
+        rooms.add(new JulietRoom());
+        rooms.add(new KiloRoom());
+        rooms.add(new LimaRoom());
+        rooms.add(new MikeRoom());
+        rooms.add(new NovemberRoom());
+        rooms.add(new OscarRoom());
+        rooms.add(new PapaRoom());
+        rooms.add(new QuebecRoom());
+        rooms.add(new RomeoRoom());
+        rooms.add(new SierraRoom());
 
-		try (Alixia alixia = new Alixia(noprompt)) {
-            
+		try (Alixia alixia = new Alixia(houses, rooms, showOrphans)) {
             
 			waitForKey();
+			LOGGER.debug("AlixiaCentral: received shutdown key");
 		}
+		LOGGER.debug("AlixiaCentral: after try");
 	}
     
 }

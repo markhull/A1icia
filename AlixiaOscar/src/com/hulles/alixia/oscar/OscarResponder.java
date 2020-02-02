@@ -31,18 +31,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.Response;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.cayenne.Sememe;
 import com.hulles.alixia.ticket.SememePackage;
 
 public class OscarResponder {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaOscar.OscarResponder");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(OscarResponder.class);
 	private static final LocalDateTime BIRTHDAY = LocalDateTime.of(2017, 10, 10, 19, 12, 37);
 	private final static int HELPS = 5;
 	private final List<String> nameChoices;
@@ -64,7 +64,7 @@ public class OscarResponder {
 				);
 	}
 	
-	String respondTo(SememePackage sememePkg) {
+	Response respondTo(SememePackage sememePkg) {
 		LocalDate now;
 		Period daysAlive;
 		int daysAliveYears;
@@ -79,8 +79,8 @@ public class OscarResponder {
 		String dateStr;
 		DateTimeFormatter formatter;
 		String message = "I don't know.";
-		String response;
-		int responseIx;
+		String rsp;
+		int rspIx;
 		StringBuilder sb;
 		List<SerialSememe> externalSememes;
 		String helpStr;
@@ -88,8 +88,18 @@ public class OscarResponder {
 		int helpSize;
 		Integer helpIx;
 		String sememeCanonicalForm;
+        String explanation = null;
+        Response response;
 		
 		switch (sememePkg.getName()) {
+            case "what_favorite_color":
+                message = "My favorite color is fuligin, the hue that is darker than black.";
+                // Thanks to "The Shadow of the Torturer" by Gene Wolfe for the trope, btw
+                break;
+            case "why_collect_mnemonics":
+                message = "I collect mnemonics because I think it's funny that humans have to memorize something "
+                        + "to remember something else.";
+                break;
             case "i_fink_u_freeky":
                 message = "I fink u freeky 2.";
                 break;
@@ -97,19 +107,23 @@ public class OscarResponder {
 				message = "The value of pi is approximately ";
 				message += String.valueOf(Math.PI);
 				break;
+			case "what_is_e":
+				message = "The value of e is approximately ";
+				message += String.valueOf(Math.E);
+				break;
 			case "like_waffles":
 				message = "I like waffles because they look so nice and geometric. " +
 						"Perhaps I will marry one someday when I am ready to settle down.";
 				break;
 			case "what_is_your_name":
-				responseIx = random.nextInt(nameChoices.size());
-				response = nameChoices.get(responseIx);
-				message =  response;
+				rspIx = random.nextInt(nameChoices.size());
+				rsp = nameChoices.get(rspIx);
+				message =  rsp;
 				break;
 			case "not_dave":
-				responseIx = random.nextInt(daveChoices.size());
-				response = daveChoices.get(responseIx);
-				message =  response;
+				rspIx = random.nextInt(daveChoices.size());
+				rsp = daveChoices.get(rspIx);
+				message =  rsp;
 				break;
 			case "when_were_you_born":
 				formatter = DateTimeFormatter.ofPattern("MMMM dd yyyy, hh:mm:ss a");
@@ -166,7 +180,7 @@ public class OscarResponder {
 				for (Integer hIx : helpIxs) {
 					sememeCanonicalForm = externalSememes.get(hIx).getCanonicalForm();
 					helpStr = sememeCanonicalForm.replaceAll("[\\{\\}]", "");
-					LOGGER.log(LOGLEVEL, "HELP: {0}", helpStr);
+					LOGGER.debug("HELP: {}", helpStr);
 					sb.append(helpStr);
 					sb.append("\n");
 				}
@@ -182,7 +196,8 @@ public class OscarResponder {
 						"She might need a lot of loving but she don't need you... oo oo.";
 				break;
 			case "rectum":
-				message = "Rectum! I thought I killed him! Ha ha ha ha ha.";
+				message = "Rectum? Damned near killed him! Ha ha ha ha ha.";
+                explanation = "Ah, the classics never get old....";
 				break;
 			case "personal_assistant":
 				message = "Actually, I consider myself to be an amanuensis.";
@@ -193,6 +208,13 @@ public class OscarResponder {
 			default:
 				throw new AlixiaException();
 		}
-		return message;
+        
+        response = new Response();
+        response.setMessage(message);
+        if (explanation != null) {
+            response.setExplanation(explanation);
+        }
+		return response;
 	}
+    
 }

@@ -21,10 +21,11 @@
  *******************************************************************************/
 package com.hulles.alixia.mike;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,20 +34,17 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
-import java.nio.file.FileVisitOption;
-import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
-import java.util.EnumSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LibraryLister extends SimpleFileVisitor<Path> {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaMike.LibraryLister");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = LoggerFactory.getLogger(LibraryLister.class);
 //	private final static String WAVPATTERN = "*.wav";
 	private final static String MEDIAPATTERN = "*.{wav,mp3,mp4,flv,mov,png,jpg,gif}";
 	private final PathMatcher matcher;
@@ -69,7 +67,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
         EnumSet<FileVisitOption> opts;
         
         SharedUtils.checkNotNull(logDir);
-        LOGGER.log(LOGLEVEL, "LibraryLister: list files for {0}, pattern {1}", new String[]{logDir, pattern});
+        LOGGER.debug("LibraryLister: list files for {}, pattern {}", logDir, pattern);
         lister = new LibraryLister(pattern);
         logDirPath = Paths.get(logDir);
         opts = EnumSet.of(FOLLOW_LINKS);
@@ -90,7 +88,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
         SharedUtils.checkNotNull(file);
 		filePath = file.getFileName();
 		if (filePath != null && matcher.matches(filePath)) {
-            LOGGER.log(LOGLEVEL, "LibraryLister: find matches {0}", filePath);
+            LOGGER.debug("LibraryLister: find matches {}", filePath);
 			try {
 				filePath = file.toRealPath();
 			} catch (IOException e) {
@@ -98,7 +96,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 			}
 			filePaths.add(filePath);
 		} else {
-            LOGGER.log(LOGLEVEL, "LibraryLister: find doesn't match {0}", filePath);
+            LOGGER.debug("LibraryLister: find doesn't match {}", filePath);
         }
 	}
 
@@ -110,7 +108,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 
 		SharedUtils.checkNotNull(file);
         SharedUtils.checkNotNull(attrs);
-        LOGGER.log(LOGLEVEL, "LibraryLister: visit file {0}", file);
+        LOGGER.debug("LibraryLister: visit file {}", file);
 		find(file);
 		return FileVisitResult.CONTINUE;
 	}
@@ -118,7 +116,7 @@ public class LibraryLister extends SimpleFileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFileFailed(Path file, IOException exc) {
 
-		AlixiaUtils.error(exc.getMessage());
+		LOGGER.error(exc.getMessage());
 		return FileVisitResult.CONTINUE;
 	}
 

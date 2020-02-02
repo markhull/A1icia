@@ -25,15 +25,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.remote.AlixianID;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.cayenne.NamedTimer;
 import com.hulles.alixia.cayenne.Task;
 import com.hulles.alixia.hotel.task.LoadTasks;
@@ -57,8 +57,7 @@ import com.hulles.alixia.ticket.Ticket;
  *
  */
 public final class HotelRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaHotel.AlixiaHotel");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(HotelRoom.class);
 	private TimerHandler timerHandler;
 	
 	public HotelRoom() {
@@ -100,8 +99,7 @@ public final class HotelRoom extends UrRoom {
 					obj = pkg.getActionObject();
 					if (obj instanceof MessageAction) {
 						msgAction = (MessageAction) obj;
-							LOGGER.log(LOGLEVEL, "We got some learning => {0} : {1}", 
-                                    new String[]{msgAction.getMessage(), msgAction.getExplanation()});
+							LOGGER.debug("We got some learning => {} : {}", msgAction.getMessage(), msgAction.getExplanation());
 					} else if (obj instanceof ClientObjectWrapper) {
 						cow = (ClientObjectWrapper) obj;
 						timerHandler.setMediaFile(cow);
@@ -155,7 +153,7 @@ public final class HotelRoom extends UrRoom {
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
 		if (sememePkg.is("duration_timer")) {
-			AlixiaUtils.error("HotelRoom: got duration timer sememe, but we can't handle that yet");
+			LOGGER.error("HotelRoom: got duration timer sememe, but we can't handle that yet");
 			return null;
 		}
 		// named_timer
@@ -163,7 +161,7 @@ public final class HotelRoom extends UrRoom {
 		timerName = namedTimerPkg.getSememeObject();
 		dbTimer = NamedTimer.findNamedTimer(timerName);
 		if (dbTimer == null) {
-			AlixiaUtils.error("HotelRoom: can't find timer named " + timerName + " in database");
+			LOGGER.error("HotelRoom: can't find timer named {} in database", timerName);
 			return null;
 		}
 		ticket = request.getTicket();

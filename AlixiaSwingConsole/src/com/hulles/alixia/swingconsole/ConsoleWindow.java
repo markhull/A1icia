@@ -5,19 +5,13 @@
  */
 package com.hulles.alixia.swingconsole;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.jebus.JebusBible;
-import com.hulles.alixia.api.jebus.JebusHub;
-import com.hulles.alixia.api.jebus.JebusPool;
-import com.hulles.alixia.api.shared.SharedUtils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -25,6 +19,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.jebus.JebusBible;
+import com.hulles.alixia.api.jebus.JebusHub;
+import com.hulles.alixia.api.jebus.JebusPool;
+import com.hulles.alixia.api.shared.SharedUtils;
+
 import redis.clients.jedis.Jedis;
 
 /**
@@ -33,9 +36,7 @@ import redis.clients.jedis.Jedis;
  * @author hulles
  */
 class ConsoleWindow extends JFrame implements KeyListener, ActionListener {
-	final static Logger LOGGER = Logger.getLogger("AlixiaSwingConsole.ConsoleWindow");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
+	final static Logger LOGGER = LoggerFactory.getLogger(ConsoleWindow.class);
     private static final long serialVersionUID = 1L;
     private JTextArea displayArea;
     private JTextField typingArea;
@@ -102,14 +103,14 @@ class ConsoleWindow extends JFrame implements KeyListener, ActionListener {
         switch (keycode) {
             case 10:
                 // enter key
-                LOGGER.log(LOGLEVEL, "Received ENTER key");
+                LOGGER.debug("Received ENTER key");
                 text = typingArea.getText();
                 handleEnter(text);
                 event.consume();
                 break;
             case 38:
                 // up arrow
-                LOGGER.log(LOGLEVEL, "Received UP ARROW");
+                LOGGER.debug("Received UP ARROW");
                 try (Jedis jebus = jebusPool.getResource()) {
                     maxHistory = jebus.llen(historyKey);
                     if (historyIx < maxHistory) {
@@ -125,7 +126,7 @@ class ConsoleWindow extends JFrame implements KeyListener, ActionListener {
                 break;
             case 40:
                 // down arrow
-                LOGGER.log(LOGLEVEL, "Received DOWN ARROW");
+                LOGGER.debug("Received DOWN ARROW");
                 try (Jedis jebus = jebusPool.getResource()) {
                     if (historyIx-- > 0) {
                         text = jebus.lindex(historyKey, historyIx);
@@ -153,7 +154,7 @@ class ConsoleWindow extends JFrame implements KeyListener, ActionListener {
     private void handleEnter(String text) {
 
         SharedUtils.checkNotNull(text);
-        LOGGER.log(LOGLEVEL, "Handling text line");
+        LOGGER.debug("Handling text line");
         displayTextln(text);
         try (Jedis jebus = jebusPool.getResource()) {
             jebus.lpush(historyKey, text);

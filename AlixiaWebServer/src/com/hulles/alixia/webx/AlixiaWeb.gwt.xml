@@ -21,7 +21,6 @@
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
 	<!-- Other module inherits -->
- 	<inherits name="com.hulles.alixia.prong.AlixiaProng"/>
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='com.hulles.alixia.webx.client.AlixiaWeb' />

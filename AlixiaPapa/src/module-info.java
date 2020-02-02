@@ -1,5 +1,5 @@
 /**
- * Alixia Papa
+ * AlixiaPapa
  * 
  * Wolfram|Alpha
  * 
@@ -9,13 +9,13 @@
 module com.hulles.alixia.papa {
 	exports com.hulles.alixia.papa to com.hulles.alixia.central;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
 	requires com.hulles.alixia.crypto;
 	requires com.hulles.alixia.media;
-	requires guava;
 	requires java.desktop;
-	requires java.xml;
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.papa.PapaRoom;
+	requires transitive java.xml;
+    requires org.slf4j;
+	// to here
 }

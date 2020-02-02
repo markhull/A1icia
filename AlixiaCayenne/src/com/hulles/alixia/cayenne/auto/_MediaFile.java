@@ -1,29 +1,9 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.LocalDateTime;
 
 import org.apache.cayenne.BaseDataObject;
 import org.apache.cayenne.exp.Property;
@@ -44,11 +24,13 @@ public abstract class _MediaFile extends BaseDataObject {
     public static final Property<String> FILE_NAME = Property.create("fileName", String.class);
     public static final Property<String> FORMAT_CODE = Property.create("formatCode", String.class);
     public static final Property<String> TITLE = Property.create("title", String.class);
+    public static final Property<LocalDateTime> FILE_LAST_MODIFIED = Property.create("fileLastModified", LocalDateTime.class);
 
     protected String artist;
     protected String fileName;
     protected String formatCode;
     protected String title;
+    protected LocalDateTime fileLastModified;
 
 
     public void setArtist(String artist) {
@@ -91,6 +73,16 @@ public abstract class _MediaFile extends BaseDataObject {
         return this.title;
     }
 
+    public void setFileLastModified(LocalDateTime fileLastModified) {
+        beforePropertyWrite("fileLastModified", this.fileLastModified, fileLastModified);
+        this.fileLastModified = fileLastModified;
+    }
+
+    public LocalDateTime getFileLastModified() {
+        beforePropertyRead("fileLastModified");
+        return this.fileLastModified;
+    }
+
     @Override
     public Object readPropertyDirectly(String propName) {
         if(propName == null) {
@@ -106,6 +98,8 @@ public abstract class _MediaFile extends BaseDataObject {
                 return this.formatCode;
             case "title":
                 return this.title;
+            case "fileLastModified":
+                return this.fileLastModified;
             default:
                 return super.readPropertyDirectly(propName);
         }
@@ -130,6 +124,9 @@ public abstract class _MediaFile extends BaseDataObject {
             case "title":
                 this.title = (String)val;
                 break;
+            case "fileLastModified":
+                this.fileLastModified = (LocalDateTime)val;
+                break;
             default:
                 super.writePropertyDirectly(propName, val);
         }
@@ -150,6 +147,7 @@ public abstract class _MediaFile extends BaseDataObject {
         out.writeObject(this.fileName);
         out.writeObject(this.formatCode);
         out.writeObject(this.title);
+        out.writeObject(this.fileLastModified);
     }
 
     @Override
@@ -159,6 +157,7 @@ public abstract class _MediaFile extends BaseDataObject {
         this.fileName = (String)in.readObject();
         this.formatCode = (String)in.readObject();
         this.title = (String)in.readObject();
+        this.fileLastModified = (LocalDateTime)in.readObject();
     }
 
 }

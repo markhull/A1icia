@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -49,7 +28,7 @@ public abstract class _AnswerChunk extends BaseDataObject {
 
     protected String chunk;
     protected String chunkTags;
-    protected short sequence;
+    protected Short sequence;
 
     protected Object answerHistory;
 
@@ -125,7 +104,7 @@ public abstract class _AnswerChunk extends BaseDataObject {
                 this.chunkTags = (String)val;
                 break;
             case "sequence":
-                this.sequence = val == null ? 0 : (short)val;
+                this.sequence = (Short)val;
                 break;
             case "answerHistory":
                 this.answerHistory = val;
@@ -148,7 +127,7 @@ public abstract class _AnswerChunk extends BaseDataObject {
         super.writeState(out);
         out.writeObject(this.chunk);
         out.writeObject(this.chunkTags);
-        out.writeShort(this.sequence);
+        out.writeObject(this.sequence);
         out.writeObject(this.answerHistory);
     }
 
@@ -157,7 +136,7 @@ public abstract class _AnswerChunk extends BaseDataObject {
         super.readState(in);
         this.chunk = (String)in.readObject();
         this.chunkTags = (String)in.readObject();
-        this.sequence = in.readShort();
+        this.sequence = (Short)in.readObject();
         this.answerHistory = in.readObject();
     }
 

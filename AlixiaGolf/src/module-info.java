@@ -1,5 +1,5 @@
 /**
- * Alixia Golf
+ * AlixiaGolf
  * 
  * WikiData
  * 
@@ -9,14 +9,11 @@
 module com.hulles.alixia.golf {
 	exports com.hulles.alixia.golf to com.hulles.alixia.central;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia;
 	requires com.hulles.alixia.api;
-	requires guava;
-	requires java.logging;
-	requires javax.json;
+	requires java.json;
 	requires jedis;
+    requires org.slf4j;
 	// to here
-    requires com.hulles.alixia.media;
-	
-	provides com.hulles.alixia.room.UrRoom with com.hulles.alixia.golf.GolfRoom;
 }

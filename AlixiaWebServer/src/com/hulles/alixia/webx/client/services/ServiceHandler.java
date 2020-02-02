@@ -23,7 +23,6 @@ package com.hulles.alixia.webx.client.services;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.webx.shared.SerialConsoleIn;
 import com.hulles.alixia.webx.shared.SerialConsoleOut;
 import com.hulles.alixia.webx.shared.SerialSystemInfo;
@@ -72,10 +71,10 @@ public class ServiceHandler  {
 					mindClass.checkSystems((AsyncCallback<SerialSystemInfo>) event.getCallback());
 					break;
 				default:
-					AlixiaUtils.error("Unhandled service event");
+					SharedUtils.error("Unhandled service event");
 			}
 		} catch (ClassCastException ex) {
-			AlixiaUtils.error("Class cast exception");
+			SharedUtils.error("Class cast exception");
 		}
 	}
 

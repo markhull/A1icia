@@ -21,39 +21,21 @@
  *******************************************************************************/
 package com.hulles.alixia.config.central;
 
+import com.hulles.alixia.api.tools.AlixiaVersion;
 import java.util.ResourceBundle;
 
 public class Installer {
 	private static final String BUNDLE_NAME = "com.hulles.alixia.config.central.Version";
-	
-	public static String getVersionString() {
-		ResourceBundle bundle;
-		StringBuilder sb;
-		String value;
-		
-		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
-		sb = new StringBuilder();
-		value = bundle.getString("Name");
-		sb.append(value);
-		sb.append(" \"");
-		value = bundle.getString("Build-Title");
-		sb.append(value);
-		sb.append("\", Version ");
-		value = bundle.getString("Build-Version");
-		sb.append(value);
-		sb.append(", Build ");
-		value = bundle.getString("Build-Number");
-		sb.append(value);
-		sb.append(" ");
-		value = bundle.getString("Build-Date");
-		sb.append(value);
-		return sb.toString();
-	}
 
 	public static void main(String[] args) {
-	
-		System.out.println(getVersionString());
+        String version;
+ 		ResourceBundle bundle;
+       
+		bundle = ResourceBundle.getBundle(BUNDLE_NAME);
+        version = AlixiaVersion.getVersionString(bundle);
+		System.out.println(version);
 		System.out.println();
 		ImportExport.importExport();
+        
 	}
 }

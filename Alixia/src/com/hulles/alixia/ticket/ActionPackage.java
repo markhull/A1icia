@@ -21,18 +21,20 @@
  *******************************************************************************/
 package com.hulles.alixia.ticket;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.shared.AlixiaException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.room.document.RoomActionObject;
 
 import redis.clients.jedis.Jedis;
@@ -45,6 +47,7 @@ import redis.clients.jedis.Jedis;
  *
  */
 public final class ActionPackage {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ActionPackage.class);
 	private final SememePackage sememePackage;
 	private RoomActionObject actionObject;
 	private final String idString;
@@ -264,12 +267,11 @@ public final class ActionPackage {
 	public boolean isReady() {
 		
 		if (sememePackage == null) {
-			AlixiaUtils.error("ActionPackage: sememe package is null in packageIsReady");
+			LOGGER.error("ActionPackage: sememe package is null in packageIsReady");
 			return false;
 		}
 		if (getActionObject() == null) {
-			AlixiaUtils.error("ActionPackage: missing 'action object' in action package for sememe " +
-					sememePackage.getSememe().getName());
+			LOGGER.error("ActionPackage: missing 'action object' in action package for sememe {}", sememePackage.getSememe().getName());
 			return false;
 		}
 		return true;

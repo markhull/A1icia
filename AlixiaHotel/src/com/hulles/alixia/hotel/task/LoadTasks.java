@@ -29,6 +29,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.cayenne.AlixiaApplication;
 import com.hulles.alixia.cayenne.Person;
 import com.hulles.alixia.cayenne.Task;
@@ -46,15 +51,9 @@ import biweekly.property.DateDue;
 import biweekly.property.Status;
 import biweekly.property.Summary;
 import biweekly.property.Uid;
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
-import com.hulles.alixia.api.tools.AlixiaUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LoadTasks {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaHotel.LoadTasks");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(LoadTasks.class);
 	
 	public static void loadTasks() {
 		String fileName;
@@ -76,19 +75,20 @@ public class LoadTasks {
         Uid uid;
         List<VEvent> events;
         String eventSummary;
+        boolean oldValue;
         
 		person = Person.findPerson("hulles");
 		taskPriority = TaskPriority.findTaskPriority(2);
 		taskType = TaskType.findTaskType(1);
 		fileName = "/home/hulles/Alixia Exec/Home.ics";
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		oldValue = AlixiaApplication.setErrorOnUncommittedObjects(false);
 		try (Reader reader = new FileReader(fileName)) {
 			ical = Biweekly.parse(reader).first();
-			LOGGER.log(LOGLEVEL, "ToDo's:");
+			LOGGER.debug("ToDo's:");
 			todos = ical.getTodos();
 			for (VTodo vt : todos) {
                 summary = vt.getSummary();
-				LOGGER.log(LOGLEVEL, "To Do: {0}", summary.getValue());
+				LOGGER.debug("To Do: {}", summary.getValue());
 				task = Task.createNew();
 				task.setDescription(summary.getValue());
 				task.setPerson(person);
@@ -97,28 +97,28 @@ public class LoadTasks {
 				if (vt.getCompleted() != null) {
 					completed = vt.getCompleted();
 					date = completed.getValue();
-					LOGGER.log(LOGLEVEL, "Completed Date: {0}", date);
+					LOGGER.debug("Completed Date: {}", date);
 					ldt = AlixiaUtils.ldtFromUtilDate(date);
 					task.setDateCompleted(ldt);
 				}
 				if (vt.getCreated() != null) {
 					created = vt.getCreated();
 					date = created.getValue();
-					LOGGER.log(LOGLEVEL, "Created Date: {0}", date);
+					LOGGER.debug("Created Date: {}", date);
 					ldt = AlixiaUtils.ldtFromUtilDate(date);
 					task.setDateCreated(ldt);
 				}
 				if (vt.getDateDue() != null) {
 					dateDue = vt.getDateDue();
 					date = dateDue.getValue();
-					LOGGER.log(LOGLEVEL, "Date Due: {0}", date);
+					LOGGER.debug("Date Due: {}", date);
 					ldt = AlixiaUtils.ldtFromUtilDate(date);
 					task.setDateDue(ldt);
 				}
 				if (vt.getStatus() != null) {
 					status = vt.getStatus();
                     statusValue = status.getValue();
-					LOGGER.log(LOGLEVEL, "Status: {0}", statusValue);
+					LOGGER.debug("Status: {}", statusValue);
                     switch (statusValue) {
                         case "COMPLETED":
                             taskStatus = TaskStatus.findTaskStatus(2);
@@ -134,23 +134,23 @@ public class LoadTasks {
 				}
 				if (vt.getUid() != null) {
 					uid = vt.getUid();
-					LOGGER.log(LOGLEVEL, "Uid: {0}", uid);
+					LOGGER.debug("Uid: {}", uid);
 					task.setTaskUuid(uid.getValue());
 				}
-				task.commit();
+				AlixiaApplication.commitAll();
 			}
-			LOGGER.log(LOGLEVEL, "Events:");
+			LOGGER.debug("Events:");
 			events = ical.getEvents();
 			for (VEvent event : events) {
 				eventSummary = event.getSummary().getValue();
-				LOGGER.log(LOGLEVEL, "Event: {0}", eventSummary);
+				LOGGER.debug("Event: {}", eventSummary);
 			}
 		} catch (FileNotFoundException e) {
 			throw new AlixiaException("LoadTasks: can't find calendar file", e);
 		} catch (IOException e1) {
 			throw new AlixiaException("LoadTasks: can't close calendar file", e1);
 		}
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		AlixiaApplication.setErrorOnUncommittedObjects(oldValue);
 	}
 	
 	public static void main(String[] args) {

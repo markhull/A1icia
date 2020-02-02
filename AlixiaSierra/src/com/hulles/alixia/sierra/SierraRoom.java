@@ -24,10 +24,10 @@ package com.hulles.alixia.sierra;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
@@ -49,9 +49,7 @@ import com.hulles.alixia.tools.ExternalAperture;
  *
  */
 public final class SierraRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaSierra.SierraRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	private final static Level LOGLEVEL = Level.INFO;
+	private final static Logger LOGGER = LoggerFactory.getLogger(SierraRoom.class);
 	private static Float saveTemp = null;
 	private static Float saveHumidity = null;
 	
@@ -95,7 +93,7 @@ public final class SierraRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "In createRoomTemperature");
+		LOGGER.debug("In createRoomTemperature");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		temperatureStr = ExternalAperture.getCurrentTempAndHumidity("temp");
@@ -118,8 +116,8 @@ public final class SierraRoom extends UrRoom {
 				messageStr = "invalid";
 			}
 		}
-		LOGGER.log(LOGLEVEL, "messageStr = {0}", messageStr);
-		LOGGER.log(LOGLEVEL, "temperatureStr = {0}", temperatureStr);
+		LOGGER.debug("messageStr = {}", messageStr);
+		LOGGER.debug("temperatureStr = {}", temperatureStr);
 		action.setMessage("The room temperature is " + messageStr);
 		action.setExplanation("The room temperature was reported as " + temperatureStr);
 		pkg.setActionObject(action);
@@ -142,7 +140,7 @@ public final class SierraRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "In createRoomHumidityActionPackage");
+		LOGGER.debug("In createRoomHumidityActionPackage");
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		humidityStr = ExternalAperture.getCurrentTempAndHumidity("humidity");
@@ -165,8 +163,8 @@ public final class SierraRoom extends UrRoom {
 				messageStr = "invalid";
 			}
 		}
-		LOGGER.log(LOGLEVEL, "humidityStr = {0}", humidityStr);
-		LOGGER.log(LOGLEVEL, "messageStr = {0}", messageStr);
+		LOGGER.debug("humidityStr = {}", humidityStr);
+		LOGGER.debug("messageStr = {}", messageStr);
 		action.setMessage("The room humidity is " + messageStr);
 		action.setExplanation("The room relative humidity was reported as " + humidityStr);
 		pkg.setActionObject(action);

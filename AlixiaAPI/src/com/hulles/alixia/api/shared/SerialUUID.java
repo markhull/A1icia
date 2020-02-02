@@ -23,6 +23,9 @@ package com.hulles.alixia.api.shared;
 
 import java.io.Serializable;
 
+// TODO clean this up since we're saying goodbye to GWT (probably)
+
+@SuppressWarnings("unused")
 final public class SerialUUID<T extends SerialEntity> implements Serializable {
 	private static final long serialVersionUID = -2501164431706716035L;
 	// we store it as a string so we can use this on both the client and the server

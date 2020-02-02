@@ -21,7 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.webx.shared;
 
-import com.hulles.alixia.api.AlixiaConstants;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,4 +52,5 @@ public class SharedUtils implements Serializable {
 		LOGGER.log(LOGLEVEL, errStr);
 		ex.printStackTrace();
 	}
+
 }

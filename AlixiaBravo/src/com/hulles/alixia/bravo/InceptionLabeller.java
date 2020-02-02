@@ -22,7 +22,6 @@
 
 package com.hulles.alixia.bravo;
 
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,6 +38,7 @@ import org.tensorflow.Output;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.SharedUtils;
@@ -77,7 +77,7 @@ public class InceptionLabeller {
 		}
 		graphDef = readAllBytes(Paths.get(modelURI));
 		labels = readAllLines(Paths.get(labelsURI));
-		try (Tensor image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {
+		try (Tensor<?> image = constructAndExecuteGraphToNormalizeImage(imageBytes)) {
 			labelProbabilities = executeInceptionGraph(graphDef, image);
 			bestLabelIdx = maxIndex(labelProbabilities);
 			resultStr = String.format("BEST MATCH: %s (%.2f%% likely)", labels.get(bestLabelIdx), 
@@ -86,14 +86,14 @@ public class InceptionLabeller {
 		return resultStr;
 	}
 
-	private static Tensor constructAndExecuteGraphToNormalizeImage(byte[] imageBytes) {
+	private static Tensor<?> constructAndExecuteGraphToNormalizeImage(byte[] imageBytes) {
 		GraphBuilder builder;
 		final int height;
 		final int width;
 		final float mean;
 		final float scale;
-		final Output input;
-		final Output output;
+		final Output<?> input;
+		final Output<?> output;
 		
 		try (Graph graph = new Graph()) {
 			builder = new GraphBuilder(graph);
@@ -128,16 +128,17 @@ public class InceptionLabeller {
 		}
 	}
 
-	private static float[] executeInceptionGraph(byte[] graphDef, Tensor image) {
+	private static float[] executeInceptionGraph(byte[] graphDef, Tensor<?> image) {
 		final long[] rshape;
 		String errStr;
+		@SuppressWarnings("unused")
 		int nlabels;
 		float[] floatResult;
 		
 		try (Graph graph = new Graph()) {
 			graph.importGraphDef(graphDef);
 			try (Session session = new Session(graph); 
-					Tensor result = session.runner().feed("input", image).fetch("output").run().get(0)) {
+					Tensor<?> result = session.runner().feed("input", image).fetch("output").run().get(0)) {
 				rshape = result.shape();
 				if (result.numDimensions() != 2 || rshape[0] != 1) {
 					errStr = String.format(
@@ -147,7 +148,8 @@ public class InceptionLabeller {
 					throw new RuntimeException(errStr);
 				}
 				nlabels = (int) rshape[1];
-				floatResult = result.copyTo(new float[1][nlabels])[0];
+// FIXME				floatResult = result.copyTo(new float[1][nlabels])[0];
+				floatResult = null;
 				return floatResult;
 			}
 		}
@@ -198,27 +200,27 @@ public class InceptionLabeller {
 			this.graph = g;
 		}
 
-		Output div(Output x, Output y) {
+		Output<?> div(Output<?> x, Output<?> y) {
 			
 			return binaryOp("Div", x, y);
 		}
 
-		Output sub(Output x, Output y) {
+		Output<?> sub(Output<?> x, Output<?> y) {
 			
 			return binaryOp("Sub", x, y);
 		}
 
-		Output resizeBilinear(Output images, Output size) {
+		Output<?> resizeBilinear(Output<?> images, Output<?> size) {
 			
 			return binaryOp("ResizeBilinear", images, size);
 		}
 
-		Output expandDims(Output input, Output dim) {
+		Output<?> expandDims(Output<?> input, Output<?> dim) {
 			
 			return binaryOp("ExpandDims", input, dim);
 		}
 
-		Output cast(Output value, DataType dtype) {
+		Output<?> cast(Output<?> value, DataType dtype) {
 			
 			return graph.opBuilder("Cast", "Cast")
 					.addInput(value)
@@ -227,7 +229,7 @@ public class InceptionLabeller {
 					.output(0);
 		}
 
-		Output decodeJpeg(Output contents, long channels) {
+		Output<?> decodeJpeg(Output<?> contents, long channels) {
 			
 			return graph.opBuilder("DecodeJpeg", "DecodeJpeg")
 					.addInput(contents)
@@ -236,9 +238,9 @@ public class InceptionLabeller {
 					.output(0);
 		}
 
-		Output constant(String name, Object value) {
+		Output<?> constant(String name, Object value) {
 			
-			try (Tensor t = Tensor.create(value)) {
+			try (Tensor<?> t = Tensor.create(value)) {
 				return graph.opBuilder("Const", name)
 						.setAttr("dtype", t.dataType())
 						.setAttr("value", t)
@@ -247,7 +249,7 @@ public class InceptionLabeller {
 			}
 		}
 
-		private Output binaryOp(String type, Output in1, Output in2) {
+		private Output<?> binaryOp(String type, Output<?> in1, Output<?> in2) {
 			
 			return graph.opBuilder(type, type)
 					.addInput(in1)

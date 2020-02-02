@@ -41,12 +41,11 @@ import com.hulles.alixia.api.object.AlixiaClientObject.ClientObjectType;
 import com.hulles.alixia.api.object.AudioObject;
 import com.hulles.alixia.media.MediaFormat;
 import com.hulles.alixia.media.audio.TTSPico;
-import com.hulles.alixia.prong.server.Prongz;
-import com.hulles.alixia.prong.shared.ProngException;
-import com.hulles.alixia.prong.shared.SerialProng;
 import com.hulles.alixia.webx.client.services.MindService;
+import com.hulles.alixia.webx.shared.ProngException;
 import com.hulles.alixia.webx.shared.SerialConsoleIn;
 import com.hulles.alixia.webx.shared.SerialConsoleOut;
+import com.hulles.alixia.webx.shared.SerialProng;
 import com.hulles.alixia.webx.shared.SerialSystemInfo;
 import com.hulles.alixia.webx.shared.SharedUtils;
 
@@ -56,7 +55,7 @@ import com.hulles.alixia.webx.shared.SharedUtils;
  */
 final public class MindServiceImpl extends RemoteServiceServlet implements MindService {
 	private static final long serialVersionUID = 3646580413754240731L;
-	private static final String BUNDLE_NAME = "com.hulles.alixia.webx.server.Version";
+	private static final String BUNDLE_NAME = "com.hulles.alixia.webx.Version";
 	private static final String MEDIA_URL = "alixiaweb/services/media?mmd=";
 	private static final boolean USE_TTS = true;
 //	private final static Logger logger = Logger.getLogger("AlixiaWeb.MindServiceImpl");

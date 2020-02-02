@@ -24,10 +24,10 @@ package com.hulles.alixia.charlie.pos;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.hulles.alixia.api.AlixiaConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
 import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
@@ -37,8 +37,7 @@ import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 
 final public class CharliePOS {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaCharlie.CharliePOS");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(CharliePOS.class);
 	private final POSTaggerME posTagger;
 
 	public CharliePOS() {
@@ -70,7 +69,7 @@ final public class CharliePOS {
 		SharedUtils.checkNotNull(tokenizedInput);
 		posStrings = posTagger.tag(tokenizedInput);
 		for (String s : posStrings) {
-			LOGGER.log(LOGLEVEL, "POS: {0}", s);
+			LOGGER.debug("POS: {}", s);
 		}
 		return posStrings;
 	}

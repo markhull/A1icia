@@ -21,12 +21,14 @@
  *******************************************************************************/
 package com.hulles.alixia.room.document;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.ticket.Ticket;
 
@@ -50,6 +52,7 @@ import redis.clients.jedis.Jedis;
  *
  */
 public abstract class RoomDocument {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoomDocument.class);
 	private final Long documentID;
 	private Ticket ticket;
 	private final RoomDocumentType type;
@@ -103,19 +106,19 @@ public abstract class RoomDocument {
 	public boolean documentIsReady() {
 		
 		if (documentID == null) {
-			AlixiaUtils.error("No document ID");
+			LOGGER.error("No document ID");
 			return false;
 		}
 		if (ticket == null) {
-			AlixiaUtils.error("No ticket");
+			LOGGER.error("No ticket");
 			return false;
 		}
 		if (type == null) {
-			AlixiaUtils.error("No type");
+			LOGGER.error("No type");
 			return false;
 		}
 		if (fromRoom == null) {
-			AlixiaUtils.error("No from room");
+			LOGGER.error("No from room");
 			return false;
 		}
 		return true;

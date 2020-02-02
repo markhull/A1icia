@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +35,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.crypto.SecretKey;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonWriter;
 
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
@@ -41,17 +47,11 @@ import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.ApplicationKeys;
+import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.Serialization;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.crypto.AlixiaCrypto;
 import com.hulles.alixia.crypto.PurdahKeys;
-import java.io.StringWriter;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonWriter;
 
 import redis.clients.jedis.Jedis;
 
@@ -63,7 +63,7 @@ public class ImportExport {
 	}
 	
 	@SuppressWarnings("resource")
-	private static void loadPurdah() {
+    private static void loadPurdah() {
 		SecretKey aesKey = null;
 		byte[] purdahKeyBytes;
 		byte[] purdah;
@@ -292,7 +292,6 @@ public class ImportExport {
         JsonBuilderFactory factory;
         Map<String, String> keyMap;
         JsonArray jsonKeys;
-        JsonWriter jsonWriter;
         StringWriter writer;
         
         keyMap = appKeys.getKeyMap();
@@ -305,9 +304,9 @@ public class ImportExport {
 		}
         jsonKeys = builder.build();
         writer = new StringWriter();
-        jsonWriter = Json.createWriter(writer);
-        jsonWriter.writeArray(jsonKeys);
-        jsonWriter.close();
+        try (JsonWriter jsonWriter = Json.createWriter(writer)) {
+        	jsonWriter.writeArray(jsonKeys);
+        }
         return writer.toString();
    }
 	

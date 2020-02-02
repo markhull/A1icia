@@ -1,5 +1,7 @@
 /**
- * Alixia Swing Console
+ * AlixiaSwingConsole
+ * 
+ * A console written with Java Swing
  * 
  * @author hulles
  *
@@ -7,11 +9,11 @@
 module com.hulles.alixia.swingconsole {
 	exports com.hulles.alixia.swingconsole;
 
+	requires com.google.common;
 	requires transitive com.hulles.alixia.api;
 	requires com.hulles.alixia.media;
-	requires guava;
+	requires commons.cli;
 	requires java.desktop;
-	requires java.logging;
 	requires jedis;
-    // to here
+    requires org.slf4j;
 }

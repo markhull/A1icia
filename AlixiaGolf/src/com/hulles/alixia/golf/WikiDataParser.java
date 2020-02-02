@@ -21,10 +21,6 @@
  *******************************************************************************/
 package com.hulles.alixia.golf;
 
-import com.hulles.alixia.api.jebus.JebusBible;
-import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
-import com.hulles.alixia.api.jebus.JebusHub;
-import com.hulles.alixia.api.jebus.JebusPool;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,8 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -41,15 +35,20 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.jebus.JebusBible;
+import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
+import com.hulles.alixia.api.jebus.JebusHub;
+import com.hulles.alixia.api.jebus.JebusPool;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.tools.ExternalAperture;
 
 import redis.clients.jedis.Jedis;
 
 public class WikiDataParser {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaGolf.WikiDataParser");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger("AlixiaGolf.WikiDataParser");
 	private final static String DATEPARSE = "+yyyy-MM-dd'T'HH:mm:ss'Z'";
 	private static SimpleDateFormat sdf = null;
 	
@@ -73,12 +72,12 @@ public class WikiDataParser {
         try (JsonReader reader = Json.createReader(sReader)) {
         	search = reader.readObject();
         }
-        LOGGER.log(LOGLEVEL, "Searchinfo: search:{0}", search.getJsonObject("searchinfo").getJsonString("search"));
-        LOGGER.log(LOGLEVEL, "Search-continue: {0}", search.getJsonNumber("search-continue"));
-        LOGGER.log(LOGLEVEL, "Success: {0}", search.getJsonNumber("success"));
+        LOGGER.debug("Searchinfo: search:{}", search.getJsonObject("searchinfo").getJsonString("search"));
+        LOGGER.debug("Search-continue: {}", search.getJsonNumber("search-continue"));
+        LOGGER.debug("Success: {}", search.getJsonNumber("success"));
         searchBody = search.getJsonArray("search");
         bodyCount = searchBody.size();
-        LOGGER.log(LOGLEVEL, "Search body length: {0}", bodyCount);
+        LOGGER.debug("Search body length: {}", bodyCount);
         results = new ArrayList<>(bodyCount);
         for (int ix = 0; ix < bodyCount; ix++) {
         	sbo = searchBody.getJsonObject(ix);
@@ -94,7 +93,7 @@ public class WikiDataParser {
         	}
         }
         for (WikiDataSearchResult sr : results) {
-        	LOGGER.log(LOGLEVEL, "Desc: {0}", sr.getDescription());
+        	LOGGER.debug("Desc: {}", sr.getDescription());
         }
         return results;
 	}
@@ -118,7 +117,7 @@ public class WikiDataParser {
         try (JsonReader reader = Json.createReader(sReader)) {
         	entity = reader.readObject();
         }
-        LOGGER.log(LOGLEVEL, "Success: {0}", entity.getJsonNumber("success"));
+        LOGGER.debug("Success: {}", entity.getJsonNumber("success"));
         entityBody = entity.getJsonObject("entities");
         values = entityBody.values();
         results = new ArrayList<>();
@@ -164,7 +163,7 @@ public class WikiDataParser {
 		SharedUtils.checkNotNull(entity);
 		jebusPool = JebusHub.getJebusLocal();
 		wdEntity = new WikiDataEntity();
-		LOGGER.log(LOGLEVEL, "Type: {0}", entity.getString("type", "(no type)"));
+		LOGGER.debug("Type: {}", entity.getString("type", "(no type)"));
 		labels = entity.getJsonObject("labels");
 		if (labels == null) {
 			label = "(no label)";
@@ -176,7 +175,7 @@ public class WikiDataParser {
 				label = labels.getString("value", "(no label)");
 			}
 		}
-		LOGGER.log(LOGLEVEL, "Labels: {0}", label);
+		LOGGER.debug("Labels: {}", label);
 		wdEntity.setLabel(label);
 		descriptions = entity.getJsonObject("descriptions");
 		if (descriptions == null) {
@@ -189,7 +188,7 @@ public class WikiDataParser {
 				description = descriptions.getString("value", "(no description)");
 			}
 		}
-		LOGGER.log(LOGLEVEL, "Descriptions: {0}", description);
+		LOGGER.debug("Descriptions: {}", description);
 		wdEntity.setDescription(description);
 		aliases = entity.getJsonObject("aliases");
 		if (aliases != null) {
@@ -198,7 +197,7 @@ public class WikiDataParser {
 				for (JsonValue value : aliasArray) {
 					alias = (JsonObject)value;
 					aliasStr = alias.getString("value", "(no alias)");
-					LOGGER.log(LOGLEVEL, "Alias: {0}", aliasStr);
+					LOGGER.debug("Alias: {}", aliasStr);
 					wdEntity.addAlias(aliasStr);
 				}
 			}
@@ -220,12 +219,12 @@ public class WikiDataParser {
 					propLabel = jebus.hget(hashKey, JebusBible.getStringKey(JebusKey.WIKIDATALABEL, jebusPool));
 				}
 				if (propLabel == null) {
-					AlixiaUtils.error("Property " + propID + " not in map");
+					LOGGER.error("Property {} not in map", propID);
 					continue;
 				}
 				dataType = mainSnak.getString("datatype");
 				dataValue = parseDataValue(mainSnak.getJsonObject("datavalue"), dataType);
-				LOGGER.log(LOGLEVEL, "Property: {0} {1} : {2}", new Object[]{propID, propLabel, dataValue.toString()});
+				LOGGER.debug("Property: {} {} : {}", propID, propLabel, dataValue.toString());
 				claim = new WikiDataClaim(propID);
 				claim.setLabel(propLabel);
 				claim.setValue(dataValue);
@@ -251,7 +250,7 @@ public class WikiDataParser {
 					wdID = (String)cl.getValue();
 					for (WikiDataEntity wd : secondaryEntities) {
 						if (wdID.equals(wd.getqID())) {
-							LOGGER.log(LOGLEVEL, "Successfully updated {0}", wdID);
+							LOGGER.debug("Successfully updated {}", wdID);
 							cl.setSecondaryLabel(wd.getLabel());
 						}
 					}
@@ -269,7 +268,7 @@ public class WikiDataParser {
 		
 		SharedUtils.checkNotNull(entity);
 		wdEntity = new WikiDataEntity();
-		LOGGER.log(LOGLEVEL, "Type: {0}", entity.getString("type", "(no type)"));
+		LOGGER.debug("Type: {}", entity.getString("type", "(no type)"));
 		labels = entity.getJsonObject("labels");
 		if (labels == null) {
 			label = "(no label)";
@@ -281,7 +280,7 @@ public class WikiDataParser {
 				label = labels.getString("value", "(no label)");
 			}
 		}
-		LOGGER.log(LOGLEVEL, "Labels: {0}", label);
+		LOGGER.debug("Labels: {}", label);
 		wdEntity.setLabel(label);
 		return wdEntity;
 	}
@@ -305,21 +304,21 @@ public class WikiDataParser {
 					result = datavalue.getString("value", "(no value)");
 					return result;
 				} 
-				AlixiaUtils.error("commonsMedia expected string, got " + type);
+				LOGGER.error("commonsMedia expected string, got {}", type);
 				break;
 			case "string":
 				if (type.equals("string")) {
 					result = datavalue.getString("value", "(no value)");
 					return result;
 				} 
-				AlixiaUtils.error("string expected string, got " + type);
+				LOGGER.error("string expected string, got {}", type);
 				break;
 			case "monolingualtext":
 				if (type.equals("monolingualtext")) {
 					result = datavalue.getString("value", "(no value)");
 					return result;
 				} 
-				AlixiaUtils.error("monolingualtext expected monolingualtext, got " + type);
+				LOGGER.error("monolingualtext expected monolingualtext, got {}", type);
 				break;
 			case "time":
 				if (type.equals("time")) {
@@ -329,11 +328,11 @@ public class WikiDataParser {
 					try {
 						date = sdf.parse(time);
 					} catch (ParseException e) {
-						AlixiaUtils.error("Can't parse date/time string " + time, e);
+						LOGGER.error("Can't parse date/time string {}", time, e);
 					}
 					return date;
 				} 
-				AlixiaUtils.error("time expected time, got " + type);
+				LOGGER.error("time expected time, got {}", type);
 				break;
 			case "wikibase-item":
 				if (type.equals("wikibase-entityid")) {
@@ -342,14 +341,14 @@ public class WikiDataParser {
 					idString = "Q" + number;
 					return idString;
 				}
-				AlixiaUtils.error("wikibase-item expected wikibase-entityid, got " + type);
+				LOGGER.error("wikibase-item expected wikibase-entityid, got {}", type);
 				break;
 			case "external-id":
 				if (type.equals("string")) {
 					result = datavalue.getString("value", "(no value)");
 					return result;
 				}
-				AlixiaUtils.error("external-id expected string, got " + type);
+				LOGGER.error("external-id expected string, got {}", type);
 				break;
 			default:
 				result = "Unknown datatype " + datatype;

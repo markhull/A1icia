@@ -53,28 +53,6 @@ public class AnswerChunk extends _AnswerChunk {
 				.select(context);
 		return dbAnswerChunks;
     }
-	
-    public void commit() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.commitChanges();
-    }
-    
-    public void rollback() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-    	context.rollbackChanges();
-    }
-
-	public void delete() {
-    	ObjectContext context;
-    	
-    	context = this.getObjectContext();
-     	context.deleteObjects(this);
-    	context.commitChanges();
-	}
 
 	public static AnswerChunk createNew() {
     	ObjectContext context;

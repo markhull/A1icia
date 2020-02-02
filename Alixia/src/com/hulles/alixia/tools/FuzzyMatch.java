@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.tools;
 
 import java.text.CharacterIterator;
@@ -32,25 +11,24 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-import com.hulles.alixia.api.AlixiaConstants;
 import com.hulles.alixia.api.shared.SharedUtils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * FuzzyMatch returns a quantified match between one string and another using the 
  * Levenshtein Distance. It actually does a pretty good job of returning interesting results, even
- * compared to the beefier fuzzywuzzy stuff implemented elsewhere. TODO Document where I got this from.
+ * compared to the beefier fuzzywuzzy stuff implemented elsewhere. Not my code originally, TODO document
+ * where I got this from.
  * 
  * @author hulles
  *
  */
 public class FuzzyMatch {
-	private final static Logger LOGGER = Logger.getLogger("Alixia.FuzzyMatch");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(FuzzyMatch.class);
 	private static final LevenshteinDistance LEVDISTANCE;
 
 	static {
@@ -66,7 +44,7 @@ public class FuzzyMatch {
 	 * 
 	 */
 	
-	public static int getRatio(String s1, String s2, boolean debug) {
+	public static int getRatio(String str1, String str2, boolean debug) {
 		Set<String> set1;
 		Set<String> set2;
 		StringTokenizer st1;
@@ -83,33 +61,38 @@ public class FuzzyMatch {
 		String t0 = "";
 		String t1 = "";
 		String t2 = "";
+		String xstr1;
+		String xstr2;
 		
-		if (s1.length() >= s2.length()) {		
+		SharedUtils.checkNotNull(str1);
+		SharedUtils.checkNotNull(str2);
+		if (str1.length() >= str2.length()) {		
 			// We need to swap s1 and s2		
-			String temp = s2;
-			s2 = s1;
-			s1 = temp;			
+			xstr2 = str1;
+			xstr1 = str2;			
+		} else {
+		    xstr1 = str1;
+		    xstr2 = str2;
 		}
 
 		// Get alpha numeric characters
 		
-		s1 = escapeString(s1);
-		s2 = escapeString(s2);
+		xstr1 = escapeString(xstr1);
+		xstr2 = escapeString(xstr2);
 		
-		s1 = s1.toLowerCase();
-		s2 = s2.toLowerCase();
-		
-		
+		xstr1 = xstr1.toLowerCase();
+		xstr2 = xstr2.toLowerCase();
+				
 		set1 = new HashSet<>();
 		set2 = new HashSet<>();
 		
 		//split the string by space and store words in sets
-		st1 = new StringTokenizer(s1);		
+		st1 = new StringTokenizer(xstr1);		
 		while (st1.hasMoreTokens()) {
 			set1.add(st1.nextToken());
 		}
 
-		st2 = new StringTokenizer(s2);		
+		st2 = new StringTokenizer(xstr2);		
 		while (st2.hasMoreTokens()) {
 			set2.add(st2.nextToken());
 		}
@@ -118,9 +101,9 @@ public class FuzzyMatch {
 		
 		sortedIntersection = Sets.newTreeSet(intersection);
 
-	    LOGGER.log(LOGLEVEL, "Sorted intersection --> ");
+	    LOGGER.debug("Sorted intersection --> ");
 		for (String s : sortedIntersection) {
-            LOGGER.log(LOGLEVEL, s);
+            LOGGER.debug(s);
 		}
 		
 		// Find out difference of sets set1 and intersection of set1,set2
@@ -129,13 +112,13 @@ public class FuzzyMatch {
 		restOfSet2 = Sets.symmetricDifference(set2, intersection);
 		sortedRestOfSet2 = Sets.newTreeSet(restOfSet2);
 		
-	    LOGGER.log(LOGLEVEL, "Sorted rest of 1 --> ");
+	    LOGGER.debug("Sorted rest of 1 --> ");
 		for (String s : sortedRestOfSet1) {
-            LOGGER.log(LOGLEVEL, s);
+            LOGGER.debug(s);
 		}
-	    LOGGER.log(LOGLEVEL, "Sorted rest of 2 --> ");
+	    LOGGER.debug("Sorted rest of 2 --> ");
 		for (String s : sortedRestOfSet2) {
-            LOGGER.log(LOGLEVEL, s);
+            LOGGER.debug(s);
 		}
 
         for (String s:sortedIntersection) {
@@ -159,9 +142,9 @@ public class FuzzyMatch {
 		int amt2 = calculateLevensteinDistance(t0, t2);
 		int amt3 = calculateLevensteinDistance(t1, t2);
 		
-        LOGGER.log(LOGLEVEL, "t0 = {0} --> {1}", new Object[]{t0, amt1});
-        LOGGER.log(LOGLEVEL, "t1 = {0} --> {1}", new Object[]{t1, amt2});
-        LOGGER.log(LOGLEVEL, "t2 = {0} --> {1}", new Object[]{t2, amt3});
+        LOGGER.debug("t0 = {} --> {}", t0, amt1);
+        LOGGER.debug("t1 = {} --> {}", t1, amt2);
+        LOGGER.debug("t2 = {} --> {}", t2, amt3);
 		
 		finalScore = Math.max(Math.max(amt1, amt2), amt3);
 		return finalScore;	
@@ -171,6 +154,8 @@ public class FuzzyMatch {
 		int distance;
 		double ratio;
 		
+		SharedUtils.checkNotNull(s1);
+		SharedUtils.checkNotNull(s2);
 		distance = LEVDISTANCE.apply(s1, s2);
 		ratio = ((double) distance) / (Math.max(s1.length(), s2.length()));
 		return 100 - ((Double)(ratio*100)).intValue();		
@@ -179,7 +164,9 @@ public class FuzzyMatch {
 	public static String escapeString(String token) {
 		StringBuffer s;
 		CharacterIterator it;
+		String tokenOut;
 		
+		SharedUtils.checkNotNull(token);
 		s = new StringBuffer(token.length());
 		it = new StringCharacterIterator(token);
 		for (char ch = it.first(); ch != CharacterIterator.DONE; ch = it.next()) {
@@ -210,51 +197,56 @@ public class FuzzyMatch {
 					break;
 			}
 		}
-		token = s.toString();
-		return token;
+		tokenOut = s.toString();
+		return tokenOut;
 	}
 
 	public static List<Match> getNBestMatches(String target, List<String> matchList, int bestNAnswers) {
-		List<String> topResults;
-		List<Integer> topRatios;
+	
+		return getNBestMatches(target, matchList, bestNAnswers, true);
+	}
+	
+	/**
+	 * Return a set of at most N best fuzzy matches to the target string, sorted 
+	 * best to worst match.
+	 * 
+	 * @param target The string to compare
+	 * @param matchList The list of possible matching strings
+	 * @param bestNAnswers The number of best matches to return
+	 * @param skipExact True if we are to ignore exact matches
+	 * @return A list of 0 to N best fuzzy matches to the target string
+	 */
+	public static List<Match> getNBestMatches(String target, List<String> matchList, int bestNAnswers, boolean skipExact) {
 		List<Match> matches;
 		Match match;
-		String result;
 		int ratio;
-		int lastRatioIx;
+		int answers;
 		
-		lastRatioIx = bestNAnswers - 1;
-		topResults = new ArrayList<>(bestNAnswers);
-		topRatios = new ArrayList<>(bestNAnswers);
-		for (int i=0; i<bestNAnswers; i++) {
-			topResults.add("");
-			topRatios.add(0);
-		}
+		SharedUtils.checkNotNull(target);
+		SharedUtils.checkNotNull(matchList);
+		SharedUtils.checkNotNull(bestNAnswers);
+		SharedUtils.checkNotNull(skipExact);
+		matches = new ArrayList<>(matchList.size());
 		for (String possible : matchList) {
-			ratio = FuzzyMatch.getRatio(target, possible, false);
-			for (int i=0; i<bestNAnswers; i++) {
-				if (ratio > topRatios.get(i)) {
-					topRatios.set(i, ratio);
-					topResults.set(i, possible);
-					continue;
-				}
-				if (topRatios.get(lastRatioIx) == 100) {
-					// all the buckets are maxed out
-					break;
-				}
+			if (possible == null || possible.isEmpty()) {
+				continue;
 			}
-		}
-		matches = new ArrayList<>(bestNAnswers);
-		for (int j=0; j<topResults.size(); j++) {
-			result = topResults.get(j);
-			ratio = topRatios.get(j);
+			if (skipExact && (target.equals(possible))) {
+				continue;
+			}
+			ratio = FuzzyMatch.getRatio(target, possible, false);
 			match = new Match();
 			match.setRatio(ratio);
-			match.setString(result);
+			match.setString(possible);
 			matches.add(match);
 		}
+		if (bestNAnswers > matches.size()) {
+			answers = matches.size();
+		} else {
+		    answers = bestNAnswers;
+		}
 		Collections.sort(matches);
-		return matches;
+		return matches.subList(0, answers);
 	}
 	
 	public static class Match implements Comparable<Match> {
@@ -268,6 +260,7 @@ public class FuzzyMatch {
 		
 		public void setRatio(Integer ratio) {
 			
+			SharedUtils.checkNotNull(ratio);
 			this.ratio = ratio;
 		}
 		
@@ -283,15 +276,21 @@ public class FuzzyMatch {
 		}
 
 		/**
-		 * Sort matches in descending order based on ration
+		 * Sort matches in descending order based on ratio
 		 * 
-		 * @param other
-		 * @return
+		 * @param other The Match to which this is to be compared
+		 * @return The value 0 if this Match is equal to the argument Match; a value less than 0 if 
+		 * this Match is numerically greater than the argument Match; and a value greater than 0 if 
+		 * this Match is numerically less than the argument Match (signed comparison).
+
 		 */
 		@Override
 		public int compareTo(Match other) {
+			Integer otherRatio;
 			
-			return other.getRatio().compareTo(getRatio());
+			SharedUtils.checkNotNull(other);
+			otherRatio = other.getRatio();
+			return otherRatio.compareTo(getRatio());
 		}
 		
 	}

@@ -1,24 +1,3 @@
-/*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
- * All rights reserved
- *  
- * This file is part of Alixia.
- *  
- * Alixia is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *    
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *  
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * SPDX-License-Identifer: GPL-3.0-or-later
- *******************************************************************************/
 package com.hulles.alixia.cayenne.auto;
 
 import java.io.IOException;
@@ -48,10 +27,10 @@ public abstract class _OwmCity extends BaseDataObject {
     public static final Property<Integer> OWM_ID = Property.create("owmId", Integer.class);
     public static final Property<Country> COUNTRY = Property.create("country", Country.class);
 
-    protected float latitude;
-    protected float longitude;
+    protected Float latitude;
+    protected Float longitude;
     protected String name;
-    protected int owmId;
+    protected Integer owmId;
 
     protected Object country;
 
@@ -133,16 +112,16 @@ public abstract class _OwmCity extends BaseDataObject {
 
         switch (propName) {
             case "latitude":
-                this.latitude = val == null ? 0 : (float)val;
+                this.latitude = (Float)val;
                 break;
             case "longitude":
-                this.longitude = val == null ? 0 : (float)val;
+                this.longitude = (Float)val;
                 break;
             case "name":
                 this.name = (String)val;
                 break;
             case "owmId":
-                this.owmId = val == null ? 0 : (int)val;
+                this.owmId = (Integer)val;
                 break;
             case "country":
                 this.country = val;
@@ -163,20 +142,20 @@ public abstract class _OwmCity extends BaseDataObject {
     @Override
     protected void writeState(ObjectOutputStream out) throws IOException {
         super.writeState(out);
-        out.writeFloat(this.latitude);
-        out.writeFloat(this.longitude);
+        out.writeObject(this.latitude);
+        out.writeObject(this.longitude);
         out.writeObject(this.name);
-        out.writeInt(this.owmId);
+        out.writeObject(this.owmId);
         out.writeObject(this.country);
     }
 
     @Override
     protected void readState(ObjectInputStream in) throws IOException, ClassNotFoundException {
         super.readState(in);
-        this.latitude = in.readFloat();
-        this.longitude = in.readFloat();
+        this.latitude = (Float)in.readObject();
+        this.longitude = (Float)in.readObject();
         this.name = (String)in.readObject();
-        this.owmId = in.readInt();
+        this.owmId = (Integer)in.readObject();
         this.country = in.readObject();
     }
 

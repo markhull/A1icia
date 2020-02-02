@@ -25,11 +25,11 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.hulles.alixia.prong.shared.ProngException;
 import com.hulles.alixia.webx.client.content.ConsoleContent;
 import com.hulles.alixia.webx.client.services.MindServiceEvent;
 import com.hulles.alixia.webx.client.services.ServiceHandler;
 import com.hulles.alixia.webx.client.services.ServiceHandler.MindServices;
+import com.hulles.alixia.webx.shared.ProngException;
 import com.hulles.alixia.webx.shared.SerialSystemInfo;
 import com.hulles.alixia.webx.shared.SharedUtils;
 

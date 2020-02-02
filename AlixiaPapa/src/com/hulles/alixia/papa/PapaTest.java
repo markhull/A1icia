@@ -31,6 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 import com.hulles.alixia.tools.ExternalAperture;
 
@@ -75,7 +76,7 @@ public class PapaTest {
     static void createAndShowGUI(BufferedImage image) {
         //Create and set up the window.
         JFrame frame = new JFrame("Wolfram|Alpha Result");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
  
         //Create and set up the content pane.
         JComponent newContentPane = new ImageScroller(image);

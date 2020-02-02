@@ -21,23 +21,28 @@
  *******************************************************************************/
 package com.hulles.alixia.alpha;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.dialog.DialogResponse;
-import com.hulles.alixia.api.remote.AlixianID;
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.AlixiaConstants;
+import com.hulles.alixia.api.dialog.DialogResponse;
+import com.hulles.alixia.api.remote.AlixianID;
+import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.house.ClientDialogResponse;
 import com.hulles.alixia.media.Language;
 import com.hulles.alixia.room.Room;
 import com.hulles.alixia.room.UrRoom;
-import com.hulles.alixia.room.document.ClientObjectWrapper;
 import com.hulles.alixia.room.document.MessageAction;
 import com.hulles.alixia.room.document.RoomActionObject;
 import com.hulles.alixia.room.document.RoomAnnouncement;
@@ -49,27 +54,18 @@ import com.hulles.alixia.ticket.SememePackage;
 import com.hulles.alixia.ticket.SentencePackage;
 import com.hulles.alixia.ticket.Ticket;
 import com.hulles.alixia.ticket.TicketJournal;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Alpha Room is an exemplary implementation for rooms. It simply returns a form of "Aardvark" 
  * when queried. I love Alpha.
- * <p>
- * At least temporarily, Alpha also tests push notfications. Go Alpha.
  * 
  * @author hulles
  *
  */
 public final class AlphaRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaAlpha.AlphaRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(AlphaRoom.class);
 	private final ScheduledExecutorService executor;
-	private volatile boolean alreadySentNotification = false;
+//	private volatile boolean alreadySentNotification = false;
     
 	public AlphaRoom() {
 		super();
@@ -114,7 +110,7 @@ public final class AlphaRoom extends UrRoom {
 	 * @param request The RoomRequest
 	 * @return A SememeAnalysis action package
 	 */
-	private ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
+	private static ActionPackage createAnalysisActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage actionPkg;
 		SememeAnalysis analysis;
 		Ticket ticket;
@@ -122,15 +118,15 @@ public final class AlphaRoom extends UrRoom {
 		List<SememePackage> sememePackages;
 		List<SentencePackage> sentencePackages;
 		SememePackage aardPkg;
-		AlixianID alixianID;
+//		AlixianID alixianID;
         
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-        if (!alreadySentNotification) {
-            alixianID = request.getTicket().getFromAlixianID();
-            startNotificationService(alixianID);
-            alreadySentNotification = true;
-        }
+//        if (!alreadySentNotification) {
+//            alixianID = request.getTicket().getFromAlixianID();
+//            startNotificationService(alixianID);
+//            alreadySentNotification = true;
+//        }
 		ticket = request.getTicket();
 		journal = ticket.getJournal();
 		actionPkg = new ActionPackage(sememePkg);
@@ -159,20 +155,20 @@ public final class AlphaRoom extends UrRoom {
 	 * @param request
 	 * @return
 	 */
-	private ActionPackage createAardvarkActionPackage(SememePackage sememePkg, RoomRequest request) {
+	private static ActionPackage createAardvarkActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
 		MessageAction action;
 		String clientMsg;
 		String result;
-		AlixianID alixianID;
+//		AlixianID alixianID;
         
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-        if (!alreadySentNotification) {
-            alixianID = request.getTicket().getFromAlixianID();
-            startNotificationService(alixianID);
-            alreadySentNotification = true;
-        }
+//        if (!alreadySentNotification) {
+//            alixianID = request.getTicket().getFromAlixianID();
+//            startNotificationService(alixianID);
+//            alreadySentNotification = true;
+//        }
 		pkg = new ActionPackage(sememePkg);
 		action = new MessageAction();
 		clientMsg = request.getMessage().trim();
@@ -199,10 +195,12 @@ public final class AlphaRoom extends UrRoom {
 		return pkg;
 	}
 	
+	@SuppressWarnings("unused")
 	private void startNotificationService(AlixianID alixianID) {
 		
         SharedUtils.checkNotNull(alixianID);
 		final Runnable checker = new Runnable() {
+			@SuppressWarnings("synthetic-access")
 			@Override
 			public void run() {
                 ClientDialogResponse clientResponse;
@@ -233,7 +231,7 @@ public final class AlphaRoom extends UrRoom {
 				pool.shutdownNow(); // Cancel currently executing tasks
 				// Wait a while for tasks to respond to being cancelled
 				if (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
-                    AlixiaUtils.error("TimerHandler -- executor did not terminate");
+                    LOGGER.error("TimerHandler -- executor did not terminate");
                 }
 			}
 		} catch (InterruptedException ie) {
@@ -296,7 +294,6 @@ public final class AlphaRoom extends UrRoom {
 		RoomActionObject obj;
 		MessageAction msgAction;
 		Ticket ticket;
-		ClientObjectWrapper cow;
 		
 		SharedUtils.checkNotNull(request);
 		SharedUtils.checkNotNull(responses);
@@ -310,8 +307,7 @@ public final class AlphaRoom extends UrRoom {
 					obj = pkg.getActionObject();
 					if (obj instanceof MessageAction) {
 						msgAction = (MessageAction) obj;
-                        LOGGER.log(LOGLEVEL, "We got us some learning => {0}, {1}", 
-                                new String[]{msgAction.getMessage(), msgAction.getExplanation()});
+                        LOGGER.debug("We got us some learning => {}, {}", msgAction.getMessage(), msgAction.getExplanation());
 					}
 				}
 			}

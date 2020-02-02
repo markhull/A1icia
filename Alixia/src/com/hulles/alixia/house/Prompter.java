@@ -24,8 +24,9 @@ package com.hulles.alixia.house;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
 import com.hulles.alixia.api.AlixiaConstants;
@@ -42,15 +43,13 @@ import com.hulles.alixia.media.Language;
 
 /**
  * Prompter pushes a prompt of one sort or another to an idle console. 
- * This could be / should be part of Delta Room, probably.
+ * Note that it uses the street bus, vs. the hall bus.
  * 
  * @author hulles
  *
  */
-final class Prompter extends TimerTask {
-	final static Logger LOGGER = Logger.getLogger("Alixia.Prompter");
-	final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
-//	final static Level LOGLEVEL = Level.INFO;
+public final class Prompter extends TimerTask {
+	final static Logger LOGGER = LoggerFactory.getLogger(Prompter.class);
 	private final static int MAXNAGS = 2;
 	private final AlixianID alixianID;
 	private int nagCounter;
@@ -61,14 +60,14 @@ final class Prompter extends TimerTask {
     private final SessionType sessionType;
 	private final Boolean isQuiet;
     
-	Prompter(AlixianID alixianID, SessionType sessionType, Language language, Boolean isQuiet, EventBus houseBus) {
+	public Prompter(AlixianID alixianID, SessionType sessionType, Language language, Boolean isQuiet, EventBus houseBus) {
 		Station station;
 		
 		SharedUtils.checkNotNull(alixianID);
 		SharedUtils.checkNotNull(sessionType);
 		SharedUtils.checkNotNull(language);
 		SharedUtils.checkNotNull(houseBus);
-        LOGGER.log(LOGLEVEL, "Prompter: creating prompter for {0}", alixianID);
+        LOGGER.debug("Prompter: creating prompter for {}", alixianID);
 		station = Station.getInstance();
 		this.stationID = station.getStationUUID(); // our station, not the promptee's
 		this.alixianID = alixianID;
@@ -80,7 +79,7 @@ final class Prompter extends TimerTask {
 		this.promptSememe = SerialSememe.find("prompt");
 	}
 
-	AlixianID getAlixianID() {
+	public AlixianID getAlixianID() {
 		
 		return alixianID;
 	}
@@ -91,10 +90,10 @@ final class Prompter extends TimerTask {
 		Set<SerialSememe> sememes;
 		
 		if (nagCounter > MAXNAGS) {
-			LOGGER.log(LOGLEVEL, "Cancelling timer");
+			LOGGER.info("Cancelling timer");
 			this.cancel();
 		}
-        LOGGER.log(LOGLEVEL, "Prompter: creating new prompt DialogRequest for {0}", alixianID);
+        LOGGER.debug("Prompter: creating new prompt DialogRequest for {}", alixianID);
 		dialogRequest = new DialogRequest();
 		sememes = Collections.singleton(promptSememe);
 		dialogRequest.setRequestActions(sememes);

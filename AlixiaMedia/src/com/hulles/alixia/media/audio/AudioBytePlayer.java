@@ -69,7 +69,7 @@ public class AudioBytePlayer {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("resource")
-	public static void playAudioFromByteArray(AudioFormat format, byte[] audio, Integer length) throws Exception {
+    public static void playAudioFromByteArray(AudioFormat format, byte[] audio, Integer length) throws Exception {
 		InputStream input;
 		final AudioInputStream ais;
 		DataLine.Info info;

@@ -21,15 +21,16 @@
  *******************************************************************************/
 package com.hulles.alixia.india;
 
-import com.hulles.alixia.api.AlixiaConstants;
-import com.hulles.alixia.api.shared.AlixiaException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.Response;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 import com.hulles.alixia.room.Room;
@@ -40,21 +41,20 @@ import com.hulles.alixia.room.document.RoomRequest;
 import com.hulles.alixia.room.document.RoomResponse;
 import com.hulles.alixia.ticket.ActionPackage;
 import com.hulles.alixia.ticket.SememePackage;
-import com.hulles.fortuna.Fortuna;
-import com.hulles.fortuna.SerialFortune;
+import com.hulles.fortune.Fortunes;
+import com.hulles.fortune.SerialFortune;
 
 /**
  * India Room provides what I call "directed random" responses, i.e. random responses from within
  * a response category. Conversationally it actually works better than you might expect. 
  * <p>
- * India Room now also looks up random quotes in the Fortuna database.
+ * India Room now also looks up random quotes in the Fortune database.
  * 
  * @author hulles
  *
  */
 public final class IndiaRoom extends UrRoom {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaIndia.IndiaRoom");
-	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(IndiaRoom.class);
 	private final static int QUOTE_PROB = 42; // a carefully-chosen integer....
 	private ResponseGenerator generator;
 	private final Random random;
@@ -93,7 +93,7 @@ public final class IndiaRoom extends UrRoom {
 
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "IndiaRoom: receiving {0}", sememePkg.getName());
+		LOGGER.debug("IndiaRoom: receiving {}", sememePkg.getName());
 		switch (sememePkg.getName()) {
 			case "greet":
 			case "youre_welcome":
@@ -128,7 +128,7 @@ public final class IndiaRoom extends UrRoom {
 	
 	private ActionPackage createRandomActionPackage(SememePackage sememePkg, RoomRequest request) {
 		ActionPackage pkg;
-		String message;
+		Response response;
 		@SuppressWarnings("unused")
 		String name;
 		MessageAction action;
@@ -136,7 +136,7 @@ public final class IndiaRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "IndiaRoom: evaluating {0}", sememePkg.getName());
+		LOGGER.debug("IndiaRoom: evaluating {}", sememePkg.getName());
 		pkg = new ActionPackage(sememePkg);
 		msgIn = request.getMessage();
 		if (msgIn == null) {
@@ -144,11 +144,12 @@ public final class IndiaRoom extends UrRoom {
 		} else {
 			name = msgIn.trim();
 		}
-		message = generator.generateResponse(sememePkg, "Dave");
+		response = generator.generateResponse(sememePkg, "Dave");
 		action = new MessageAction();
-		action.setMessage(message);
+		action.setMessage(response.getMessage());
+        action.setExplanation(response.getExplanation());
 		pkg.setActionObject(action);
-		LOGGER.log(LOGLEVEL, "IndiaRoom: returning package for {0}", sememePkg.getName());
+		LOGGER.debug("IndiaRoom: returning package for {}", sememePkg.getName());
 		return pkg;
 	}
 
@@ -161,17 +162,16 @@ public final class IndiaRoom extends UrRoom {
 		
 		SharedUtils.checkNotNull(sememePkg);
 		SharedUtils.checkNotNull(request);
-		LOGGER.log(LOGLEVEL, "IndiaRoom: getting random quotation");
+		LOGGER.debug("IndiaRoom: getting random quotation");
 		pkg = new ActionPackage(sememePkg);
-		fortune = Fortuna.getFortune();
-//		message = fortune.getText(); 
+		fortune = Fortunes.getFortune();
 		expl = "\"" + fortune.getText() + "\" ‒ " + fortune.getSource();
 		message = expl;
 		action = new MessageAction();
 		action.setMessage(message);
 		action.setExplanation(expl);
 		pkg.setActionObject(action);
-		LOGGER.log(LOGLEVEL, "IndiaRoom: returning package for {0}", sememePkg.getName());
+		LOGGER.debug("IndiaRoom: returning package for {}", sememePkg.getName());
 		return pkg;
 	}
 	
@@ -196,6 +196,4 @@ public final class IndiaRoom extends UrRoom {
 	@Override
 	protected void processRoomAnnouncement(RoomAnnouncement announcement) {
 	}
-
-
 }

@@ -24,8 +24,10 @@ package com.hulles.alixia.room.document;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hulles.alixia.api.shared.SharedUtils;
-import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.ticket.SememePackage;
 import com.hulles.alixia.ticket.Ticket;
 
@@ -37,6 +39,7 @@ import com.hulles.alixia.ticket.Ticket;
  *
  */
 public class RoomRequest extends RoomDocument {
+    private final static Logger LOGGER = LoggerFactory.getLogger(RoomRequest.class);
 	private String message;
 	private RoomObject roomObject;
 	private final List<SememePackage> sememePackages;
@@ -106,15 +109,30 @@ public class RoomRequest extends RoomDocument {
 		this.sememePackages.add(sememePackage);
 	}
 	
+	private String dumpSememes() {
+		StringBuilder sb;
+		boolean first = true;
+		
+		sb = new StringBuilder(" Sememes: ");
+		for (SememePackage pkg : sememePackages) {
+			if (!first) {
+				sb.append(",");
+			}
+			sb.append(pkg.getName());
+			first = false;
+		}
+		return sb.toString();
+	}
+	
 	@Override
 	public boolean documentIsReady() {
 		
 		if (message == null && roomObject == null && sememePackages == null) {
-			AlixiaUtils.error("No payload");
+			LOGGER.error("No payload");
 			return false;
 		}		
 		if (sememePackages == null || sememePackages.isEmpty()) {
-			AlixiaUtils.error("Null or empty sememe packages");
+			LOGGER.error("Null or empty sememe packages");
 			return false;
 		}
 		return super.documentIsReady();
@@ -122,7 +140,13 @@ public class RoomRequest extends RoomDocument {
 	
 	@Override
 	public String toString() {
-
-		return "Room Request #"  + getDocumentID() + " from " + getFromRoom();
+		StringBuilder sb;
+		
+		sb = new StringBuilder("Room Request #");
+		sb.append(getDocumentID());
+		sb.append(" from ");
+		sb.append(getFromRoom());
+		sb.append(dumpSememes());
+		return sb.toString();
 	}
 }

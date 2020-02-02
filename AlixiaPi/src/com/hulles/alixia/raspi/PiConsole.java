@@ -21,8 +21,8 @@
  *******************************************************************************/
 package com.hulles.alixia.raspi;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.remote.WakeUp;
@@ -32,8 +32,7 @@ import com.hulles.alixia.api.shared.SharedUtils.PortCheck;
 import com.hulles.alixia.cli.AlixiaCLIConsole;
 
 public class PiConsole extends AlixiaCLIConsole implements WakeUppable {
-	private final static Logger LOGGER = Logger.getLogger("AlixiaPi.PiConsole");
-	private final static Level LOGLEVEL = Level.FINE;
+	private final static Logger LOGGER = LoggerFactory.getLogger(PiConsole.class);
 	private final HardwareLayer hardwareLayer;
 	
 	PiConsole(String host, Integer port, ConsoleType console, HardwareLayer layer) {
@@ -75,7 +74,7 @@ public class PiConsole extends AlixiaCLIConsole implements WakeUppable {
 	public boolean receiveCommand(SerialSememe command) {
 
 		SharedUtils.checkNotNull(command);
-		LOGGER.log(LOGLEVEL, "PiConsole: in receiveCommand");
+		LOGGER.debug("PiConsole: in receiveCommand");
 		super.receiveCommand(command);
 		// the valid commands in super.receiveCommand are handled below as well, so
 		//    don't just return if super.receiveCommand is true
@@ -84,13 +83,13 @@ public class PiConsole extends AlixiaCLIConsole implements WakeUppable {
 				if (!hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_on");
 				}
-				LOGGER.log(LOGLEVEL, "PiConsole: Alixia Central startup command");
+				LOGGER.debug("PiConsole: Alixia Central startup command");
 				return true;
 			case "central_shutdown":
 				if (hardwareLayer.ledIsOn("LeftGreen")) {
 					hardwareLayer.setLED("set_green_LED_off");
 				}
-				LOGGER.log(LOGLEVEL, "PiConsole: Alixia Central shutdown command");
+				LOGGER.debug("PiConsole: Alixia Central shutdown command");
 				return true;
 			// we don't allow the MOTION and ON LEDs to be set by the Central Scrutinizer
 			case "set_red_LED_on":
@@ -109,12 +108,12 @@ public class PiConsole extends AlixiaCLIConsole implements WakeUppable {
 			case "pulse_green_LED":
 			case "pulse_yellow_LED":
 			case "pulse_white_LED":
-				LOGGER.log(LOGLEVEL, "PiConsole: LED command");
+				LOGGER.debug("PiConsole: LED command");
 				hardwareLayer.setLED(command.getName());
 				return true;
 			case "wake_up_console":
 				WakeUp.wakeUpLinux();
-				LOGGER.log(LOGLEVEL, "PiConsole: wake up command");
+				LOGGER.debug("PiConsole: wake up command");
 				return true;
 			case "pretty_lights_off":
 			case "pretty_lights_random":
@@ -122,7 +121,7 @@ public class PiConsole extends AlixiaCLIConsole implements WakeUppable {
 			case "pretty_lights_color_wipe":
 			case "pretty_lights_theater":
 			case "pretty_lights_rainbows":
-				LOGGER.log(LOGLEVEL, "PiConsole: pretty lights command");
+				LOGGER.debug("PiConsole: pretty lights command");
 				HardwareLayer.setPrettyLights(command.getName());
 				return true;
 			default:

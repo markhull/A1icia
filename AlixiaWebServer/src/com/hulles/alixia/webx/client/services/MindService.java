@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2017, 2018 Hulles Industries LLC
+	 * Copyright © 2017, 2018 Hulles Industries LLC
  * All rights reserved
  *  
  * This file is part of Alixia.
@@ -28,10 +28,10 @@ package com.hulles.alixia.webx.client.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.hulles.alixia.prong.shared.ProngException;
-import com.hulles.alixia.prong.shared.SerialProng;
+import com.hulles.alixia.webx.shared.ProngException;
 import com.hulles.alixia.webx.shared.SerialConsoleIn;
 import com.hulles.alixia.webx.shared.SerialConsoleOut;
+import com.hulles.alixia.webx.shared.SerialProng;
 import com.hulles.alixia.webx.shared.SerialSystemInfo;
 
 /**

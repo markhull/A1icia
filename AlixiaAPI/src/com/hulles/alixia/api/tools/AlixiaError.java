@@ -21,13 +21,15 @@
  *******************************************************************************/
 package com.hulles.alixia.api.tools;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.hulles.alixia.api.jebus.JebusBible;
 import com.hulles.alixia.api.jebus.JebusBible.JebusKey;
 import com.hulles.alixia.api.jebus.JebusHub;
 import com.hulles.alixia.api.jebus.JebusPool;
-import java.time.Instant;
-import java.util.Set;
-
 import com.hulles.alixia.api.shared.SharedUtils;
 
 import redis.clients.jedis.Jedis;
@@ -45,7 +47,7 @@ import redis.clients.jedis.Jedis;
  */
 public final class AlixiaError {
 	private final JebusPool jebusPool;
-	private final Long idNo;
+//	private final Long idNo;
 	private final String hashKey;
 	private final Long ERROR_TTL = 1000L * 60L * 24L * 3L; // 3 days in millis
 	
@@ -60,12 +62,13 @@ public final class AlixiaError {
 		String timelineKey;
 		String deadHashKey;
 		String counterKey;
+        Long idNo;
         
 		jebusPool = JebusHub.getJebusLocal();
 		timelineKey = JebusBible.getStringKey(JebusKey.ALIXIAERRORTIMELINEKEY, jebusPool);
 		try (Jedis jebus = jebusPool.getResource()) {
             counterKey = JebusBible.getStringKey(JebusKey.ALIXIAERRORCOUNTERKEY, jebusPool);
-			this.idNo = jebus.incr(counterKey);
+			idNo = jebus.incr(counterKey);
 			this.hashKey = JebusBible.getErrorHashKey(jebusPool, idNo);
 			timestamp = Instant.now();
 			timestampStr = timestamp.toString();
@@ -85,7 +88,7 @@ public final class AlixiaError {
 				deadHashKey = JebusBible.getErrorHashKey(jebusPool, id);
 				jebus.del(deadHashKey);
 			}
-			// notify
+			// notify anyone who might be listening
 			jebus.publish(JebusBible.getStringKey(JebusKey.ALIXIAERRORCHANNELKEY, jebusPool), 
 					"Recieved error " + idNo.toString() + " at " + timestamp.toString());
 		}
@@ -95,12 +98,22 @@ public final class AlixiaError {
 	 * 
 	 * @param idNo The ID number of the error.
 	 */
-	public AlixiaError(Long idNo) {
+//	public AlixiaError(Long idNo) {
+//		
+//		SharedUtils.checkNotNull(idNo);
+//		jebusPool = JebusHub.getJebusLocal();
+//		this.hashKey = JebusBible.getErrorHashKey(jebusPool, idNo);
+//	}
+	/**
+	 * Create a new instance of AlixiaError from an existing Jebus error record.
+	 * 
+	 * @param idStr The ID string of the error.
+	 */
+	public AlixiaError(String idStr) {
 		
-		SharedUtils.checkNotNull(idNo);
+		SharedUtils.checkNotNull(idStr);
 		jebusPool = JebusHub.getJebusLocal();
-		this.idNo = idNo;
-		this.hashKey = JebusBible.getErrorHashKey(jebusPool, idNo);
+		this.hashKey = JebusBible.getErrorHashKey(jebusPool, idStr);
 	}
 	
 	/**
@@ -162,4 +175,24 @@ public final class AlixiaError {
 			return instant;
 		}		
 	}
+    
+    public static List<AlixiaError> getRecentErrors() {
+        JebusPool jebusPool;
+        Set<String> keys;
+        String timelineKey;
+        AlixiaError alixiaError;
+        List<AlixiaError> alixiaErrors;
+        
+		jebusPool = JebusHub.getJebusLocal();
+        alixiaErrors = new ArrayList<>();
+		timelineKey = JebusBible.getStringKey(JebusKey.ALIXIAERRORTIMELINEKEY, jebusPool);
+		try (Jedis jebus = jebusPool.getResource()) {
+            keys = jebus.zrange(timelineKey, 0, -1);
+            for (String key : keys) {
+                alixiaError = new AlixiaError(key);
+                alixiaErrors.add(alixiaError);
+            }
+            return alixiaErrors;
+		}
+    }
 }

@@ -99,7 +99,6 @@ public class AlixianID implements Serializable {
 	 * 
 	 * @return The ID
 	 */
-	@SuppressWarnings("resource")
 	public static AlixianID createAlixianID() {
 		JebusPool jebusPool;
 		String alixianID;
@@ -109,8 +108,8 @@ public class AlixianID implements Serializable {
 		try (Jedis jebus = jebusPool.getResource()) {
 			counterKey = JebusBible.getStringKey(JebusBible.JebusKey.ALIXIANCOUNTERKEY, jebusPool);
 			alixianID = jebus.incr(counterKey).toString();
+	        return new AlixianID(alixianID);
 		}
-		return new AlixianID(alixianID);
 	}
 	
 }
