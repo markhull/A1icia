@@ -74,6 +74,7 @@ public class MediaLibrary {
 		MediaFile mediaFile;
 		Path filePath;
         String fileName;
+        boolean oldValue;
         
         SharedUtils.checkNotNull(forceUpdate);
 		updateKey = JebusBible.getStringKey(JebusKey.ALIXIAMEDIAFILEUPDATEKEY, jebusLocal);
@@ -84,6 +85,7 @@ public class MediaLibrary {
 				timestamp = Instant.parse(instantStr);
 			}
 			if (timestamp == null || timestamp.isBefore(now) || forceUpdate) {
+			    oldValue = AlixiaApplication.setErrorOnUncommittedObjects(false);
                 mediaFilesUpdated = 0;
                 mediaFilesDeleted = 0;
                 LOGGER.info("Updating media library");
@@ -117,8 +119,10 @@ public class MediaLibrary {
 					}
 				}
 				AlixiaApplication.commitAll();
+				AlixiaApplication.setErrorOnUncommittedObjects(oldValue);
 			}
 		}
+		
         return new MediaUpdateStats();
 	}
 	

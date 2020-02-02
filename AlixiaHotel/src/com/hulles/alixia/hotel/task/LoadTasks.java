@@ -75,12 +75,13 @@ public class LoadTasks {
         Uid uid;
         List<VEvent> events;
         String eventSummary;
+        boolean oldValue;
         
 		person = Person.findPerson("hulles");
 		taskPriority = TaskPriority.findTaskPriority(2);
 		taskType = TaskType.findTaskType(1);
 		fileName = "/home/hulles/Alixia Exec/Home.ics";
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		oldValue = AlixiaApplication.setErrorOnUncommittedObjects(false);
 		try (Reader reader = new FileReader(fileName)) {
 			ical = Biweekly.parse(reader).first();
 			LOGGER.debug("ToDo's:");
@@ -149,7 +150,7 @@ public class LoadTasks {
 		} catch (IOException e1) {
 			throw new AlixiaException("LoadTasks: can't close calendar file", e1);
 		}
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		AlixiaApplication.setErrorOnUncommittedObjects(oldValue);
 	}
 	
 	public static void main(String[] args) {

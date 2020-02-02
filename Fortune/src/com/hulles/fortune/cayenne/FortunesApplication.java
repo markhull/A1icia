@@ -19,10 +19,12 @@
  *******************************************************************************/
 package com.hulles.fortune.cayenne;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.resource.ResourceLocator;
 
 public class FortunesApplication {
     private static ObjectContext entityContext = null;
@@ -39,18 +41,29 @@ public class FortunesApplication {
      * @return The Cayenne ServerRuntime
      */
     private synchronized static ServerRuntime getServerRuntime() {
-    	
+        FortuneResourceLocator fortuneLocator;
+        Path xmlPath;
+                
     	if (cayenneRuntime == null) {
+            fortuneLocator = new FortuneResourceLocator();
+            xmlPath = Path.of("/home/hulles/Alixia_Exec/Runtime/cayenne/cayenne-fortune.xml");
+            fortuneLocator.addResource("cayenne-fortune.xml", xmlPath);
+
             cayenneRuntime = ServerRuntime.builder()
-                    .addConfig("com/hulles/fortune/cayenne/cayenne-fortune.xml")
+                    .addModule(binder -> binder.bind(ResourceLocator.class)
+                            .toInstance(fortuneLocator))
+                    .addConfig("cayenne-fortune.xml")
                     .build();
     	}
     	return cayenneRuntime;
     }
 
-    public static void setErrorOnUncommittedObjects(boolean value) {
+    public static boolean setErrorOnUncommittedObjects(boolean value) {
+    	boolean oldValue;
     	
+    	oldValue = uncommittedObjectsError;
     	uncommittedObjectsError = value;
+    	return oldValue;
     }
     
     /**

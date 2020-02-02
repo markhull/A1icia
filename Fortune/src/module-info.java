@@ -10,6 +10,8 @@ module com.hulles.fortune {
 	exports com.hulles.fortune.cayenne;
 	exports com.hulles.fortune.cayenne.auto;
 
+	requires transitive cayenne.di;
+	requires transitive cayenne.client;
 	requires transitive cayenne.server;
 	requires java.json;
 	requires java.sql;

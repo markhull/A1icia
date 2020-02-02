@@ -48,7 +48,7 @@ import com.hulles.fortune.SerialFortune;
  * India Room provides what I call "directed random" responses, i.e. random responses from within
  * a response category. Conversationally it actually works better than you might expect. 
  * <p>
- * India Room now also looks up random quotes in the Fortuna database.
+ * India Room now also looks up random quotes in the Fortune database.
  * 
  * @author hulles
  *
@@ -165,7 +165,6 @@ public final class IndiaRoom extends UrRoom {
 		LOGGER.debug("IndiaRoom: getting random quotation");
 		pkg = new ActionPackage(sememePkg);
 		fortune = Fortunes.getFortune();
-//		message = fortune.getText(); 
 		expl = "\"" + fortune.getText() + "\" ‒ " + fortune.getSource();
 		message = expl;
 		action = new MessageAction();

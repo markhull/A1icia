@@ -149,9 +149,10 @@ public class CharlieLemmatizer {
 		Lemma lemma;
 		String word;
 		String dummy;
+		boolean oldValue;
 		
 		dummy = Lemma.getDummyLemmaTag();
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		oldValue = AlixiaApplication.setErrorOnUncommittedObjects(false);
 		for (int i=0; i<lemmata.size(); i++) {
 			word = lemmata.get(i);
 			if (word.isEmpty() || word.equals("O")) {
@@ -166,6 +167,6 @@ public class CharlieLemmatizer {
 			}
 		}
 		AlixiaApplication.commitAll();
-		AlixiaApplication.setErrorOnUncommittedObjects(true);
+		AlixiaApplication.setErrorOnUncommittedObjects(oldValue);
 	}
 }

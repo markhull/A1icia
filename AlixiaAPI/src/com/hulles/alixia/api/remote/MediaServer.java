@@ -42,7 +42,6 @@ import redis.clients.jedis.Jedis;
  */
 public final class MediaServer {
 	private final static Logger LOGGER = LoggerFactory.getLogger(MediaServer.class);
-//	private final static Level LOGLEVEL = Level.INFO;
 	private static final int MEDIA_CACHE_TTL = 60 * 60 * 1; // 1 hr in seconds
 	
 	private MediaServer()  {
@@ -67,7 +66,7 @@ public final class MediaServer {
 		
         SharedUtils.checkNotNull(format);
 		SharedUtils.checkNotNull(audioBytes);
-		LOGGER.info("NodeMediaServer: in saveMediaBytes, bytes len = {}", audioBytes.length);
+		LOGGER.debug("MediaServer: in saveMediaBytes, bytes len = {}", audioBytes.length);
 		jebusPool = JebusHub.getJebusLocal();
 		try (Jedis jebus = jebusPool.getResource()) {
 			counterKey = JebusBible.getStringKey(JebusKey.ALIXIAMEDIACACHECOUNTERKEY, jebusPool);
@@ -98,7 +97,7 @@ public final class MediaServer {
 		String mediaBytesKey;
 		
 		SharedUtils.checkNotNull(key);
-		LOGGER.info("NodeMediaServer: in getMediaBytes");
+		LOGGER.debug("MediaServer: in getMediaBytes");
 		jebusPool = JebusHub.getJebusLocal();
 		val = Long.parseLong(key);
 		try (Jedis jebus = jebusPool.getResource()) {
@@ -106,7 +105,7 @@ public final class MediaServer {
 			keyBytes = hashKey.getBytes();
 			mediaBytesKey = JebusBible.getStringKey(JebusKey.MEDIABYTESFIELD, jebusPool);
 			mediaBytes = jebus.hget(keyBytes, mediaBytesKey.getBytes());
-	        LOGGER.info("NodeMediaServer: leaving getMediaBytes, bytes len = {}", mediaBytes.length);
+	        LOGGER.debug("MediaServer: leaving getMediaBytes, bytes len = {}", mediaBytes.length);
 	        return mediaBytes;
 		}
 	}

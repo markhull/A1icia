@@ -32,8 +32,12 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.hulles.alixia.api.object.AlixiaClientObject;
+import com.hulles.alixia.api.object.AlixiaClientObject.ClientObjectType;
 import com.hulles.alixia.api.object.MediaObject;
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialProng;
@@ -51,8 +55,7 @@ import com.hulles.alixia.media.audio.TTSPico;
  * @author hulles
  */
 public final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
-//	private final static Logger LOGGER = Logger.getLogger("AlixiaNodeServer.MiniConsole");
-//	private final static Level LOGLEVEL = AlixiaConstants.getAlixiaLogLevel();
+	private final static Logger LOGGER = LoggerFactory.getLogger(MiniConsole.class);
 	private final AlixiaRemote console;
 	private final Queue<String> messages;
 	private final Queue<String> explanations;
@@ -115,6 +118,7 @@ public final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
         Integer length;
 		MediaObject mediaObject;
         String mediaType;
+        ClientObjectType objType;
         
         SharedUtils.checkNotNull(prong);
         resultBuilder = Json.createObjectBuilder();
@@ -152,7 +156,15 @@ public final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
         mediaBuilder = Json.createArrayBuilder();
         for (AlixiaClientObject obj : clientObjects) {
             mediaObjectBuilder = Json.createObjectBuilder();
-            switch (obj.getClientObjectType()) {
+            objType = obj.getClientObjectType();
+            switch (objType) {
+                case LOGIN:
+                case LOGIN_RESPONSE:
+                    LOGGER.error("MiniConsole can't support logging in yet");
+                    break;
+                case CHANGE_LANGUAGE:
+                    LOGGER.error("MiniConsole can't support changing languages yet");
+                    break;
                 case AUDIOBYTES:
                 case VIDEOBYTES:
                     mediaObject = (MediaObject) obj;
@@ -179,7 +191,8 @@ public final class MiniConsole implements AlixiaRemoteDisplay, Closeable {
                     mediaBuilder.add(mediaObjectBuilder);
                     break;
                 case IMAGEBYTES:
-                    throw new AlixiaException("NodeMediaServer can't support images yet");
+                    LOGGER.error("MiniConsole can't support images yet");
+                    break;
                 default:
                     throw new AlixiaException("Bad ClientObjectType enum: " + obj.getClientObjectType());
             }

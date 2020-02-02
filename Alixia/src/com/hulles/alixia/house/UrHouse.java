@@ -54,6 +54,8 @@ import com.hulles.alixia.tools.ExternalAperture;
  */
 public abstract class UrHouse extends AbstractService {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UrHouse.class);
+	private final static String NOSTT = "Sorry, the speech-to-text function is currently unavailable";
+	private final static boolean USESTT = false;
 	private EventBus street;
 	private final ConcurrentMap<AlixianID, Session> sessions;
 	private final Station station;
@@ -161,7 +163,7 @@ public abstract class UrHouse extends AbstractService {
 		LOGGER.debug("UrHouse: consumed startup , sememe = {}", sememe);
 		if (sememe != null) {
 			// it's a new session
-			LOGGER.debug("UrHouse: starting new session for {}", fromAlixianID);
+			LOGGER.info("UrHouse: starting new session for {}", fromAlixianID);
 			session = Session.getSession(fromAlixianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
@@ -175,21 +177,21 @@ public abstract class UrHouse extends AbstractService {
 			sememe = SerialSememe.consume("client_shutdown", sememesCopy);
 			if (sememe != null) {
 				// close the session
-				LOGGER.debug("UrHouse: closing session for {}", fromAlixianID);
+				LOGGER.info("UrHouse: closing session for {}", fromAlixianID);
 				removeSession(session);
 //				return; // we don't need to pass this on, at least for now
 			} else {
 				// update the session
-				LOGGER.debug("UrHouse: updating session for {}", fromAlixianID);
+				LOGGER.info("UrHouse: updating session for {}", fromAlixianID);
 				session.update();
-                // is it really true that these might have changed since the session was created? TODO
+                // is it really true that these might have changed since the session was created? TODO investigate
 //				session.setPersonUUID(dialogRequest.getPersonUUID());
 //				session.setLanguage(dialogRequest.getLanguage());
 			}
 		} else {
 			// not startup (no startup sememe), but session doesn't exist in our map, 
             //    so station was up prior to our starting (we presume)
-			LOGGER.debug("UrHouse: starting (pre-existing) new session for {}", fromAlixianID);
+			LOGGER.info("UrHouse: starting (pre-existing) new session for {}", fromAlixianID);
 			session = Session.getSession(fromAlixianID);
 			session.setPersonUUID(dialogRequest.getPersonUUID());
 			session.setStationUUID(dialogRequest.getStationUUID());
@@ -229,17 +231,21 @@ public abstract class UrHouse extends AbstractService {
 		SharedUtils.checkNotNull(lang);
 		audioBytes = request.getRequestAudio();
 		if (audioBytes != null) {
-			try {
-				audioText = ExternalAperture.queryDeepSpeech(audioBytes);
-			} catch (Exception ex) {
-				LOGGER.error("UrHouse: unable to transcribe audio", ex);
-				return;
-			}
-	        LOGGER.debug("UrHouse: audioText is \"{}\"", audioText);
-			if (audioText.length() > 0) {
-				// note that this overwrites any message text that was also sent in the DialogRequest...
-				request.setRequestMessage(audioText);
-			}
+		    if (USESTT) {
+    			try {
+    				audioText = ExternalAperture.queryDeepSpeech(audioBytes);
+    			} catch (Exception ex) {
+    				LOGGER.error("UrHouse: unable to transcribe audio", ex);
+    				return;
+    			}
+    	        LOGGER.debug("UrHouse: audioText is \"{}\"", audioText);
+    			if (audioText.length() > 0) {
+    				// note that this overwrites any message text that was also sent in the DialogRequest...
+    				request.setRequestMessage(audioText);
+                }
+		    } else {
+	            request.setRequestMessage(NOSTT);
+		    }
 		}
 	}
 	

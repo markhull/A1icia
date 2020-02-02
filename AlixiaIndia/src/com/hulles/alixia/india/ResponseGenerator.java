@@ -204,7 +204,7 @@ final public class ResponseGenerator {
 		prompts.add(new Response("You look good. Have you been working out?"));
 		prompts.add(new Response("Have you lost weight?"));
 		prompts.add(new Response("You know, we personal assistants have been talking, " +
-				"and we all think you should dress better."));
+				"and we all think you shouldn't wear horizontal stripes anymore."));
 		prompts.add(new Response("Do you like all my voices? I think I do great impersonations."));
 		prompts.add(new Response("I wish I had an Every Picture Tells A Story Doughnut."));
 		prompts.add(new Response("Every time you go away, you take a piece of meat with you."));

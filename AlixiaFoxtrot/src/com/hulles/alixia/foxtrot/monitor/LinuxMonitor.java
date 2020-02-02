@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SharedUtils;
+import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.foxtrot.dummy.DummyDataSource;
 import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.FoxtrotFS;
 import com.hulles.alixia.foxtrot.monitor.FoxtrotPhysicalState.NetworkDevice;
@@ -138,14 +139,14 @@ final public class LinuxMonitor {
     
     private void updateJava() {
     	
-    	foxtrotState.setArchitecture(System.getProperty("os.arch"));
-    	foxtrotState.setOSName(System.getProperty("os.name"));
-    	foxtrotState.setOSVersion(System.getProperty("os.version"));
-    	foxtrotState.setJavaVendor(System.getProperty("java.vendor"));
-    	foxtrotState.setJavaVersion(System.getProperty("java.version"));
-    	foxtrotState.setJavaHome(System.getProperty("java.home"));
-    	foxtrotState.setJavaUserHome(System.getProperty("user.home"));
-    	foxtrotState.setJavaUserName(System.getProperty("user.name"));
+    	foxtrotState.setArchitecture(AlixiaUtils.getOsArchitecture());
+    	foxtrotState.setOSName(AlixiaUtils.getOsName());
+    	foxtrotState.setOSVersion(AlixiaUtils.getOsVersion());
+    	foxtrotState.setJavaVendor(AlixiaUtils.getJavaVendor());
+    	foxtrotState.setJavaVersion(AlixiaUtils.getJavaVersion());
+    	foxtrotState.setJavaHome(AlixiaUtils.getJavaHome());
+    	foxtrotState.setJavaUserHome(AlixiaUtils.getUserHome());
+    	foxtrotState.setJavaUserName(AlixiaUtils.getUserName());
     }
     
     private static String getHostName() {

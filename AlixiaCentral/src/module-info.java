@@ -37,5 +37,6 @@ module com.hulles.alixia.central {
 	requires com.hulles.alixia.sierra;
     requires org.slf4j;
     requires com.hulles.alixia.nodeserver;
+    requires com.hulles.alixia.qa;
 	// to here
 }

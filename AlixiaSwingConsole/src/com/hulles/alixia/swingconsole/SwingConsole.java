@@ -36,7 +36,6 @@ import com.hulles.alixia.api.object.AlixiaClientObject;
 import com.hulles.alixia.api.remote.AlixiaRemote;
 import com.hulles.alixia.api.remote.AlixiaRemoteDisplay;
 import com.hulles.alixia.api.remote.Station;
-import com.hulles.alixia.api.shared.AlixiaException;
 import com.hulles.alixia.api.shared.SerialSememe;
 import com.hulles.alixia.api.shared.SharedUtils;
 
@@ -334,14 +333,17 @@ public class SwingConsole  extends AbstractExecutionThreadService implements Ali
      * 
      */
 	private void startSwing() {
-
+	    String laf;
+	    
         try {
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-            //UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            laf = UIManager.getSystemLookAndFeelClassName();
+//            laf = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+//            laf = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+//            laf = "javax.swing.plaf.metal.MetalLookAndFeel";
+            UIManager.setLookAndFeel(laf);
         } catch (UnsupportedLookAndFeelException | IllegalAccessException | 
                 InstantiationException | ClassNotFoundException ex) {
-            throw new AlixiaException("SwingConsole: can't set LAF",ex);
+            LOGGER.error("SwingConsole: can't set LAF",ex);
         }
         // Turn off metal's use of bold fonts
         //UIManager.put("swing.boldMetal", Boolean.FALSE);

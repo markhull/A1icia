@@ -164,6 +164,7 @@ public class LimaHistory {
 		List<SentenceChunk> chunks;
 		AnswerChunk answerChunk;
 		String fixedSentence;
+		boolean oldValue;
 		
 		SharedUtils.checkNotNull(sp);
 		SharedUtils.checkNotNull(ap);
@@ -176,7 +177,7 @@ public class LimaHistory {
 			return;
 		}
 		LOGGER.debug("LimaHistory: should be updating database with {}", sememePkg);
-		AlixiaApplication.setErrorOnUncommittedObjects(false);
+		oldValue = AlixiaApplication.setErrorOnUncommittedObjects(false);
 		answerHistory = AnswerHistory.createNew();
 		answerHistory.setSememe(Sememe.fromSerial(sememePkg.getSememe()));
 		answerHistory.setSememeObject(sememePkg.getSememeObject());
@@ -198,7 +199,7 @@ public class LimaHistory {
 			}
 		}
 		AlixiaApplication.commitAll();
-		AlixiaApplication.setErrorOnUncommittedObjects(true);
+		AlixiaApplication.setErrorOnUncommittedObjects(oldValue);
 		// add this to our list copy of database AnswerHistory tuples that
 		//    we use in our analysis lookup, since we have it here
 		history.add(answerHistory);

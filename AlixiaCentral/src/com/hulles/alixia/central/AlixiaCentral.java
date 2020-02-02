@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.hulles.alixia.Alixia;
 import com.hulles.alixia.alpha.AlphaRoom;
 import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.tools.AlixiaUtils;
 import com.hulles.alixia.bravo.BravoRoom;
 import com.hulles.alixia.charlie.CharlieRoom;
 import com.hulles.alixia.delta.DeltaRoom;
@@ -56,6 +57,7 @@ import com.hulles.alixia.november.NovemberRoom;
 import com.hulles.alixia.oscar.OscarRoom;
 import com.hulles.alixia.overmind.OvermindRoom;
 import com.hulles.alixia.papa.PapaRoom;
+import com.hulles.alixia.qa.QARoom;
 import com.hulles.alixia.quebec.QuebecRoom;
 import com.hulles.alixia.romeo.RomeoRoom;
 import com.hulles.alixia.room.UrRoom;
@@ -127,7 +129,11 @@ public class AlixiaCentral {
 		// load houses
         houses = new ArrayList<>(2);
         houses.add(new StationServer(noprompt));
-        houses.add(new NodeWebServer(noprompt));
+        System.out.println("Architecture says " + AlixiaUtils.getOsArchitecture());
+        if (AlixiaUtils.getOsArchitecture() != "arm") {
+            // j2v8 doesn't work for arm so don't include it TODO use a different method to get the NodeJS stuff working
+            houses.add(new NodeWebServer(noprompt));
+        }
         
 		// a minimal configuration consists of Overmind, Alpha and Charlie rooms if noprompt;
         //    add India and/or Mike if you want prompts
@@ -136,7 +142,7 @@ public class AlixiaCentral {
         rooms = new ArrayList<>(24);
         rooms.add(new TrackerRoom());
 		rooms.add(new OvermindRoom());
-//		rooms.add(new QARoom());
+		rooms.add(new QARoom());
 		rooms.add(new AlphaRoom());
 		rooms.add(new BravoRoom());
 		rooms.add(new CharlieRoom());

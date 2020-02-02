@@ -1,4 +1,4 @@
-package com.hulles.alixia.qa.junit5;
+package com.hulles.alixia.qa;
 
 import java.io.Closeable;
 import java.util.HashSet;

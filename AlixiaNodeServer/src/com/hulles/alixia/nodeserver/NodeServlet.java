@@ -120,6 +120,10 @@ public final class NodeServlet {
     public void stopServing() {
         
         LOGGER.info("NodeServlet is stopping");
-        nodeJS.getRuntime().terminateExecution();
+        if (nodeJS != null) {
+            nodeJS.getRuntime().terminateExecution();
+        } else {
+            LOGGER.error("NodeJS was nul in stopServing");
+        }
     }
 }

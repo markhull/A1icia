@@ -8,7 +8,6 @@
  */
 module com.hulles.alixia.qa {
 	exports com.hulles.alixia.qa to com.hulles.alixia.central;
-	exports com.hulles.alixia.qa.junit5;
 
 	requires com.google.common;
 	requires transitive com.hulles.alixia;

@@ -174,19 +174,19 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		sendCommand(sememe, null);
 		if (executor != null) {
 			try {
-				LOGGER.info("attempting to shutdown executor");
+				LOGGER.debug("attempting to shutdown executor");
 			    executor.shutdown();
 			    executor.awaitTermination(5, TimeUnit.SECONDS);
 			}
 			catch (InterruptedException e) {
-				LOGGER.info("tasks interrupted");
+				LOGGER.debug("tasks interrupted");
 			}
 			finally {
 			    if (!executor.isTerminated()) {
-			    	LOGGER.info("cancelling non-finished tasks");
+			    	LOGGER.debug("cancelling non-finished tasks");
 			    }
 			    executor.shutdownNow();
-			    LOGGER.info("shutdown finished");
+			    LOGGER.debug("shutdown finished");
 			}
 		}
 		executor = null;
@@ -436,7 +436,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		}
 		request = buildRequest();
 		sememes = Collections.singleton(sememe);
-		LOGGER.info("AlixiaRemote: Sending command");
+		LOGGER.debug("AlixiaRemote: Sending command");
 		request.setRequestActions(sememes);
 		request.setRequestMessage(message);
         if (!request.isValid()) {
@@ -458,7 +458,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		sememe = new SerialSememe();
 		sememe.setName("login");
 		sememes = Collections.singleton(sememe);
-		LOGGER.info("AlixiaRemote: Sending login");
+		LOGGER.debug("AlixiaRemote: Sending login");
 		request.setRequestActions(sememes);
 		request.setClientObject(object);
         if (!request.isValid()) {
@@ -496,12 +496,12 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		}
 		header = new DialogHeader();
 		header.setToAlixianID(AlixiaConstants.getAlixiaAlixianID());
-		LOGGER.info("AlixiaRemote: serializing request");
+		LOGGER.debug("AlixiaRemote: serializing request");
 		dialogBytes = DialogSerialization.serialize(header, request);
 		if (dialogBytes == null) {
 			throw new AlixiaException("Couldn't create dialog to send");
 		}
-		LOGGER.info("AlixiaRemote: sending request");
+		LOGGER.debug("AlixiaRemote: sending request");
 		try (Jedis jebus = jebusCentral.getResource()) {
 			jebus.publish(JebusBible.getBytesKey(JebusBible.JebusKey.TOCHANNEL, jebusCentral), dialogBytes);
 		}
@@ -520,7 +520,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		Language lang;
 		
 		SharedUtils.checkNotNull(responseBytes);
-		LOGGER.info("AlixiaRemote: in receiveBytes");
+		LOGGER.debug("AlixiaRemote: in receiveBytes");
 		try { // TODO make me better :)
 			dialog = DialogSerialization.deSerialize(alixianID, responseBytes);
 		} catch (Exception e1) {
@@ -528,7 +528,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		}
 		if (dialog == null) {
 			// dialog not sent to us...
-			LOGGER.info("AlixiaRemote: got input, but not sent to us");
+			LOGGER.debug("AlixiaRemote: got input, but not sent to us");
 			return;
 		}
 		if (dialog instanceof DialogResponse) {
@@ -569,7 +569,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		SharedUtils.checkNotNull(text);
 		SharedUtils.checkNotNull(lang);
 		if (text != null) {
-			LOGGER.info("AlixiaRemote: message text is {}", text);
+			LOGGER.debug("AlixiaRemote: message text is {}", text);
 			receiveText(text, lang);
 			txt = text;
 			if (showText) {
@@ -588,7 +588,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		SharedUtils.checkNotNull(text);
 		SharedUtils.checkNotNull(lang);
 		if (text != null) {
-			LOGGER.info("AlixiaRemote: request text is {}", text);
+			LOGGER.debug("AlixiaRemote: request text is {}", text);
 			receiveRequest(text, lang);
 			txt = text;
 			if (showText) {
@@ -606,7 +606,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		SharedUtils.nullsOkay(expl);
 		SharedUtils.checkNotNull(text);
 		if (expl != null && !expl.isEmpty() && !expl.equals(text)) {
-			LOGGER.info("AlixiaRemote: explanation is {}", expl);
+			LOGGER.debug("AlixiaRemote: explanation is {}", expl);
 			if (showText) {
 				textDisplayer.appendText(ALIXIA_PREFIX, alixiaExplAttrs);
 				textDisplayer.appendText(expl + "\n");
@@ -619,7 +619,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		
 		SharedUtils.nullsOkay(sememe);
 		if (sememe != null) {
-			LOGGER.info("AlixiaRemote: sememe is {}", sememe.getName());
+			LOGGER.debug("AlixiaRemote: sememe is {}", sememe.getName());
 			receiveCommand(sememe);
 		}
 	}
@@ -642,16 +642,16 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		}		
 		// if AlixiaRemoteDisplay doesn't handle it, well, we can, let's roll up our sleeves...
 		objectType = clientObject.getClientObjectType();
-		LOGGER.info("AlixiaRemote: processing object");
+		LOGGER.debug("AlixiaRemote: processing object");
 		switch (objectType) {
 			case LOGIN_RESPONSE:
-				LOGGER.info("AlixiaRemote: LOGIN_RESPONSE");
+				LOGGER.debug("AlixiaRemote: LOGIN_RESPONSE");
 				loginObject = (LoginResponseObject) clientObject;
 				this.personUUID = loginObject.getPersonUUID();
 				this.userName = loginObject.getUserName();
 				break;
 			case CHANGE_LANGUAGE:
-				LOGGER.info("AlixiaRemote: CHANGE_LANGUAGE");
+				LOGGER.debug("AlixiaRemote: CHANGE_LANGUAGE");
 				changeLanguage = (ChangeLanguageObject) clientObject;
 				this.language = changeLanguage.getNewLanguage();
 				// we change the default language for the station based on the most recent change
@@ -659,15 +659,15 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 				receiveText("Changed language to " + language.getDisplayName(), language);
 				break;
 			case IMAGEBYTES:
-				LOGGER.info("AlixiaRemote: IMAGEBYTES");
+				LOGGER.debug("AlixiaRemote: IMAGEBYTES");
 				if (showImage) {
-					LOGGER.info("AlixiaRemote:receiveBytes: object is ImageObject");
+					LOGGER.debug("AlixiaRemote:receiveBytes: object is ImageObject");
 					mediaObject = (MediaObject) clientObject;
 					showImage(mediaObject);
 				}
 				break;
 			case AUDIOBYTES:
-				LOGGER.info("AlixiaRemote: AUDIOBYTES");
+				LOGGER.debug("AlixiaRemote: AUDIOBYTES");
 				if (playAudio) {
 					LOGGER.info("AlixiaRemote:receiveBytes: object is AudioObject");
 					audioObject = (AudioObject) clientObject;
@@ -675,9 +675,9 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 				}
 				break;
 			case VIDEOBYTES:
-				LOGGER.info("AlixiaRemote: VIDEOBYTES");
+				LOGGER.debug("AlixiaRemote: VIDEOBYTES");
 				if (playVideo) {
-					LOGGER.info("AlixiaRemote:receiveBytes: object is VideoObject");
+					LOGGER.debug("AlixiaRemote:receiveBytes: object is VideoObject");
 					mediaObject = (MediaObject) clientObject;
 					playVideo(mediaObject);
 				}
@@ -731,7 +731,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		}
 		for (byte[] audioArray : audioBytes) {
 			try {
-				LOGGER.info("AlixiaRemote:playAudio: audio from byte array");
+				LOGGER.debug("AlixiaRemote:playAudio: audio from byte array");
 				if (serialFormat == null) {
 					AudioBytePlayer.playAudioFromByteArray(audioArray, 
 							audioObject.getLengthSeconds());
@@ -760,14 +760,14 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		if (videoBytes == null || format == null) {
             throw new AlixiaException("AlixiaRemote: bad argument(s) in playVideo");
 		}
-		LOGGER.info("AlixiaRemote:playVideo: video from byte array");
+		LOGGER.debug("AlixiaRemote:playVideo: video from byte array");
 		MediaUtils.playMediaBytes(videoBytes, format);
 	}
 	
 	void receiveText(String text, Language lang) {
 
 		SharedUtils.checkNotNull(text);
-		LOGGER.info("AlixiaRemote:receiveText: text is {}", text);
+		LOGGER.debug("AlixiaRemote:receiveText: text is {}", text);
 		display.receiveText(text);
 		if (useTTS) {
 			processTTS(text, lang);
@@ -777,7 +777,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 	void receiveRequest(String text, Language lang) {
 
 		SharedUtils.checkNotNull(text);
-		LOGGER.info("AlixiaRemote:receiveRequest: text is {}", text);
+		LOGGER.debug("AlixiaRemote:receiveRequest: text is {}", text);
 		display.receiveRequest(text);
 		if (useTTS) {
 			processTTS(text, lang);
@@ -789,7 +789,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 		
 		SharedUtils.checkNotNull(sememe);
 		cmd = sememe.getName();
-		LOGGER.info("AlixiaRemote:receiveCommand: command is {}", cmd);
+		LOGGER.debug("AlixiaRemote:receiveCommand: command is {}", cmd);
 		switch (sememe.getName()) {
 			case "central_startup":
 				serverUp = true;
@@ -813,7 +813,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
 			sendQuietCommand();
 			return;
 		}
-		LOGGER.info("AlixiaRemote:processTTS: text is {}", text);
+		LOGGER.debug("AlixiaRemote:processTTS: text is {}", text);
 		if (text.startsWith("ME")) {
 			colonPos = text.indexOf(':');
 			speech = text.substring(colonPos + 1);
@@ -849,7 +849,7 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
         @Override
 		public void onMessage(byte[] channel, byte[] msgBytes) {
         	
-    		LOGGER.info("AlixiaRemote:listener: got message");
+    		LOGGER.debug("AlixiaRemote:listener: got message");
     		executor.submit(new Runnable() {
     			@Override
     			public void run() {
@@ -861,13 +861,13 @@ public final class AlixiaRemote extends AbstractExecutionThreadService {
         @Override
 		public void onSubscribe(byte[] channel, int subscribedChannels) {
 
-        	LOGGER.info("Subscribed to Alixia's 'from' channel");
+        	LOGGER.debug("Subscribed to Alixia's 'from' channel");
         }
 
         @Override
 		public void onUnsubscribe(byte[] channel, int subscribedChannels) {
         	
-        	LOGGER.info("Unsubscribed to Alixia's 'from' channel");
+        	LOGGER.debug("Unsubscribed to Alixia's 'from' channel");
         }
 	}
 }

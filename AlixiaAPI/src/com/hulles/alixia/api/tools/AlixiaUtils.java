@@ -437,5 +437,87 @@ public final class AlixiaUtils {
 		}
         return text;
 	}
+    
+    /**
+     * Return the value of the System property for the O/S architecture.
+     * 
+     * @return The O/S architecture as a String
+     */
+    public static String getOsArchitecture() {
+        
+        return System.getProperty("os.arch");
+    }
+    
+    /**
+     * Return the value of the System property for the O/S name.
+     * 
+     * @return The O/S name as a String
+     */
+    public static String getOsName() {
+        
+        return System.getProperty("os.name");
+    }
+    
+    /**
+     * Return the value of the System property for the O/S version.
+     * 
+     * @return The O/S version as a String
+     */
+    public static String getOsVersion() {
+        
+        return System.getProperty("os.version");
+    }
+    
+    /**
+     * Return the value of the System property for the Java vendor.
+     * 
+     * @return The name of the Java vendor as a String
+     */
+    public static String getJavaVendor() {
+        
+        return System.getProperty("java.vendor");
+    }
+    
+    /**
+     * Return the value of the System property for the Java version.
+     * 
+     * @return The Java version as a String
+     */
+    public static String getJavaVersion() {
+        
+        return System.getProperty("java.version");
+    }
+    
+    /**
+     * Return the value of the System property for the value of environment variable JAVA_HOME.
+     * 
+     * @return The value of JAVA_HOME as a String
+     */
+    public static String getJavaHome() {
+        
+        return System.getProperty("java.home");
+    }
+    
+    /**
+     * Return the value of the System property for the user's home directory.
+     * 
+     * @return The folder name of the user's home directory as a String
+     */
+    public static String getUserHome() {
+        
+        return System.getProperty("user.home");
+    }
+    
+    /**
+     * Return the value of the System property for the user's name.
+     * 
+     * @return The name of the user as a String
+     */
+    public static String getUserName() {
+        
+        return System.getProperty("user.name");
+    }
+	
+	
 
 }

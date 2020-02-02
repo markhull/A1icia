@@ -1,4 +1,4 @@
-package com.hulles.alixia.cayenne;
+package com.hulles.fortune.cayenne;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,15 +12,14 @@ import org.apache.cayenne.resource.Resource;
 import org.apache.cayenne.resource.ResourceLocator;
 import org.apache.cayenne.resource.URLResource;
 
-import com.hulles.alixia.api.shared.AlixiaException;
-import com.hulles.alixia.api.shared.SharedUtils;
+import com.hulles.fortune.SharedUtils;
 
-public class AlixiaResourceLocator implements ResourceLocator {
+public class FortuneResourceLocator implements ResourceLocator {
     Map<String, Resource> resourceMap;
     
-    AlixiaResourceLocator() {
+    FortuneResourceLocator() {
     
-        resourceMap = new HashMap<>(3);
+        resourceMap = new HashMap<>();
     }
     
     @Override
@@ -30,7 +29,7 @@ public class AlixiaResourceLocator implements ResourceLocator {
         SharedUtils.checkNotNull(name);
         resource = resourceMap.get(name);
         if (resource == null) {
-            throw new AlixiaException("Unable to find resource by name");
+            throw new RuntimeException("Unable to find resource by name");
         }
         return Collections.singleton(resource);
     }
@@ -52,9 +51,8 @@ public class AlixiaResourceLocator implements ResourceLocator {
         try {
             url = path.toUri().toURL();
         } catch (MalformedURLException e) {
-            throw new AlixiaException("Unable to create URL from path " + path);
+            throw new RuntimeException("Unable to create URL from path " + path);
         }
         addResource(name, url);
     }
-
 }

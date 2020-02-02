@@ -212,6 +212,7 @@ public class ApplicationKeys implements Serializable {
         EXPRESSURL,
         PARSERURL,
         NODEHOST,
-        NODEPORT
+        NODEPORT,
+        CAYENNEXMLPATH
 	}
 }

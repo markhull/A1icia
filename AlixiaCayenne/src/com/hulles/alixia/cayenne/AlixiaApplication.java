@@ -23,6 +23,7 @@ package com.hulles.alixia.cayenne;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.apache.cayenne.DeleteDenyException;
 import org.apache.cayenne.ObjectContext;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.di.ClassLoaderManager;
+import org.apache.cayenne.di.spi.DefaultClassLoaderManager;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.log.NoopJdbcEventLogger;
 import org.apache.cayenne.query.SQLExec;
@@ -42,6 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hulles.alixia.api.shared.AlixiaException;
+import com.hulles.alixia.api.shared.ApplicationKeys;
+import com.hulles.alixia.api.shared.ApplicationKeys.ApplicationKey;
 import com.hulles.alixia.api.shared.SharedUtils;
 
 public final class AlixiaApplication {
@@ -68,18 +72,26 @@ public final class AlixiaApplication {
      * @return The Cayenne ServerRuntime
      */
     public synchronized static ServerRuntime getServerRuntime() {
-    	ResourceLocator alixiaLocator;
+    	AlixiaResourceLocator alixiaLocator;
+        Path xmlPath;
+        String appKeyPath;
+        ApplicationKeys appKeys;
     
     	if (cayenneRuntime == null) {
-    		alixiaLocator = new AlixiaResourceLocator(AlixiaApplication.class, "cayenne-alixia.xml");
+    	    alixiaLocator = new AlixiaResourceLocator();
+            appKeys = ApplicationKeys.getInstance();        
+            appKeyPath = appKeys.getKey(ApplicationKey.CAYENNEXMLPATH);
+    	    xmlPath = Path.of(appKeyPath, "cayenne-alixia.xml");
+    	    alixiaLocator.addResource("cayenne-alixia.xml", xmlPath);
+            
             showURLs("com/hulles/alixia/cayenne/cayenne-alixia.xml");
             showURLs("com/hulles/alixia/cayenne/alixia_datamap.map.xml");
             
     		if (!logging) {
-	    		cayenneRuntime = ServerRuntime.builder()
+    	        cayenneRuntime = ServerRuntime.builder()
 	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
 	    	            		.toInstance(alixiaLocator))
-	    				.addConfig("com/hulles/alixia/cayenne/cayenne-alixia.xml")
+                        .addConfig("cayenne-alixia.xml")
 	    				.addModule(binder -> binder.bind(JdbcEventLogger.class)
 	    						.to(NoopJdbcEventLogger.class))
 	    				.build();
@@ -87,7 +99,7 @@ public final class AlixiaApplication {
 	    		cayenneRuntime = ServerRuntime.builder()
 	    	            .addModule(binder -> binder.bind(ResourceLocator.class)
 	    	            		.toInstance(alixiaLocator))
-	    				.addConfig("com/hulles/alixia/cayenne/cayenne-alixia.xml")
+	    				.addConfig("cayenne-alixia.xml")
 	    				.build();
     		}
     		
@@ -110,49 +122,56 @@ public final class AlixiaApplication {
         }
     }
     
-    static class DefaultClassLoaderManager implements ClassLoaderManager {
-
+    static class GRRRClassLoaderManager implements ClassLoaderManager {
+        ClassLoader classLoader;
+        
         @Override
         public ClassLoader getClassLoader(String resourceName) {
-            // here we are ignoring 'className' when looking for ClassLoader...
-            // other implementations (such as OSGi) may actually use it
-
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-            if (classLoader == null) {
-            	System.out.println("Using THIS classLoader");
-                classLoader = DefaultClassLoaderManager.class.getClassLoader();
-            } else {
-            	System.out.println("Using THREAD classLoader");
-            }
-
-            // this is too paranoid I guess... "this" class will always have a
-            // ClassLoader
-            if (classLoader == null) {
-                throw new IllegalStateException("Can't find a ClassLoader");
-            }
-
-            return classLoader;
+            Module module;
+            
+            module = this.getClass().getModule();
+            return module.getClassLoader();
         }
-
-    } 
+    }
+    
+//    static class DefaultClassLoaderManager implements ClassLoaderManager {
+//
+//        @Override
+//        public ClassLoader getClassLoader(String resourceName) {
+//            // here we are ignoring 'className' when looking for ClassLoader...
+//            // other implementations (such as OSGi) may actually use it
+//
+//            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//
+//            if (classLoader == null) {
+//            	System.out.println("Using THIS classLoader");
+//                classLoader = DefaultClassLoaderManager.class.getClassLoader();
+//            } else {
+//            	System.out.println("Using THREAD classLoader");
+//            }
+//
+//            // this is too paranoid I guess... "this" class will always have a
+//            // ClassLoader
+//            if (classLoader == null) {
+//                throw new IllegalStateException("Can't find a ClassLoader");
+//            }
+//
+//            return classLoader;
+//        }
+//
+//    } 
    
     /**
      * We use the check for uncommitted objects to "fail fast" if there are any dangling db objects.
      * @param value True to check for uncommitted objects, false otherwise
+     * @return The value of the flag prior to this call
      */
-    public static void setErrorOnUncommittedObjects(boolean value) {
-    	
-    	uncommittedObjectsError = value;
-    }
-
-    /**
-     * We use the check for uncommitted objects to "fail fast" if there are any dangling db objects.
-     * @return True if we're currently checking for uncommitted objects, false otherwise
-     */
-    public static boolean getErrorOnUncommittedObjects() {
+    public static boolean setErrorOnUncommittedObjects(boolean value) {
+        boolean oldValue;
         
-        return uncommittedObjectsError;
+        oldValue = uncommittedObjectsError;
+        uncommittedObjectsError = value;
+        return oldValue;
     }
     
     /**
@@ -210,8 +229,7 @@ public final class AlixiaApplication {
         ObjectContext context;
         
         // since we're doing a commit we might have uncommitted objects outstanding...
-        originalValue = getErrorOnUncommittedObjects();
-        setErrorOnUncommittedObjects(false);        
+        originalValue = setErrorOnUncommittedObjects(false);        
         context = getEntityContext();
         context.rollbackChanges();
         setErrorOnUncommittedObjects(originalValue);
@@ -227,8 +245,7 @@ public final class AlixiaApplication {
         ObjectContext context;
         
         // since we're doing a commit we might have uncommitted objects outstanding...
-        originalValue = getErrorOnUncommittedObjects();
-        setErrorOnUncommittedObjects(false);        
+        originalValue = setErrorOnUncommittedObjects(false);        
         context = getEntityContext();
         context.commitChanges();
         setErrorOnUncommittedObjects(originalValue);

@@ -29,17 +29,17 @@ public class Fortunes {
 	private final static Logger LOGGER = LoggerFactory.getLogger(Fortunes.class);
     private static final long MILLIS_TO_MINUTES = 1000l * 60l; // millis divided by dbUnit = minutes
 	private static final long FORTUNE_MILLIS = 60l * 12l * MILLIS_TO_MINUTES; // every 12 hours (for now)
-	private static long nextFortune;
-	private static final boolean USE_EXTERNAL_MOTD = false;
+	@SuppressWarnings("unused")
+    private static long nextFortune;
+	private static final boolean USE_EXTERNAL_MOTD = true;
 	
-	@SuppressWarnings("null")
 	public static SerialFortune getFortune() {
 		SerialFortune fortune;
 		Fortune dbFortune = null;
 		String[] result;
 		
 		if (USE_EXTERNAL_MOTD) {
-			if (System.currentTimeMillis() > nextFortune) {
+//			if (System.currentTimeMillis() > nextFortune) {
 				// get one from the Packetizer MOTD service
 				result = ExternalAperture.getMOTD();
 				if (result != null) {
@@ -49,9 +49,9 @@ public class Fortunes {
 						dbFortune.setText(result[0]);
 						dbFortune.setSource(result[1]);
 						dbFortune.commit();
-						LOGGER.debug("New fortune: {}", result[0]);
+						LOGGER.info("New fortune: {}", result[0]);
 					}
-				}
+//				}
 				nextFortune = java.lang.System.currentTimeMillis() + FORTUNE_MILLIS;
 			}
 		}
