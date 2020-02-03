@@ -106,7 +106,6 @@ final public class ExternalAperture {
         SharedUtils.checkNotNull(textToTranslate);
 		appKeys = ApplicationKeys.getInstance();
 		urlTemplate = appKeys.getKey(ApplicationKey.GOOGLEXLATE);       
-//        xkey = "AIzaSyCsD4HkuRu7Gb1lvVUrQOYQM5Ejw4GggLk";
         try {
             encodedText = URLEncoder.encode(textToTranslate, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
